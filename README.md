@@ -1,0 +1,2 @@
+# OpenSidescan
+Sidescan files viewer

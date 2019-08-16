@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>OpenSidescan - by CIDCO</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/Images/resources/cidco_icon.png</normaloff>:/Images/resources/cidco_icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -48,9 +52,14 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpen"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/open.png</normaloff>:/Images/resources/open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Open</string>
    </property>
@@ -72,7 +81,9 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionOpen</sender>

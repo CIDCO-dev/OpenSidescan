@@ -34,13 +34,18 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.cpp \
     ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
-    opencvhelper.cpp
+    opencvhelper.cpp \
+    imagetab.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
-    opencvhelper.h
+    opencvhelper.h \
+    imagetab.h \
+    aboutdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    aboutdialog.ui
 
 RESOURCES += \
     resources.qrc

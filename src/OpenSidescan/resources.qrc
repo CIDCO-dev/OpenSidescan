@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/Images">
         <file>resources/splash.jpg</file>
+        <file>resources/open.png</file>
+        <file>resources/export.png</file>
+        <file>resources/cidco_icon.png</file>
+        <file>resources/help.png</file>
+        <file>resources/cidco-logo.png</file>
     </qresource>
 </RCC>

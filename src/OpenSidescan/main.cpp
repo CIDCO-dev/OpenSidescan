@@ -15,9 +15,11 @@ const char * captions[] = {
     "Parity-checking barnacles...",
     "Removing fishbones from backbone...",
     "Bootstrapping pacemaker with magnetometer...",
-    "Stroking the Big Red Button...",
+    "Hiring Captain Ahab...",
+    "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn",
     "Warming up planet Earth...",
     "Increasing sunspot activity...",
+    "Waking up Cthulhu...",
     "Recalibrating lobster traps...",
     "Freeing up memory from lost fishing nets..."
 };
@@ -25,6 +27,9 @@ const char * captions[] = {
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    //Show splash
+    srand(time(NULL));
     QPixmap splashImage (":/Images/resources/splash.jpg");
     QSplashScreen splash(splashImage);
 
@@ -40,6 +45,7 @@ int main(int argc, char *argv[])
 
     sleep(1);
 
+    //Show main window
     MainWindow w;
     w.showFullScreen();
 

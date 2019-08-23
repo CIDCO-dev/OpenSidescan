@@ -24,10 +24,9 @@ public slots:
     void actionOpen();
     void actionQuit();
     void actionAbout();
-    void saveImage();
 
 private:
-    void updateUI();
+
     void buildUI();
 
     Ui::MainWindow * ui;

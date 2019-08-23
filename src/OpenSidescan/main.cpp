@@ -3,7 +3,13 @@
 #include <QSplashScreen>
 
 //TODO: windows-proof this (for sleep())
+
+#ifdef _WIN32
+#include <windows.h>
+#define sleep Sleep
+#else
 #include <unistd.h>
+#endif
 
 const char * captions[] = {
     "Obtaining Poseidon's blessing...",

@@ -22,6 +22,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+win32 {
+    INCLUDEPATH += "C:\\Program Files (x86)\\Eigen3\\include\\eigen3" \
+                    "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
+
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_core347.lib"
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_features2d347.lib"
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_imgcodecs347.lib"
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_imgproc347.lib"
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_ml347.lib"
+    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_photo347.lib"
+  }
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -31,7 +42,6 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp \
-    ../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.cpp \
     ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     opencvhelper.cpp \
@@ -51,4 +61,7 @@ RESOURCES += \
     resources.qrc
 
 CONFIG+=link_pkgconfig
-PKGCONFIG+=opencv eigen3
+
+unix{
+        PKGCONFIG+=opencv eigen3
+}

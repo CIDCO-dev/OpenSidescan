@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>OpenSidescan - by CIDCO</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/Images/resources/cidco_icon.png</normaloff>:/Images/resources/cidco_icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -28,7 +32,6 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
-    <addaction name="actionSaveImage"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -42,20 +45,36 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/open.png</normaloff>:/Images/resources/open.png</iconset>
+   </property>
    <property name="text">
-    <string>&amp;Open</string>
+    <string>&amp;Open Sidescan File</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/help.png</normaloff>:/Images/resources/help.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;About OpenSidescan</string>
    </property>
@@ -65,14 +84,11 @@
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="actionSaveImage">
-   <property name="text">
-    <string>&amp;Save Image</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionOpen</sender>

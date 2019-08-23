@@ -23,7 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 win32 {
-    INCLUDEPATH += "C:\\Program Files\\Eigen3" \
+    INCLUDEPATH += "C:\\Program Files (x86)\\Eigen3\\include\\eigen3" \
                     "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
 
     LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_core347.lib"

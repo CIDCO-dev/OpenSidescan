@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>OpenSidescan</DisplayName>
+    <Description>Sidescan image processor</Description>
+    <Version>1.0.0</Version>
+    <ReleaseDate>2000-00-00</ReleaseDate>
+    <Licenses>
+        <License name="MIT License Agreement" file="license.txt" />
+    </Licenses>
+</Package>

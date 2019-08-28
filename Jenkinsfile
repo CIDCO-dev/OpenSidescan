@@ -28,10 +28,12 @@ pipeline {
       agent { label 'windows10-x64-2'}
       steps {
         //compile
-        bat "Scripts\\buildopensidescan_gui.bat"
-
-        archiveArtifacts('build\\bin\\OpenSidescan.zip')
-
+        bat "Scripts\\build_opensidescan_gui.bat"
+        bat "Scripts\\sign_exe.au3"
+        bat "Scripts\\package_opensidescan_gui.bat"
+        bat "Scripts\\build_installer.bat %version%"
+        bat "Scripts\\sign_installer.au3 %version%"
+        archiveArtifacts('OpenSidescan_installer*.exe')
       }
     }
 
@@ -41,7 +43,7 @@ pipeline {
         sh 'mkdir -p $binMasterPublishDir'
         sh 'mkdir -p $binWinx64PublishDir'
         sh 'cp -r build/bin/OpenSidescan $binMasterPublishDir/$exec_name'
-        sh 'cp  /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/bin/OpenSidescan.zip  $binWinx64PublishDir/overlap-$version.zip'
+        sh 'cp  /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe  $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }
   }

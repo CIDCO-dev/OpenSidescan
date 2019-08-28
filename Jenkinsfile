@@ -21,6 +21,7 @@ pipeline {
       agent { label 'master'}
       steps {
         sh 'make'
+        archiveArtifacts('build/bin/OpenSidescan')
       }
     }
 

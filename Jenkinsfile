@@ -21,7 +21,8 @@ pipeline {
       agent { label 'master'}
       steps {
         sh 'make'
-        archiveArtifacts('build/bin/OpenSidescan')
+        sh 'Scripts/build_installer.sh $version'
+        archiveArtifacts('OpenSidescan_installer*.run')
       }
     }
 

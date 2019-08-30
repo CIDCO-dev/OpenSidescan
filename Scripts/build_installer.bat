@@ -18,4 +18,3 @@ move "%CD%\installer\packages\ca.cidco.opensidescan\meta\package2.xml" "installe
 
 
 binarycreator -c installer\config\config.xml -p installer\packages OpenSidescan_installer_%version%
-

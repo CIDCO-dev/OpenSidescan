@@ -2,6 +2,7 @@
 
 set version=%1
 
+mkdir installer\packages\ca.cidco.opensidescan\data
 xcopy /h/k/e/y build\release installer\packages\ca.cidco.opensidescan\data
 
 call powershell.exe -Command "& { (Get-Content '%CD%\installer\config\config.xml') -replace '1.0.0', '%version%' | Set-Content '%CD%\installer\config\config2.xml' }"

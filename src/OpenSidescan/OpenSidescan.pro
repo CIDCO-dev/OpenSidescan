@@ -31,9 +31,9 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp \
-    ../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.cpp \
     ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
+    ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
     opencvhelper.cpp \
     imagetab.cpp \
     aboutdialog.cpp

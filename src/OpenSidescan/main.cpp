@@ -45,9 +45,11 @@ int main(int argc, char *argv[])
 
     sleep(1);
 
+    splash.hide();
+
     //Show main window
     MainWindow w;
-    w.showFullScreen();
+    w.showMaximized();
 
     return a.exec();
 }

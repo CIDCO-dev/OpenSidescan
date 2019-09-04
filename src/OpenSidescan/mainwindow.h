@@ -32,8 +32,7 @@ private:
     Ui::MainWindow * ui;
     QTabWidget  *    tabs;
 
-    QScrollArea *    scrollArea;
-    QLabel *         imageLabel;
+    DatagramParser * parser;
 
     std::list<cv::Mat*> * images;
 };

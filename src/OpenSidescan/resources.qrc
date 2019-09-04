@@ -6,5 +6,7 @@
         <file>resources/cidco_icon.png</file>
         <file>resources/help.png</file>
         <file>resources/cidco-logo.png</file>
+        <file>resources/marker.png</file>
+        <file>resources/clear.png</file>
     </qresource>
 </RCC>

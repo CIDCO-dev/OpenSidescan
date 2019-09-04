@@ -24,7 +24,6 @@ AboutDialog::AboutDialog(QWidget *parent) :
     label->setAlignment(Qt::AlignCenter);
     layout->addWidget(label,Qt::AlignCenter);
 
-
     this->setLayout(layout);
 }
 

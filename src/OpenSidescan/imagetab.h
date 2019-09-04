@@ -10,7 +10,13 @@
 class ImageTab : public QWidget
 {
 private:
-    cv::Mat * image;
+    cv::Mat * originalImage;
+    cv::Mat displayedImage;
+
+    QLabel * imageLabel;
+    QScrollArea * scrollArea;
+
+    void refreshImage();
 
     Q_OBJECT
 public:
@@ -20,6 +26,8 @@ signals:
 
 private slots:
     void saveImage();
+    void findFeatures();
+    void cleanImage();
 };
 
 #endif // IMAGETAB_H

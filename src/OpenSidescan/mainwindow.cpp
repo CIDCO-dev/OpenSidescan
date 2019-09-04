@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QTabWidget>
+#include <QProgressDialog>
 #include <string>
 #include <iostream>
 #include "imagetab.h"
@@ -13,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
-    images(NULL)
+    images(NULL),
+    parser(NULL)
 {
     ui->setupUi(this);
     buildUI();
@@ -28,8 +30,6 @@ void MainWindow::buildUI(){
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete scrollArea;
-    delete imageLabel;
 }
 
 void MainWindow::actionOpen(){
@@ -38,9 +38,9 @@ void MainWindow::actionOpen(){
 
     if(fileName.size() > 0){
         try{
+            //Cleanup previous workspace ------------------
             statusBar()->showMessage("Loading sidescan data...");
-            if(images != NULL){
-                //FIXME: clear tabs
+            if(images){
                 for(auto i=images->begin();i!= images->end();i++){
                     delete *i;
                 }
@@ -50,10 +50,25 @@ void MainWindow::actionOpen(){
                 images->clear();
             }
 
-            //TODO: Add progress bar
+            if(parser){
+                delete parser;
+                parser = NULL;
+            }
+
+            //Load file -----------------------------------
+            QProgressDialog progress("Loading files...", QString(), 0, 2, this);
+            progress.setWindowModality(Qt::ApplicationModal);
+            progress.show();
+            QCoreApplication::processEvents();
+
             SidescanImager imager;
-            DatagramParser * parser = DatagramParserFactory::build(sFileName,imager);
+            parser = DatagramParserFactory::build(sFileName,imager);
             parser->parse(sFileName);
+            progress.setValue(1);
+            progress.setLabelText(QString("Generating images..."));
+            QCoreApplication::processEvents();
+
+
             images = imager.generateImages();
 
             int n = 0;
@@ -69,7 +84,9 @@ void MainWindow::actionOpen(){
                 n++;
             }
 
-            delete parser;
+            progress.setValue(2);
+            progress.reset();
+            QCoreApplication::processEvents();
 
             statusBar()->showMessage("Sidescan data loaded");
         }

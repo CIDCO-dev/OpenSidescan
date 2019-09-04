@@ -4,7 +4,7 @@ version=$1
 
 mkdir installer/packages/ca.cidco.opensidescan/data
 cp build/bin/OpenSidescan installer/packages/ca.cidco.opensidescan/data
-linuxdeployqt.AppImage installer/packages/ca.cidco.opensidescan/data/OpenSidescan
+linuxdeployqt.AppImage installer/packages/ca.cidco.opensidescan/data/OpenSidescan -bundle-non-qt-libs
 
 sed -i "s/1.0.0/$version/g" installer/config/config.xml
 sed -i "s/1.0.0/$version/g" installer/packages/ca.cidco.opensidescan/meta/package.xml

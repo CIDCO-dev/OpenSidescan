@@ -6,4 +6,5 @@ nbproject/*
 
 
 *.pro.user
-
+*.xtf
+*.xtf.hits

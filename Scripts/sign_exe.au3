@@ -5,7 +5,7 @@ Sleep(2000)
 Send($CMD)
 Send("{Enter}")
 Sleep(8000)
-Send("SuperCIDCO42$")
+Send(EnvGet("Sign_Password"))
 Send("{Enter}")
 Sleep(4000)
 

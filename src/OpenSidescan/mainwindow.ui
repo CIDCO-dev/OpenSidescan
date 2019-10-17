@@ -41,7 +41,23 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuObject_Inventory">
+    <property name="title">
+     <string>Ob&amp;ject Inventory</string>
+    </property>
+    <addaction name="actionFindObjects"/>
+   </widget>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>&amp;Windows</string>
+    </property>
+    <addaction name="actionShowProjectWindow"/>
+    <addaction name="actionShowFilePropertiesWindow"/>
+    <addaction name="actionShowObjectInventoryWindow"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuObject_Inventory"/>
+   <addaction name="menuWindows"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -58,6 +74,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionFindObjects"/>
    <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -82,6 +99,30 @@
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionFindObjects">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/marker.png</normaloff>:/Images/resources/marker.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find &amp;Objects</string>
+   </property>
+  </action>
+  <action name="actionShowProjectWindow">
+   <property name="text">
+    <string>Project</string>
+   </property>
+  </action>
+  <action name="actionShowFilePropertiesWindow">
+   <property name="text">
+    <string>File Properties</string>
+   </property>
+  </action>
+  <action name="actionShowObjectInventoryWindow">
+   <property name="text">
+    <string>Object Inventory</string>
    </property>
   </action>
  </widget>
@@ -138,10 +179,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFindObjects</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionFindObjects()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionOpen()</slot>
   <slot>actionQuit()</slot>
   <slot>actionAbout()</slot>
+  <slot>actionFindObjects()</slot>
+  <slot>slot1()</slot>
  </slots>
 </ui>

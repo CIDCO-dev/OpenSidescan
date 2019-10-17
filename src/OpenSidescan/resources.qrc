@@ -8,5 +8,8 @@
         <file>resources/cidco-logo.png</file>
         <file>resources/marker.png</file>
         <file>resources/clear.png</file>
+        <file>resources/bounding-box.png</file>
+        <file>resources/ruler.png</file>
+        <file>resources/aim.png</file>
     </qresource>
 </RCC>

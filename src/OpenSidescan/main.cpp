@@ -1,3 +1,5 @@
+#define OPENCV_TRAITS_ENABLE_DEPRECATED
+
 #include "mainwindow.h"
 #include <QApplication>
 #include <QSplashScreen>
@@ -19,11 +21,11 @@ const char * captions[] = {
     "Cleaning up the oceans...",
     "Launching asynchronous dolphin call...",
     "Parity-checking barnacles...",
-    "Removing fishbones from backbone...",
+    "Removing fishbones...",
     "Bootstrapping pacemaker with magnetometer...",
     "Hiring Captain Ahab...",
     "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn",
-    "Warming up planet Earth...",
+    "Applying sunscreen...",
     "Increasing sunspot activity...",
     "Waking up Cthulhu...",
     "Recalibrating lobster traps...",
@@ -43,7 +45,7 @@ int main(int argc, char *argv[])
     sleep(1);
 
     for(int i=0;i<3;i++){
-        splash.showMessage(captions[rand()%14],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
+        splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
         sleep(1);
     }
 

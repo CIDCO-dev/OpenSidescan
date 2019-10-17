@@ -1,5 +1,9 @@
 build
 build/*
 
+nbproject
+nbproject/*
+
+
 *.pro.user
 

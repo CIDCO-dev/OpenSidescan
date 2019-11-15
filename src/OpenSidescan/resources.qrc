@@ -11,5 +11,12 @@
         <file>resources/bounding-box.png</file>
         <file>resources/ruler.png</file>
         <file>resources/aim.png</file>
+        <file>resources/new.png</file>
+        <file>resources/import.png</file>
+        <file>resources/save.png</file>
+        <file>resources/save-as.png</file>
+        <file>resources/view.png</file>
+        <file>resources/delete.png</file>
+        <file>resources/kml.png</file>
     </qresource>
 </RCC>

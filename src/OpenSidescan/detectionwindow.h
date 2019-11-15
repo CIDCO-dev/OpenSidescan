@@ -17,6 +17,8 @@
 
 class DetectionWindow : public QDialog
 {
+    Q_OBJECT
+
 public:
     DetectionWindow(std::vector<SidescanFile *> & files,
                     int & fastThresholdValue,
@@ -27,12 +29,6 @@ public:
                     int & mserDeltaValue,
                     int & mserMinimumAreaValue,
                     int & mserMaximumAreaValue,
-                    double & mserMaximumVariationValue,
-                    double & mserMinimumDiversityValue,
-                    int & mserMaximumEvolutionValue,
-                    double & mserAreaThresholdValue,
-                    double & mserMinimumMarginValue,
-                    int & mserEdgeBlurValue,
                     bool & showFeatureMarkersValue,
                     bool & mergeOverlappingBoundingBoxesValue,
                     QWidget * parent=0
@@ -43,8 +39,6 @@ private slots:
     void cancel();
 
 private:
-    Q_OBJECT;
-
     std::vector<SidescanFile *>  & files;
 
     std::vector<GeoreferencedObject*> & objects;
@@ -75,12 +69,7 @@ private:
     QLineEdit * mserDelta;
     QLineEdit * mserMinimumArea;
     QLineEdit * mserMaximumArea;
-    QLineEdit * mserMaximumVariation;
-    QLineEdit * mserMinimumDiversity;
-    QLineEdit * mserMaximumEvolution;
-    QLineEdit * mserAreaThreshold;
-    QLineEdit * mserMinimumMargin;
-    QLineEdit * mserEdgeBlur;
+
 
     //DBSCAN parameters;
 
@@ -99,12 +88,6 @@ private:
     int & mserDeltaValue;
     int & mserMinimumAreaValue;
     int & mserMaximumAreaValue;
-    double & mserMaximumVariationValue;
-    double & mserMinimumDiversityValue;
-    int & mserMaximumEvolutionValue;
-    double & mserAreaThresholdValue;
-    double & mserMinimumMarginValue;
-    int & mserEdgeBlurValue;
     bool & showFeatureMarkersValue;
     bool & mergeOverlappingBoundingBoxesValue;
 

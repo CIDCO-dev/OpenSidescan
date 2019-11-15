@@ -7,6 +7,8 @@
 #include <QDockWidget>
 #include <string>
 #include <QVBoxLayout>
+#include <QMessageBox>
+#include <QScrollBar>
 #include <iostream>
 #include "imagetab.h"
 #include "aboutdialog.h"
@@ -41,11 +43,9 @@ void MainWindow::buildUI(){
     inventoryWindow = new InventoryWindow(this);
     this->addDockWidget(Qt::BottomDockWidgetArea,inventoryWindow);
     connect(ui->actionShowObjectInventoryWindow,&QAction::triggered,inventoryWindow,&InventoryWindow::show);
+    connect(inventoryWindow,&InventoryWindow::objectSelected,this,&MainWindow::objectSelected);
 
-
-
-
-    createProject();
+    actionCreate();
 
     //center
     this->setCentralWidget(tabs);
@@ -57,19 +57,59 @@ MainWindow::~MainWindow()
     delete projectWindow;
 }
 
-void MainWindow::createProject(){
-    //TODO: handle previous project's cleanup and closure
+void MainWindow::actionCreate(){
 
-    currentProject = new Project();
+    if(promptProject()){
 
-    projectWindow->setProject(currentProject);
-    inventoryWindow->setProject(currentProject);
+        if(currentProject){
+            delete currentProject;
+        }
 
+        currentProject = new Project();
+
+        refreshProjectUI();
+    }
 }
 
-void MainWindow::actionOpen(){
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open File"),QDir::homePath(), tr("Sidescan Files (*.xtf)"));
-    //std::string sFileName= fileName.toStdString();
+bool MainWindow::promptProject(){
+    if(this->currentProject){
+        //Prompt user if he wants to override current project
+        QMessageBox msgBox;
+        msgBox.setText("There's already an active project. Are you sure you want to continue?");
+        msgBox.setInformativeText("All unsaved changed will be lost.");
+        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+
+        if(ret == QMessageBox::Ok){
+            return true;
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief MainWindow::refreshProjectUI
+ * Refreshes the UI after project load or creation
+ */
+void MainWindow::refreshProjectUI(){
+
+    projectWindow->setProject(currentProject);
+
+    inventoryWindow->setProject(currentProject);
+
+    selectedFile = NULL;
+
+    //Set window title
+    std::string title = currentProject->getFilename().size() > 0 ? currentProject->getFilename() : "New Project";
+    this->setWindowTitle(QString::fromStdString(title));
+}
+
+void MainWindow::actionImport(){
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"),QDir::homePath(), tr("Sidescan Files (*.xtf)"));
 
     if(fileNames.size() > 0){
 
@@ -90,25 +130,32 @@ void MainWindow::actionOpen(){
             unsigned int operationCount=0;
 
             for(auto i=fileNames.begin();i!=fileNames.end();i++){
-                SidescanImager imager;
                 std::string sFileName = (*i).toStdString();
-                DatagramParser * parser = DatagramParserFactory::build(sFileName,imager);
-                parser->parse(sFileName);
 
-                progress.setValue(operationCount++);
-                progress.setLabelText(QString::fromStdString(sFileName));
-                QCoreApplication::processEvents();
+                if(!projectWindow->containsFile(sFileName)){
+                    SidescanImager imager;
 
-                SidescanFile * file = imager.generate(sFileName);
+                    DatagramParser * parser = DatagramParserFactory::build(sFileName,imager);
+                    parser->parse(sFileName);
 
-                projectWindow->addFile(file);
+                    progress.setValue(operationCount++);
+                    progress.setLabelText(QString::fromStdString(sFileName));
+                    QCoreApplication::processEvents();
 
-                lastFile = file;
+                    SidescanFile * file = imager.generate(sFileName);
 
-                progress.setValue(operationCount++);
-                QCoreApplication::processEvents();
-                delete parser;
-                parser=NULL;
+                    projectWindow->addFile(file);
+
+                    lastFile = file;
+
+                    progress.setValue(operationCount++);
+                    QCoreApplication::processEvents();
+                    delete parser;
+                    parser=NULL;
+                }
+                else{
+                    //Project already contains file. Ignore silently.
+                }
             }
 
             progress.reset();
@@ -127,27 +174,30 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
 
-    /* Update tabs -----------------------------*/
-    int n = 0;
+    if(selectedFile){
+        /* Update tabs -----------------------------*/
+        int n = 0;
 
-    tabs->clear(); //TODO: does this leak?
+        tabs->clear(); //TODO: does this leak?
 
-    for(auto i= selectedFile->getImages().begin();i!=selectedFile->getImages().end();i++){
+        for(auto i= selectedFile->getImages().begin();i!=selectedFile->getImages().end();i++){
 
-        ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
+            ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
+            connect(newTab,&ImageTab::inventoryChanged,this,&MainWindow::refreshObjectInventory);
 
-        tabs->addTab(
-                    newTab,
-                    QString::fromStdString(
-                                            (**i).getChannelName()
+            tabs->addTab(
+                        newTab,
+                        QString::fromStdString(
+                                                (**i).getChannelName()
 
-                                           )
-        );
-        n++;
+                                               )
+            );
+            n++;
+        }
+
+        /* Update file info window ------------------- */
+        fileInfo->setFile(selectedFile);
     }
-
-    /* Update file info window ------------------- */
-    fileInfo->setFile(selectedFile);
 }
 
 
@@ -185,28 +235,15 @@ void MainWindow::actionFindObjects(){
                                         mserDeltaValue,
                                         mserMinimumAreaValue,
                                         mserMaximumAreaValue,
-                                        mserMaximumVariationValue,
-                                        mserMinimumDiversityValue,
-                                        mserMaximumEvolutionValue,
-                                        mserAreaThresholdValue,
-                                        mserMinimumMarginValue,
-                                        mserEdgeBlurValue,
                                         showFeatureMarkersValue,
                                         mergeOverlappingBoundingBoxesValue,
                                         this
         );
 
         if(detectionWindow.exec() == QDialog::Accepted){
-            inventoryWindow->refreshInventoryTable();
-            refreshTabs();
+            refreshObjectInventory();
         }
     }
-}
-
-void MainWindow::actionCleanImage(){
-    //TODO
-    //displayedImage= image.getImage().clone();
-    //refreshImage();
 }
 
 void MainWindow::refreshTabs(){
@@ -217,10 +254,81 @@ void MainWindow::refreshTabs(){
     }
 }
 
-void MainWindow::refreshObjectInventory(){
-    if(inventoryWindow){
-        inventoryWindow->refreshInventoryTable();
+void MainWindow::objectSelected(GeoreferencedObject * object){
+    updateSelectedFile(&object->getFile());
+    selectImageTab(object);
+
+    //TODO: scroll to object
+}
+
+void MainWindow::selectImageTab(GeoreferencedObject * object){
+    for(unsigned int i=0; i<tabs->count();i++){
+        ImageTab * tab = (ImageTab*)tabs->widget(i);
+        if( tab->getImage() == &object->getImage()){
+            //select tab
+            tabs->setCurrentIndex(i);
+
+            //scroll tab's image view
+            tab->getScrollArea().ensureVisible(object->getX(),object->getY(),50,50);
+        }
     }
 }
 
 
+void MainWindow::actionOpen()
+{
+    if(promptProject()){
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+
+        if(fileName.size() > 0){
+            if(currentProject){
+                delete currentProject;
+            }
+
+            std::string sFilename = fileName.toStdString();
+            currentProject = new Project();
+            currentProject->read(sFilename);
+            currentProject->setFilename(sFilename);
+
+            refreshProjectUI();
+        }
+    }
+}
+
+void MainWindow::actionSave()
+{
+    if(currentProject){
+        if(currentProject->getFilename().size() > 0){
+            currentProject->write(currentProject->getFilename());
+            refreshProjectUI();
+        }
+        else{
+            actionSaveAs();
+        }
+    }
+}
+
+void MainWindow::actionSaveAs(){
+    if(currentProject){
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+            currentProject->write(sFilename);
+            currentProject->setFilename(sFilename);
+            refreshProjectUI();
+        }
+    }
+}
+
+void MainWindow::actionExportKmlFile(){
+    if(currentProject){
+        //QFileDialog::setDefaultSuffix(QString::fromStdString(".kml"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("KML File"),QDir::homePath(), tr("KML File (*.kml)"));
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+            currentProject->exportInventoryAsKml(sFilename);
+        }
+    }
+}

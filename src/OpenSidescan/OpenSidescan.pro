@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     detectionwindow.cpp \
     inventorywindow.cpp \
     qthelper.cpp \
-    imagetablabel.cpp
+    imagetablabel.cpp \
+    georeferencedobjectwindow.cpp \
+    georeferencedobjectmenu.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -77,7 +79,9 @@ HEADERS  += mainwindow.h \
     detectionwindow.h \
     inventorywindow.h \
     qthelper.h \
-    imagetablabel.h
+    imagetablabel.h \
+    georeferencedobjectwindow.h \
+    georeferencedobjectmenu.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

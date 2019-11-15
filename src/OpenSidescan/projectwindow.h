@@ -24,6 +24,8 @@ public:
     void        addFile(SidescanFile * file);
     void        refresh();
 
+    bool        containsFile(std::string & filename);
+
     //FIXME: this will be obsolete with the use of a proper listview model
     SidescanFile * getSelectedFile(){
         if(files && project){
@@ -36,6 +38,8 @@ public:
                 }
             }
         }
+
+        return NULL;
     }
 
 signals:

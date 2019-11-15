@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_XML_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../OpenSidescan -I. -isystem /usr/local/include/opencv -isystem /usr/local/include -isystem /usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../OpenSidescan -I. -isystem /usr/local/include/opencv -isystem /usr/local/include -isystem /usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /opt/Qt/5.11.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = OpenSidescan1.0.0
 DISTDIR = /home/glm/src/OpenSidescan/src/build-OpenSidescan-Desktop-Debug/.tmp/OpenSidescan1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/opt/Qt/5.11.1/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/usr/local/lib -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_core -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/local/lib -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_core -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Xml -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -74,7 +74,9 @@ SOURCES       = ../OpenSidescan/main.cpp \
 		../OpenSidescan/detectionwindow.cpp \
 		../OpenSidescan/inventorywindow.cpp \
 		../OpenSidescan/qthelper.cpp \
-		../OpenSidescan/imagetablabel.cpp qrc_resources.cpp \
+		../OpenSidescan/imagetablabel.cpp \
+		../OpenSidescan/georeferencedobjectwindow.cpp \
+		../OpenSidescan/georeferencedobjectmenu.cpp qrc_resources.cpp \
 		moc_mainwindow.cpp \
 		moc_imagetab.cpp \
 		moc_aboutdialog.cpp \
@@ -82,7 +84,9 @@ SOURCES       = ../OpenSidescan/main.cpp \
 		moc_filepropertieswindow.cpp \
 		moc_detectionwindow.cpp \
 		moc_inventorywindow.cpp \
-		moc_imagetablabel.cpp
+		moc_imagetablabel.cpp \
+		moc_georeferencedobjectwindow.cpp \
+		moc_georeferencedobjectmenu.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		sidescanimager.o \
@@ -108,6 +112,8 @@ OBJECTS       = main.o \
 		inventorywindow.o \
 		qthelper.o \
 		imagetablabel.o \
+		georeferencedobjectwindow.o \
+		georeferencedobjectmenu.o \
 		qrc_resources.o \
 		moc_mainwindow.o \
 		moc_imagetab.o \
@@ -116,7 +122,9 @@ OBJECTS       = main.o \
 		moc_filepropertieswindow.o \
 		moc_detectionwindow.o \
 		moc_inventorywindow.o \
-		moc_imagetablabel.o
+		moc_imagetablabel.o \
+		moc_georeferencedobjectwindow.o \
+		moc_georeferencedobjectmenu.o
 DIST          = /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.11.1/gcc_64/mkspecs/common/linux.conf \
@@ -322,7 +330,9 @@ DIST          = /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../OpenSidescan/detectionwindow.h \
 		../OpenSidescan/inventorywindow.h \
 		../OpenSidescan/qthelper.h \
-		../OpenSidescan/imagetablabel.h ../OpenSidescan/main.cpp \
+		../OpenSidescan/imagetablabel.h \
+		../OpenSidescan/georeferencedobjectwindow.h \
+		../OpenSidescan/georeferencedobjectmenu.h ../OpenSidescan/main.cpp \
 		../OpenSidescan/mainwindow.cpp \
 		../OpenSidescan/sidescanimager.cpp \
 		../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
@@ -346,7 +356,9 @@ DIST          = /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../OpenSidescan/detectionwindow.cpp \
 		../OpenSidescan/inventorywindow.cpp \
 		../OpenSidescan/qthelper.cpp \
-		../OpenSidescan/imagetablabel.cpp
+		../OpenSidescan/imagetablabel.cpp \
+		../OpenSidescan/georeferencedobjectwindow.cpp \
+		../OpenSidescan/georeferencedobjectmenu.cpp
 QMAKE_TARGET  = OpenSidescan
 DESTDIR       = 
 TARGET        = OpenSidescan
@@ -552,6 +564,7 @@ Makefile: ../OpenSidescan/OpenSidescan.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g
 		../OpenSidescan/resources.qrc \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Widgets.prl \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Gui.prl \
+		/opt/Qt/5.11.1/gcc_64/lib/libQt5Xml.prl \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile ../OpenSidescan/OpenSidescan.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 /opt/Qt/5.11.1/gcc_64/mkspecs/features/spec_pre.prf:
@@ -748,6 +761,7 @@ Makefile: ../OpenSidescan/OpenSidescan.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g
 ../OpenSidescan/resources.qrc:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Widgets.prl:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Gui.prl:
+/opt/Qt/5.11.1/gcc_64/lib/libQt5Xml.prl:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../OpenSidescan/OpenSidescan.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -765,8 +779,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../OpenSidescan/resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../OpenSidescan/mainwindow.h ../OpenSidescan/sidescanimager.h ../OpenSidescan/opencvhelper.h ../OpenSidescan/imagetab.h ../OpenSidescan/aboutdialog.h ../OpenSidescan/dbscan.h ../OpenSidescan/sidescanimage.h ../OpenSidescan/projectwindow.h ../OpenSidescan/sidescanfile.h ../OpenSidescan/project.h ../OpenSidescan/georeferencedobject.h ../OpenSidescan/filepropertieswindow.h ../OpenSidescan/detectionwindow.h ../OpenSidescan/inventorywindow.h ../OpenSidescan/qthelper.h ../OpenSidescan/imagetablabel.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../OpenSidescan/main.cpp ../OpenSidescan/mainwindow.cpp ../OpenSidescan/sidescanimager.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp ../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp ../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp ../thirdParty/MBES-lib/src/utils/StringUtils.cpp ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp ../OpenSidescan/opencvhelper.cpp ../OpenSidescan/imagetab.cpp ../OpenSidescan/aboutdialog.cpp ../OpenSidescan/dbscan.cpp ../OpenSidescan/sidescanimage.cpp ../OpenSidescan/projectwindow.cpp ../OpenSidescan/sidescanfile.cpp ../OpenSidescan/project.cpp ../OpenSidescan/georeferencedobject.cpp ../OpenSidescan/filepropertieswindow.cpp ../OpenSidescan/detectionwindow.cpp ../OpenSidescan/inventorywindow.cpp ../OpenSidescan/qthelper.cpp ../OpenSidescan/imagetablabel.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../OpenSidescan/mainwindow.h ../OpenSidescan/sidescanimager.h ../OpenSidescan/opencvhelper.h ../OpenSidescan/imagetab.h ../OpenSidescan/aboutdialog.h ../OpenSidescan/dbscan.h ../OpenSidescan/sidescanimage.h ../OpenSidescan/projectwindow.h ../OpenSidescan/sidescanfile.h ../OpenSidescan/project.h ../OpenSidescan/georeferencedobject.h ../OpenSidescan/filepropertieswindow.h ../OpenSidescan/detectionwindow.h ../OpenSidescan/inventorywindow.h ../OpenSidescan/qthelper.h ../OpenSidescan/imagetablabel.h ../OpenSidescan/georeferencedobjectwindow.h ../OpenSidescan/georeferencedobjectmenu.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../OpenSidescan/main.cpp ../OpenSidescan/mainwindow.cpp ../OpenSidescan/sidescanimager.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp ../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp ../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp ../thirdParty/MBES-lib/src/utils/StringUtils.cpp ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp ../OpenSidescan/opencvhelper.cpp ../OpenSidescan/imagetab.cpp ../OpenSidescan/aboutdialog.cpp ../OpenSidescan/dbscan.cpp ../OpenSidescan/sidescanimage.cpp ../OpenSidescan/projectwindow.cpp ../OpenSidescan/sidescanfile.cpp ../OpenSidescan/project.cpp ../OpenSidescan/georeferencedobject.cpp ../OpenSidescan/filepropertieswindow.cpp ../OpenSidescan/detectionwindow.cpp ../OpenSidescan/inventorywindow.cpp ../OpenSidescan/qthelper.cpp ../OpenSidescan/imagetablabel.cpp ../OpenSidescan/georeferencedobjectwindow.cpp ../OpenSidescan/georeferencedobjectmenu.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../OpenSidescan/mainwindow.ui ../OpenSidescan/aboutdialog.ui $(DISTDIR)/
 
 
@@ -796,17 +810,24 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resources.cpp
 qrc_resources.cpp: ../OpenSidescan/resources.qrc \
 		/opt/Qt/5.11.1/gcc_64/bin/rcc \
-		../OpenSidescan/resources/splash.jpg \
-		../OpenSidescan/resources/open.png \
-		../OpenSidescan/resources/help.png \
-		../OpenSidescan/resources/cidco-logo.png \
-		../OpenSidescan/resources/ruler.png \
-		../OpenSidescan/resources/export.png \
-		../OpenSidescan/resources/bounding-box.png \
 		../OpenSidescan/resources/clear.png \
-		../OpenSidescan/resources/marker.png \
+		../OpenSidescan/resources/help.png \
+		../OpenSidescan/resources/open.png \
 		../OpenSidescan/resources/cidco_icon.png \
-		../OpenSidescan/resources/aim.png
+		../OpenSidescan/resources/delete.png \
+		../OpenSidescan/resources/marker.png \
+		../OpenSidescan/resources/ruler.png \
+		../OpenSidescan/resources/save-as.png \
+		../OpenSidescan/resources/view.png \
+		../OpenSidescan/resources/splash.jpg \
+		../OpenSidescan/resources/kml.png \
+		../OpenSidescan/resources/cidco-logo.png \
+		../OpenSidescan/resources/import.png \
+		../OpenSidescan/resources/save.png \
+		../OpenSidescan/resources/aim.png \
+		../OpenSidescan/resources/new.png \
+		../OpenSidescan/resources/export.png \
+		../OpenSidescan/resources/bounding-box.png
 	/opt/Qt/5.11.1/gcc_64/bin/rcc -name resources ../OpenSidescan/resources.qrc -o qrc_resources.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
@@ -815,9 +836,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /opt/Qt/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -Wall -W -dM -E -o moc_predefs.h /opt/Qt/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_imagetab.cpp moc_aboutdialog.cpp moc_projectwindow.cpp moc_filepropertieswindow.cpp moc_detectionwindow.cpp moc_inventorywindow.cpp moc_imagetablabel.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_imagetab.cpp moc_aboutdialog.cpp moc_projectwindow.cpp moc_filepropertieswindow.cpp moc_detectionwindow.cpp moc_inventorywindow.cpp moc_imagetablabel.cpp moc_georeferencedobjectwindow.cpp moc_georeferencedobjectmenu.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_imagetab.cpp moc_aboutdialog.cpp moc_projectwindow.cpp moc_filepropertieswindow.cpp moc_detectionwindow.cpp moc_inventorywindow.cpp moc_imagetablabel.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_imagetab.cpp moc_aboutdialog.cpp moc_projectwindow.cpp moc_filepropertieswindow.cpp moc_detectionwindow.cpp moc_inventorywindow.cpp moc_imagetablabel.cpp moc_georeferencedobjectwindow.cpp moc_georeferencedobjectmenu.cpp
 moc_mainwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmainwindow.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -991,7 +1012,7 @@ moc_mainwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
 		../OpenSidescan/mainwindow.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/mainwindow.h -o moc_mainwindow.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/mainwindow.h -o moc_mainwindow.cpp
 
 moc_imagetab.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QWidget \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qwidget.h \
@@ -1119,9 +1140,65 @@ moc_imagetab.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QWidget \
 		../OpenSidescan/sidescanfile.h \
 		../OpenSidescan/imagetablabel.h \
 		../OpenSidescan/imagetab.h \
+		../OpenSidescan/mainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../OpenSidescan/sidescanimager.h \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramEventHandler.hpp \
+		../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.hpp \
+		../thirdParty/MBES-lib/src/utils/TimeUtils.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.hpp \
+		../thirdParty/MBES-lib/src/utils/NmeaUtils.hpp \
+		../thirdParty/MBES-lib/src/utils/Exception.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/vendors/QuinsyR2Sonic.hpp \
+		../thirdParty/MBES-lib/src/Ping.hpp \
+		../thirdParty/MBES-lib/src/Attitude.hpp \
+		../thirdParty/MBES-lib/src/math/SlantRangeCorrection.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kTypes.hpp \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp \
+		../thirdParty/MBES-lib/src/math/Interpolation.hpp \
+		../OpenSidescan/opencvhelper.h \
+		../OpenSidescan/dbscan.h \
+		../OpenSidescan/projectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QListWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvalidator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QStringListModel \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QVariant \
+		../OpenSidescan/project.h \
+		../OpenSidescan/filepropertieswindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTableWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtableview.h \
+		../OpenSidescan/inventorywindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qheaderview.h \
+		../OpenSidescan/imagetab.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/imagetab.h -o moc_imagetab.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/imagetab.h -o moc_imagetab.cpp
 
 moc_aboutdialog.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
@@ -1230,7 +1307,7 @@ moc_aboutdialog.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
 		../OpenSidescan/aboutdialog.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/aboutdialog.h -o moc_aboutdialog.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/aboutdialog.h -o moc_aboutdialog.cpp
 
 moc_projectwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
@@ -1369,7 +1446,7 @@ moc_projectwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
 		../OpenSidescan/projectwindow.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/projectwindow.h -o moc_projectwindow.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/projectwindow.h -o moc_projectwindow.cpp
 
 moc_filepropertieswindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
@@ -1504,7 +1581,7 @@ moc_filepropertieswindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidge
 		../OpenSidescan/filepropertieswindow.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/filepropertieswindow.h -o moc_filepropertieswindow.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/filepropertieswindow.h -o moc_filepropertieswindow.cpp
 
 moc_detectionwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
@@ -1660,7 +1737,7 @@ moc_detectionwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
 		../OpenSidescan/detectionwindow.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/detectionwindow.h -o moc_detectionwindow.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/detectionwindow.h -o moc_detectionwindow.cpp
 
 moc_inventorywindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
@@ -1798,7 +1875,7 @@ moc_inventorywindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
 		../OpenSidescan/inventorywindow.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/inventorywindow.h -o moc_inventorywindow.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/inventorywindow.h -o moc_inventorywindow.cpp
 
 moc_imagetablabel.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLabel \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlabel.h \
@@ -1905,10 +1982,337 @@ moc_imagetablabel.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLabel \
 		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QRubberBand \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QPoint \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/QMouseEvent \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/imagetab.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QScrollArea \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/QPixmap \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QCheckBox \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qcheckbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qicon.h \
+		../OpenSidescan/imagetablabel.h \
+		../OpenSidescan/mainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../OpenSidescan/sidescanimager.h \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramEventHandler.hpp \
+		../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.hpp \
+		../thirdParty/MBES-lib/src/utils/TimeUtils.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.hpp \
+		../thirdParty/MBES-lib/src/utils/NmeaUtils.hpp \
+		../thirdParty/MBES-lib/src/utils/Exception.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/vendors/QuinsyR2Sonic.hpp \
+		../thirdParty/MBES-lib/src/Ping.hpp \
+		../thirdParty/MBES-lib/src/Attitude.hpp \
+		../thirdParty/MBES-lib/src/math/SlantRangeCorrection.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kTypes.hpp \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp \
+		../thirdParty/MBES-lib/src/math/Interpolation.hpp \
+		../OpenSidescan/opencvhelper.h \
+		../OpenSidescan/dbscan.h \
+		../OpenSidescan/projectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QListWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvalidator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QStringListModel \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QVariant \
+		../OpenSidescan/project.h \
+		../OpenSidescan/filepropertieswindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTableWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtableview.h \
+		../OpenSidescan/inventorywindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qheaderview.h \
 		../OpenSidescan/imagetablabel.h \
 		moc_predefs.h \
 		/opt/Qt/5.11.1/gcc_64/bin/moc
-	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/imagetablabel.h -o moc_imagetablabel.cpp
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/imagetablabel.h -o moc_imagetablabel.cpp
+
+moc_georeferencedobjectwindow.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QFormLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qframe.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextdocument.h \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		../OpenSidescan/georeferencedobjectwindow.h \
+		moc_predefs.h \
+		/opt/Qt/5.11.1/gcc_64/bin/moc
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/georeferencedobjectwindow.h -o moc_georeferencedobjectwindow.cpp
+
+moc_georeferencedobjectmenu.cpp: /opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMenu \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qicon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		../OpenSidescan/georeferencedobjectmenu.h \
+		moc_predefs.h \
+		/opt/Qt/5.11.1/gcc_64/bin/moc
+	/opt/Qt/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/Qt/5.11.1/gcc_64/mkspecs/linux-g++ -I/home/glm/src/OpenSidescan/src/OpenSidescan -I/usr/local/include/opencv -I/usr/local/include -I/usr/include/eigen3 -I/opt/Qt/5.11.1/gcc_64/include -I/opt/Qt/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt/5.11.1/gcc_64/include/QtGui -I/opt/Qt/5.11.1/gcc_64/include/QtXml -I/opt/Qt/5.11.1/gcc_64/include/QtCore -I. -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../OpenSidescan/georeferencedobjectmenu.h -o moc_georeferencedobjectmenu.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -2323,6 +2727,10 @@ mainwindow.o: ../OpenSidescan/mainwindow.cpp ../OpenSidescan/mainwindow.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMessageBox \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmessagebox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QScrollBar \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qscrollbar.h \
 		../OpenSidescan/imagetab.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/QPixmap \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QRubberBand \
@@ -2601,6 +3009,61 @@ imagetab.o: ../OpenSidescan/imagetab.cpp ../OpenSidescan/imagetab.h \
 		../OpenSidescan/georeferencedobject.h \
 		../OpenSidescan/sidescanfile.h \
 		../OpenSidescan/imagetablabel.h \
+		../OpenSidescan/mainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../OpenSidescan/sidescanimager.h \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramEventHandler.hpp \
+		../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.hpp \
+		../thirdParty/MBES-lib/src/utils/TimeUtils.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.hpp \
+		../thirdParty/MBES-lib/src/utils/NmeaUtils.hpp \
+		../thirdParty/MBES-lib/src/utils/Exception.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/vendors/QuinsyR2Sonic.hpp \
+		../thirdParty/MBES-lib/src/Ping.hpp \
+		../thirdParty/MBES-lib/src/Attitude.hpp \
+		../thirdParty/MBES-lib/src/math/SlantRangeCorrection.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kTypes.hpp \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp \
+		../thirdParty/MBES-lib/src/math/Interpolation.hpp \
+		../OpenSidescan/opencvhelper.h \
+		../OpenSidescan/dbscan.h \
+		../OpenSidescan/projectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QListWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvalidator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QStringListModel \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QVariant \
+		../OpenSidescan/project.h \
+		../OpenSidescan/filepropertieswindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTableWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtableview.h \
+		../OpenSidescan/inventorywindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qheaderview.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
@@ -2629,26 +3092,13 @@ imagetab.o: ../OpenSidescan/imagetab.cpp ../OpenSidescan/imagetab.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgroupbox.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QComboBox \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qcombobox.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyleoption.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvalidator.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qslider.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractslider.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyle.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabbar.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabwidget.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
 		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtGui/QIntValidator \
-		../OpenSidescan/opencvhelper.h \
-		../OpenSidescan/dbscan.h
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/QIntValidator
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagetab.o ../OpenSidescan/imagetab.cpp
 
 aboutdialog.o: ../OpenSidescan/aboutdialog.cpp ../OpenSidescan/aboutdialog.h \
@@ -2975,7 +3425,201 @@ project.o: ../OpenSidescan/project.cpp ../OpenSidescan/project.h \
 		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
 		../thirdParty/MBES-lib/src/Position.hpp \
 		../thirdParty/MBES-lib/src/utils/Constants.hpp \
-		../OpenSidescan/georeferencedobject.h
+		../OpenSidescan/georeferencedobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QFile \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/QtXml \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/QtXmlDepends \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QtCore \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QtCoreDepends \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractanimation.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qeventloop.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractproxymodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractstate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstracttransition.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qanimationgroup.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydataops.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbitarray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbuffer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraymatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcollator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcommandlineoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcommandlineparser.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcryptographichash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatetime.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdir.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfileinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdiriterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qeasingcurve.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qendian.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qeventtransition.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qexception.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfactoryinterface.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfileselector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QObject \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QStringList \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfilesystemwatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfinalstate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfuture.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrunnable.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qresultstore.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfuturesynchronizer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfuturewatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhistorystate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qidentityproxymodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qisenum.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qjsonarray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qjsonvalue.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qjsondocument.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qjsonobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlibrary.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlibraryinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversionnumber.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlinkedlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlockfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qloggingcategory.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmath.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmessageauthenticationcode.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetaobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmimedata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmimedatabase.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmimetype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectcleanuphandler.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qoperatingsystemversion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qparallelanimationgroup.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpauseanimation.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qplugin.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpluginloader.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocess.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpropertyanimation.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariantanimation.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qqueue.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrandom.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qreadwritelock.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qresource.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsavefile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedvaluerollback.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsemaphore.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsequentialanimationgroup.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsettings.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedmemory.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsignalmapper.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsignaltransition.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsocketnotifier.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsortfilterproxymodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstack.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstandardpaths.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstatemachine.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstorageinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemsemaphore.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtemporarydir.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtemporaryfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextboundaryfinder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextcodec.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qthread.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qthreadpool.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qthreadstorage.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtimeline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtimezone.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtranslator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypetraits.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/quuid.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qwaitcondition.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qwineventnotifier.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qxmlstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcoreversion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxmlglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxml-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qxml.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxmlversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o project.o ../OpenSidescan/project.cpp
 
 georeferencedobject.o: ../OpenSidescan/georeferencedobject.cpp ../OpenSidescan/georeferencedobject.h \
@@ -3409,7 +4053,26 @@ inventorywindow.o: ../OpenSidescan/inventorywindow.cpp ../OpenSidescan/inventory
 		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
 		../thirdParty/MBES-lib/src/Position.hpp \
 		../thirdParty/MBES-lib/src/utils/Constants.hpp \
-		../OpenSidescan/project.h
+		../OpenSidescan/project.h \
+		../OpenSidescan/georeferencedobjectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QFormLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextdocument.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o inventorywindow.o ../OpenSidescan/inventorywindow.cpp
 
 qthelper.o: ../OpenSidescan/qthelper.cpp ../OpenSidescan/qthelper.h \
@@ -3599,8 +4262,382 @@ imagetablabel.o: ../OpenSidescan/imagetablabel.cpp ../OpenSidescan/imagetablabel
 		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QRubberBand \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QPoint \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/QMouseEvent \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/imagetab.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QScrollArea \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/QPixmap \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QCheckBox \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qcheckbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qicon.h \
+		../OpenSidescan/mainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMainWindow \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmainwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		../OpenSidescan/sidescanimager.h \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramEventHandler.hpp \
+		../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.hpp \
+		../thirdParty/MBES-lib/src/utils/TimeUtils.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.hpp \
+		../thirdParty/MBES-lib/src/utils/NmeaUtils.hpp \
+		../thirdParty/MBES-lib/src/utils/Exception.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/vendors/QuinsyR2Sonic.hpp \
+		../thirdParty/MBES-lib/src/Ping.hpp \
+		../thirdParty/MBES-lib/src/Attitude.hpp \
+		../thirdParty/MBES-lib/src/math/SlantRangeCorrection.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kTypes.hpp \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp \
+		../thirdParty/MBES-lib/src/math/Interpolation.hpp \
+		../OpenSidescan/opencvhelper.h \
+		../OpenSidescan/dbscan.h \
+		../OpenSidescan/projectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDockWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdockwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QListWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlistview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvalidator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregularexpression.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qstyle.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QStringListModel \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QVariant \
+		../OpenSidescan/project.h \
+		../OpenSidescan/filepropertieswindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTableWidget \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtableview.h \
+		../OpenSidescan/inventorywindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QHeaderView \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qheaderview.h \
+		../OpenSidescan/georeferencedobjectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QFormLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextdocument.h \
+		../OpenSidescan/georeferencedobjectmenu.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMenu \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qactiongroup.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagetablabel.o ../OpenSidescan/imagetablabel.cpp
+
+georeferencedobjectwindow.o: ../OpenSidescan/georeferencedobjectwindow.cpp ../OpenSidescan/georeferencedobjectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QFormLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qframe.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextdocument.h \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLabel \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlabel.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialogButtonBox \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o georeferencedobjectwindow.o ../OpenSidescan/georeferencedobjectwindow.cpp
+
+georeferencedobjectmenu.o: ../OpenSidescan/georeferencedobjectmenu.cpp ../OpenSidescan/georeferencedobjectmenu.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMenu \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qline.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qset.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qicon.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		../OpenSidescan/georeferencedobject.h \
+		../OpenSidescan/sidescanfile.h \
+		../OpenSidescan/sidescanimage.h \
+		../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp \
+		../thirdParty/MBES-lib/src/Position.hpp \
+		../thirdParty/MBES-lib/src/utils/Constants.hpp \
+		../OpenSidescan/georeferencedobjectwindow.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QFormLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLayout \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QLineEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qframe.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextcursor.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextformat.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QTextEdit \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qtextedit.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtGui/qtextdocument.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QMessageBox \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qmessagebox.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o georeferencedobjectmenu.o ../OpenSidescan/georeferencedobjectmenu.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp
@@ -3628,6 +4665,12 @@ moc_inventorywindow.o: moc_inventorywindow.cpp
 
 moc_imagetablabel.o: moc_imagetablabel.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_imagetablabel.o moc_imagetablabel.cpp
+
+moc_georeferencedobjectwindow.o: moc_georeferencedobjectwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_georeferencedobjectwindow.o moc_georeferencedobjectwindow.cpp
+
+moc_georeferencedobjectmenu.o: moc_georeferencedobjectmenu.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_georeferencedobjectmenu.o moc_georeferencedobjectmenu.cpp
 
 ####### Install
 

@@ -9,12 +9,6 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  int & mserDeltaValue,
                                  int & mserMinimumAreaValue,
                                  int & mserMaximumAreaValue,
-                                 double & mserMaximumVariationValue,
-                                 double & mserMinimumDiversityValue,
-                                 int & mserMaximumEvolutionValue,
-                                 double & mserAreaThresholdValue,
-                                 double & mserMinimumMarginValue,
-                                 int & mserEdgeBlurValue,
                                  bool & showFeatureMarkersValue,
                                  bool & mergeOverlappingBoundingBoxesValue,
                                  QWidget * parent):
@@ -29,12 +23,6 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                 mserDeltaValue(mserDeltaValue),
                                 mserMinimumAreaValue(mserMinimumAreaValue),
                                 mserMaximumAreaValue(mserMaximumAreaValue),
-                                mserMaximumVariationValue(mserMaximumVariationValue),
-                                mserMinimumDiversityValue(mserMinimumDiversityValue),
-                                mserMaximumEvolutionValue(mserMaximumEvolutionValue),
-                                mserAreaThresholdValue(mserAreaThresholdValue),
-                                mserMinimumMarginValue(mserMinimumMarginValue),
-                                mserEdgeBlurValue(mserEdgeBlurValue),
                                 showFeatureMarkersValue(showFeatureMarkersValue),
                                 mergeOverlappingBoundingBoxesValue(mergeOverlappingBoundingBoxesValue)
 
@@ -43,7 +31,7 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
 }
 
 void DetectionWindow::initUI(){
-    this->setWindowTitle("Find objects");
+    this->setWindowTitle("Find Objects");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
@@ -132,47 +120,6 @@ void DetectionWindow::createMserParameterBox(QFormLayout * advancedParametersLay
 
     advancedParametersLayout->addRow(new QLabel(tr("MSER Maximum Area")),mserMaximumArea);
 
-    mserMaximumVariation = new QLineEdit();
-    mserMaximumVariation->setValidator( new QDoubleValidator(1.0, 1000000.0,3, this) );
-    mserMaximumVariation->setAlignment(Qt::AlignRight);
-    mserMaximumVariation->setText(QString::fromStdString(std::to_string(mserMaximumVariationValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Maximum Variation")),mserMaximumVariation);
-
-    mserMinimumDiversity = new QLineEdit();
-    mserMinimumDiversity->setValidator( new QDoubleValidator(1.0, 1000000.0, 3, this) );
-    mserMinimumDiversity->setAlignment(Qt::AlignRight);
-    mserMinimumDiversity->setText(QString::fromStdString(std::to_string(mserMinimumDiversityValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Minimum Diversity")),mserMinimumDiversity);
-
-    mserMaximumEvolution = new QLineEdit();
-    mserMaximumEvolution->setValidator( new QIntValidator(1.0, 1000000.0, this) );
-    mserMaximumEvolution->setAlignment(Qt::AlignRight);
-    mserMaximumEvolution->setText(QString::fromStdString(std::to_string(mserMaximumEvolutionValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Maximum Evolution")),mserMaximumEvolution);
-
-    mserAreaThreshold = new QLineEdit();
-    mserAreaThreshold->setValidator( new QDoubleValidator(1.0, 1000000.0, 3, this) );
-    mserAreaThreshold->setAlignment(Qt::AlignRight);
-    mserAreaThreshold->setText(QString::fromStdString(std::to_string(mserAreaThresholdValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Area Threshold")),mserAreaThreshold);
-
-    mserMinimumMargin = new QLineEdit();
-    mserMinimumMargin->setValidator( new QDoubleValidator(1.0, 1000000.0, 3, this) );
-    mserMinimumMargin->setAlignment(Qt::AlignRight);
-    mserMinimumMargin->setText(QString::fromStdString(std::to_string(mserMinimumMarginValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Minimum Margin")),mserMinimumMargin);
-
-    mserEdgeBlur = new QLineEdit();
-    mserEdgeBlur->setValidator( new QIntValidator(1.0, 1000000.0, this) );
-    mserEdgeBlur->setAlignment(Qt::AlignRight);
-    mserEdgeBlur->setText(QString::fromStdString(std::to_string(mserEdgeBlurValue)));
-
-    advancedParametersLayout->addRow(new QLabel(tr("MSER Edge Blur")),mserEdgeBlur);
 }
 
 QGroupBox * DetectionWindow::createDisplayParameterBox(){
@@ -233,67 +180,25 @@ void DetectionWindow::ok(){
                                                 if(!sMserMaximumArea.empty()){
                                                     mserMaximumAreaValue = std::atoi(sMserMaximumArea.c_str());
 
-                                                    std::string sMserMaximumVariation = mserMaximumVariation->text().toStdString();
+                                                    for(auto i=files.begin();i!=files.end();i++){
+                                                        //for every file, every image
 
-                                                    if(!sMserMaximumVariation.empty()){
-                                                        mserMaximumVariationValue = std::atof(sMserMaximumVariation.c_str());
-
-                                                        std::string sMserMinimumDiversity = mserMinimumDiversity->text().toStdString();
-
-                                                        if(!sMserMinimumDiversity.empty()){
-                                                            mserMinimumDiversityValue = std::atof(sMserMinimumDiversity.c_str());
-
-                                                            std::string sMaximumEvolution = mserMaximumEvolution->text().toStdString();
-
-                                                            if(!sMaximumEvolution.empty()){
-                                                                mserMaximumEvolutionValue = std::atof(sMaximumEvolution.c_str());
-
-                                                                std::string sMserAreaThreshold = mserAreaThreshold->text().toStdString();
-
-                                                                if(!sMserAreaThreshold.empty()){
-                                                                    mserAreaThresholdValue = std::atof(sMserAreaThreshold.c_str());
-
-                                                                    std::string sMserMinimumMargin = mserMinimumMargin->text().toStdString();
-
-                                                                    if(!sMserMinimumMargin.empty()){
-                                                                        mserMinimumMarginValue = std::atof(sMserMinimumMargin.c_str());
-
-                                                                        std::string sMserEdgeBlur = mserEdgeBlur->text().toStdString();
-
-                                                                        if(!sMserEdgeBlur.empty()){
-                                                                            mserEdgeBlurValue = std::atoi(sMserEdgeBlur.c_str());
-
-                                                                            for(auto i=files.begin();i!=files.end();i++){
-                                                                                //for every file, every image
-
-                                                                                for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
-                                                                                    OpencvHelper::detectObjects(
-                                                                                                (*j)->getObjects(),
-                                                                                                **i,
-                                                                                                **j,
-                                                                                                fastThresholdValue,
-                                                                                                fastTypeValue,
-                                                                                                fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked(),
-                                                                                                dbscanEpsilonValue,
-                                                                                                dbscanMinPointsValue,
-                                                                                                mserDeltaValue,
-                                                                                                mserMinimumAreaValue,
-                                                                                                mserMaximumAreaValue,
-                                                                                                mserMaximumVariationValue,
-                                                                                                mserMinimumDiversityValue,
-                                                                                                mserMaximumEvolutionValue,
-                                                                                                mserAreaThresholdValue,
-                                                                                                mserMinimumMarginValue,
-                                                                                                mserEdgeBlurValue,
-                                                                                                showFeatureMarkersValue = showFeatureMarkers->isChecked(),
-                                                                                                mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked()
-                                                                                    );
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
+                                                        for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
+                                                            OpencvHelper::detectObjects(
+                                                                        (*j)->getObjects(),
+                                                                        **i,
+                                                                        **j,
+                                                                        fastThresholdValue,
+                                                                        fastTypeValue,
+                                                                        fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked(),
+                                                                        dbscanEpsilonValue,
+                                                                        dbscanMinPointsValue,
+                                                                        mserDeltaValue,
+                                                                        mserMinimumAreaValue,
+                                                                        mserMaximumAreaValue,
+                                                                        showFeatureMarkersValue = showFeatureMarkers->isChecked(),
+                                                                        mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked()
+                                                                    );
                                                         }
                                                     }
                                                 }

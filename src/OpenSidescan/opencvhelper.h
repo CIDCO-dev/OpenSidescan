@@ -11,7 +11,7 @@
 class OpencvHelper
 {
 public:
-    static void detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold=100,int fastType=cv::FastFeatureDetector::TYPE_9_16,bool fastNonMaxSuppression=false,double dbscanEpsilon=50.0,int dbscanMinimumPoints=10,int mserDelta=5,int mserMinimumArea=60,int mserMaximumArea=14400,double mserMaximumVariation=0.25,double mserMinimumDiversity=0.2, int mserMaxEvolution=200, double mserAreaThreshold=1.01, double mserMinimumMargin=0.003,int mserEdgeBlur=5,bool showMarkers=true,bool mergeOverlappingObjects=true);
+    static void detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold=100,int fastType=cv::FastFeatureDetector::TYPE_9_16,bool fastNonMaxSuppression=false,double dbscanEpsilon=50.0,int dbscanMinimumPoints=10,int mserDelta=5,int mserMinimumArea=60,int mserMaximumArea=14400,bool showMarkers=true,bool mergeOverlappingObjects=true);
     static bool isInsideImage(double x,double y,cv::Mat & img);
 
     static void draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter);

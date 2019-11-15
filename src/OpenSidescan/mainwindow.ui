@@ -29,9 +29,14 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>&amp;File</string>
+     <string>P&amp;roject</string>
     </property>
-    <addaction name="actionOpen"/>
+    <addaction name="actionNewProject"/>
+    <addaction name="actionOpenProject"/>
+    <addaction name="actionSaveProject"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -45,7 +50,14 @@
     <property name="title">
      <string>Ob&amp;ject Inventory</string>
     </property>
+    <widget class="QMenu" name="menuExport_Inventory">
+     <property name="title">
+      <string>Export Inventory</string>
+     </property>
+     <addaction name="actionExportKmlFile"/>
+    </widget>
     <addaction name="actionFindObjects"/>
+    <addaction name="menuExport_Inventory"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -73,18 +85,25 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionOpen"/>
+   <addaction name="actionNewProject"/>
+   <addaction name="actionOpenProject"/>
+   <addaction name="actionSaveProject"/>
+   <addaction name="actionSaveAs"/>
+   <addaction name="separator"/>
+   <addaction name="actionImport"/>
    <addaction name="actionFindObjects"/>
-   <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionOpen">
+  <action name="actionImport">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/Images/resources/open.png</normaloff>:/Images/resources/open.png</iconset>
+     <normaloff>:/Images/resources/import.png</normaloff>:/Images/resources/import.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Sidescan File</string>
+    <string>&amp;Import Sidescan File</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Sidescan File</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -112,17 +131,74 @@
   </action>
   <action name="actionShowProjectWindow">
    <property name="text">
-    <string>Project</string>
+    <string>&amp;Project</string>
    </property>
   </action>
   <action name="actionShowFilePropertiesWindow">
    <property name="text">
-    <string>File Properties</string>
+    <string>&amp;File Properties</string>
    </property>
   </action>
   <action name="actionShowObjectInventoryWindow">
    <property name="text">
-    <string>Object Inventory</string>
+    <string>&amp;Object Inventory</string>
+   </property>
+  </action>
+  <action name="actionNewProject">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/new.png</normaloff>:/Images/resources/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New Project</string>
+   </property>
+   <property name="toolTip">
+    <string>New Project</string>
+   </property>
+  </action>
+  <action name="actionOpenProject">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/open.png</normaloff>:/Images/resources/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Project</string>
+   </property>
+  </action>
+  <action name="actionSaveProject">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/save.png</normaloff>:/Images/resources/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Project</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/save-as.png</normaloff>:/Images/resources/save-as.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;Project As ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Project As..</string>
+   </property>
+  </action>
+  <action name="actionExportKmlFile">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/Images/resources/kml.png</normaloff>:/Images/resources/kml.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export KML File</string>
    </property>
   </action>
  </widget>
@@ -132,10 +208,10 @@
  </resources>
  <connections>
   <connection>
-   <sender>actionOpen</sender>
+   <sender>actionImport</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>actionOpen()</slot>
+   <slot>actionImport()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -195,12 +271,96 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionNewProject</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionCreate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpenProject</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionOpen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveProject</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionSave()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveAs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionSaveAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExportKmlFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionExportKmlFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionOpen()</slot>
   <slot>actionQuit()</slot>
   <slot>actionAbout()</slot>
   <slot>actionFindObjects()</slot>
-  <slot>slot1()</slot>
+  <slot>actionCreate()</slot>
+  <slot>actionImport()</slot>
+  <slot>actionSave()</slot>
+  <slot>actionSaveAs()</slot>
+  <slot>actionExportKmlFile()</slot>
  </slots>
 </ui>

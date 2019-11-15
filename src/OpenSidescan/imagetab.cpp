@@ -25,7 +25,7 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
 
     toolbar->addSeparator();
 
-    showObjectBoundingBox = new QAction(QIcon("/home/glm/Downloads/639ced73d49d3da46d3b0741cd18db8b.png"),tr("&Show bounding boxes"));
+    showObjectBoundingBox = new QAction(QIcon(":/Images/resources/bounding-box.png"),tr("&Show bounding boxes"));
     showObjectBoundingBox->setCheckable(true);
     showObjectBoundingBox->setChecked(true);
     connect(showObjectBoundingBox,&QAction::triggered,this,&ImageTab::refreshImage);
@@ -46,12 +46,11 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
     //Init image scroll area
     scrollArea = new QScrollArea();
     imageLabel = new ImageTabLabel(*this,file,image);
+    connect(imageLabel,&ImageTabLabel::inventoryChanged,this,&ImageTab::refreshInventory);
 
     imageLabel->setBackgroundRole(QPalette::Base);
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     imageLabel->setScaledContents(true);
-
-
 
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(imageLabel);
@@ -87,5 +86,8 @@ void ImageTab::saveImage(){
     }
 }
 
-
+void ImageTab::refreshInventory(){
+    emit inventoryChanged();
+    refreshImage();
+}
 

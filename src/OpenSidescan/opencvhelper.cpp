@@ -4,7 +4,7 @@
 
 
 
-void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,double mserMaximumVariation,double mserMinimumDiversity, int mserMaxEvolution, double mserAreaThreshold, double mserMinimumMargin,int mserEdgeBlur,bool showFeatureMarkers,bool mergeOverlappingObjects){
+void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool showFeatureMarkers,bool mergeOverlappingObjects){
 
     image.resetDisplayedImage();
 
@@ -17,7 +17,7 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
 
     cv::FAST(image.getImage(),combinedKeypoints,fastThreshold,fastNonMaxSuppression,fastType);
 
-    cv::Ptr<cv::MSER> detector= cv::MSER::create(mserDelta,mserMinimumArea,mserMaximumArea,mserMaximumVariation,mserMinimumDiversity,mserMaxEvolution,mserAreaThreshold,mserMinimumMargin,mserEdgeBlur);
+    cv::Ptr<cv::MSER> detector= cv::MSER::create(mserDelta,mserMinimumArea,mserMaximumArea,0.25,0.2,200,1.01,0.003,5);
     detector->detect(image.getImage(),combinedKeypoints);
 
     for(auto i = combinedKeypoints.begin();i!=combinedKeypoints.end();i++){
@@ -143,7 +143,7 @@ void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool sho
             std::stringstream ss;
 
             if(showObjectSize){
-                ss << (*i)->getWidth() << " x " << (*i)->getHeight() << " m";
+                ss << (*i)->getWidth() << " m x " << (*i)->getHeight() << " m";
             }
 
             if(showObjectCenter){

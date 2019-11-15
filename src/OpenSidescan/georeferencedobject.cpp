@@ -18,6 +18,8 @@ GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & ima
 
     computeDimensions();
     computePosition();
+
+    name = "Unknown";
 }
 
 GeoreferencedObject::~GeoreferencedObject(){

@@ -49,3 +49,15 @@ void ProjectWindow::addFile(SidescanFile * file){
         //TODO: throw exception or msgbox
     }
 }
+
+bool ProjectWindow::containsFile(std::string & filename){
+    if(project){
+        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
+            if(strcmp((*i)->getFilename().c_str(),filename.c_str()) == 0){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

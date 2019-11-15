@@ -22,31 +22,42 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
     void updateSelectedFile(SidescanFile * file);
-    void refreshObjectInventory();
-    void dummy(){ std::cout << "POOP" << std::endl;}
+
+
+    void refreshObjectInventory(){             inventoryWindow->refreshInventoryTable();
+                                               refreshTabs();
+                                 }
 
 public slots:
-    void createProject();
-
+    void actionCreate();
     void actionOpen();
+    void actionSave();
+    void actionSaveAs();
+    void actionImport();
     void actionQuit();
     void actionAbout();
     void actionFindObjects();
-    void actionCleanImage();
+    void actionExportKmlFile();
 
     void fileSelected(const QItemSelection & selection);
+    void objectSelected(GeoreferencedObject * object);
+
     void refreshTabs();
+
 
 private:
 
     void buildUI();
+    bool promptProject();
+    void refreshProjectUI();
+    void selectImageTab(GeoreferencedObject * object);
 
     Ui::MainWindow * ui;
     QTabWidget     * tabs;
@@ -55,9 +66,7 @@ private:
     FilePropertiesWindow * fileInfo;
     InventoryWindow      * inventoryWindow;
 
-
     SidescanFile         * selectedFile;
-
     Project              * currentProject = NULL;
 
     //Detection parameters
@@ -69,14 +78,9 @@ private:
     int    mserDeltaValue = 5;
     int    mserMinimumAreaValue=60;
     int    mserMaximumAreaValue= 14400;
-    double mserMaximumVariationValue=0.25;
-    double mserMinimumDiversityValue=0.2;
-    int    mserMaximumEvolutionValue=200;
-    double mserAreaThresholdValue=1.01;
-    double mserMinimumMarginValue=0.003;
-    int    mserEdgeBlurValue = 5;
     bool   showFeatureMarkersValue = false;
     bool   mergeOverlappingBoundingBoxesValue = true;
+
 };
 
 #endif // MAINWINDOW_H

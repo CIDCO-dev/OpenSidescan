@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[12];
-    char stringdata0[145];
+    QByteArrayData data[18];
+    char stringdata0[227];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,23 +32,31 @@ struct qt_meta_stringdata_MainWindow_t {
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
 QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
-QT_MOC_LITERAL(1, 11, 13), // "createProject"
-QT_MOC_LITERAL(2, 25, 0), // ""
-QT_MOC_LITERAL(3, 26, 10), // "actionOpen"
-QT_MOC_LITERAL(4, 37, 10), // "actionQuit"
-QT_MOC_LITERAL(5, 48, 11), // "actionAbout"
-QT_MOC_LITERAL(6, 60, 17), // "actionFindObjects"
-QT_MOC_LITERAL(7, 78, 16), // "actionCleanImage"
-QT_MOC_LITERAL(8, 95, 12), // "fileSelected"
-QT_MOC_LITERAL(9, 108, 14), // "QItemSelection"
-QT_MOC_LITERAL(10, 123, 9), // "selection"
-QT_MOC_LITERAL(11, 133, 11) // "refreshTabs"
+QT_MOC_LITERAL(1, 11, 12), // "actionCreate"
+QT_MOC_LITERAL(2, 24, 0), // ""
+QT_MOC_LITERAL(3, 25, 10), // "actionOpen"
+QT_MOC_LITERAL(4, 36, 10), // "actionSave"
+QT_MOC_LITERAL(5, 47, 12), // "actionSaveAs"
+QT_MOC_LITERAL(6, 60, 12), // "actionImport"
+QT_MOC_LITERAL(7, 73, 10), // "actionQuit"
+QT_MOC_LITERAL(8, 84, 11), // "actionAbout"
+QT_MOC_LITERAL(9, 96, 17), // "actionFindObjects"
+QT_MOC_LITERAL(10, 114, 19), // "actionExportKmlFile"
+QT_MOC_LITERAL(11, 134, 12), // "fileSelected"
+QT_MOC_LITERAL(12, 147, 14), // "QItemSelection"
+QT_MOC_LITERAL(13, 162, 9), // "selection"
+QT_MOC_LITERAL(14, 172, 14), // "objectSelected"
+QT_MOC_LITERAL(15, 187, 20), // "GeoreferencedObject*"
+QT_MOC_LITERAL(16, 208, 6), // "object"
+QT_MOC_LITERAL(17, 215, 11) // "refreshTabs"
 
     },
-    "MainWindow\0createProject\0\0actionOpen\0"
+    "MainWindow\0actionCreate\0\0actionOpen\0"
+    "actionSave\0actionSaveAs\0actionImport\0"
     "actionQuit\0actionAbout\0actionFindObjects\0"
-    "actionCleanImage\0fileSelected\0"
-    "QItemSelection\0selection\0refreshTabs"
+    "actionExportKmlFile\0fileSelected\0"
+    "QItemSelection\0selection\0objectSelected\0"
+    "GeoreferencedObject*\0object\0refreshTabs"
 };
 #undef QT_MOC_LITERAL
 
@@ -58,7 +66,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -66,14 +74,18 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   54,    2, 0x0a /* Public */,
-       3,    0,   55,    2, 0x0a /* Public */,
-       4,    0,   56,    2, 0x0a /* Public */,
-       5,    0,   57,    2, 0x0a /* Public */,
-       6,    0,   58,    2, 0x0a /* Public */,
-       7,    0,   59,    2, 0x0a /* Public */,
-       8,    1,   60,    2, 0x0a /* Public */,
-      11,    0,   63,    2, 0x0a /* Public */,
+       1,    0,   74,    2, 0x0a /* Public */,
+       3,    0,   75,    2, 0x0a /* Public */,
+       4,    0,   76,    2, 0x0a /* Public */,
+       5,    0,   77,    2, 0x0a /* Public */,
+       6,    0,   78,    2, 0x0a /* Public */,
+       7,    0,   79,    2, 0x0a /* Public */,
+       8,    0,   80,    2, 0x0a /* Public */,
+       9,    0,   81,    2, 0x0a /* Public */,
+      10,    0,   82,    2, 0x0a /* Public */,
+      11,    1,   83,    2, 0x0a /* Public */,
+      14,    1,   86,    2, 0x0a /* Public */,
+      17,    0,   89,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -82,7 +94,11 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 9,   10,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 12,   13,
+    QMetaType::Void, 0x80000000 | 15,   16,
     QMetaType::Void,
 
        0        // eod
@@ -94,20 +110,24 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         MainWindow *_t = static_cast<MainWindow *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->createProject(); break;
+        case 0: _t->actionCreate(); break;
         case 1: _t->actionOpen(); break;
-        case 2: _t->actionQuit(); break;
-        case 3: _t->actionAbout(); break;
-        case 4: _t->actionFindObjects(); break;
-        case 5: _t->actionCleanImage(); break;
-        case 6: _t->fileSelected((*reinterpret_cast< const QItemSelection(*)>(_a[1]))); break;
-        case 7: _t->refreshTabs(); break;
+        case 2: _t->actionSave(); break;
+        case 3: _t->actionSaveAs(); break;
+        case 4: _t->actionImport(); break;
+        case 5: _t->actionQuit(); break;
+        case 6: _t->actionAbout(); break;
+        case 7: _t->actionFindObjects(); break;
+        case 8: _t->actionExportKmlFile(); break;
+        case 9: _t->fileSelected((*reinterpret_cast< const QItemSelection(*)>(_a[1]))); break;
+        case 10: _t->objectSelected((*reinterpret_cast< GeoreferencedObject*(*)>(_a[1]))); break;
+        case 11: _t->refreshTabs(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<int*>(_a[0]) = -1; break;
-        case 6:
+        case 9:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
@@ -143,13 +163,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 12;
     }
     return _id;
 }

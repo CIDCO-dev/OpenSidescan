@@ -36,6 +36,12 @@ public:
     int getPixelWidth(){ return pixelWidth;}
     int getPixelHeight(){ return pixelHeight;}
 
+    std::string & getName(){ return name;}
+    void setName(std::string & newName){ name = newName;}
+
+    std::string & getDescription() { return description;}
+    void setDescription(std::string & newDescription) { description = newDescription;}
+
 
 private:
     int x; //top left corner

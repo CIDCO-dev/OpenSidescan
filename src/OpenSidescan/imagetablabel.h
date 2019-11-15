@@ -14,15 +14,25 @@
 class ImageTab;
 
 class ImageTabLabel : public QLabel
-{
+{    
+    Q_OBJECT
+
 public:
     ImageTabLabel(ImageTab & parent,SidescanFile & file,SidescanImage & img);
+
+    GeoreferencedObject * insideObject(QPoint & p);
 
 protected:
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+    void inventoryChanged();
+
+public slots:
+    void emitInventoryChanged();
 
 private:
     ImageTab & parent;
@@ -32,8 +42,6 @@ private:
 
     QPoint selectionOrigin;
     QRubberBand * rubberBand = NULL;
-
-    Q_OBJECT
 };
 
 #endif // IMAGETABLABEL_H

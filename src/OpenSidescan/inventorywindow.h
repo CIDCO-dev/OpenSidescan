@@ -18,15 +18,17 @@ private:
     Project * project;
 
 
-
 public:
     InventoryWindow(QWidget * parent);
 
     void setProject(Project * p);
-    void refreshInventoryTable();
+
+signals:
+    void objectSelected(GeoreferencedObject * object);
 
 public slots:
-
+    void refreshInventoryTable();
+    void doubleClicked(const QModelIndex & index);
 };
 
 #endif // INVENTORYWINDOW_H

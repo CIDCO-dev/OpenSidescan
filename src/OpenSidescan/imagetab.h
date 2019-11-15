@@ -19,6 +19,8 @@ class ImageTabLabel;
 
 class ImageTab : public QWidget
 {
+    Q_OBJECT
+
 private:
     SidescanImage & image;
     SidescanFile & file;
@@ -31,19 +33,19 @@ private:
     ImageTabLabel * imageLabel;
     QScrollArea * scrollArea;
 
-
-    Q_OBJECT
 public:
     explicit ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent);
 
-    MainWindow * getParent() { return (MainWindow*) this->parent();}
+    SidescanImage * getImage(){ return &image;}
+    QScrollArea & getScrollArea() { return *scrollArea;}
 
 signals:
+    void inventoryChanged();
 
 public slots:
     void saveImage();
     void refreshImage();
-
+    void refreshInventory();
 };
 
 #endif // IMAGETAB_H

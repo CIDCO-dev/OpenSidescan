@@ -98,7 +98,7 @@ public:
 
                 //generate pixel row
                 for(unsigned int k=0;k<channels[i]->at(j)->getSamples().size();k++){ //k indexes cols
-                    img.at<double>(j, k, 0) = channels[i]->at(j)->getSamples().at(k);
+                    img.at<double>(j, k, 0) = channels[i]->at(j)->getSamples().at(k) ;
                 }
 
                 averageXDistancePerPixel += channels[i]->at(j)->getDistancePerSample();

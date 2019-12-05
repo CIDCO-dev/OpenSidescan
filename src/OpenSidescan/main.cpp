@@ -4,6 +4,9 @@
 #include <QApplication>
 #include <QSplashScreen>
 
+#include <QFile>
+#include <QTextStream>
+
 //TODO: windows-proof this (for sleep())
 
 #ifdef _WIN32
@@ -54,6 +57,19 @@ int main(int argc, char *argv[])
     sleep(1);
 
     splash.hide();
+
+    //Load stylesheet
+    QFile f(":qdarkstyle/style.qss");
+    if (!f.exists())
+    {
+        printf("Unable to set stylesheet, file not found\n");
+    }
+    else
+    {
+        f.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&f);
+        qApp->setStyleSheet(ts.readAll());
+    }
 
     //Show main window
     MainWindow w;

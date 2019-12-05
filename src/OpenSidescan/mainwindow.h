@@ -31,13 +31,15 @@ public:
     void updateSelectedFile(SidescanFile * file);
 
 
-    void refreshObjectInventory(){             inventoryWindow->refreshInventoryTable();
-                                               refreshTabs();
-                                 }
+    void refreshObjectInventory(){
+        inventoryWindow->refreshInventoryTable();
+        refreshTabs();
+    }
 
 public slots:
     void actionCreate();
     void actionOpen();
+    void actionClose();
     void actionSave();
     void actionSaveAs();
     void actionImport();
@@ -59,8 +61,8 @@ private:
     void refreshProjectUI();
     void selectImageTab(GeoreferencedObject * object);
 
-    Ui::MainWindow * ui;
-    QTabWidget     * tabs;
+    Ui::MainWindow       * ui;
+    QTabWidget           * tabs;
 
     ProjectWindow        * projectWindow;
     FilePropertiesWindow * fileInfo;
@@ -70,16 +72,16 @@ private:
     Project              * currentProject = NULL;
 
     //Detection parameters
-    int    fastThresholdValue = 100;
-    int    fastTypeValue =cv::FastFeatureDetector::TYPE_9_16;
-    bool   fastNonMaxSuppressionValue = false;
-    int    dbscanEpsilonValue = 50;
-    int    dbscanMinPointsValue = 10;
-    int    mserDeltaValue = 5;
-    int    mserMinimumAreaValue=60;
-    int    mserMaximumAreaValue= 14400;
-    bool   showFeatureMarkersValue = false;
-    bool   mergeOverlappingBoundingBoxesValue = true;
+    int    fastThresholdValue                   = 100;
+    int    fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
+    bool   fastNonMaxSuppressionValue           = false;
+    int    dbscanEpsilonValue                   = 50;
+    int    dbscanMinPointsValue                 = 10;
+    int    mserDeltaValue                       = 5;
+    int    mserMinimumAreaValue                 = 60;
+    int    mserMaximumAreaValue                 = 14400;
+    bool   showFeatureMarkersValue              = false;
+    bool   mergeOverlappingBoundingBoxesValue   = true;
 
 };
 

@@ -38,7 +38,7 @@ DISTNAME      = OpenSidescan1.0.0
 DISTDIR = /home/glm/src/OpenSidescan/src/build-OpenSidescan-Desktop-Debug/.tmp/OpenSidescan1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/opt/Qt/5.11.1/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/usr/local/lib -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_core -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Xml -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/local/lib -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_viz -lopencv_core -L/opt/Qt/5.11.1/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Xml -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -77,6 +77,7 @@ SOURCES       = ../OpenSidescan/main.cpp \
 		../OpenSidescan/imagetablabel.cpp \
 		../OpenSidescan/georeferencedobjectwindow.cpp \
 		../OpenSidescan/georeferencedobjectmenu.cpp qrc_resources.cpp \
+		qrc_style.cpp \
 		moc_mainwindow.cpp \
 		moc_imagetab.cpp \
 		moc_aboutdialog.cpp \
@@ -115,6 +116,7 @@ OBJECTS       = main.o \
 		georeferencedobjectwindow.o \
 		georeferencedobjectmenu.o \
 		qrc_resources.o \
+		qrc_style.o \
 		moc_mainwindow.o \
 		moc_imagetab.o \
 		moc_aboutdialog.o \
@@ -562,6 +564,7 @@ Makefile: ../OpenSidescan/OpenSidescan.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g
 		/opt/Qt/5.11.1/gcc_64/mkspecs/features/lex.prf \
 		../OpenSidescan/OpenSidescan.pro \
 		../OpenSidescan/resources.qrc \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Widgets.prl \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Gui.prl \
 		/opt/Qt/5.11.1/gcc_64/lib/libQt5Xml.prl \
@@ -759,6 +762,7 @@ Makefile: ../OpenSidescan/OpenSidescan.pro /opt/Qt/5.11.1/gcc_64/mkspecs/linux-g
 /opt/Qt/5.11.1/gcc_64/mkspecs/features/lex.prf:
 ../OpenSidescan/OpenSidescan.pro:
 ../OpenSidescan/resources.qrc:
+../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Widgets.prl:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Gui.prl:
 /opt/Qt/5.11.1/gcc_64/lib/libQt5Xml.prl:
@@ -777,7 +781,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../OpenSidescan/resources.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents ../OpenSidescan/resources.qrc ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../OpenSidescan/mainwindow.h ../OpenSidescan/sidescanimager.h ../OpenSidescan/opencvhelper.h ../OpenSidescan/imagetab.h ../OpenSidescan/aboutdialog.h ../OpenSidescan/dbscan.h ../OpenSidescan/sidescanimage.h ../OpenSidescan/projectwindow.h ../OpenSidescan/sidescanfile.h ../OpenSidescan/project.h ../OpenSidescan/georeferencedobject.h ../OpenSidescan/filepropertieswindow.h ../OpenSidescan/detectionwindow.h ../OpenSidescan/inventorywindow.h ../OpenSidescan/qthelper.h ../OpenSidescan/imagetablabel.h ../OpenSidescan/georeferencedobjectwindow.h ../OpenSidescan/georeferencedobjectmenu.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../OpenSidescan/main.cpp ../OpenSidescan/mainwindow.cpp ../OpenSidescan/sidescanimager.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp ../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp ../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp ../thirdParty/MBES-lib/src/utils/StringUtils.cpp ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp ../OpenSidescan/opencvhelper.cpp ../OpenSidescan/imagetab.cpp ../OpenSidescan/aboutdialog.cpp ../OpenSidescan/dbscan.cpp ../OpenSidescan/sidescanimage.cpp ../OpenSidescan/projectwindow.cpp ../OpenSidescan/sidescanfile.cpp ../OpenSidescan/project.cpp ../OpenSidescan/georeferencedobject.cpp ../OpenSidescan/filepropertieswindow.cpp ../OpenSidescan/detectionwindow.cpp ../OpenSidescan/inventorywindow.cpp ../OpenSidescan/qthelper.cpp ../OpenSidescan/imagetablabel.cpp ../OpenSidescan/georeferencedobjectwindow.cpp ../OpenSidescan/georeferencedobjectmenu.cpp $(DISTDIR)/
@@ -805,9 +809,9 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all: qrc_resources.cpp
+compiler_rcc_make_all: qrc_resources.cpp qrc_style.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_resources.cpp
+	-$(DEL_FILE) qrc_resources.cpp qrc_style.cpp
 qrc_resources.cpp: ../OpenSidescan/resources.qrc \
 		/opt/Qt/5.11.1/gcc_64/bin/rcc \
 		../OpenSidescan/resources/clear.png \
@@ -829,6 +833,219 @@ qrc_resources.cpp: ../OpenSidescan/resources.qrc \
 		../OpenSidescan/resources/export.png \
 		../OpenSidescan/resources/bounding-box.png
 	/opt/Qt/5.11.1/gcc_64/bin/rcc -name resources ../OpenSidescan/resources.qrc -o qrc_resources.cpp
+
+qrc_style.cpp: ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc \
+		/opt/Qt/5.11.1/gcc_64/bin/rcc \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_close_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_checked_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_vertical_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_grip_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/base_icon.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_up@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_vertical_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_undock@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_disabled@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_line_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/window_minimize_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_indeterminate_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_vertical_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/line_horizontal_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_more_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_separator_horizontal_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_closed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/transparent_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_open_focus.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/radio_unchecked_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/branch_end.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_unchecked_disabled.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/checkbox_checked_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_left_pressed.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_down.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/toolbar_move_horizontal_pressed@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/rc/arrow_right_focus@2x.png \
+		../thirdParty/QDarkStyleSheet/qdarkstyle/style.qss
+	/opt/Qt/5.11.1/gcc_64/bin/rcc -name style ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc -o qrc_style.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
@@ -3619,7 +3836,27 @@ project.o: ../OpenSidescan/project.cpp ../OpenSidescan/project.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxml-config.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtXml/qdom.h \
 		/opt/Qt/5.11.1/gcc_64/include/QtXml/qxml.h \
-		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxmlversion.h
+		/opt/Qt/5.11.1/gcc_64/include/QtXml/qtxmlversion.h \
+		../OpenSidescan/sidescanimager.h \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/DatagramEventHandler.hpp \
+		../thirdParty/MBES-lib/src/svp/SoundVelocityProfile.hpp \
+		../thirdParty/MBES-lib/src/utils/TimeUtils.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.hpp \
+		../thirdParty/MBES-lib/src/utils/NmeaUtils.hpp \
+		../thirdParty/MBES-lib/src/utils/Exception.hpp \
+		../thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/XtfTypes.hpp \
+		../thirdParty/MBES-lib/src/datagrams/xtf/vendors/QuinsyR2Sonic.hpp \
+		../thirdParty/MBES-lib/src/Ping.hpp \
+		../thirdParty/MBES-lib/src/Attitude.hpp \
+		../thirdParty/MBES-lib/src/math/SlantRangeCorrection.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.hpp \
+		../thirdParty/MBES-lib/src/datagrams/s7k/S7kTypes.hpp \
+		../thirdParty/MBES-lib/src/utils/StringUtils.hpp \
+		../thirdParty/MBES-lib/src/math/Interpolation.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o project.o ../OpenSidescan/project.cpp
 
 georeferencedobject.o: ../OpenSidescan/georeferencedobject.cpp ../OpenSidescan/georeferencedobject.h \
@@ -3917,7 +4154,12 @@ detectionwindow.o: ../OpenSidescan/detectionwindow.cpp ../OpenSidescan/detection
 		../thirdParty/MBES-lib/src/utils/Constants.hpp \
 		../OpenSidescan/georeferencedobject.h \
 		../OpenSidescan/opencvhelper.h \
-		../OpenSidescan/dbscan.h
+		../OpenSidescan/dbscan.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/QProgressDialog \
+		/opt/Qt/5.11.1/gcc_64/include/QtWidgets/qprogressdialog.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/QCoreApplication \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt/5.11.1/gcc_64/include/QtCore/qeventloop.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o detectionwindow.o ../OpenSidescan/detectionwindow.cpp
 
 inventorywindow.o: ../OpenSidescan/inventorywindow.cpp ../OpenSidescan/inventorywindow.h \
@@ -4641,6 +4883,9 @@ georeferencedobjectmenu.o: ../OpenSidescan/georeferencedobjectmenu.cpp ../OpenSi
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp
+
+qrc_style.o: qrc_style.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_style.o qrc_style.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

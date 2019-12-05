@@ -15,6 +15,7 @@
 #include "projectwindow.h"
 #include "detectionwindow.h"
 #include "inventorywindow.h"
+#include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,7 +63,7 @@ void MainWindow::actionCreate(){
     if(promptProject()){
 
         if(currentProject){
-            delete currentProject;
+            actionClose();
         }
 
         currentProject = new Project();
@@ -103,8 +104,10 @@ void MainWindow::refreshProjectUI(){
 
     selectedFile = NULL;
 
+    updateSelectedFile(selectedFile);
+
     //Set window title
-    std::string title = currentProject->getFilename().size() > 0 ? currentProject->getFilename() : "New Project";
+    std::string title = (currentProject)?  (currentProject->getFilename().size() > 0 ? currentProject->getFilename() : "New Project")  : "No active project";
     this->setWindowTitle(QString::fromStdString(title));
 }
 
@@ -174,11 +177,11 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
 
+    tabs->clear(); //TODO: does this leak?
+
     if(selectedFile){
         /* Update tabs -----------------------------*/
         int n = 0;
-
-        tabs->clear(); //TODO: does this leak?
 
         for(auto i= selectedFile->getImages().begin();i!=selectedFile->getImages().end();i++){
 
@@ -281,14 +284,25 @@ void MainWindow::actionOpen()
         QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
 
         if(fileName.size() > 0){
+
             if(currentProject){
-                delete currentProject;
+                actionClose();
             }
 
             std::string sFilename = fileName.toStdString();
             currentProject = new Project();
+
+            QProgressDialog progress("Loading project data...", QString(), 0, 0, this);
+            progress.setValue(0);
+            progress.setWindowModality(Qt::ApplicationModal);
+            progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
+            progress.show();
+            QCoreApplication::processEvents();
+
             currentProject->read(sFilename);
             currentProject->setFilename(sFilename);
+
+            progress.reset();
 
             refreshProjectUI();
         }
@@ -300,7 +314,7 @@ void MainWindow::actionSave()
     if(currentProject){
         if(currentProject->getFilename().size() > 0){
             currentProject->write(currentProject->getFilename());
-            refreshProjectUI();
+            this->setWindowTitle(QString::fromStdString(std::string(currentProject->getFilename())));
         }
         else{
             actionSaveAs();
@@ -314,9 +328,13 @@ void MainWindow::actionSaveAs(){
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".ssp")){
+                sFilename = sFilename + std::string(".ssp");
+            }
             currentProject->write(sFilename);
             currentProject->setFilename(sFilename);
-            refreshProjectUI();
+            this->setWindowTitle(QString::fromStdString(std::string(currentProject->getFilename())));
         }
     }
 }
@@ -328,7 +346,19 @@ void MainWindow::actionExportKmlFile(){
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".kml")){
+                sFilename = sFilename + std::string(".kml");
+            }
+
             currentProject->exportInventoryAsKml(sFilename);
         }
+    }
+}
+
+void MainWindow::actionClose(){
+    if(currentProject){
+        delete currentProject;
+        currentProject = NULL;
     }
 }

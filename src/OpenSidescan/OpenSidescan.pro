@@ -86,8 +86,9 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     aboutdialog.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=  resources.qrc
+
+RESOURCES +=  ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
 
 CONFIG+=link_pkgconfig
 

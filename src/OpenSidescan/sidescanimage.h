@@ -34,12 +34,6 @@ public:
 
     std::vector<GeoreferencedObject*> & getObjects(){ return objects;}
 
-    void isInsideObject(std::vector<GeoreferencedObject&> & found, int x,int y){
-       /* for(auto i = objects.begin();i!=objects.end();i++){
-            found.push_back(**i);
-        }*/
-    }
-
     void resetDisplayedImage(){
         if(!displayedImage.empty()){
             displayedImage.release();
@@ -49,6 +43,7 @@ public:
 
 private:
     cv::Mat * image = NULL;
+
     cv::Mat displayedImage;
     std::vector<SidescanPing * > * rawData = NULL;
 

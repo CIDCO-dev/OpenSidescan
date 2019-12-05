@@ -13,7 +13,7 @@ class SidescanImage;
 class GeoreferencedObject
 {
 public:
-    GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight);
+    GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name="Unknown",std::string description = "");
 
     ~GeoreferencedObject();
 

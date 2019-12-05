@@ -3,7 +3,7 @@
 #include "../thirdParty/MBES-lib/src/math/Distance.hpp"
 #include <algorithm>
 
-GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight) :
+GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     file(file) ,
     image(image),
     startPing(*image.getPings().at( y)       ),
@@ -11,15 +11,15 @@ GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & ima
     x(x),
     y(y),
     pixelWidth(pixelWidth),
-    pixelHeight(std::min((int)pixelHeight,(int)image.getPings().size()))
+    pixelHeight(std::min((int)pixelHeight,(int)image.getPings().size())),
+    name(name),
+    description(description)
 {
     yCenter = y + (pixelHeight/2);
     xCenter = x + (pixelWidth/2);
 
     computeDimensions();
     computePosition();
-
-    name = "Unknown";
 }
 
 GeoreferencedObject::~GeoreferencedObject(){

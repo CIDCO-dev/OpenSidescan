@@ -1,5 +1,8 @@
 #include "detectionwindow.h"
 
+#include <QProgressDialog>
+#include <QCoreApplication>
+
 DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  int & fastThresholdValue,
                                  int & fastTypeValue,
@@ -180,6 +183,13 @@ void DetectionWindow::ok(){
                                                 if(!sMserMaximumArea.empty()){
                                                     mserMaximumAreaValue = std::atoi(sMserMaximumArea.c_str());
 
+                                                    QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
+                                                    progress.setWindowModality(Qt::ApplicationModal);
+                                                    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
+                                                    progress.show();
+                                                    QCoreApplication::processEvents();
+
+                                                    int fileIdx = 0;
                                                     for(auto i=files.begin();i!=files.end();i++){
                                                         //for every file, every image
 
@@ -200,7 +210,14 @@ void DetectionWindow::ok(){
                                                                         mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked()
                                                                     );
                                                         }
+
+                                                        progress.setValue(fileIdx);
+                                                        QCoreApplication::processEvents();
+                                                        fileIdx++;
+
                                                     }
+
+                                                    progress.reset();
                                                 }
                                             }
                                         }

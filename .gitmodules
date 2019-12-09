@@ -1,6 +1,3 @@
-[submodule "src/thirdParty/MBES-lib"]
-	path = src/thirdParty/MBES-lib
-	url = https://github.com/CIDCO-dev/MBES-lib
 [submodule "src/thirdParty/QDarkStyleSheet"]
 	path = src/thirdParty/QDarkStyleSheet
 	url = https://github.com/ColinDuquesnoy/QDarkStyleSheet

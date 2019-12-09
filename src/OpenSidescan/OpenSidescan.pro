@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -49,19 +49,46 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
     opencvhelper.cpp \
     imagetab.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    dbscan.cpp \
+    sidescanimage.cpp \
+    projectwindow.cpp \
+    sidescanfile.cpp \
+    project.cpp \
+    georeferencedobject.cpp \
+    filepropertieswindow.cpp \
+    detectionwindow.cpp \
+    inventorywindow.cpp \
+    qthelper.cpp \
+    imagetablabel.cpp \
+    georeferencedobjectwindow.cpp \
+    georeferencedobjectmenu.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
     opencvhelper.h \
     imagetab.h \
-    aboutdialog.h
+    aboutdialog.h \
+    dbscan.h \
+    sidescanimage.h \
+    projectwindow.h \
+    sidescanfile.h \
+    project.h \
+    georeferencedobject.h \
+    filepropertieswindow.h \
+    detectionwindow.h \
+    inventorywindow.h \
+    qthelper.h \
+    imagetablabel.h \
+    georeferencedobjectwindow.h \
+    georeferencedobjectmenu.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=  resources.qrc
+
+RESOURCES +=  ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
 
 CONFIG+=link_pkgconfig
 

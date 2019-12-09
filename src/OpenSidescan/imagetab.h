@@ -5,29 +5,47 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QPixmap>
-#include "opencvhelper.h"
+#include <QRubberBand>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QCheckBox>
+
+#include "sidescanimage.h"
+#include "sidescanfile.h"
+#include "imagetablabel.h"
+#include "mainwindow.h"
+
+class ImageTabLabel;
 
 class ImageTab : public QWidget
 {
-private:
-    cv::Mat * originalImage;
-    cv::Mat displayedImage;
+    Q_OBJECT
 
-    QLabel * imageLabel;
+private:
+    SidescanImage & image;
+    SidescanFile & file;
+
+    QAction * showObjectBoundingBox;
+    QAction * showObjectSizesAction;
+    QAction * showObjectCenter;
+
+
+    ImageTabLabel * imageLabel;
     QScrollArea * scrollArea;
 
-    void refreshImage();
-
-    Q_OBJECT
 public:
-    explicit ImageTab(cv::Mat * image,QWidget *parent = 0);
+    explicit ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent);
+
+    SidescanImage * getImage(){ return &image;}
+    QScrollArea & getScrollArea() { return *scrollArea;}
 
 signals:
+    void inventoryChanged();
 
-private slots:
+public slots:
     void saveImage();
-    void findFeatures();
-    void cleanImage();
+    void refreshImage();
+    void refreshInventory();
 };
 
 #endif // IMAGETAB_H

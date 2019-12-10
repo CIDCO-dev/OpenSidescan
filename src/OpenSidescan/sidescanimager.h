@@ -107,6 +107,14 @@ public:
             averageXDistancePerPixel /= (double) channels[i]->size();
 
             cv::normalize(img,img,200000,0);
+
+
+            cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
+            cv::imshow("Display Image", img);
+            cv::waitKey(0);
+
+
+
             cv::Mat * I = new cv::Mat();
             img.convertTo(*I, CV_8UC1);
 

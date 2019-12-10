@@ -22,7 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
     currentProject(NULL),
-    fileInfo(NULL)
+    fileInfo(NULL),
+    lastFilePath( QDir::homePath().toStdString() )
 {
     ui->setupUi(this);
     buildUI();
@@ -77,7 +78,7 @@ bool MainWindow::promptProject(){
         //Prompt user if he wants to override current project
         QMessageBox msgBox;
         msgBox.setText("There's already an active project. Are you sure you want to continue?");
-        msgBox.setInformativeText("All unsaved changed will be lost.");
+        msgBox.setInformativeText("All unsaved changes will be lost.");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
         msgBox.setDefaultButton(QMessageBox::Cancel);
         int ret = msgBox.exec();
@@ -112,7 +113,11 @@ void MainWindow::refreshProjectUI(){
 }
 
 void MainWindow::actionImport(){
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"),QDir::homePath(), tr("Sidescan Files (*.xtf)"));
+
+    QString startPath = tr( lastFilePath.c_str() );
+
+
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"),startPath, tr("Sidescan Files (*.xtf)"));
 
     if(fileNames.size() > 0){
 
@@ -165,6 +170,16 @@ void MainWindow::actionImport(){
             updateSelectedFile(lastFile);
 
             statusBar()->showMessage("Sidescan data loaded");
+
+
+            QFileInfo infoInput( *(fileNames.begin()) );
+
+
+            if( infoInput.exists() ){
+                QDir absoluteDir = infoInput.absoluteDir();
+                lastFilePath = absoluteDir.absolutePath().toLocal8Bit().constData();
+            }
+
         }
         catch(std::exception * e){
             //TODO: whine message box

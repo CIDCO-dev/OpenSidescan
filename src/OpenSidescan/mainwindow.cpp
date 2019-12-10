@@ -116,8 +116,7 @@ void MainWindow::actionImport(){
 
     QString startPath = tr( lastFilePath.c_str() );
 
-
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"),startPath, tr("Sidescan Files (*.xtf)"));
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), startPath, tr("Sidescan Files (*.xtf)"));
 
     if(fileNames.size() > 0){
 
@@ -174,10 +173,9 @@ void MainWindow::actionImport(){
 
             QFileInfo infoInput( *(fileNames.begin()) );
 
-
             if( infoInput.exists() ){
                 QDir absoluteDir = infoInput.absoluteDir();
-                lastFilePath = absoluteDir.absolutePath().toLocal8Bit().constData();
+                lastFilePath = absoluteDir.absolutePath().toStdString();
             }
 
         }

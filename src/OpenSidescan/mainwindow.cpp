@@ -22,8 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
     currentProject(NULL),
-    fileInfo(NULL),
-    lastFilePath( QDir::homePath().toStdString() )
+    fileInfo(NULL)
 {
     ui->setupUi(this);
     buildUI();
@@ -114,9 +113,7 @@ void MainWindow::refreshProjectUI(){
 
 void MainWindow::actionImport(){
 
-    QString startPath = tr( lastFilePath.c_str() );
-
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), startPath, tr("Sidescan Files (*.xtf)"));
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), "", tr("Sidescan Files (*.xtf)"));
 
     if(fileNames.size() > 0){
 
@@ -169,15 +166,6 @@ void MainWindow::actionImport(){
             updateSelectedFile(lastFile);
 
             statusBar()->showMessage("Sidescan data loaded");
-
-
-            QFileInfo infoInput( *(fileNames.begin()) );
-
-            if( infoInput.exists() ){
-                QDir absoluteDir = infoInput.absoluteDir();
-                lastFilePath = absoluteDir.absolutePath().toStdString();
-            }
-
         }
         catch(std::exception * e){
             //TODO: whine message box
@@ -294,7 +282,7 @@ void MainWindow::selectImageTab(GeoreferencedObject * object){
 void MainWindow::actionOpen()
 {
     if(promptProject()){
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"), "", tr("Sidescan Project Files (*.ssp)"));
 
         if(fileName.size() > 0){
 
@@ -337,7 +325,7 @@ void MainWindow::actionSave()
 
 void MainWindow::actionSaveAs(){
     if(currentProject){
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Sidescan Project Files"), "", tr("Sidescan Project Files (*.ssp)"));
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();
@@ -355,7 +343,7 @@ void MainWindow::actionSaveAs(){
 void MainWindow::actionExportKmlFile(){
     if(currentProject){
         //QFileDialog::setDefaultSuffix(QString::fromStdString(".kml"));
-        QString fileName = QFileDialog::getSaveFileName(this, tr("KML File"),QDir::homePath(), tr("KML File (*.kml)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("KML File"), "", tr("KML File (*.kml)"));
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();

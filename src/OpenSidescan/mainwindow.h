@@ -83,8 +83,6 @@ private:
     bool   showFeatureMarkersValue              = false;
     bool   mergeOverlappingBoundingBoxesValue   = true;
 
-    std::string lastFilePath;
-
 };
 
 #endif // MAINWINDOW_H

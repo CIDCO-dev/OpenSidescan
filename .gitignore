@@ -1,10 +1,12 @@
 build
 build/*
+build*
 
 nbproject
 nbproject/*
 
 
-*.pro.user
+*.pro.user*
+
 *.xtf
 *.xtf.hits

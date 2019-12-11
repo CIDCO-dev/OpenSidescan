@@ -77,7 +77,7 @@ bool MainWindow::promptProject(){
         //Prompt user if he wants to override current project
         QMessageBox msgBox;
         msgBox.setText("There's already an active project. Are you sure you want to continue?");
-        msgBox.setInformativeText("All unsaved changed will be lost.");
+        msgBox.setInformativeText("All unsaved changes will be lost.");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
         msgBox.setDefaultButton(QMessageBox::Cancel);
         int ret = msgBox.exec();
@@ -112,7 +112,8 @@ void MainWindow::refreshProjectUI(){
 }
 
 void MainWindow::actionImport(){
-    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"),QDir::homePath(), tr("Sidescan Files (*.xtf)"));
+
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), "", tr("Sidescan Files (*.xtf)"));
 
     if(fileNames.size() > 0){
 
@@ -281,7 +282,7 @@ void MainWindow::selectImageTab(GeoreferencedObject * object){
 void MainWindow::actionOpen()
 {
     if(promptProject()){
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Sidescan Project Files"), "", tr("Sidescan Project Files (*.ssp)"));
 
         if(fileName.size() > 0){
 
@@ -324,7 +325,7 @@ void MainWindow::actionSave()
 
 void MainWindow::actionSaveAs(){
     if(currentProject){
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Sidescan Project Files"),QDir::homePath(), tr("Sidescan Project Files (*.ssp)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Sidescan Project Files"), "", tr("Sidescan Project Files (*.ssp)"));
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();
@@ -342,7 +343,7 @@ void MainWindow::actionSaveAs(){
 void MainWindow::actionExportKmlFile(){
     if(currentProject){
         //QFileDialog::setDefaultSuffix(QString::fromStdString(".kml"));
-        QString fileName = QFileDialog::getSaveFileName(this, tr("KML File"),QDir::homePath(), tr("KML File (*.kml)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("KML File"), "", tr("KML File (*.kml)"));
 
         if(fileName.size() > 0){
             std::string sFilename = fileName.toStdString();

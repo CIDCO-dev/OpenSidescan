@@ -75,7 +75,6 @@ void ImageTab::refreshImage(){
 void ImageTab::saveImage(){
     QFileDialog saveDialog(this);
     saveDialog.setAcceptMode(QFileDialog::AcceptSave);
-    saveDialog.setDirectory(QDir::homePath());
     saveDialog.setDefaultSuffix(".jpg");
 
     if(saveDialog.exec()){

@@ -121,10 +121,8 @@ void MainWindow::actionImport(){
 
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), "", tr("Sidescan Files (*.xtf)"));
 
-
     if(fileNames.size() <= 0)
         return;
-
 
     statusBar()->showMessage("Loading sidescan data...");
 
@@ -138,8 +136,7 @@ void MainWindow::actionImport(){
     progress.setValue(0);
     progress.setMinimumDuration( 0 );
 
-    SidescanFile * lastFile = NULL; //used to "open" a file after the import loop
-
+    SidescanFile * lastFile = NULL; //used to "open" a file after the import
 
     QThread * workerThread = new QThread( this );
 
@@ -155,23 +152,16 @@ void MainWindow::actionImport(){
 
     workerThread->start();
 
-    qDebug() << tr( "After 'workerThread->start()'" );
+//    qDebug() << tr( "After 'workerThread->start()'" );
 
     progress.exec();
 
-//    bool didGetException = worker->getDidGetException();
-
     std::string exceptionText = worker->getExceptionString();
-
-//    bool readSuccess = worker->getSuccess();
 
     workerThread->quit();
     workerThread->wait();
 
-    qDebug() << tr( "exceptionText:" ) << QString::fromStdString(exceptionText);
-
-//    qDebug() << tr( "didGetException:" ) << didGetException;
-//    qDebug() << tr( "readSuccess:" ) << readSuccess;
+//    qDebug() << tr( "exceptionText:" ) << QString::fromStdString(exceptionText);
 
 
     if ( exceptionText == "" ) {
@@ -182,7 +172,7 @@ void MainWindow::actionImport(){
     }
     else {
 
-        // ? Close ProgressDialog?
+        // TODO: ? Close ProgressDialog or does the worker class do it properly?
 
         //TODO: whine message box
 

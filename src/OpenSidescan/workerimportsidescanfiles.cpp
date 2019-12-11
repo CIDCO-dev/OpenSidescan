@@ -6,6 +6,8 @@
  * \author Christian Bouchard
  */
 
+#include <QDebug>
+
 
 #include "workerimportsidescanfiles.h"
 
@@ -16,32 +18,15 @@ WorkerImportSidescanFiles::WorkerImportSidescanFiles( QStringList & fileNames,
                            ProjectWindow * projectWindow,
                            SidescanFile ** lastFile)
     : fileNames( fileNames ), projectWindow( projectWindow ), lastFile( lastFile ),
-//      success( false ),
-//      didGetException( false ),
       exceptionText( "" )
 {
-
-
 }
-
-
-//bool WorkerImportSidescanFiles::getSuccess() const
-//{
-//    return success;
-//}
-
-//bool WorkerImportSidescanFiles::getDidGetException() const
-//{
-//    return didGetException;
-//}
 
 
 std::string WorkerImportSidescanFiles::getExceptionString() const
 {
     return exceptionText;
 }
-
-
 
 
 void WorkerImportSidescanFiles::doWork() {
@@ -87,22 +72,18 @@ void WorkerImportSidescanFiles::doWork() {
     }
     catch ( std::exception * e )
     {
-//        didGetException = true;
-
         if ( parser != NULL )
             delete parser;
 
         exceptionText =  e->what();
 
         qDebug() << tr( "WorkerImportSidescanFiles exception" );
-
-        // TODO: progressInt(2*nbFiles);     to close the progress dialog?
     }
 
 
     qDebug() << tr( "End of DoWork" );
 
-    progressInt(2*nbFiles);
+    progressInt(2*nbFiles); // To close the progress dialog
 
 
 }

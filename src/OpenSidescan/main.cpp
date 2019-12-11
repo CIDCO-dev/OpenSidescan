@@ -44,32 +44,37 @@ int main(int argc, char *argv[])
     QPixmap splashImage (":/Images/resources/splash.jpg");
     QSplashScreen splash(splashImage);
 
-    splash.show();
-    sleep(1);
 
-    for(int i=0;i<3;i++){
-        splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
-        sleep(1);
-    }
+    // TODO: Put splash back in
+//    splash.show();
+//    sleep(1);
 
-    a.processEvents();
+//    for(int i=0;i<3;i++){
+//        splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
+//        sleep(1);
+//    }
 
-    sleep(1);
+//    a.processEvents();
 
-    splash.hide();
+//    sleep(1);
 
-    //Load stylesheet
-    QFile f(":qdarkstyle/style.qss");
-    if (!f.exists())
-    {
-        printf("Unable to set stylesheet, file not found\n");
-    }
-    else
-    {
-        f.open(QFile::ReadOnly | QFile::Text);
-        QTextStream ts(&f);
-        qApp->setStyleSheet(ts.readAll());
-    }
+//    splash.hide();
+
+
+
+    // TODO: Put theme back in
+//    //Load stylesheet
+//    QFile f(":qdarkstyle/style.qss");
+//    if (!f.exists())
+//    {
+//        printf("Unable to set stylesheet, file not found\n");
+//    }
+//    else
+//    {
+//        f.open(QFile::ReadOnly | QFile::Text);
+//        QTextStream ts(&f);
+//        qApp->setStyleSheet(ts.readAll());
+//    }
 
     //Show main window
     MainWindow w;

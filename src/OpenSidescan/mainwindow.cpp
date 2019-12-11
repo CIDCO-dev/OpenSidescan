@@ -9,12 +9,18 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QScrollBar>
+
+#include <QThread>
+
 #include <iostream>
 #include "imagetab.h"
 #include "aboutdialog.h"
 #include "projectwindow.h"
 #include "detectionwindow.h"
 #include "inventorywindow.h"
+
+#include "workerimportsidescanfiles.h"
+
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -115,63 +121,75 @@ void MainWindow::actionImport(){
 
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Import Sidescan Files"), "", tr("Sidescan Files (*.xtf)"));
 
-    if(fileNames.size() > 0){
 
-        try{
-            statusBar()->showMessage("Loading sidescan data...");
+    if(fileNames.size() <= 0)
+        return;
 
-            //Load file -----------------------------------*
-            unsigned int nbFiles = fileNames.size();
 
-            QProgressDialog progress("Loading files...", QString(), 0, nbFiles*2, this);
-            progress.setWindowModality(Qt::ApplicationModal);
-            progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
-            progress.show();
-            QCoreApplication::processEvents();
+    statusBar()->showMessage("Loading sidescan data...");
 
-            SidescanFile * lastFile = NULL; //used to "open" a file after the import loop
+    //Load file -----------------------------------*
+    unsigned int nbFiles = fileNames.size();
 
-            unsigned int operationCount=0;
+    QProgressDialog progress("Loading files...", QString(), 0, nbFiles*2, this);
+    progress.setWindowModality( Qt::WindowModal );
+    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
 
-            for(auto i=fileNames.begin();i!=fileNames.end();i++){
-                std::string sFileName = (*i).toStdString();
+    progress.setValue(0);
+    progress.setMinimumDuration( 0 );
 
-                if(!projectWindow->containsFile(sFileName)){
-                    SidescanImager imager;
+    SidescanFile * lastFile = NULL; //used to "open" a file after the import loop
 
-                    DatagramParser * parser = DatagramParserFactory::build(sFileName,imager);
-                    parser->parse(sFileName);
 
-                    progress.setValue(operationCount++);
-                    progress.setLabelText(QString::fromStdString(sFileName));
-                    QCoreApplication::processEvents();
+    QThread * workerThread = new QThread( this );
 
-                    SidescanFile * file = imager.generate(sFileName);
+    WorkerImportSidescanFiles * worker = new WorkerImportSidescanFiles( fileNames, projectWindow, &lastFile );
 
-                    projectWindow->addFile(file);
+    worker->moveToThread(workerThread);
 
-                    lastFile = file;
+    connect( workerThread, &QThread::finished, worker, &WorkerImportSidescanFiles::deleteLater );
+    connect( workerThread, &QThread::started, worker, &WorkerImportSidescanFiles::doWork );
 
-                    progress.setValue(operationCount++);
-                    QCoreApplication::processEvents();
-                    delete parser;
-                    parser=NULL;
-                }
-                else{
-                    //Project already contains file. Ignore silently.
-                }
-            }
+    connect( worker, &WorkerImportSidescanFiles::progressInt, &progress, &QProgressDialog::setValue);
+    connect( worker, &WorkerImportSidescanFiles::progressFilename, &progress, &QProgressDialog::setLabelText);
 
-            progress.reset();
-            updateSelectedFile(lastFile);
+    workerThread->start();
 
-            statusBar()->showMessage("Sidescan data loaded");
-        }
-        catch(std::exception * e){
-            //TODO: whine message box
-            std::cerr << e->what() << std::endl;
-        }
+    qDebug() << tr( "After 'workerThread->start()'" );
+
+    progress.exec();
+
+//    bool didGetException = worker->getDidGetException();
+
+    std::string exceptionText = worker->getExceptionString();
+
+//    bool readSuccess = worker->getSuccess();
+
+    workerThread->quit();
+    workerThread->wait();
+
+    qDebug() << tr( "exceptionText:" ) << QString::fromStdString(exceptionText);
+
+//    qDebug() << tr( "didGetException:" ) << didGetException;
+//    qDebug() << tr( "readSuccess:" ) << readSuccess;
+
+
+    if ( exceptionText == "" ) {
+
+        updateSelectedFile(lastFile);
+
+        statusBar()->showMessage("Sidescan data loaded");
     }
+    else {
+
+        // ? Close ProgressDialog?
+
+        //TODO: whine message box
+
+        std::cerr << exceptionText << std::endl;
+    }
+
+
 }
 
 void MainWindow::updateSelectedFile(SidescanFile * newFile){

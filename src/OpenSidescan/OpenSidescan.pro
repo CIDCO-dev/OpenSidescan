@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     imagetablabel.cpp \
     georeferencedobjectwindow.cpp \
     georeferencedobjectmenu.cpp \
-    workerimportsidescanfiles.cpp
+    workerimportsidescanfiles.cpp \
+    workeropenproject.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -83,7 +84,8 @@ HEADERS  += mainwindow.h \
     imagetablabel.h \
     georeferencedobjectwindow.h \
     georeferencedobjectmenu.h \
-    workerimportsidescanfiles.h
+    workerimportsidescanfiles.h \
+    workeropenproject.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

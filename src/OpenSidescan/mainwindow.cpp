@@ -20,6 +20,7 @@
 #include "inventorywindow.h"
 
 #include "workerimportsidescanfiles.h"
+#include "workeropenproject.h"
 
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
@@ -302,16 +303,31 @@ void MainWindow::actionOpen()
             currentProject = new Project();
 
             QProgressDialog progress("Loading project data...", QString(), 0, 0, this);
-            progress.setValue(0);
-            progress.setWindowModality(Qt::ApplicationModal);
+            progress.setWindowModality(Qt::WindowModal);
             progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
-            progress.show();
-            QCoreApplication::processEvents();
 
-            currentProject->read(sFilename);
+            progress.setValue(0);
+            progress.setMinimumDuration( 0 );
+
+            QThread * workerThread = new QThread( this );
+
+            WorkerOpenProject * worker = new WorkerOpenProject( currentProject, sFilename );
+
+            worker->moveToThread(workerThread);
+
+            connect( workerThread, &QThread::finished, worker, &WorkerOpenProject::deleteLater );
+            connect( workerThread, &QThread::started, worker, &WorkerOpenProject::doWork );
+
+            connect( worker, &WorkerOpenProject::done, &progress, &QProgressDialog::cancel);
+
+            workerThread->start();
+
+            progress.exec();
+
+            workerThread->quit();
+            workerThread->wait();
+
             currentProject->setFilename(sFilename);
-
-            progress.reset();
 
             refreshProjectUI();
         }

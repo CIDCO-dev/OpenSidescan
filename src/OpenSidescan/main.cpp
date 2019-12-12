@@ -45,20 +45,19 @@ int main(int argc, char *argv[])
     QSplashScreen splash(splashImage);
 
 
-    // TODO: Put splash back in
-//    splash.show();
-//    sleep(1);
+    splash.show();
+    sleep(1);
 
-//    for(int i=0;i<3;i++){
-//        splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
-//        sleep(1);
-//    }
+    for(int i=0;i<3;i++){
+        splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));
+        sleep(1);
+    }
 
-//    a.processEvents();
+    a.processEvents();
 
-//    sleep(1);
+    sleep(1);
 
-//    splash.hide();
+    splash.hide();
 
 
     //Load stylesheet

@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     georeferencedobjectwindow.cpp \
     georeferencedobjectmenu.cpp \
     workerimportsidescanfiles.cpp \
-    workeropenproject.cpp
+    workeropenproject.cpp \
+    workerdetection.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -85,7 +86,8 @@ HEADERS  += mainwindow.h \
     georeferencedobjectwindow.h \
     georeferencedobjectmenu.h \
     workerimportsidescanfiles.h \
-    workeropenproject.h
+    workeropenproject.h \
+    workerdetection.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

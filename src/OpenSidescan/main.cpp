@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     QPixmap splashImage (":/Images/resources/splash.jpg");
     QSplashScreen splash(splashImage);
 
+
     splash.show();
     sleep(1);
 
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
     sleep(1);
 
     splash.hide();
+
 
     //Load stylesheet
     QFile f(":qdarkstyle/style.qss");

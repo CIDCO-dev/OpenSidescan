@@ -3,6 +3,12 @@
 #include <QProgressDialog>
 #include <QCoreApplication>
 
+#include <QThread>
+
+#include "workerdetection.h"
+
+
+
 DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  int & fastThresholdValue,
                                  int & fastTypeValue,
@@ -184,40 +190,38 @@ void DetectionWindow::ok(){
                                                     mserMaximumAreaValue = std::atoi(sMserMaximumArea.c_str());
 
                                                     QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
-                                                    progress.setWindowModality(Qt::ApplicationModal);
+
+                                                    progress.setWindowModality(Qt::WindowModal);
                                                     progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
-                                                    progress.show();
-                                                    QCoreApplication::processEvents();
 
-                                                    int fileIdx = 0;
-                                                    for(auto i=files.begin();i!=files.end();i++){
-                                                        //for every file, every image
+                                                    progress.setValue(0);
+                                                    progress.setMinimumDuration( 0 );
 
-                                                        for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
-                                                            OpencvHelper::detectObjects(
-                                                                        (*j)->getObjects(),
-                                                                        **i,
-                                                                        **j,
-                                                                        fastThresholdValue,
-                                                                        fastTypeValue,
-                                                                        fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked(),
-                                                                        dbscanEpsilonValue,
-                                                                        dbscanMinPointsValue,
-                                                                        mserDeltaValue,
-                                                                        mserMinimumAreaValue,
-                                                                        mserMaximumAreaValue,
-                                                                        showFeatureMarkersValue = showFeatureMarkers->isChecked(),
-                                                                        mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked()
-                                                                    );
-                                                        }
 
-                                                        progress.setValue(fileIdx);
-                                                        QCoreApplication::processEvents();
-                                                        fileIdx++;
+                                                    fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked();
+                                                    showFeatureMarkersValue = showFeatureMarkers->isChecked();
+                                                    mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked();
 
-                                                    }
 
-                                                    progress.reset();
+                                                    QThread * workerThread = new QThread( this );
+
+                                                    WorkerDetection * worker = new WorkerDetection( this );
+
+                                                    worker->moveToThread(workerThread);
+
+                                                    connect( workerThread, &QThread::finished, worker, &WorkerDetection::deleteLater );
+                                                    connect( workerThread, &QThread::started, worker, &WorkerDetection::doWork );
+
+                                                    connect( worker, &WorkerDetection::progress, &progress, &QProgressDialog::setValue);
+
+                                                    workerThread->start();
+
+                                                    progress.exec();
+
+                                                    workerThread->quit();
+                                                    workerThread->wait();
+
+
                                                 }
                                             }
                                         }

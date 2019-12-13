@@ -34,6 +34,25 @@ public:
                     QWidget * parent=0
     );
 
+
+    std::vector<SidescanFile *>  & getFiles() { return files; }
+
+    int getFastThresholdValue() const { return fastThresholdValue; }
+    int getFastTypeValue() const { return fastTypeValue; }
+    bool getFastNonMaxSuppressionValue() const { return fastNonMaxSuppressionValue; }
+    int getDbscanEpsilonValue() const { return dbscanEpsilonValue; }
+    int getDbscanMinPointsValue() const { return dbscanMinPointsValue; }
+    int getMserDeltaValue() const { return mserDeltaValue; }
+    int getMserMinimumAreaValue() const { return mserMinimumAreaValue; }
+    int getMserMaximumAreaValue() const { return mserMaximumAreaValue; }
+    bool getShowFeatureMarkersValue() const { return showFeatureMarkersValue; }
+    bool getMergeOverlappingBoundingBoxesValue() const { return mergeOverlappingBoundingBoxesValue; }
+
+
+
+
+
+
 private slots:
     void ok();
     void cancel();

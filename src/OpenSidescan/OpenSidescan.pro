@@ -66,8 +66,8 @@ SOURCES += main.cpp\
     workerimportsidescanfiles.cpp \
     workeropenproject.cpp \
     workerdetection.cpp \
-    treeitem.cpp \
-    treemodel.cpp
+    projecttreeitem.cpp \
+    projecttreemodel.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -90,8 +90,8 @@ HEADERS  += mainwindow.h \
     workerimportsidescanfiles.h \
     workeropenproject.h \
     workerdetection.h \
-    treeitem.h \
-    treemodel.h
+    projecttreeitem.h \
+    projecttreemodel.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

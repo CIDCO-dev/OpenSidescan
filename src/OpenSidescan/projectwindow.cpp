@@ -18,7 +18,7 @@ ProjectWindow::ProjectWindow(QWidget *parent)
     tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tree->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    model = new TreeModel(this);
+    model = new ProjectTreeModel(this);
     tree->setModel(model);
 
     qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
@@ -77,7 +77,7 @@ void ProjectWindow::refresh(){
             delete model;
         }
 
-        model = new TreeModel(this);
+        model = new ProjectTreeModel(this);
 
 
         for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){

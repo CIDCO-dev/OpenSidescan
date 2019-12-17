@@ -14,7 +14,7 @@
 #include "project.h"
 #include "sidescanfile.h"
 
-#include "treemodel.h"
+#include "projecttreemodel.h"
 
 
 class ProjectWindow : public QDockWidget
@@ -64,7 +64,7 @@ protected:
 
 
     QTreeView * tree                = NULL;
-    TreeModel * model               = NULL;
+    ProjectTreeModel * model               = NULL;
 
     QWidget *parent;
 

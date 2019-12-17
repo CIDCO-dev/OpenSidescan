@@ -16,7 +16,7 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TreeModel(QString &header, QObject *parent = 0);
+    TreeModel( QObject *parent = 0);
     ~TreeModel();
 
 

@@ -2,12 +2,19 @@
 #define PROJECTWINDOW_H
 
 #include <QDockWidget>
-#include <QListWidget>
-#include <QStringListModel>
+
+//#include <QListWidget>
+//#include <QStringListModel>
+
+#include <QTreeView>
+
+
 #include <QVariant>
 
 #include "project.h"
 #include "sidescanfile.h"
+
+#include "treemodel.h"
 
 
 class ProjectWindow : public QDockWidget
@@ -48,8 +55,14 @@ public slots:
 
 protected:
     Project *   project            = NULL;
-    QListView * files              = NULL;
-    QStringListModel * model       = NULL;
+
+//    QListView * files              = NULL;
+//    QStringListModel * model       = NULL;
+
+
+    QTreeView * tree                = NULL;
+    TreeModel * model               = NULL;
+
 };
 
 

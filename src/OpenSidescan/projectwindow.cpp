@@ -6,17 +6,17 @@
 ProjectWindow::ProjectWindow(QWidget *parent) : QDockWidget(tr("Files"),parent),project(NULL),model(NULL)
 {
     //TODO: use model to deal with SidescanFile * objects instead
-    files = new QListView(this);
-    files->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    files->setSelectionMode(QAbstractItemView::SingleSelection);
+    tree = new QTreeView(this);
+    tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    tree->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    model = new QStringListModel(this);
-    files->setModel(model);
+    model = new TreeModel(this);
+    tree->setModel(model);
 
-    connect(files->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
+    connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
 
     this->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-    this->setWidget(files);
+    this->setWidget(tree);
     this->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
     this->show();
 }

@@ -7,7 +7,7 @@
 #include "treemodel.h"
 
 //! [0]
-TreeModel::TreeModel(QString &header, QObject *parent)
+TreeModel::TreeModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
 
@@ -19,7 +19,7 @@ TreeModel::TreeModel(QString &header, QObject *parent)
 //    setupModelData(data.split(QString("\n")), rootItem);
 
 
-    QVariant rootData( header );
+    QVariant rootData( "root" );
     rootItem = new TreeItem(rootData);
 
     // Insert a TreeItem for node "Files"

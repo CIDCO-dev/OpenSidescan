@@ -1,9 +1,17 @@
 #include "projectwindow.h"
 
-#include <QStringListModel>
+//#include <QStringListModel>
+
+#include <QFileInfo>
+
+#include <QDebug>
+
 #include "mainwindow.h"
 
-ProjectWindow::ProjectWindow(QWidget *parent) : QDockWidget(tr("Files"),parent),project(NULL),model(NULL)
+//ProjectWindow::ProjectWindow(QWidget *parent) : QDockWidget(tr("Files"),parent),project(NULL),model(NULL)
+ProjectWindow::ProjectWindow(QWidget *parent)
+    : QDockWidget(tr("Project"),parent),project(NULL),model(NULL), parent(parent)
+
 {
     //TODO: use model to deal with SidescanFile * objects instead
     tree = new QTreeView(this);
@@ -13,6 +21,8 @@ ProjectWindow::ProjectWindow(QWidget *parent) : QDockWidget(tr("Files"),parent),
     model = new TreeModel(this);
     tree->setModel(model);
 
+    qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
+
     connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
 
     this->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
@@ -20,6 +30,35 @@ ProjectWindow::ProjectWindow(QWidget *parent) : QDockWidget(tr("Files"),parent),
     this->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
     this->show();
 }
+
+// TODO: destructor for tree and model?
+
+SidescanFile * ProjectWindow::getSelectedFile() {
+    if(tree && project){
+        QModelIndex index = tree->selectionModel()->currentIndex();
+
+        if ( model->isFilesNode( index ) ) {
+            qDebug() << tr("Selected node is file node");
+            return NULL;
+        }
+        else {
+            return model->getSidescanFile(index);
+        }
+
+
+
+//        QString itemText = index.data(Qt::DisplayRole).toString();
+
+//        for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
+//            if((*i)->getFilename()==itemText.toStdString()){
+//                return (*i);
+//            }
+//        }
+    }
+
+    return NULL;
+}
+
 
 void ProjectWindow::setProject(Project * project){
     this->project = project;
@@ -29,13 +68,40 @@ void ProjectWindow::setProject(Project * project){
 
 void ProjectWindow::refresh(){
     if(project){
-        QStringList filenames;
+//        QStringList filenames;
 
-        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
-            filenames.push_back( QString::fromStdString( (*i)->getFilename() ) );
+        // Delete previous model
+        tree->setModel(nullptr);
+
+        if(model) {
+            delete model;
         }
 
-        model->setStringList(filenames);
+        model = new TreeModel(this);
+
+
+        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
+
+//            filenames.push_back( QString::fromStdString( (*i)->getFilename() ) );
+
+
+            QFileInfo fileInfo( tr( (*i)->getFilename().c_str() )  );
+            QString filename = fileInfo.fileName(); // Filename without path
+
+            model->appendFile( filename, (*i) );
+        }
+
+        tree->setModel(model);
+
+        tree->setHeaderHidden(true);
+
+        connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
+
+        tree->expandAll();
+
+
+//        model->setStringList(filenames);
+
     }
 }
 

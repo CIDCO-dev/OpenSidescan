@@ -12,6 +12,8 @@
 
 #include <QThread>
 
+#include <QDebug>
+
 #include <iostream>
 #include "imagetab.h"
 #include "aboutdialog.h"
@@ -225,10 +227,23 @@ void MainWindow::actionAbout(){
 }
 
 void MainWindow::fileSelected(const QItemSelection & selection){
+
+    qDebug() << tr("MainWindow::fileSelected()");
+
     if(!selection.indexes().empty()){
+
+        qDebug() << tr("if(!selection.indexes().empty())");
+
         if(projectWindow){
+
+            qDebug() << tr("if(projectWindow)");
+
             SidescanFile * file = projectWindow->getSelectedFile();
+
             if(file){
+
+                qDebug() << tr("if(file)");
+
                 updateSelectedFile(file);
             }
         }

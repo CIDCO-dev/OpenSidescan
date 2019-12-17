@@ -124,3 +124,8 @@ void TreeItem::setSidescanFile( SidescanFile *sidescanFileIN )
 {
     sidescanFile = sidescanFileIN;
 }
+
+SidescanFile * TreeItem::getSidescanFile() const
+{
+    return sidescanFile;
+}

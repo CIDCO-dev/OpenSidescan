@@ -8,6 +8,9 @@
 #include <QModelIndex>
 #include <QVariant>
 
+#include "sidescanfile.h"
+
+
 class TreeItem;
 
 
@@ -20,12 +23,18 @@ public:
     ~TreeModel();
 
 
-    void populateTree( const QStringList &list );
+//    void populateTree( const QStringList &list );
+
+    void appendFile( QString &filename, SidescanFile *sidescanFile );
+
+    SidescanFile * getSidescanFile(const QModelIndex &index) const;
 
 
 //    TreeModel * getFileNode();
 
     bool isFilesNode( const QModelIndex &index ) const;
+
+
 
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation,

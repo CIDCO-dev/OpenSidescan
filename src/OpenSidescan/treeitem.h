@@ -33,6 +33,8 @@ public:
 
     void setSidescanFile( SidescanFile *sidescanFileIN );
 
+    SidescanFile * getSidescanFile() const;
+
 private:
 
     TreeItem *parentItem;

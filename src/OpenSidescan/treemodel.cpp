@@ -40,33 +40,79 @@ TreeModel::~TreeModel()
 {
     delete rootItem;
 }
-//! [1]
 
-void TreeModel::populateTree( const QStringList &list )
+
+
+void TreeModel::appendFile( QString &filename, SidescanFile *sidescanFile )
+{
+    fileNode->insertChildren( fileNode->childCount(), 1, 1 );
+
+    QVariant data( filename );
+
+    fileNode->child(fileNode->childCount() - 1)->setData(0, data);
+
+    fileNode->child(fileNode->childCount() - 1)->setSidescanFile( sidescanFile );
+}
+
+
+SidescanFile * TreeModel::getSidescanFile(const QModelIndex &index) const
 {
 
+    qDebug() << tr( "TreeModel::getSidescanFile" );
+
+    if (index.isValid() == false)
+        return nullptr;
+
+
+    TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+
+    if (item) {
+
+        // If it is not the file node
+        if (item != fileNode) {
+            qDebug() << tr( "item != fileNode" );
+            return item->getSidescanFile();
+        }
+        else {
+            qDebug() << tr( "item == fileNode" );
+            return nullptr;
+        }
+    }
+    else {
+        return nullptr;
+    }
+}
+
+
+
+//void TreeModel::populateTree( const QStringList &list )
+//{
+
+
+////    for (int count = 0; count < list.count(); ++count)
+////    {
+////        rootItem->insertChildren( rootItem->childCount(), 1, 1 );
+
+////        QVariant data( list[ count ]);
+
+////        rootItem->child(rootItem->childCount() - 1)->setData(0, data);
+////    }
 
 //    for (int count = 0; count < list.count(); ++count)
 //    {
-//        rootItem->insertChildren( rootItem->childCount(), 1, 1 );
+//        fileNode->insertChildren( fileNode->childCount(), 1, 1 );
 
 //        QVariant data( list[ count ]);
 
-//        rootItem->child(rootItem->childCount() - 1)->setData(0, data);
+//        fileNode->child(fileNode->childCount() - 1)->setData(0, data);
 //    }
 
-    for (int count = 0; count < list.count(); ++count)
-    {
-        fileNode->insertChildren( fileNode->childCount(), 1, 1 );
 
-        QVariant data( list[ count ]);
 
-        fileNode->child(fileNode->childCount() - 1)->setData(0, data);
-    }
+//}
 
 
 
-}
 
 //TreeModel * TreeModel::getFileNode()
 //{

@@ -33,21 +33,24 @@ public:
 
     bool        containsFile(std::string & filename);
 
-    //FIXME: this will be obsolete with the use of a proper listview model
-    SidescanFile * getSelectedFile(){
-        if(files && project){
-            QModelIndex index = files->currentIndex();
-            QString itemText = index.data(Qt::DisplayRole).toString();
 
-            for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
-                if((*i)->getFilename()==itemText.toStdString()){
-                    return (*i);
-                }
-            }
-        }
+    SidescanFile * getSelectedFile();
 
-        return NULL;
-    }
+//    //FIXME: this will be obsolete with the use of a proper listview model
+//    SidescanFile * getSelectedFile(){
+//        if(files && project){
+//            QModelIndex index = files->currentIndex();
+//            QString itemText = index.data(Qt::DisplayRole).toString();
+
+//            for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
+//                if((*i)->getFilename()==itemText.toStdString()){
+//                    return (*i);
+//                }
+//            }
+//        }
+
+//        return NULL;
+//    }
 
 signals:
 
@@ -62,6 +65,8 @@ protected:
 
     QTreeView * tree                = NULL;
     TreeModel * model               = NULL;
+
+    QWidget *parent;
 
 };
 

@@ -2,12 +2,19 @@
 #define PROJECTWINDOW_H
 
 #include <QDockWidget>
-#include <QListWidget>
-#include <QStringListModel>
+
+//#include <QListWidget>
+//#include <QStringListModel>
+
+#include <QTreeView>
+
+
 #include <QVariant>
 
 #include "project.h"
 #include "sidescanfile.h"
+
+#include "projecttreemodel.h"
 
 
 class ProjectWindow : public QDockWidget
@@ -26,30 +33,46 @@ public:
 
     bool        containsFile(std::string & filename);
 
-    //FIXME: this will be obsolete with the use of a proper listview model
-    SidescanFile * getSelectedFile(){
-        if(files && project){
-            QModelIndex index = files->currentIndex();
-            QString itemText = index.data(Qt::DisplayRole).toString();
 
-            for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
-                if((*i)->getFilename()==itemText.toStdString()){
-                    return (*i);
-                }
-            }
-        }
+    SidescanFile * getSelectedFile();
 
-        return NULL;
-    }
+//    void setSelected( SidescanFile * file );
+
+//    //FIXME: this will be obsolete with the use of a proper listview model
+//    SidescanFile * getSelectedFile(){
+//        if(files && project){
+//            QModelIndex index = files->currentIndex();
+//            QString itemText = index.data(Qt::DisplayRole).toString();
+
+//            for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
+//                if((*i)->getFilename()==itemText.toStdString()){
+//                    return (*i);
+//                }
+//            }
+//        }
+
+//        return NULL;
+//    }
 
 signals:
+    void removeFileFromProjectRequest( SidescanFile * file );
 
 public slots:
+    void customContextMenu(QPoint pos);
+    void removeFileFromProject();
 
 protected:
     Project *   project            = NULL;
-    QListView * files              = NULL;
-    QStringListModel * model       = NULL;
+
+//    QListView * files              = NULL;
+//    QStringListModel * model       = NULL;
+
+
+    QTreeView * tree                = NULL;
+    ProjectTreeModel * model               = NULL;
+
+    QWidget *parent;
+
 };
 
 

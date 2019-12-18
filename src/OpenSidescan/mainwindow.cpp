@@ -1,3 +1,5 @@
+#include <algorithm>    // std::find
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDir>
@@ -11,6 +13,8 @@
 #include <QScrollBar>
 
 #include <QThread>
+
+#include <QDebug>
 
 #include <iostream>
 #include "imagetab.h"
@@ -43,6 +47,7 @@ void MainWindow::buildUI(){
     projectWindow = new ProjectWindow(this);
     this->addDockWidget(Qt::LeftDockWidgetArea,projectWindow);
     connect(ui->actionShowProjectWindow,&QAction::triggered,projectWindow,&ProjectWindow::show);
+    connect(projectWindow, &ProjectWindow::removeFileFromProjectRequest, this, &MainWindow::removeSidescanFileFromProject);
 
     fileInfo = new FilePropertiesWindow(this);
     this->addDockWidget(Qt::LeftDockWidgetArea,fileInfo);
@@ -52,6 +57,9 @@ void MainWindow::buildUI(){
     this->addDockWidget(Qt::BottomDockWidgetArea,inventoryWindow);
     connect(ui->actionShowObjectInventoryWindow,&QAction::triggered,inventoryWindow,&InventoryWindow::show);
     connect(inventoryWindow,&InventoryWindow::objectSelected,this,&MainWindow::objectSelected);
+
+
+
 
     actionCreate();
 
@@ -166,7 +174,6 @@ void MainWindow::actionImport(){
 
 
     if ( exceptionText == "" ) {
-
         updateSelectedFile(lastFile);
 
         statusBar()->showMessage("Sidescan data loaded");
@@ -211,6 +218,9 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
         /* Update file info window ------------------- */
         fileInfo->setFile(selectedFile);
     }
+    else {
+        fileInfo->setFile(NULL);
+    }
 }
 
 
@@ -225,10 +235,23 @@ void MainWindow::actionAbout(){
 }
 
 void MainWindow::fileSelected(const QItemSelection & selection){
+
+    qDebug() << tr("MainWindow::fileSelected()");
+
     if(!selection.indexes().empty()){
+
+        qDebug() << tr("if(!selection.indexes().empty())");
+
         if(projectWindow){
+
+            qDebug() << tr("if(projectWindow)");
+
             SidescanFile * file = projectWindow->getSelectedFile();
+
             if(file){
+
+                qDebug() << tr("if(file)");
+
                 updateSelectedFile(file);
             }
         }
@@ -386,4 +409,42 @@ void MainWindow::actionClose(){
         delete currentProject;
         currentProject = NULL;
     }
+}
+
+void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
+{
+    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
+
+
+//    // TODO: remove found objects
+//    refreshProjectUI();
+
+    // Remove file from project
+    if( currentProject ) {
+
+        std::vector<SidescanFile *> & files = currentProject->getFiles();
+
+        auto iter = std::find( files.begin(), files.end(), file );
+
+        if ( iter != files.end() )
+        {
+            files.erase( iter );
+        }
+
+    }
+
+
+    // TODO: remove found objects
+    refreshProjectUI();
+
+    qDebug() << tr("After refreshProjectUI");
+
+    // If no files left in the project, make sure nothing is displayed
+    if( !currentProject || currentProject->getFiles().size() == 0 ) {
+        updateSelectedFile(NULL);
+    }
+
+
+
+
 }

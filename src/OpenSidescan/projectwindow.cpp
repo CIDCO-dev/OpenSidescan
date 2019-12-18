@@ -157,7 +157,7 @@ void ProjectWindow::customContextMenu(QPoint pos)
 
         QMenu menu;
 
-        menu.addAction( QString("Remove..."), this, &ProjectWindow::removeFileFromProject );
+        menu.addAction( QIcon(":/Images/resources/delete.png"), QString("Remove file..."), this, &ProjectWindow::removeFileFromProject );
 
         menu.exec( QCursor::pos() );
     }
@@ -191,7 +191,7 @@ void ProjectWindow::removeFileFromProject()
     if(ret == QMessageBox::Cancel)
         return;
 
-    emit removeFileFromProjectRequest( sidescanFile );
+//    emit removeFileFromProjectRequest( sidescanFile );
 
     if (model->removeRow(index.row(), index.parent())) {
 
@@ -204,5 +204,8 @@ void ProjectWindow::removeFileFromProject()
         }
 
     }
+
+    emit removeFileFromProjectRequest( sidescanFile );
+
 
 }

@@ -21,7 +21,7 @@ ProjectTreeModel::ProjectTreeModel(QObject *parent)
     fileNode = rootItem->child( rootItem->childCount() - 1 );
 
     // Set the node "Files"'s data to "Files"
-    QVariant data( tr("Files") );
+    QVariant data( tr("Sidescan files") );
     fileNode->setData(0, data);
     fileNode->setSidescanFile( nullptr ); // Node those not have an associated sidescan file
 

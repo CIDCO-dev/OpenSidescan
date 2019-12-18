@@ -416,16 +416,15 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
     qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
 
 
-    // TODO: remove found objects
-
+//    // TODO: remove found objects
+//    refreshProjectUI();
 
     // Remove file from project
     if( currentProject ) {
 
         std::vector<SidescanFile *> & files = currentProject->getFiles();
 
-        std::vector<SidescanFile *>::iterator iter
-                = std::find( files.begin(), files.end(), file );
+        auto iter = std::find( files.begin(), files.end(), file );
 
         if ( iter != files.end() )
         {
@@ -434,9 +433,18 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 
     }
 
+
+    // TODO: remove found objects
+    refreshProjectUI();
+
+    qDebug() << tr("After refreshProjectUI");
+
     // If no files left in the project, make sure nothing is displayed
     if( !currentProject || currentProject->getFiles().size() == 0 ) {
         updateSelectedFile(NULL);
     }
+
+
+
 
 }

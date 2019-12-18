@@ -51,5 +51,11 @@ void FilePropertiesWindow::updateModel(SidescanFile * file){
         propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString( std::to_string( file->getAverageXDistancePerPixel() ))));
 
     }
+    else {
+        propertiesTable->setColumnCount(2);
+        QStringList headers;
+        headers << "Property" << "Value";
+        propertiesTable->setHorizontalHeaderLabels(headers);
+    }
 
 }

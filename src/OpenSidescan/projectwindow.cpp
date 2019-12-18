@@ -193,5 +193,16 @@ void ProjectWindow::removeFileFromProject()
 
     emit removeFileFromProjectRequest( sidescanFile );
 
+    if (model->removeRow(index.row(), index.parent())) {
+
+        // Update selection
+
+        bool hasCurrent = tree->selectionModel()->currentIndex().isValid();
+
+        if (hasCurrent) {
+            tree->closePersistentEditor(tree->selectionModel()->currentIndex());
+        }
+
+    }
 
 }

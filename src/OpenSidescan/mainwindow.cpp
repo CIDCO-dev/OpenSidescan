@@ -1,3 +1,5 @@
+#include <algorithm>    // std::find
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDir>
@@ -414,5 +416,27 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
     qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
 
 
+    // TODO: remove found objects
+
+
+    // Remove file from project
+    if( currentProject ) {
+
+        std::vector<SidescanFile *> & files = currentProject->getFiles();
+
+        std::vector<SidescanFile *>::iterator iter
+                = std::find( files.begin(), files.end(), file );
+
+        if ( iter != files.end() )
+        {
+            files.erase( iter );
+        }
+
+    }
+
+    // If no files left in the project, make sure nothing is displayed
+    if( !currentProject || currentProject->getFiles().size() == 0 ) {
+        updateSelectedFile(NULL);
+    }
 
 }

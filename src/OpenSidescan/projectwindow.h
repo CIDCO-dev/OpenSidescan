@@ -55,6 +55,8 @@ public:
 signals:
 
 public slots:
+    void customContextMenu(QPoint pos);
+    void removeFileFromProject();
 
 protected:
     Project *   project            = NULL;

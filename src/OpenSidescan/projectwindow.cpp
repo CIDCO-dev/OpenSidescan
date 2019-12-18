@@ -4,7 +4,11 @@
 
 #include <QFileInfo>
 
+#include <QMenu>
+
 #include <QDebug>
+
+#include <QMessageBox>
 
 #include "mainwindow.h"
 
@@ -24,6 +28,11 @@ ProjectWindow::ProjectWindow(QWidget *parent)
     qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
 
     connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
+
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(tree, &QWidget::customContextMenuRequested,
+                this, &ProjectWindow::customContextMenu);
+
 
     this->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
     this->setWidget(tree);
@@ -126,4 +135,62 @@ bool ProjectWindow::containsFile(std::string & filename){
     }
 
     return false;
+}
+
+
+
+void ProjectWindow::customContextMenu(QPoint pos)
+{
+    // Based on
+    // https://www.qtcentre.org/threads/49656-ContextMenu-in-QTreeView
+    // https://github.com/qt-creator/qt-creator/blob/master/src/libs/modelinglib/qmt/model_widgets_ui/modeltreeview.cpp
+
+    QModelIndex index=tree->indexAt(pos);
+
+    if (index.isValid()) {
+
+        if ( model->isFilesNode( index ) ) {
+            // No right-click menu
+
+            qDebug() << tr("MainWindow::customContextMenu() Selected node is file node");
+            return;
+        }
+
+        QMenu menu;
+
+        menu.addAction( QString("Remove..."), this, &ProjectWindow::removeFileFromProject );
+
+        menu.exec( QCursor::pos() );
+    }
+
+}
+
+
+void ProjectWindow::removeFileFromProject()
+{
+    qDebug() << tr("Inside 'ProjectWindow::removeFileFromProject()'");
+
+    QModelIndex index = tree->selectionModel()->currentIndex();
+
+    if ( model->isFilesNode( index ) ) {
+        return;
+    }
+
+    SidescanFile * sidescanFile = model->getSidescanFile( index );
+    std::string filename = sidescanFile->getFilename();
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Remove File");
+    msgBox.setText("The following file will be removed from the project (cannot be undone):");
+
+    msgBox.setInformativeText( QString::fromStdString(filename) );
+
+    msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    if(ret == QMessageBox::Cancel)
+        return;
+
+
 }

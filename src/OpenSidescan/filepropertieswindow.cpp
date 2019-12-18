@@ -25,27 +25,31 @@ void FilePropertiesWindow::setFile(SidescanFile * file){
 void FilePropertiesWindow::updateModel(SidescanFile * file){
     propertiesTable->clear();
 
-    propertiesTable->setColumnCount(2);
-    propertiesTable->setRowCount(file->getFileProperties().size()+1);
+    if(file) {
 
-    QStringList headers;
-    headers << "Property" << "Value";
-    propertiesTable->setHorizontalHeaderLabels(headers);
+        propertiesTable->setColumnCount(2);
+        propertiesTable->setRowCount(file->getFileProperties().size()+1);
 
-    int row = 0;
+        QStringList headers;
+        headers << "Property" << "Value";
+        propertiesTable->setHorizontalHeaderLabels(headers);
 
-    for(
-        auto i = file->getFileProperties().begin();
-        i != file->getFileProperties().end();
-        i++
-    ){
-        propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString(i->first)));
-        propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString(i->second)));
+        int row = 0;
 
-        row++;
+        for(
+            auto i = file->getFileProperties().begin();
+            i != file->getFileProperties().end();
+            i++
+        ){
+            propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString(i->first)));
+            propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString(i->second)));
+
+            row++;
+        }
+
+        propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString("Average X Distance Per Pixel")));
+        propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString( std::to_string( file->getAverageXDistancePerPixel() ))));
+
     }
-
-    propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString("Average X Distance Per Pixel")));
-    propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString( std::to_string( file->getAverageXDistancePerPixel() ))));
 
 }

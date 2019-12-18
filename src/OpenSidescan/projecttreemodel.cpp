@@ -83,6 +83,7 @@ SidescanFile * ProjectTreeModel::getSidescanFile(const QModelIndex &index) const
 //}
 
 
+
 int ProjectTreeModel::columnCount(const QModelIndex & /* parent */) const
 {
 //    return rootItem->columnCount();

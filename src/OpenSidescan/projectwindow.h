@@ -36,6 +36,8 @@ public:
 
     SidescanFile * getSelectedFile();
 
+//    void setSelected( SidescanFile * file );
+
 //    //FIXME: this will be obsolete with the use of a proper listview model
 //    SidescanFile * getSelectedFile(){
 //        if(files && project){
@@ -53,6 +55,7 @@ public:
 //    }
 
 signals:
+    void removeFileFromProjectRequest( SidescanFile * file );
 
 public slots:
     void customContextMenu(QPoint pos);

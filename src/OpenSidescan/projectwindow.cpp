@@ -138,7 +138,6 @@ bool ProjectWindow::containsFile(std::string & filename){
 }
 
 
-
 void ProjectWindow::customContextMenu(QPoint pos)
 {
     // Based on
@@ -191,6 +190,8 @@ void ProjectWindow::removeFileFromProject()
 
     if(ret == QMessageBox::Cancel)
         return;
+
+    emit removeFileFromProjectRequest( sidescanFile );
 
 
 }

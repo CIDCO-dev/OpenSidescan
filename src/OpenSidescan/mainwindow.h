@@ -53,6 +53,8 @@ public slots:
 
     void refreshTabs();
 
+    void removeSidescanFileFromProject( SidescanFile * file );
+
 
 private:
 

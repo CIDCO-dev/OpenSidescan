@@ -45,6 +45,7 @@ void MainWindow::buildUI(){
     projectWindow = new ProjectWindow(this);
     this->addDockWidget(Qt::LeftDockWidgetArea,projectWindow);
     connect(ui->actionShowProjectWindow,&QAction::triggered,projectWindow,&ProjectWindow::show);
+    connect(projectWindow, &ProjectWindow::removeFileFromProjectRequest, this, &MainWindow::removeSidescanFileFromProject);
 
     fileInfo = new FilePropertiesWindow(this);
     this->addDockWidget(Qt::LeftDockWidgetArea,fileInfo);
@@ -54,6 +55,9 @@ void MainWindow::buildUI(){
     this->addDockWidget(Qt::BottomDockWidgetArea,inventoryWindow);
     connect(ui->actionShowObjectInventoryWindow,&QAction::triggered,inventoryWindow,&InventoryWindow::show);
     connect(inventoryWindow,&InventoryWindow::objectSelected,this,&MainWindow::objectSelected);
+
+
+
 
     actionCreate();
 
@@ -168,7 +172,6 @@ void MainWindow::actionImport(){
 
 
     if ( exceptionText == "" ) {
-
         updateSelectedFile(lastFile);
 
         statusBar()->showMessage("Sidescan data loaded");
@@ -212,6 +215,9 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
         /* Update file info window ------------------- */
         fileInfo->setFile(selectedFile);
+    }
+    else {
+        fileInfo->setFile(NULL);
     }
 }
 
@@ -401,4 +407,12 @@ void MainWindow::actionClose(){
         delete currentProject;
         currentProject = NULL;
     }
+}
+
+void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
+{
+    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
+
+
+
 }

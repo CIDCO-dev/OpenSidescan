@@ -24,6 +24,9 @@ class MainWindow : public QMainWindow
 {
 Q_OBJECT
 
+    // TODO: ? Put preprocessor condition so as not to use when not building for test?
+    friend class testGUI;
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

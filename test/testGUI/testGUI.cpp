@@ -176,6 +176,49 @@ void testGUI::testActionImport()
 
 void testGUI::finish()
 {
+
+
+    // Display the number of Sidescan channel tabs (which uses QTabWidget Class)
+    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << std::endl;
+
+    // Display the tab labels
+    for ( int i=0; i< mainWindow.tabs->count(); i++ ) {
+        std::cout << "count: " << i << ", tab text: " << mainWindow.tabs->tabText( i ).toStdString() << "\n";
+    }
+
+    std::cout << "\n" << std::endl;
+
+    // File properties (which uses QTableWidget class)
+
+    std::cout << "\n\nmainWindow.fileInfo->propertiesTable->rowCount(): " << mainWindow.fileInfo->propertiesTable->rowCount() << std::endl;
+
+    for ( int i=0; i< mainWindow.fileInfo->propertiesTable->rowCount(); i++ ) {
+        std::cout << "count: " << i << ", "
+                  << mainWindow.fileInfo->propertiesTable->item(i, 0)->text().toStdString()
+                  << ": " << mainWindow.fileInfo->propertiesTable->item(i, 1)->text().toStdString()
+                  << "\n";
+    }
+
+//    propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString(i->first)));
+//    propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString(i->second)));
+
+
+
+
+
+
+
+//    std::cout << "\n\nWait some time to import file\n" << std::endl;
+
+//    mainWindow.show();
+//    eventLoop(20000);
+
+//    // Verify the number of Sidescan channel tabs
+
+//    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << "\n" << std::endl;
+
+
+
     // Give some time for the main windows GUI to update with values set in dialog  window
 
     std::cout << "\n\nWaiting before finishing\n" << std::endl;
@@ -365,10 +408,14 @@ void testGUI::InteractWithModalWindowActionImport()
 
     }
 
+//    std::cout << "\n\nWait some time to import file\n" << std::endl;
 
+//    mainWindow.show();
+//    eventLoop(20000);
 
+//    // Verify the number of Sidescan channel tabs
 
-
+//    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << "\n" << std::endl;
 
 }
 

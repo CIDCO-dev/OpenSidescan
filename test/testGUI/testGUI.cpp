@@ -44,7 +44,9 @@ public slots:
 private slots:
     void init();
 
-    void testActionImport();
+    void useToolBarActionImportToLoadSidescanFile();
+
+    void verifyResultOfUseToolBarActionImportToLoadSidescanFile();
 
 
     void finish();
@@ -93,7 +95,7 @@ void testGUI::init()
 
 }
 
-void testGUI::testActionImport()
+void testGUI::useToolBarActionImportToLoadSidescanFile()
 {
 
     qDebug() << tr( "Beginning of 'testActionImport()', list from QApplication::topLevelWidgets()" );
@@ -174,9 +176,9 @@ void testGUI::testActionImport()
 
 }
 
-void testGUI::finish()
-{
 
+void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
+{
 
     // Display the number of Sidescan channel tabs (which uses QTabWidget Class)
     std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << std::endl;
@@ -188,19 +190,106 @@ void testGUI::finish()
 
     std::cout << "\n" << std::endl;
 
+
+
+
+
+    // Display children QTabWidget
+
+    const QObjectList list = mainWindow.tabs->children();
+
+    qDebug() << tr( "mainWindow.tabs->children() list.size(): " ) << list.size();
+
+    for (QObject *children : list) {
+        qDebug() << children->objectName()
+                 << ", className: " << children->metaObject()->className();
+    }
+
+    std::cout << "\n\n" << std::endl;
+
+//    QTabBar *tabBar = mainWindow.tabs->findChild<QTabBar*>("qt_tabwidget_tabbar");
+    QTabBar *tabBar = mainWindow.tabs->tabBar();
+
+    const QObjectList listChildrenTabBar = tabBar->children();
+
+    qDebug() << tr( "tabBar->children() listChildrenTabBar.size(): " ) << listChildrenTabBar.size();
+
+    for (QObject *children : listChildrenTabBar) {
+        qDebug() << children->objectName()
+                 << ", className: " << children->metaObject()->className();
+    }
+
+
+
+    std::cout << "\n\ntabBar->count(): " << tabBar->count() << std::endl;
+
+    // Display the tab labels
+    for ( int i=0; i< tabBar->count(); i++ ) {
+        std::cout << "count: " << i << ", tab text: " << tabBar->tabText( i ).toStdString()
+                  << ", tabButton widget address QTabBar::LeftSide: " << tabBar->tabButton(i, QTabBar::LeftSide)
+                  << ", tabButton widget address QTabBar::RightSide: " << tabBar->tabButton(i, QTabBar::RightSide)
+                  << "\n";
+    }
+
+
+    std::cout << "\n\n" << std::endl;
+
+
+    // Click on second tab
+    int index = 1;
+    const QPoint tabPos = tabBar->tabRect( index ).center();
+    QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
+
+
+//    // Display children of the second tab
+
+//    int index = 1;
+
+//    const QObjectList list = mainWindow.tabs->widget( index )->children();
+
+
+////    QString fileNameEdit = tr( "fileNameEdit" );
+////    QLineEdit * lineEdit = nullptr;
+
+
+//    qDebug() << tr( "mainWindow.tabs->widget( index )->children() list.size(): " ) << list.size();
+
+//    for (QObject *children : list) {
+
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+
+
+
+////        if ( children->objectName() == fileNameEdit )
+////            lineEdit = static_cast<QLineEdit * >( children );
+
+
+
+//    }
+
+
+
+////    // Click on second tab
+////    int index = 1;
+////    QTest::mouseClick(mainWindow.tabs->widget( index ), Qt::LeftButton);
+
+
+
+    mainWindow.show();
+    eventLoop(1200);
+
+
     // File properties (which uses QTableWidget class)
 
     std::cout << "\n\nmainWindow.fileInfo->propertiesTable->rowCount(): " << mainWindow.fileInfo->propertiesTable->rowCount() << std::endl;
 
     for ( int i=0; i< mainWindow.fileInfo->propertiesTable->rowCount(); i++ ) {
-        std::cout << "count: " << i << ", "
+        std::cout << "count: " << i << ", \""
                   << mainWindow.fileInfo->propertiesTable->item(i, 0)->text().toStdString()
-                  << ": " << mainWindow.fileInfo->propertiesTable->item(i, 1)->text().toStdString()
-                  << "\n";
+                  << "\": \"" << mainWindow.fileInfo->propertiesTable->item(i, 1)->text().toStdString()
+                  << "\"\n";
     }
-
-//    propertiesTable->setItem(row,0,new QTableWidgetItem(QString::fromStdString(i->first)));
-//    propertiesTable->setItem(row,1,new QTableWidgetItem(QString::fromStdString(i->second)));
 
 
 
@@ -218,7 +307,13 @@ void testGUI::finish()
 //    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << "\n" << std::endl;
 
 
+}
 
+
+
+
+void testGUI::finish()
+{
     // Give some time for the main windows GUI to update with values set in dialog  window
 
     std::cout << "\n\nWaiting before finishing\n" << std::endl;

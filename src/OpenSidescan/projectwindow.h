@@ -54,6 +54,8 @@ public:
 //        return NULL;
 //    }
 
+//    void displayInfoOnTreeView();
+
 signals:
     void removeFileFromProjectRequest( SidescanFile * file );
 

@@ -362,6 +362,10 @@ void MainWindow::actionOpen()
             currentProject->setFilename(sFilename);
 
             refreshProjectUI();
+
+//            projectWindow->displayInfoOnTreeView();
+
+
         }
     }
 }

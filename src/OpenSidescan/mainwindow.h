@@ -58,6 +58,8 @@ public slots:
 
     void removeSidescanFileFromProject( SidescanFile * file );
 
+    void addFileToProjectWindow( SidescanFile * file);
+
 
 private:
 

@@ -31,6 +31,8 @@ signals:
     void progressInt(int);
     void progressFilename(QString);
 
+    void fileToBeAddedToProjectWindow( SidescanFile * file );
+
 private:
 
     QStringList & fileNames;

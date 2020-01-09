@@ -156,8 +156,13 @@ void MainWindow::actionImport(){
     connect( workerThread, &QThread::finished, worker, &WorkerImportSidescanFiles::deleteLater );
     connect( workerThread, &QThread::started, worker, &WorkerImportSidescanFiles::doWork );
 
+
     connect( worker, &WorkerImportSidescanFiles::progressInt, &progress, &QProgressDialog::setValue);
     connect( worker, &WorkerImportSidescanFiles::progressFilename, &progress, &QProgressDialog::setLabelText);
+
+    connect( worker, &WorkerImportSidescanFiles::fileToBeAddedToProjectWindow,
+             this, &MainWindow::addFileToProjectWindow);
+
 
     workerThread->start();
 
@@ -341,6 +346,10 @@ void MainWindow::actionOpen()
             connect( workerThread, &QThread::finished, worker, &WorkerOpenProject::deleteLater );
             connect( workerThread, &QThread::started, worker, &WorkerOpenProject::doWork );
 
+
+
+
+
             connect( worker, &WorkerOpenProject::done, &progress, &QProgressDialog::cancel);
 
             workerThread->start();
@@ -447,4 +456,10 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 
 
 
+}
+
+
+void MainWindow::addFileToProjectWindow( SidescanFile * file )
+{
+    projectWindow->addFile(file);
 }

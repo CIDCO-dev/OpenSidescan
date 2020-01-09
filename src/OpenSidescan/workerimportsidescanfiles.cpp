@@ -54,7 +54,8 @@ void WorkerImportSidescanFiles::doWork() {
 
                 SidescanFile * file = imager.generate(sFileName);
 
-                projectWindow->addFile(file);
+                emit fileToBeAddedToProjectWindow( file );
+//                projectWindow->addFile(file);
 
                 *lastFile = file;
 

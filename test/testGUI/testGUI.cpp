@@ -319,6 +319,29 @@ void testGUI::useToolBarActionOpenProject()
 void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
 
+    std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
+
+
+    mainWindow.show();
+    eventLoop(20000);
+
+
+    QModelIndex currentIndex = mainWindow.projectWindow->tree->currentIndex();
+
+    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+    mainWindow.projectWindow->tree->setCurrentIndex(
+                mainWindow.projectWindow->tree->model()->index( 2, 0 ) );
+
+//    view.setCurrentIndex(view.model()->index(row, column));
+
+    // Click on an item in the treeview
+
+
+
+
+
 }
 
 
@@ -687,9 +710,6 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
     mainWindow.show();
     eventLoop(1200);
 
-
-
-
     if ( lineEdit != nullptr && acceptButton != nullptr) {
 
 
@@ -708,12 +728,6 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
 
         mainWindow.show();
         eventLoop(1200);
-
-
-        // Write into input fields
-//        QTest::keyClicks(lineEdit, "zxcvbn");
-
-
 
         QTest::keyClicks(lineEdit, "/home/chris/Worskpace/OpenSidescan/test/testProject/TestProject5Files.ssp");
 
@@ -736,10 +750,6 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
         eventLoop(1200);
 
     }
-
-
-
-
 
 
 

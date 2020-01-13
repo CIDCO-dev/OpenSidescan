@@ -21,6 +21,8 @@ class ProjectWindow : public QDockWidget
 {
     Q_OBJECT
 
+    friend class testGUI;
+
 public:
 
     explicit    ProjectWindow(QWidget *parent);
@@ -53,6 +55,8 @@ public:
 
 //        return NULL;
 //    }
+
+//    void displayInfoOnTreeView();
 
 signals:
     void removeFileFromProjectRequest( SidescanFile * file );

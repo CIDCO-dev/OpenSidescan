@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/plane1.xtf">
+        <Image channelName="Channel 0"/>
+        <Image channelName="Channel 1"/>
+        <Image channelName="Channel 2"/>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman-iver2.xtf">
+        <Image channelName="PORT"/>
+        <Image channelName="STARBOARD"/>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman1.xtf">
+        <Image channelName="port"/>
+        <Image channelName="starboard"/>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman2.xtf">
+        <Image channelName="port"/>
+        <Image channelName="starboard"/>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman3.xtf">
+        <Image channelName="port"/>
+        <Image channelName="starboard"/>
+    </File>
+</Project>

@@ -1,6 +1,8 @@
 #include "imagetablabel.h"
 
+#include <algorithm>
 #include <iostream>
+
 #include "georeferencedobject.h"
 #include "mainwindow.h"
 #include "georeferencedobjectwindow.h"
@@ -86,14 +88,12 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
             rubberBand->hide();
 
             //upper left
-            int x1 = std::min( std::max( std::min(selectionOrigin.x(),p.x()) , 0 ) , img.getImage().cols);
-
-
-            int y1 = std::min(std::max(std::min(selectionOrigin.y(),p.y()) , 0) , img.getImage().rows);
+            int x1 = (std::min)( (std::max)( (std::min)( selectionOrigin.x(), p.x() ) , 0 ) , img.getImage().cols);
+            int y1 = (std::min)( (std::max)( (std::min)( selectionOrigin.y(),p.y() ) , 0 ) , img.getImage().rows);
 
             //lower right
-            int x2 = std::min(std::max(std::max(selectionOrigin.x(),p.x()), 0 ) , img.getImage().cols);
-            int y2 = std::min(std::max(std::max(selectionOrigin.y(),p.y()), 0 ) , img.getImage().rows);
+            int x2 = (std::min)( (std::max)( (std::max)( selectionOrigin.x(),p.x() ), 0 ) , img.getImage().cols);
+            int y2 = (std::min)( (std::max)( (std::max)( selectionOrigin.y(),p.y() ), 0 ) , img.getImage().rows);
 
             int width  = x2-x1;
             int height = y2-y1;

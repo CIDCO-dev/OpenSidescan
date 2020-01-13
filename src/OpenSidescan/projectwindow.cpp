@@ -209,3 +209,21 @@ void ProjectWindow::removeFileFromProject()
 
 
 }
+
+
+//void ProjectWindow::displayInfoOnTreeView()
+//{
+
+
+
+//    const QObjectList listChildrenTree = tree->children();
+
+//    qDebug() << tr( "listChildrenTree.size(): " ) << listChildrenTree.size();
+
+//    for (QObject *children : listChildrenTree) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+//    }
+
+
+//}

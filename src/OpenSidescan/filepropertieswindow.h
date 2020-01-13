@@ -9,6 +9,8 @@ class FilePropertiesWindow : public QDockWidget
 {
     Q_OBJECT
 
+    friend class testGUI;
+
 public:
     FilePropertiesWindow(QWidget *parent);
 

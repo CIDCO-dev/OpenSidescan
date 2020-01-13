@@ -88,7 +88,7 @@ private slots:
 private:
 
 
-    MainWindow mainWindow;
+    MainWindow * mainWindow;
 };
 
 void testGUI::eventLoop(const int msec)
@@ -110,7 +110,14 @@ void testGUI::init()
 void testGUI::useToolBarActionImportToLoadSidescanFile()
 {
 
-    qDebug() << tr( "Beginning of 'testActionImport()', list from QApplication::topLevelWidgets()" );
+    qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
+
+    mainWindow = new MainWindow;
+
+    // TODO verify that mainWindow created?
+
+
+    qDebug() << tr( "list from QApplication::topLevelWidgets()" );
 
     const QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
     for (QWidget *widget : topLevelWidgets) {
@@ -120,8 +127,8 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     std::cout << "\n\n" << std::endl;
 
-    mainWindow.show();
-    eventLoop(1200);
+    mainWindow->show();
+    eventLoop(2400);
 
 
 //    std::cout << "Enter something to continue: " << std::endl;
@@ -131,7 +138,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 //    std::cin >> textToContinue;
 
 
-    const QObjectList list = mainWindow.children();
+    const QObjectList list = mainWindow->children();
 
     qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
 
@@ -151,11 +158,11 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     std::cout << "\n\n" << std::endl;
 
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
 
-    QToolBar * mainToolBar = mainWindow.findChild< QToolBar * >( "mainToolBar" );
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
 
     const QObjectList listChildrenMainToolBar = mainToolBar->children();
 
@@ -167,7 +174,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
     }
 
 
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
     if ( actionImport != nullptr ) {
@@ -192,12 +199,14 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 {
 
+    std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile\n" << std::endl;
+
     // Display the number of Sidescan channel tabs (which uses QTabWidget Class)
-    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << std::endl;
+    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << std::endl;
 
     // Display the tab labels
-    for ( int i=0; i< mainWindow.tabs->count(); i++ ) {
-        std::cout << "count: " << i << ", tab text: " << mainWindow.tabs->tabText( i ).toStdString() << "\n";
+    for ( int i=0; i< mainWindow->tabs->count(); i++ ) {
+        std::cout << "count: " << i << ", tab text: " << mainWindow->tabs->tabText( i ).toStdString() << "\n";
     }
 
     std::cout << "\n" << std::endl;
@@ -208,9 +217,9 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
     // Display children QTabWidget
 
-    const QObjectList list = mainWindow.tabs->children();
+    const QObjectList list = mainWindow->tabs->children();
 
-    qDebug() << tr( "mainWindow.tabs->children() list.size(): " ) << list.size();
+    qDebug() << tr( "mainWindow->tabs->children() list.size(): " ) << list.size();
 
     for (QObject *children : list) {
         qDebug() << children->objectName()
@@ -219,8 +228,8 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
     std::cout << "\n\n" << std::endl;
 
-//    QTabBar *tabBar = mainWindow.tabs->findChild<QTabBar*>("qt_tabwidget_tabbar");
-    QTabBar *tabBar = mainWindow.tabs->tabBar();
+//    QTabBar *tabBar = mainWindow->tabs->findChild<QTabBar*>("qt_tabwidget_tabbar");
+    QTabBar *tabBar = mainWindow->tabs->tabBar();
 
     const QObjectList listChildrenTabBar = tabBar->children();
 
@@ -246,7 +255,7 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 //    std::cout << "\n\n" << std::endl;
 
-    std::cout << "\n\nmainWindow.tabs->currentIndex(): " << mainWindow.tabs->currentIndex() << std::endl;
+    std::cout << "\n\nmainWindow->tabs->currentIndex(): " << mainWindow->tabs->currentIndex() << std::endl;
 
     // Click on second tab
     int index = 1;
@@ -254,23 +263,23 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
 
 
-    std::cout << "\n\nAfter click on second tab, mainWindow.tabs->currentIndex(): " << mainWindow.tabs->currentIndex() << std::endl;
+    std::cout << "\n\nAfter click on second tab, mainWindow->tabs->currentIndex(): " << mainWindow->tabs->currentIndex() << std::endl;
 
 
 
 
-    mainWindow.show();
-    eventLoop(1200);
+    mainWindow->show();
+    eventLoop(3000);
 
 
     // File properties (which uses QTableWidget class)
 
-    std::cout << "\n\nmainWindow.fileInfo->propertiesTable->rowCount(): " << mainWindow.fileInfo->propertiesTable->rowCount() << std::endl;
+    std::cout << "\n\nmainWindow->fileInfo->propertiesTable->rowCount(): " << mainWindow->fileInfo->propertiesTable->rowCount() << std::endl;
 
-    for ( int i=0; i< mainWindow.fileInfo->propertiesTable->rowCount(); i++ ) {
+    for ( int i=0; i< mainWindow->fileInfo->propertiesTable->rowCount(); i++ ) {
         std::cout << "count: " << i << ", \""
-                  << mainWindow.fileInfo->propertiesTable->item(i, 0)->text().toStdString()
-                  << "\": \"" << mainWindow.fileInfo->propertiesTable->item(i, 1)->text().toStdString()
+                  << mainWindow->fileInfo->propertiesTable->item(i, 0)->text().toStdString()
+                  << "\": \"" << mainWindow->fileInfo->propertiesTable->item(i, 1)->text().toStdString()
                   << "\"\n";
     }
 
@@ -282,25 +291,35 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 //    std::cout << "\n\nWait some time to import file\n" << std::endl;
 
-//    mainWindow.show();
+//    mainWindow->show();
 //    eventLoop(20000);
 
 //    // Verify the number of Sidescan channel tabs
 
-//    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << "\n" << std::endl;
+//    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << "\n" << std::endl;
 
+
+
+    if ( mainWindow )
+        delete mainWindow;
 
 }
 
 void testGUI::useToolBarActionOpenProject()
 {
-    mainWindow.show();
+    qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
+
+    mainWindow = new MainWindow;
+
+    // TODO verify that mainWindow created?
+
+    mainWindow->show();
     eventLoop(1200);
 
-    QAction * actionOpenProject = mainWindow.findChild< QAction * >( "actionOpenProject" );
+    QAction * actionOpenProject = mainWindow->findChild< QAction * >( "actionOpenProject" );
 
 
-    QToolBar * mainToolBar = mainWindow.findChild< QToolBar * >( "mainToolBar" );
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
 
     if ( actionOpenProject ) {
 
@@ -322,24 +341,29 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
 
 
-    mainWindow.show();
-    eventLoop(20000);
+    mainWindow->show();
+    eventLoop(7000);
 
 
-    QModelIndex currentIndex = mainWindow.projectWindow->tree->currentIndex();
+    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
 
     std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
 
-    mainWindow.projectWindow->tree->setCurrentIndex(
-                mainWindow.projectWindow->tree->model()->index( 2, 0 ) );
+    // The following does not work to set the current index
+    mainWindow->projectWindow->tree->setCurrentIndex(
+                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
 
 //    view.setCurrentIndex(view.model()->index(row, column));
 
     // Click on an item in the treeview
 
+    mainWindow->show();
+    eventLoop(5000);
 
 
+    if ( mainWindow )
+        delete mainWindow;
 
 
 }
@@ -347,18 +371,16 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 void testGUI::finish()
 {
-    // Give some time for the main windows GUI to update with values set in dialog  window
 
     std::cout << "\n\nWaiting before finishing\n" << std::endl;
 
-    mainWindow.show();
-    eventLoop(5000);
+
 }
 
 
 void testGUI::InteractWithModalWindowActionImport()
 {
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
 
@@ -479,7 +501,7 @@ void testGUI::InteractWithModalWindowActionImport()
 
 
 
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
 
@@ -501,7 +523,7 @@ void testGUI::InteractWithModalWindowActionImport()
             QTest::keyClick(lineEdit, Qt::Key_Backspace );
 
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
 
@@ -517,33 +539,33 @@ void testGUI::InteractWithModalWindowActionImport()
 //        lineEdit->setText( "Using setText()" );
 
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
 
         // Click button to close the modal dialog
         QTest::mouseClick(acceptButton, Qt::LeftButton);
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
     } else if ( cancelButton != nullptr ) {
 
         // Click button to close the modal dialog
         QTest::mouseClick(cancelButton, Qt::LeftButton);
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
     }
 
 //    std::cout << "\n\nWait some time to import file\n" << std::endl;
 
-//    mainWindow.show();
+//    mainWindow->show();
 //    eventLoop(20000);
 
 //    // Verify the number of Sidescan channel tabs
 
-//    std::cout << "\n\nmainWindow.tabs->count(): " << mainWindow.tabs->count() << "\n" << std::endl;
+//    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << "\n" << std::endl;
 
 }
 
@@ -551,7 +573,7 @@ void testGUI::InteractWithModalWindowActionImport()
 void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
 {
 
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
 
@@ -649,7 +671,7 @@ void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
 
 void testGUI::InteractWithModalWindowToSelectProjectToOpen()
 {
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
     qDebug() << tr( "Beginning of testGUI::InteractWithModalWindowToSelectProjectToOpen" );
@@ -707,7 +729,7 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
     std::cout << "\n\n" << std::endl;
 
 
-    mainWindow.show();
+    mainWindow->show();
     eventLoop(1200);
 
     if ( lineEdit != nullptr && acceptButton != nullptr) {
@@ -726,27 +748,27 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
             QTest::keyClick(lineEdit, Qt::Key_Backspace );
 
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
         QTest::keyClicks(lineEdit, "/home/chris/Worskpace/OpenSidescan/test/testProject/TestProject5Files.ssp");
 
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
 
         // Click button to close the modal dialog
         QTest::mouseClick(acceptButton, Qt::LeftButton);
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
     } else if ( cancelButton != nullptr ) {
 
         // Click button to close the modal dialog
         QTest::mouseClick(cancelButton, Qt::LeftButton);
 
-        mainWindow.show();
+        mainWindow->show();
         eventLoop(1200);
 
     }

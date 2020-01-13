@@ -110,6 +110,8 @@ void testGUI::init()
 void testGUI::useToolBarActionImportToLoadSidescanFile()
 {
 
+    mainWindow = nullptr;
+
     qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
 
     mainWindow = new MainWindow;
@@ -300,14 +302,30 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 
 
-    if ( mainWindow )
+//    QVERIFY2(false, "false on purpose" );
+//    QVERIFY(false);
+
+
+    std::cout << "\n\n\nBefore if ( mainWindow )" << std::endl;
+
+    if ( mainWindow ) {
         delete mainWindow;
+        mainWindow = nullptr;
+    }
+
 
 }
 
 void testGUI::useToolBarActionOpenProject()
 {
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
+
+    // In case the previous test did not complete to the end
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
 
     mainWindow = new MainWindow;
 
@@ -350,13 +368,22 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
 
-    // The following does not work to set the current index
-    mainWindow->projectWindow->tree->setCurrentIndex(
-                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
+//    // The following does not work to set the current index
+//    mainWindow->projectWindow->tree->setCurrentIndex(
+//                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
 
 //    view.setCurrentIndex(view.model()->index(row, column));
 
     // Click on an item in the treeview
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+
+//    int xPos = mainWindow->projectWindow->tree->columnViewportPosition(0) + 2; // add 2 pixels
+//    int yPos = mainWindow->projectWindow->tree-
+
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+
+
+
 
     mainWindow->show();
     eventLoop(5000);

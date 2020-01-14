@@ -435,8 +435,11 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 //    int yPos = mainWindow->projectWindow->tree-
 
     // The following works
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
 //    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
+
+
+
 
 
     currentIndex = mainWindow->projectWindow->tree->currentIndex();
@@ -476,7 +479,41 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 
     mainWindow->show();
+    eventLoop(5000);
+
+
+    int fileToSelect = 4;
+    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+
+
+    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
+
+
+    currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
+
+
+
+    if ( currentIndex.isValid() ) {
+        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
+            std::cout << "File name: "
+                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
+        else
+            std::cout << "File node is the current index\n" << std::endl;
+    } else { // e.g. no selection
+        std::cout << "currentIndex is not valid\n" << std::endl;
+
+    }
+
+
+
+    mainWindow->show();
     eventLoop(10000);
+
+
 
 
     if ( mainWindow )

@@ -265,5 +265,18 @@ bool ProjectTreeModel::setHeaderData(int section, Qt::Orientation orientation,
 int ProjectTreeModel::getNbFiles() const
 {
     return fileNode->childCount();
+}
+
+
+QModelIndex ProjectTreeModel::getModelIndexFileIndex( const int fileIndex ) const
+{
+    if ( fileIndex < 0 || fileIndex >= fileNode->childCount() )
+        return QModelIndex();
+
+    ProjectTreeItem *childItem = fileNode->child(fileIndex);
+    if (childItem)
+        return createIndex(fileIndex, 0, childItem);
+    else
+        return QModelIndex();
 
 }

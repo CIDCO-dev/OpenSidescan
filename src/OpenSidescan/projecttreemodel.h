@@ -61,6 +61,8 @@ public:
 
     int getNbFiles() const;
 
+    QModelIndex getModelIndexFileIndex( const int fileIndex ) const;
+
 private:
     void setupModelData(const QStringList &lines, ProjectTreeItem *parent);
     ProjectTreeItem *getItem(const QModelIndex &index) const;

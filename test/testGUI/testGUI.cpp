@@ -28,8 +28,6 @@
 #include "../../src/OpenSidescan/mainwindow.h"
 
 
-#define DONT_DO_FIRST_TEST
-
 
 // https://doc.qt.io/qt-5/qtest-overview.html
 
@@ -48,6 +46,8 @@ public slots:
     void InteractWithModalWindowAlreadyAnActiveProject();
 
     void InteractWithModalWindowToSelectProjectToOpen();
+
+//    void InteractWithContextMenu();
 
 //    void InteractWithModalWindowDialogPlatform();
 
@@ -74,18 +74,20 @@ private slots:
 
 
 
-#ifndef DONT_DO_FIRST_TEST
+
 
     void useToolBarActionImportToLoadSidescanFile();
 
     void verifyResultOfUseToolBarActionImportToLoadSidescanFile();
-#endif
+
 
 
 
     void useToolBarActionOpenProject();
 
     void verifyResultOfUseToolBarActionOpenProject();
+
+//    void afterContextMenu();
 
 
 
@@ -155,11 +157,11 @@ void testGUI::cleanupTestCase()
 
 // Test functions
 
-#ifndef DONT_DO_FIRST_TEST
+
 
 void testGUI::useToolBarActionImportToLoadSidescanFile()
 {
-
+//    QSKIP( "Skip the first test" );
 
     qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
 
@@ -252,6 +254,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 {
+//    QSKIP( "Skip the first test" );
 
     std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile\n" << std::endl;
 
@@ -368,7 +371,6 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 }
 
-#endif
 
 void testGUI::useToolBarActionOpenProject()
 {
@@ -580,10 +582,30 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     eventLoop(1000);
 
 
+    // Trying to use Right click to remove a file from the project
 
+
+//    QTimer::singleShot(500, this, SLOT(InteractWithContextMenu() ) );
+
+
+    // Does not work
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton,
                       Qt::NoModifier,
                       rectFileToSelect.center() );
+
+
+
+
+
+
+
+    // Does not work: select the previous file
+//    QTest::mouseMove(mainWindow->projectWindow->tree->viewport(),
+//                      rectFileToSelect.center() );
+
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton );
+
+
 
     mainWindow->show();
     eventLoop(10000);
@@ -601,6 +623,33 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 }
 
 
+//void testGUI::afterContextMenu()
+//{
+//    qDebug() << tr( "Beginning of 'testGUI::afterContextMenu()'" );
+
+//    mainWindow->show();
+//    eventLoop(10000);
+
+//    if ( mainWindow )
+//    {
+//        delete mainWindow;
+//        mainWindow = nullptr;
+//    }
+
+
+//}
+
+
+//void testGUI::InteractWithContextMenu()
+//{
+
+//    qDebug() << tr( "Beginning of 'testGUI::InteractWithContextMenu'" );
+
+
+//    mainWindow->show();
+//    eventLoop(5000);
+
+//}
 
 
 

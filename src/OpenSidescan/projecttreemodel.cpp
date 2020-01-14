@@ -31,6 +31,8 @@ ProjectTreeModel::ProjectTreeModel(QObject *parent)
 ProjectTreeModel::~ProjectTreeModel()
 {
     delete rootItem;
+
+    // TODO: call the base class destructor?
 }
 
 

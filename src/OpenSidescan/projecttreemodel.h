@@ -59,8 +59,8 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
+    // For tests purposes:
     int getNbFiles() const;
-
     QModelIndex getModelIndexFileIndex( const int fileIndex ) const;
 
 private:

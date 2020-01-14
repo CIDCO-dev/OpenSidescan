@@ -599,7 +599,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 
 
-    // Does not work: select the previous file
+    // Does not work: selects the previous file and does trigger context menu
 //    QTest::mouseMove(mainWindow->projectWindow->tree->viewport(),
 //                      rectFileToSelect.center() );
 

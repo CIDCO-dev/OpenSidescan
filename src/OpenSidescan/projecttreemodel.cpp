@@ -262,3 +262,8 @@ bool ProjectTreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
+int ProjectTreeModel::getNbFiles() const
+{
+    return fileNode->childCount();
+
+}

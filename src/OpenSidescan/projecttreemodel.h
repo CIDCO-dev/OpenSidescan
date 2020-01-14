@@ -59,6 +59,8 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) override;
 
+    int getNbFiles() const;
+
 private:
     void setupModelData(const QStringList &lines, ProjectTreeItem *parent);
     ProjectTreeItem *getItem(const QModelIndex &index) const;

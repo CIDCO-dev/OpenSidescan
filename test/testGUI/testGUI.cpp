@@ -434,6 +434,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 //    int xPos = mainWindow->projectWindow->tree->columnViewportPosition(0) + 2; // add 2 pixels
 //    int yPos = mainWindow->projectWindow->tree-
 
+    // The following works
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
 
 
@@ -441,9 +442,29 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
 
-    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): " << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
+    if ( currentIndex.isValid() ) {
+        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
+            std::cout << "File name: "
+                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
+        else
+            std::cout << "File node is the current index\n" << std::endl;
+    } else { // e.g. no selection
+        std::cout << "currentIndex is not valid\n" << std::endl;
+
+    }
 
 
+
+
+
+
+
+    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): "
+              << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
+
+    std::cout << "\n\nmainWindow->projectWindow->model->getNbFiles(): "
+                 << mainWindow->projectWindow->model->getNbFiles() << "\n"
+              << std::endl;
 
 
 

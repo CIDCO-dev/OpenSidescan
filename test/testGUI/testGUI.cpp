@@ -532,16 +532,18 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
                   << "width:      " << width << "\n" << std::endl;
 
 
-
     int horizontalPosition = static_cast<int>( ( rectFileToSelect.right() + rectFileToSelect.left() ) / 2 );
     int verticalPosition = static_cast<int>( ( rectFileToSelect.bottom() + rectFileToSelect.top() ) / 2 );
 
-    std::cout << "\n\nhorizontalPosition: " << horizontalPosition << "\n"
-                  << "verticalPosition:   " << verticalPosition << "\n" << std::endl;
+    std::cout << "\n\nhorizontalPosition:            " << horizontalPosition << "\n"
+                  << "verticalPosition:              " << verticalPosition << "\n"
+                  << "rectFileToSelect.center().x(): " << rectFileToSelect.center().x() << "\n"
+                  << "rectFileToSelect.center().y(): " << rectFileToSelect.center().y() << "\n"
+                  << std::endl;
 
     // Verify that the position corresponds to the same index
     QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
-                                    QPoint( horizontalPosition, verticalPosition ) );
+                                    rectFileToSelect.center() );
 
     if ( indexFileToSelect == indexForPosition )
         std::cout << "\n\nSame Index\n" << std::endl;
@@ -552,7 +554,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
                       Qt::NoModifier,
-                      QPoint( horizontalPosition, verticalPosition ) );
+                      rectFileToSelect.center() );
 
 
     currentIndex = mainWindow->projectWindow->tree->currentIndex();
@@ -574,7 +576,14 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
     }
 
+    mainWindow->show();
+    eventLoop(1000);
 
+
+
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton,
+                      Qt::NoModifier,
+                      rectFileToSelect.center() );
 
     mainWindow->show();
     eventLoop(10000);

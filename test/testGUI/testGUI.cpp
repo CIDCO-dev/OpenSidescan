@@ -438,6 +438,31 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
 //    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
 
+//    // Entire dimension of tree viewport, not just where they entries are.
+//    QRect a = mainWindow->projectWindow->tree->viewport()->rect();
+
+
+//    int height = a.bottom() - a.top();
+//    int width = a.right() - a.left();
+
+
+//    std::cout << "\n\na.top():    " << a.top() << "\n"
+//                  << "a.bottom(): " << a.bottom() << "\n"
+//                  << "a.left():   " << a.left() << "\n"
+//                  << "a.right():  " << a.right() << "\n"
+//                  << "height:     " << height << "\n"
+//                  << "width:      " << width << "\n"
+//                  << "\n" << std::endl;
+
+//   int indexFileToClick = 1;
+//   int verticalPos = static_cast< int > ( ( indexFileToClick + 1.5 ) * height /
+//                                    ( mainWindow->projectWindow->model->getNbFiles() + 1 ) );
+//   QTest::mouseClick(mainWindow->projectWindow->tree->viewport(),
+//                     Qt::LeftButton, Qt::NoModifier,
+//                     QPoint( width / 2, verticalPos) );
+
+
+
 
 
 
@@ -485,8 +510,38 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     int fileToSelect = 4;
     QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
 
+    // Set the index directly without mouse click
+//    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
 
-    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
+    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
+
+
+    int height = rectFileToSelect.bottom() - rectFileToSelect.top();
+    int width = rectFileToSelect.right() - rectFileToSelect.left();
+
+
+    std::cout << "\n\nrectFileToSelect.top():    " << rectFileToSelect.top() << "\n"
+                  << "rectFileToSelect.bottom(): " << rectFileToSelect.bottom() << "\n"
+                  << "rectFileToSelect.left():   " << rectFileToSelect.left() << "\n"
+                  << "rectFileToSelect.right():  " << rectFileToSelect.right() << "\n"
+                  << "height:     " << height << "\n"
+                  << "width:      " << width << "\n" << std::endl;
+
+
+
+    int horizontalPosition = static_cast<int>( ( rectFileToSelect.right() + rectFileToSelect.left() ) / 2 );
+    int verticalPosition = static_cast<int>( ( rectFileToSelect.bottom() + rectFileToSelect.top() ) / 2 );
+
+    std::cout << "\n\nhorizontalPosition: " << horizontalPosition << "\n"
+                  << "verticalPosition:   " << verticalPosition << "\n" << std::endl;
+
+
+
+
+
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
+                      Qt::NoModifier,
+                      QPoint( horizontalPosition, verticalPosition ) );
 
 
     currentIndex = mainWindow->projectWindow->tree->currentIndex();

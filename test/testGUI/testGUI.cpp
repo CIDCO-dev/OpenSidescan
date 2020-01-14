@@ -27,6 +27,12 @@
 
 #include "../../src/OpenSidescan/mainwindow.h"
 
+
+#define DONT_DO_FIRST_TEST
+
+
+// https://doc.qt.io/qt-5/qtest-overview.html
+
 class testGUI : public QObject
 {
     Q_OBJECT
@@ -46,12 +52,34 @@ public slots:
 //    void InteractWithModalWindowDialogPlatform();
 
 private slots:
-    void init();
+
+    // The following private slots that are not treated as test functions.
+
+
+    void initTestCase();        // initTestCase() will be called before the first test function is executed.
+
+//    void initTestCase_data();   // initTestCase_data() will be called to create a global test data table.
+
+    void cleanupTestCase();     // cleanupTestCase() will be called after the last test function was executed.
+
+//    void init();                // init() will be called before each test function is executed.
+
+//    void cleanup();             // cleanup() will be called after every test function.
+
+
+
+
+
+    // Test functions
+
+
+
+#ifndef DONT_DO_FIRST_TEST
 
     void useToolBarActionImportToLoadSidescanFile();
 
     void verifyResultOfUseToolBarActionImportToLoadSidescanFile();
-
+#endif
 
 
 
@@ -61,7 +89,7 @@ private slots:
 
 
 
-    void finish();
+//    void finish();
 
 
 //    void TestsvpFileLineEditAndmbesFilePathLineEdit();
@@ -101,18 +129,42 @@ void testGUI::eventLoop(const int msec)
     loop.exec();
 }
 
-void testGUI::init()
+
+void testGUI::initTestCase()
+{
+    mainWindow = nullptr;
+}
+
+void testGUI::cleanupTestCase()
 {
 
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanupTestCase()'" << std::endl;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
 
 }
+
+//void testGUI::init()
+//{
+////    mainWindow = nullptr;
+//}
+
+
+// Test functions
+
+#ifndef DONT_DO_FIRST_TEST
 
 void testGUI::useToolBarActionImportToLoadSidescanFile()
 {
 
-    mainWindow = nullptr;
 
     qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
+
+//    mainWindow = nullptr;
+
 
     mainWindow = new MainWindow;
 
@@ -316,6 +368,8 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 }
 
+#endif
+
 void testGUI::useToolBarActionOpenProject()
 {
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
@@ -383,26 +437,31 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
 
 
+    currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): " << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
+
+
+
 
 
     mainWindow->show();
-    eventLoop(5000);
+    eventLoop(10000);
 
 
     if ( mainWindow )
+    {
         delete mainWindow;
+        mainWindow = nullptr;
+    }
 
 
 }
 
 
-void testGUI::finish()
-{
 
-    std::cout << "\n\nWaiting before finishing\n" << std::endl;
-
-
-}
 
 
 void testGUI::InteractWithModalWindowActionImport()

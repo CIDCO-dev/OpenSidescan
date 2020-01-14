@@ -435,11 +435,18 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 //    int yPos = mainWindow->projectWindow->tree-
 
     // The following works
-    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
 
 
     currentIndex = mainWindow->projectWindow->tree->currentIndex();
     std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+    QModelIndexList listSelected = mainWindow->projectWindow->tree->selectionModel()->selectedIndexes();
+
+    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
+
 
 
     if ( currentIndex.isValid() ) {

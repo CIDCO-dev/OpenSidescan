@@ -510,6 +510,10 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     int fileToSelect = 4;
     QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
 
+    // Scroll until it is visible
+    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+
+
     // Set the index directly without mouse click
 //    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
 
@@ -535,7 +539,14 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     std::cout << "\n\nhorizontalPosition: " << horizontalPosition << "\n"
                   << "verticalPosition:   " << verticalPosition << "\n" << std::endl;
 
+    // Verify that the position corresponds to the same index
+    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
+                                    QPoint( horizontalPosition, verticalPosition ) );
 
+    if ( indexFileToSelect == indexForPosition )
+        std::cout << "\n\nSame Index\n" << std::endl;
+    else
+        std::cout << "\n\nDifferent Index\n" << std::endl;
 
 
 

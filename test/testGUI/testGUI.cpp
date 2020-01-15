@@ -275,6 +275,9 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 {
 //    QSKIP( "Skip the first test" );
 
+
+    timerTimeOut->stop();
+
     std::cout << "\n" << std::endl;
 
     qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile'" );
@@ -708,193 +711,81 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 void testGUI::InteractWithModalWindowActionImport()
 {
+    qDebug() << tr( "Beginning of InteractWithModalWindowActionImport()" );
+
     mainWindow->show();
-    eventLoop(1200);
-
-
-    qDebug() << tr( "After starting ActionImport modal window" );
+    eventLoop(500);
 
     QWidget * modalWidget = QApplication::activeModalWidget();    
     QVERIFY2( modalWidget, "InteractWithModalWindowActionImport: modalWidget tests false");
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "Importe Sidescan Files" ),
+    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
               "InteractWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
 
 
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "InteractWithModalWindowActionImport: lineEdit tests false");
 
 
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
 
-
-    std::cout << "\n\n" << std::endl;
-
-    qDebug() << tr( "After starting ActionImport modal window, list from QApplication::topLevelWidgets()" );
-
-    const QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
-    for (QWidget *widget : topLevelWidgets) {
-
-        if ( modalWidget == widget ) {
-            qDebug() << widget->objectName()
-                 << ", className: " << widget->metaObject()->className()
-                 << tr( " -------- modalWidget == widget --------" );
-        } else {
-            qDebug() << widget->objectName()
-                 << ", className: " << widget->metaObject()->className();
-        }
-
-    }
-
-
-    std::cout << "\n\n" << std::endl;
-
-
-
-    const QObjectList list = modalWidget->children();
-
-
-    QString fileNameEdit = tr( "fileNameEdit" );
-    QLineEdit * lineEdit = nullptr;
-
-
-    qDebug() << tr( "ActionImport modal window list.size(): " ) << list.size();
-
-    for (QObject *children : list) {
-
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-
-
-
-        if ( children->objectName() == fileNameEdit )
-            lineEdit = static_cast<QLineEdit * >( children );
-
-
-
-    }
-
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-
-    std::cout << "\n\n" << std::endl;
-
-    qDebug() << tr( "buttonBox->children() listButtonBox.size(): " ) << listButtonBox.size();
-
-//    QString acceptButtonText = tr( "Select" );
-
-    QString acceptButtonText = tr( "&Open" ); // When using QFileDialog::getOpenFileNames
-
-    QPushButton * acceptButton = nullptr;
-
-
-    QString cancelButtonText = tr( "&Cancel" );
-    QPushButton * cancelButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        qDebug() << button->objectName() << ", "
-                 << button->text()
-                 << ", className: " << button->metaObject()->className();
-
-        if ( button->text() == acceptButtonText )
-            acceptButton = static_cast<QPushButton * >( button );
-        else if ( button->text() == cancelButtonText )
-            cancelButton = static_cast<QPushButton * >( button );
-
-    }
-
-
-
-    std::cout << "\n\n" << std::endl;
-
-
-
-
-    QList<QAction *> listActions = modalWidget->actions();
-
-
-    qDebug() << tr( "modalWidget listActions.size(): " ) << listActions.size();
-    for (QAction *action : listActions) {
-        qDebug() << action->objectName()
-                 << ", className: " << action->metaObject()->className();
-
-    }
-
-    std::cout << "\n\n" << std::endl;
-
-    std::cout << "\n\nmodalWidget->layout(): " << modalWidget->layout();
-
-    std::cout << "\n\n" << std::endl;
-
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
 
 
     mainWindow->show();
-    eventLoop(1200);
+    eventLoop(100);
+
+    // TODO: relative path
+    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/data/wrecks/plane1.xtf" );
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "InteractWithModalWindowActionImport: filename is not the same in the QLineEdit");
 
 
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "InteractWithModalWindowActionImport: buttonBox tests false");
 
 
-    if ( lineEdit != nullptr && acceptButton != nullptr) {
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
 
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
-        qDebug() << tr( "lineEdit->text(): " ) << lineEdit->text();
+    QString acceptButtonText = tr( "&Open" );
+    QPushButton * acceptButton = nullptr;
 
+    for (QAbstractButton *button : listButtonBox) {
 
-        // Number of characters currently present in the QLineEdit
-        int nbBackspaces = lineEdit->text().length();
-
-        qDebug() << tr( "nbBackspaces: " ) << nbBackspaces;
-
-        // Use backspaces to clear the current content
-        for ( int count = 0; count < nbBackspaces; count++ )
-            QTest::keyClick(lineEdit, Qt::Key_Backspace );
-
-
-        mainWindow->show();
-        eventLoop(1200);
-
-
-        // Write into input fields
-//        QTest::keyClicks(lineEdit, "zxcvbn");
-
-
-
-        QTest::keyClicks(lineEdit, "/home/chris/Worskpace/OpenSidescan/test/data/wrecks/plane1.xtf");
-
-
-//        // Trying to set directly the text
-//        lineEdit->setText( "Using setText()" );
-
-
-        mainWindow->show();
-        eventLoop(1200);
-
-
-        // Click button to close the modal dialog
-        QTest::mouseClick(acceptButton, Qt::LeftButton);
-
-        mainWindow->show();
-        eventLoop(1200);
-    } else if ( cancelButton != nullptr ) {
-
-        // Click button to close the modal dialog
-        QTest::mouseClick(cancelButton, Qt::LeftButton);
-
-        mainWindow->show();
-        eventLoop(1200);
-
+        if ( button->text() == acceptButtonText )
+            acceptButton = static_cast<QPushButton * >( button );
     }
 
-//    std::cout << "\n\nWait some time to import file\n" << std::endl;
+    QVERIFY2( acceptButton, "InteractWithModalWindowActionImport: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "InteractWithModalWindowActionImport: acceptButton is not enabled");
 
-//    mainWindow->show();
-//    eventLoop(20000);
 
-//    // Verify the number of Sidescan channel tabs
 
-//    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << "\n" << std::endl;
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    eventLoop(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(acceptButton, Qt::LeftButton);
+
+    mainWindow->show();
+    eventLoop(500);
+
 
     InteractWithModalWindowActionImportReachedTheEnd = true;
 

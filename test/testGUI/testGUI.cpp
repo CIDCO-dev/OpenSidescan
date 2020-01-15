@@ -91,6 +91,8 @@ private:
     MainWindow * mainWindow;
 
     bool InteractWithModalWindowActionImportReachedTheEnd;
+    bool InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd;
+    bool InteractWithModalWindowToSelectProjectToOpenReachedTheEnd;
 
     QTimer *timerTimeOut;
 
@@ -145,6 +147,8 @@ void testGUI::initTestCase()
     mainWindow = nullptr;
 
     InteractWithModalWindowActionImportReachedTheEnd = false;
+    InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
+    InteractWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -186,23 +190,9 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     // Get action for importing a sidescan file
 
-    const QObjectList list = mainWindow->children();
-
-//    qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
-
-    QString actionImportObjectName = tr( "actionImport" );
-    QAction * actionImport = nullptr;
-
-    for (QObject *children : list) {
-
-        if ( children->objectName() == actionImportObjectName )
-            actionImport = static_cast<QAction * >( children );
-    }
-
+    QAction * actionImport = mainWindow->findChild< QAction * >( "actionImport" );
     QVERIFY2( actionImport, "useToolBarActionImportToLoadSidescanFile: actionImport tests false");
 
-
-    std::cout << "\n\n" << std::endl;
 
     mainWindow->show();
     eventLoop(1200);
@@ -252,7 +242,7 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
         }
 
         QVERIFY2( InteractWithModalWindowActionImportReachedTheEnd,
-                    "verifyResultOfUseToolBarActionImportToLoadSidescanFile: InteractWithModalWindowActionImportReachedTheEnd tests false");
+                    "verifyResultOfUseToolBarActionImportToLoadSidescanFile: InteractWithModalWindowActionImportReachedTheEnd is false");
     }
 
 
@@ -379,7 +369,7 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 void testGUI::useToolBarActionOpenProject()
 {
 
-    QSKIP( "Skip the second test" );
+//    QSKIP( "Skip the second test" );
 
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
 
@@ -389,134 +379,75 @@ void testGUI::useToolBarActionOpenProject()
         mainWindow = nullptr;
     }
 
-
     mainWindow = new MainWindow;
 
-    // TODO verify that mainWindow created?
+    QVERIFY2( mainWindow, "useToolBarActionOpenProject: mainWindow tests false");
 
-    mainWindow->show();
-    eventLoop(1200);
+
+    // Get action for importing a sidescan file
 
     QAction * actionOpenProject = mainWindow->findChild< QAction * >( "actionOpenProject" );
+    QVERIFY2( actionOpenProject, "useToolBarActionOpenProject: actionOpenProject tests false");
 
 
     QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionOpenProject: mainToolBar tests false");
 
-    if ( actionOpenProject ) {
 
-        QWidget *widgetForActionOpenProject = mainToolBar->widgetForAction( actionOpenProject );
 
-        QTimer::singleShot(500, this, SLOT(InteractWithModalWindowAlreadyAnActiveProject() ) );
+    QWidget *widgetForActionOpenProject = mainToolBar->widgetForAction( actionOpenProject );
+    QVERIFY2( widgetForActionOpenProject, "useToolBarActionOpenProject: widgetForActionOpenProject tests false");
 
-        // Click the button to open the modal dialog
-        QTest::mouseClick(widgetForActionOpenProject, Qt::LeftButton);
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 10 * 1000 );
 
-    }
+    QTimer::singleShot(500, this, SLOT(InteractWithModalWindowAlreadyAnActiveProject() ) );
 
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionOpenProject, Qt::LeftButton);
 
 }
 
 void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
+//    QSKIP( "Skip the second test" );
 
-    QSKIP( "Skip the second test" );
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
 
     std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
 
+    if ( InteractWithModalWindowToSelectProjectToOpenReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
 
-    mainWindow->show();
-    eventLoop(7000);
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
 
-
-    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
-
-    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-//    // The following does not work to set the current index
-//    mainWindow->projectWindow->tree->setCurrentIndex(
-//                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
-
-//    view.setCurrentIndex(view.model()->index(row, column));
-
-    // Click on an item in the treeview
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
-
-//    int xPos = mainWindow->projectWindow->tree->columnViewportPosition(0) + 2; // add 2 pixels
-//    int yPos = mainWindow->projectWindow->tree-
-
-    // The following works
-    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
-
-//    // Entire dimension of tree viewport, not just where they entries are.
-//    QRect a = mainWindow->projectWindow->tree->viewport()->rect();
-
-
-//    int height = a.bottom() - a.top();
-//    int width = a.right() - a.left();
-
-
-//    std::cout << "\n\na.top():    " << a.top() << "\n"
-//                  << "a.bottom(): " << a.bottom() << "\n"
-//                  << "a.left():   " << a.left() << "\n"
-//                  << "a.right():  " << a.right() << "\n"
-//                  << "height:     " << height << "\n"
-//                  << "width:      " << width << "\n"
-//                  << "\n" << std::endl;
-
-//   int indexFileToClick = 1;
-//   int verticalPos = static_cast< int > ( ( indexFileToClick + 1.5 ) * height /
-//                                    ( mainWindow->projectWindow->model->getNbFiles() + 1 ) );
-//   QTest::mouseClick(mainWindow->projectWindow->tree->viewport(),
-//                     Qt::LeftButton, Qt::NoModifier,
-//                     QPoint( width / 2, verticalPos) );
-
-
-
-
-
-
-
-    currentIndex = mainWindow->projectWindow->tree->currentIndex();
-    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-    QModelIndexList listSelected = mainWindow->projectWindow->tree->selectionModel()->selectedIndexes();
-
-    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
-
-
-
-    if ( currentIndex.isValid() ) {
-        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
-            std::cout << "File name: "
-                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
-        else
-            std::cout << "File node is the current index\n" << std::endl;
-    } else { // e.g. no selection
-        std::cout << "currentIndex is not valid\n" << std::endl;
-
+        QVERIFY2( InteractWithModalWindowToSelectProjectToOpenReachedTheEnd,
+                    "verifyResultOfUseToolBarActionOpenProject: InteractWithModalWindowActionImportReachedTheEnd is false");
     }
 
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionOpenProject: mainWindow tests false");
 
-
-
-
-
-
-    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): "
-              << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
-
-    std::cout << "\n\nmainWindow->projectWindow->model->getNbFiles(): "
-                 << mainWindow->projectWindow->model->getNbFiles() << "\n"
-              << std::endl;
-
-
+    // There should be five files in the tree model
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  5,
+                "verifyResultOfUseToolBarActionOpenProject: the number of files in the projectWindow is different from 5");
 
     mainWindow->show();
-    eventLoop(5000);
+    eventLoop(1000);
 
+
+    // Verify the file names in the projectWindow
+    // TODO:
+
+
+    // Select a file
 
     int fileToSelect = 4;
     QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
@@ -524,83 +455,37 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     // Scroll until it is visible
     mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
 
-
-    // Set the index directly without mouse click
-//    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
-
     QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
 
-
-    int height = rectFileToSelect.bottom() - rectFileToSelect.top();
-    int width = rectFileToSelect.right() - rectFileToSelect.left();
-
-
-    std::cout << "\n\nrectFileToSelect.top():    " << rectFileToSelect.top() << "\n"
-                  << "rectFileToSelect.bottom(): " << rectFileToSelect.bottom() << "\n"
-                  << "rectFileToSelect.left():   " << rectFileToSelect.left() << "\n"
-                  << "rectFileToSelect.right():  " << rectFileToSelect.right() << "\n"
-                  << "height:     " << height << "\n"
-                  << "width:      " << width << "\n" << std::endl;
-
-
-    int horizontalPosition = static_cast<int>( ( rectFileToSelect.right() + rectFileToSelect.left() ) / 2 );
-    int verticalPosition = static_cast<int>( ( rectFileToSelect.bottom() + rectFileToSelect.top() ) / 2 );
-
-    std::cout << "\n\nhorizontalPosition:            " << horizontalPosition << "\n"
-                  << "verticalPosition:              " << verticalPosition << "\n"
-                  << "rectFileToSelect.center().x(): " << rectFileToSelect.center().x() << "\n"
-                  << "rectFileToSelect.center().y(): " << rectFileToSelect.center().y() << "\n"
-                  << std::endl;
-
-    // Verify that the position corresponds to the same index
+    // Verify that the rectangle position corresponds to the same index in the model
     QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
                                     rectFileToSelect.center() );
 
-    if ( indexFileToSelect == indexForPosition )
-        std::cout << "\n\nSame Index\n" << std::endl;
-    else
-        std::cout << "\n\nDifferent Index\n" << std::endl;
+    QVERIFY2( indexFileToSelect == indexForPosition,
+                "verifyResultOfUseToolBarActionOpenProject: indexFileToSelect is different from indexForPosition");
 
-
-
+    // Select the file
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
                       Qt::NoModifier,
                       rectFileToSelect.center() );
 
-
-    currentIndex = mainWindow->projectWindow->tree->currentIndex();
-    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
-
-
-
-    if ( currentIndex.isValid() ) {
-        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
-            std::cout << "File name: "
-                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
-        else
-            std::cout << "File node is the current index\n" << std::endl;
-    } else { // e.g. no selection
-        std::cout << "currentIndex is not valid\n" << std::endl;
-
-    }
-
+    // Give a bit of time to be sure the tabs are settled
     mainWindow->show();
-    eventLoop(1000);
+    eventLoop(100);
+
+    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    QVERIFY2( currentIndex.row() == fileToSelect,
+                "verifyResultOfUseToolBarActionOpenProject: currentIndex.row() is different from fileToSelect");
+
+    std::cout << "File name: "
+        << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
 
 
-    // Trying to use Right click to remove a file from the project
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
-
-//    QTimer::singleShot(500, this, SLOT(InteractWithContextMenu() ) );
-
-
-    // Does not work
-    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton,
-                      Qt::NoModifier,
-                      rectFileToSelect.center() );
+    // Give a bit of time to be sure the tabs are settled
+    mainWindow->show();
+    eventLoop(100);
 
 
 
@@ -608,16 +493,196 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 
 
-    // Does not work: selects the previous file and does trigger context menu
-//    QTest::mouseMove(mainWindow->projectWindow->tree->viewport(),
+//    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
+
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+////    // The following does not work to set the current index
+////    mainWindow->projectWindow->tree->setCurrentIndex(
+////                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
+
+////    view.setCurrentIndex(view.model()->index(row, column));
+
+//    // Click on an item in the treeview
+////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+
+////    int xPos = mainWindow->projectWindow->tree->columnViewportPosition(0) + 2; // add 2 pixels
+////    int yPos = mainWindow->projectWindow->tree-
+
+//    // The following works
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
+////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
+
+////    // Entire dimension of tree viewport, not just where they entries are.
+////    QRect a = mainWindow->projectWindow->tree->viewport()->rect();
+
+
+////    int height = a.bottom() - a.top();
+////    int width = a.right() - a.left();
+
+
+////    std::cout << "\n\na.top():    " << a.top() << "\n"
+////                  << "a.bottom(): " << a.bottom() << "\n"
+////                  << "a.left():   " << a.left() << "\n"
+////                  << "a.right():  " << a.right() << "\n"
+////                  << "height:     " << height << "\n"
+////                  << "width:      " << width << "\n"
+////                  << "\n" << std::endl;
+
+////   int indexFileToClick = 1;
+////   int verticalPos = static_cast< int > ( ( indexFileToClick + 1.5 ) * height /
+////                                    ( mainWindow->projectWindow->model->getNbFiles() + 1 ) );
+////   QTest::mouseClick(mainWindow->projectWindow->tree->viewport(),
+////                     Qt::LeftButton, Qt::NoModifier,
+////                     QPoint( width / 2, verticalPos) );
+
+
+
+
+
+
+
+//    currentIndex = mainWindow->projectWindow->tree->currentIndex();
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+//    QModelIndexList listSelected = mainWindow->projectWindow->tree->selectionModel()->selectedIndexes();
+
+//    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
+
+
+
+//    if ( currentIndex.isValid() ) {
+//        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
+//            std::cout << "File name: "
+//                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
+//        else
+//            std::cout << "File node is the current index\n" << std::endl;
+//    } else { // e.g. no selection
+//        std::cout << "currentIndex is not valid\n" << std::endl;
+
+//    }
+
+
+
+
+
+
+
+//    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): "
+//              << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
+
+//    std::cout << "\n\nmainWindow->projectWindow->model->getNbFiles(): "
+//                 << mainWindow->projectWindow->model->getNbFiles() << "\n"
+//              << std::endl;
+
+
+
+//    mainWindow->show();
+//    eventLoop(1000);
+
+
+//    int fileToSelect = 4;
+//    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+
+//    // Scroll until it is visible
+//    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+
+
+//    // Set the index directly without mouse click
+////    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
+
+//    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
+
+
+//    int height = rectFileToSelect.bottom() - rectFileToSelect.top();
+//    int width = rectFileToSelect.right() - rectFileToSelect.left();
+
+
+//    std::cout << "\n\nrectFileToSelect.top():    " << rectFileToSelect.top() << "\n"
+//                  << "rectFileToSelect.bottom(): " << rectFileToSelect.bottom() << "\n"
+//                  << "rectFileToSelect.left():   " << rectFileToSelect.left() << "\n"
+//                  << "rectFileToSelect.right():  " << rectFileToSelect.right() << "\n"
+//                  << "height:     " << height << "\n"
+//                  << "width:      " << width << "\n" << std::endl;
+
+
+//    int horizontalPosition = static_cast<int>( ( rectFileToSelect.right() + rectFileToSelect.left() ) / 2 );
+//    int verticalPosition = static_cast<int>( ( rectFileToSelect.bottom() + rectFileToSelect.top() ) / 2 );
+
+//    std::cout << "\n\nhorizontalPosition:            " << horizontalPosition << "\n"
+//                  << "verticalPosition:              " << verticalPosition << "\n"
+//                  << "rectFileToSelect.center().x(): " << rectFileToSelect.center().x() << "\n"
+//                  << "rectFileToSelect.center().y(): " << rectFileToSelect.center().y() << "\n"
+//                  << std::endl;
+
+//    // Verify that the position corresponds to the same index
+//    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
+//                                    rectFileToSelect.center() );
+
+//    if ( indexFileToSelect == indexForPosition )
+//        std::cout << "\n\nSame Index\n" << std::endl;
+//    else
+//        std::cout << "\n\nDifferent Index\n" << std::endl;
+
+
+
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
+//                      Qt::NoModifier,
 //                      rectFileToSelect.center() );
 
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton );
+
+//    currentIndex = mainWindow->projectWindow->tree->currentIndex();
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+
+//    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
+
+
+
+//    if ( currentIndex.isValid() ) {
+//        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
+//            std::cout << "File name: "
+//                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
+//        else
+//            std::cout << "File node is the current index\n" << std::endl;
+//    } else { // e.g. no selection
+//        std::cout << "currentIndex is not valid\n" << std::endl;
+
+//    }
+
+//    mainWindow->show();
+//    eventLoop(1000);
+
+
+//    // Trying to use Right click to remove a file from the project
+
+
+////    QTimer::singleShot(500, this, SLOT(InteractWithContextMenu() ) );
+
+
+//    // Does not work
+//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton,
+//                      Qt::NoModifier,
+//                      rectFileToSelect.center() );
+
+
+
+
+
+
+
+//    // Does not work: selects the previous file and does trigger context menu
+////    QTest::mouseMove(mainWindow->projectWindow->tree->viewport(),
+////                      rectFileToSelect.center() );
+
+////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton );
 
 
 
     mainWindow->show();
-    eventLoop(10000);
+    eventLoop(5000);
 
 
 
@@ -747,91 +812,44 @@ void testGUI::InteractWithModalWindowActionImport()
 
 void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
 {
+    qDebug() << tr( "Beginning of InteractWithModalWindowAlreadyAnActiveProject()" );
 
     mainWindow->show();
-    eventLoop(1200);
-
+    eventLoop(500);
 
     qDebug() << tr( "After starting AlreadyAnActiveProject modal window" );
 
+//    QVERIFY2( false, "InteractWithModalWindowAlreadyAnActiveProject: false on purpose");
+
+
     QWidget * modalWidget = QApplication::activeModalWidget();
-    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+    QVERIFY2( modalWidget, "InteractWithModalWindowAlreadyAnActiveProject: modalWidget tests false");
 
-    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
+//    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
 
-    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
+//    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
 
+//    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
 
-
-
-    std::cout << "\n\n" << std::endl;
-
-    qDebug() << tr( "After starting AlreadyAnActiveProject modal window, list from QApplication::topLevelWidgets()" );
-
-    const QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
-    for (QWidget *widget : topLevelWidgets) {
-
-        if ( modalWidget == widget ) {
-            qDebug() << widget->objectName()
-                 << ", className: " << widget->metaObject()->className()
-                 << tr( " -------- modalWidget == widget --------" );
-        } else {
-            qDebug() << widget->objectName()
-                 << ", className: " << widget->metaObject()->className();
-        }
-
-    }
-
-
-    std::cout << "\n\n" << std::endl;
-
-
-    const QObjectList list = modalWidget->children();
-
-
-
-    qDebug() << tr( "AlreadyAnActiveProject modal window list.size(): " ) << list.size();
-
-    for (QObject *children : list) {
-
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-
-    }
 
 
     QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("qt_msgbox_buttonbox");
-
+    QVERIFY2( buttonBox, "InteractWithModalWindowAlreadyAnActiveProject: buttonBox tests false");
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-
-    std::cout << "\n\n" << std::endl;
-
-    qDebug() << tr( "buttonBox->children() listButtonBox.size(): " ) << listButtonBox.size();
 
     QString OKButtonText = tr( "&OK" );
     QPushButton * buttonOK = nullptr;
 
     for (QAbstractButton *button : listButtonBox) {
-
-        qDebug() << button->objectName() << ", "
-                 << button->text()
-                 << ", className: " << button->metaObject()->className();
-
         if ( button->text() == OKButtonText )
             buttonOK = static_cast<QPushButton * >( button );
-
-
     }
 
-    // The buttons don't have objectName.
-    //QDEBUG : testGUI::useToolBarActionOpenProject() "" ,  "&OK" , className:  QPushButton
-    //QDEBUG : testGUI::useToolBarActionOpenProject() "" ,  "&Cancel" , className:  QPushButton
+    QVERIFY2( buttonOK, "InteractWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
 
-    std::cout << "\n\n" << std::endl;
-
-    std::cout << "\n\nbuttonOK: " << buttonOK << std::endl;
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 60 * 1000 ); // Time large enough to include the time it takes to load the files
 
     QTimer::singleShot(500, this, SLOT(InteractWithModalWindowToSelectProjectToOpen() ) );
 
@@ -839,6 +857,7 @@ void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
     // Click the button to open the modal dialog
     QTest::mouseClick(buttonOK, Qt::LeftButton);
 
+    InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd = true;
 
 
 }
@@ -846,112 +865,102 @@ void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
 
 void testGUI::InteractWithModalWindowToSelectProjectToOpen()
 {
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::InteractWithModalWindowToSelectProjectToOpen'" );
+
+
+    if ( InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
+    {
+        // Just in case, stop the timer
+        timerTimeOut->stop();
+
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
+                    "InteractWithModalWindowToSelectProjectToOpen: InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
+    }
+
+//    QVERIFY2( mainWindow, "InteractWithModalWindowToSelectProjectToOpen: mainWindow tests false");
+
+
+
     mainWindow->show();
     eventLoop(1200);
 
-    qDebug() << tr( "Beginning of testGUI::InteractWithModalWindowToSelectProjectToOpen" );
+//    QVERIFY2( false, "InteractWithModalWindowToSelectProjectToOpen: false on purpose");
+
 
     QWidget * modalWidget = QApplication::activeModalWidget();
-    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+    QVERIFY2( modalWidget, "InteractWithModalWindowToSelectProjectToOpen: modalWidget tests false");
 
-    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
-
-    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
-
-
+    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+              "InteractWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
 
 
     QLineEdit *lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "InteractWithModalWindowToSelectProjectToOpen: lineEdit tests false");
 
 
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
 
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-
-    std::cout << "\n\n" << std::endl;
-
-    qDebug() << tr( "buttonBox->children() listButtonBox.size(): " ) << listButtonBox.size();
-
-//    QString acceptButtonText = tr( "Select" );
-
-    QString acceptButtonText = tr( "&Open" ); // When using QFileDialog::getOpenFileNames
-
-    QPushButton * acceptButton = nullptr;
-
-
-    QString cancelButtonText = tr( "&Cancel" );
-    QPushButton * cancelButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        qDebug() << button->objectName() << ", "
-                 << button->text()
-                 << ", className: " << button->metaObject()->className();
-
-        if ( button->text() == acceptButtonText )
-            acceptButton = static_cast<QPushButton * >( button );
-        else if ( button->text() == cancelButtonText )
-            cancelButton = static_cast<QPushButton * >( button );
-
-    }
-
-
-
-    std::cout << "\n\n" << std::endl;
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
 
 
     mainWindow->show();
-    eventLoop(1200);
+    eventLoop(100);
 
-    if ( lineEdit != nullptr && acceptButton != nullptr) {
+    // TODO: relative path
+    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/testProject/TestProject5Files.ssp" );
 
+    QTest::keyClicks(lineEdit, filename );
 
-        qDebug() << tr( "lineEdit->text(): " ) << lineEdit->text();
-
-
-        // Number of characters currently present in the QLineEdit
-        int nbBackspaces = lineEdit->text().length();
-
-        qDebug() << tr( "nbBackspaces: " ) << nbBackspaces;
-
-        // Use backspaces to clear the current content
-        for ( int count = 0; count < nbBackspaces; count++ )
-            QTest::keyClick(lineEdit, Qt::Key_Backspace );
+    QVERIFY2( lineEdit->text() == filename, "InteractWithModalWindowToSelectProjectToOpen: filename is not the same in the QLineEdit");
 
 
-        mainWindow->show();
-        eventLoop(1200);
+    // Find the button to accept and close the modal window
 
-        QTest::keyClicks(lineEdit, "/home/chris/Worskpace/OpenSidescan/test/testProject/TestProject5Files.ssp");
+    // The buttons are within a QDialogButtonBox
 
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "InteractWithModalWindowToSelectProjectToOpen: buttonBox tests false");
 
-        mainWindow->show();
-        eventLoop(1200);
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
+    QString acceptButtonText = tr( "&Open" );
+    QPushButton * acceptButton = nullptr;
 
-        // Click button to close the modal dialog
-        QTest::mouseClick(acceptButton, Qt::LeftButton);
+    for (QAbstractButton *button : listButtonBox) {
 
-        mainWindow->show();
-        eventLoop(1200);
-    } else if ( cancelButton != nullptr ) {
-
-        // Click button to close the modal dialog
-        QTest::mouseClick(cancelButton, Qt::LeftButton);
-
-        mainWindow->show();
-        eventLoop(1200);
-
+        if ( button->text() == acceptButtonText )
+            acceptButton = static_cast<QPushButton * >( button );
     }
 
+    QVERIFY2( acceptButton, "InteractWithModalWindowToSelectProjectToOpen: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "InteractWithModalWindowToSelectProjectToOpen: acceptButton is not enabled");
 
 
+    mainWindow->show();
+    eventLoop(500);
 
+    // Click button to close the modal dialog
+    QTest::mouseClick(acceptButton, Qt::LeftButton);
 
+    mainWindow->show();
+    eventLoop(500);
+
+    InteractWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
 
 }
 

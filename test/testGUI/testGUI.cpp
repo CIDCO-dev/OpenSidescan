@@ -74,54 +74,21 @@ private slots:
 
     // Test functions
 
-
-
-
-
     void useToolBarActionImportToLoadSidescanFile();
-
     void verifyResultOfUseToolBarActionImportToLoadSidescanFile();
 
-
-
-
     void useToolBarActionOpenProject();
-
     void verifyResultOfUseToolBarActionOpenProject();
 
 //    void afterContextMenu();
 
-
-
 //    void finish();
 
-
-//    void TestsvpFileLineEditAndmbesFilePathLineEdit();
-
-
-//    void TestPuttingValuesOnDialogPlatform();
-
-
-//    void TestSvpFileBrowse();
-
-
-//    void finish();
-
-
-
-
-//	void TestSize();
-
-//	void TestClear();
-
-//	void TestConcat_data();
-//	void TestConcat();
 
 private:
 
 
     MainWindow * mainWindow;
-
 
     bool InteractWithModalWindowActionImportReachedTheEnd;
 
@@ -150,9 +117,9 @@ void testGUI::timeOutOccured()
     std::cout << "\n\n" << std::endl;
 
 
-    // If there is a modal widget, it must be closed for the tests to continue
-    // and delete the mainWindows
-    // (Deleting the window cannot be done here,
+    // If there is a modal widget, it must be closed to be able to continue through the test functions
+    // and delete the mainWindow
+    // (Deleting the mainWindow cannot be done here,
     // it must be done in the thread which created the mainWindow.)
 
     QWidget * modalWidget = QApplication::activeModalWidget();
@@ -196,14 +163,8 @@ void testGUI::cleanupTestCase()
 
 }
 
-//void testGUI::init()
-//{
-////    mainWindow = nullptr;
-//}
-
 
 // Test functions
-
 
 
 void testGUI::useToolBarActionImportToLoadSidescanFile()
@@ -234,9 +195,6 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     for (QObject *children : list) {
 
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-
         if ( children->objectName() == actionImportObjectName )
             actionImport = static_cast<QAction * >( children );
     }
@@ -258,7 +216,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
     QVERIFY2( widgetForActionImport, "useToolBarActionImportToLoadSidescanFile: widgetForActionImport tests false");
 
 
-    // Time out timer in case there is a failure
+    // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 10 * 1000 );
 
     // Single shot timer for function that will interact with the modal window
@@ -266,7 +224,6 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     // Click the button to open the modal dialog
     QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
-
 
 }
 
@@ -283,12 +240,9 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile'" );
 
 
-
     if ( InteractWithModalWindowActionImportReachedTheEnd == false )
     {
-//        qDebug() << tr( "'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile': inside if" );
-
-        // Give time for the window to be closed after the instruction to close is performed
+        // Give time for the window to be closed after the instruction to close is sent
         // in the function responding to the timer
         QTest::qWait( 200 );
 
@@ -299,7 +253,6 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
         QVERIFY2( InteractWithModalWindowActionImportReachedTheEnd,
                     "verifyResultOfUseToolBarActionImportToLoadSidescanFile: InteractWithModalWindowActionImportReachedTheEnd tests false");
-
     }
 
 
@@ -319,19 +272,16 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     // Scroll until it is visible
     mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
 
-
     QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
 
-
-
-//    // Verify that the position corresponds to the same index
+    // Verify that the rectangle position corresponds to the same index in the model
     QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
                                     rectFileToSelect.center() );
 
     QVERIFY2( indexFileToSelect == indexForPosition,
                 "verifyResultOfUseToolBarActionImportToLoadSidescanFile: indexFileToSelect is different from indexForPosition");
 
-
+    // Select the file
     QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
                       Qt::NoModifier,
                       rectFileToSelect.center() );
@@ -342,13 +292,16 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
                 "verifyResultOfUseToolBarActionImportToLoadSidescanFile: currentIndex.row() is different from fileToSelect");
 
 
-    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
     // Give a bit of time to be sure the tabs are settled
     mainWindow->show();
     eventLoop(100);
 
     // Verify tabs
+
+    QVERIFY2( mainWindow->tabs,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile:  mainWindow->tabs tests false");
 
     QVERIFY2( mainWindow->tabs->count() == 3,
                 "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of tabs is different from 3");
@@ -379,51 +332,40 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     const QPoint tabPos = tabBar->tabRect( index ).center();
     QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
 
+    mainWindow->show();
+    eventLoop(100);
 
     QVERIFY2( mainWindow->tabs->currentIndex() == index,
                 "verifyResultOfUseToolBarActionImportToLoadSidescanFile: The current tab index is different from the target");
 
 
+    // Verifying file properties (which uses QTableWidget class)
+
+    // Verify the number of channels
+    QString searchtext = "Channels (Sonar)";
+
+    QList<QTableWidgetItem *> items = mainWindow->fileInfo->propertiesTable->findItems(searchtext, Qt::MatchExactly);
+
+//    std::cout << "\n\nitems.size(): " << items.size() << "\n"
+//              << "items[ 0 ]->row(): " << items[ 0 ]->row() << "\n"
+//              << "items[ 0 ]->column(): " << items[ 0 ]->column() << "\n"
+//              << "items[ 0 ]->data( Qt::DisplayRole ).toString(): " << items[ 0 ]->data( Qt::DisplayRole ).toString().toStdString() << "\n"
+//              << "second column: " << mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString() << "\n"
+//              << std::endl;
+
+    QVERIFY2( items.size() == 1,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: items.size() is different from 1");
+
+    QVERIFY2( items[ 0 ]->column() == 0,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: searchtext found in the wrong column");
+
+    std::string nbChannelsString = mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
+    QVERIFY2( nbChannelsString == "3",
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: wrong number of channels in propertiesTable");
+
+
     mainWindow->show();
     eventLoop(3000);
-
-
-
-
-
-    // File properties (which uses QTableWidget class)
-
-    std::cout << "\n\nmainWindow->fileInfo->propertiesTable->rowCount(): " << mainWindow->fileInfo->propertiesTable->rowCount() << std::endl;
-
-    for ( int i=0; i< mainWindow->fileInfo->propertiesTable->rowCount(); i++ ) {
-        std::cout << "count: " << i << ", \""
-                  << mainWindow->fileInfo->propertiesTable->item(i, 0)->text().toStdString()
-                  << "\": \"" << mainWindow->fileInfo->propertiesTable->item(i, 1)->text().toStdString()
-                  << "\"\n";
-    }
-
-
-
-
-
-
-
-//    std::cout << "\n\nWait some time to import file\n" << std::endl;
-
-//    mainWindow->show();
-//    eventLoop(20000);
-
-//    // Verify the number of Sidescan channel tabs
-
-//    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << "\n" << std::endl;
-
-
-
-//    QVERIFY2(false, "false on purpose" );
-//    QVERIFY(false);
-
-
-    std::cout << "\n\n\nBefore if ( mainWindow )" << std::endl;
 
     if ( mainWindow ) {
         delete mainWindow;

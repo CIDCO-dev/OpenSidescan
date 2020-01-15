@@ -51,6 +51,8 @@ public slots:
 
 //    void InteractWithModalWindowDialogPlatform();
 
+    void timeOutOccured();
+
 private slots:
 
     // The following private slots that are not treated as test functions.
@@ -119,6 +121,12 @@ private:
 
 
     MainWindow * mainWindow;
+
+
+    bool InteractWithModalWindowActionImportReachedTheEnd;
+
+    QTimer *timerTimeOut;
+
 };
 
 void testGUI::eventLoop(const int msec)
@@ -132,9 +140,48 @@ void testGUI::eventLoop(const int msec)
 }
 
 
+void testGUI::timeOutOccured()
+{
+    // Just in case, stop the timer
+    timerTimeOut->stop();
+
+    qDebug() << tr( "'testGUI::timeOutOccured()'" );
+
+    std::cout << "\n\n" << std::endl;
+
+
+    // If there is a modal widget, it must be closed for the tests to continue
+    // and delete the mainWindows
+    // (Deleting the window cannot be done here,
+    // it must be done in the thread which created the mainWindow.)
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+
+    if ( modalWidget )
+    {
+        qDebug() << tr( "QApplication::activeModalWidget():" );
+
+        std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+
+        qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
+
+        qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
+
+        modalWidget->close();
+    }
+
+}
+
+
 void testGUI::initTestCase()
 {
     mainWindow = nullptr;
+
+    InteractWithModalWindowActionImportReachedTheEnd = false;
+
+    timerTimeOut = new QTimer( this );
+    timerTimeOut->setSingleShot( true );
+    connect(timerTimeOut, &QTimer::timeout, this, &testGUI::timeOutOccured );
 }
 
 void testGUI::cleanupTestCase()
@@ -165,52 +212,37 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
     qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
 
-//    mainWindow = nullptr;
 
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
 
     mainWindow = new MainWindow;
 
-    // TODO verify that mainWindow created?
+    QVERIFY2( mainWindow, "useToolBarActionImportToLoadSidescanFile: mainWindow tests false");
 
 
-    qDebug() << tr( "list from QApplication::topLevelWidgets()" );
-
-    const QWidgetList topLevelWidgets = QApplication::topLevelWidgets();
-    for (QWidget *widget : topLevelWidgets) {
-        qDebug() << widget->objectName()
-                 << ", className: " << widget->metaObject()->className();
-    }
-
-    std::cout << "\n\n" << std::endl;
-
-    mainWindow->show();
-    eventLoop(2400);
-
-
-//    std::cout << "Enter something to continue: " << std::endl;
-
-//    std::string textToContinue;
-
-//    std::cin >> textToContinue;
-
+    // Get action for importing a sidescan file
 
     const QObjectList list = mainWindow->children();
 
-    qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
+//    qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
 
     QString actionImportObjectName = tr( "actionImport" );
     QAction * actionImport = nullptr;
 
     for (QObject *children : list) {
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
 
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
 
         if ( children->objectName() == actionImportObjectName )
             actionImport = static_cast<QAction * >( children );
-
-
     }
+
+    QVERIFY2( actionImport, "useToolBarActionImportToLoadSidescanFile: actionImport tests false");
+
 
     std::cout << "\n\n" << std::endl;
 
@@ -219,34 +251,21 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 
     QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
-
-    const QObjectList listChildrenMainToolBar = mainToolBar->children();
-
-    qDebug() << tr( "listChildrenMainToolBar.size(): " ) << listChildrenMainToolBar.size();
-
-    for (QObject *children : listChildrenMainToolBar) {
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-    }
+    QVERIFY2( mainToolBar, "useToolBarActionImportToLoadSidescanFile: mainToolBar tests false");
 
 
-    mainWindow->show();
-    eventLoop(1200);
-
-    if ( actionImport != nullptr ) {
-
-        QWidget *widgetForActionImport = mainToolBar->widgetForAction( actionImport );
-
-
-        QTimer::singleShot(500, this, SLOT(InteractWithModalWindowActionImport() ) );
-
-        // Click the button to open the modal dialog
-        QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
+    QWidget *widgetForActionImport = mainToolBar->widgetForAction( actionImport );
+    QVERIFY2( widgetForActionImport, "useToolBarActionImportToLoadSidescanFile: widgetForActionImport tests false");
 
 
 
+    timerTimeOut->start( 10 * 1000 );
 
-    }
+    // Single shot timer for function that will interact with the modal window
+    QTimer::singleShot(500, this, SLOT(InteractWithModalWindowActionImport() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
 
 
 }
@@ -256,7 +275,36 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 {
 //    QSKIP( "Skip the first test" );
 
-    std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile\n" << std::endl;
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile'" );
+
+
+
+    if ( InteractWithModalWindowActionImportReachedTheEnd == false )
+    {
+        qDebug() << tr( "'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile': inside if" );
+
+        // Give time for the window to be closed after the instruction is performed
+        // in function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( InteractWithModalWindowActionImportReachedTheEnd,
+                    "verifyResultOfUseToolBarActionImportToLoadSidescanFile: InteractWithModalWindowActionImportReachedTheEnd tests false");
+
+    }
+
+
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFile: mainWindow tests false");
+
+
+
+
 
     // Display the number of Sidescan channel tabs (which uses QTabWidget Class)
     std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << std::endl;
@@ -374,6 +422,9 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 void testGUI::useToolBarActionOpenProject()
 {
+
+    QSKIP( "Skip the second test" );
+
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
 
     // In case the previous test did not complete to the end
@@ -411,6 +462,8 @@ void testGUI::useToolBarActionOpenProject()
 
 void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
+
+    QSKIP( "Skip the second test" );
 
     std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
 
@@ -661,12 +714,13 @@ void testGUI::InteractWithModalWindowActionImport()
 
     qDebug() << tr( "After starting ActionImport modal window" );
 
-    QWidget * modalWidget = QApplication::activeModalWidget();
-    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+    QWidget * modalWidget = QApplication::activeModalWidget();    
+    QVERIFY2( modalWidget, "InteractWithModalWindowActionImport: modalWidget tests false");
 
-    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
+    QVERIFY2( modalWidget->windowTitle() == tr( "Importe Sidescan Files" ),
+              "InteractWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
 
-    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
+
 
 
 
@@ -841,6 +895,8 @@ void testGUI::InteractWithModalWindowActionImport()
 //    // Verify the number of Sidescan channel tabs
 
 //    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << "\n" << std::endl;
+
+    InteractWithModalWindowActionImportReachedTheEnd = true;
 
 }
 

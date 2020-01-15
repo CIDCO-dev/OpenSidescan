@@ -258,7 +258,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
     QVERIFY2( widgetForActionImport, "useToolBarActionImportToLoadSidescanFile: widgetForActionImport tests false");
 
 
-
+    // Time out timer in case there is a failure
     timerTimeOut->start( 10 * 1000 );
 
     // Single shot timer for function that will interact with the modal window
@@ -286,10 +286,10 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
     if ( InteractWithModalWindowActionImportReachedTheEnd == false )
     {
-        qDebug() << tr( "'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile': inside if" );
+//        qDebug() << tr( "'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile': inside if" );
 
-        // Give time for the window to be closed after the instruction is performed
-        // in function responding to the timer
+        // Give time for the window to be closed after the instruction to close is performed
+        // in the function responding to the timer
         QTest::qWait( 200 );
 
         if ( mainWindow ) {
@@ -306,64 +306,73 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFile: mainWindow tests false");
 
 
+    // There should be one file in the tree model
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  1,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of files in the projectWindow is different from 1");
+
+
+    // Select the file to be sure it is displayed
+
+    int fileToSelect = 0;
+    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+
+    // Scroll until it is visible
+    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+
+
+    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
 
 
 
-    // Display the number of Sidescan channel tabs (which uses QTabWidget Class)
-    std::cout << "\n\nmainWindow->tabs->count(): " << mainWindow->tabs->count() << std::endl;
+//    // Verify that the position corresponds to the same index
+    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
+                                    rectFileToSelect.center() );
 
-    // Display the tab labels
-    for ( int i=0; i< mainWindow->tabs->count(); i++ ) {
-        std::cout << "count: " << i << ", tab text: " << mainWindow->tabs->tabText( i ).toStdString() << "\n";
-    }
-
-    std::cout << "\n" << std::endl;
+    QVERIFY2( indexFileToSelect == indexForPosition,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: indexFileToSelect is different from indexForPosition");
 
 
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
+                      Qt::NoModifier,
+                      rectFileToSelect.center() );
 
 
+    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    QVERIFY2( currentIndex.row() == fileToSelect,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: currentIndex.row() is different from fileToSelect");
 
-    // Display children QTabWidget
 
-    const QObjectList list = mainWindow->tabs->children();
+    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
-    qDebug() << tr( "mainWindow->tabs->children() list.size(): " ) << list.size();
+    // Give a bit of time to be sure the tabs are settled
+    mainWindow->show();
+    eventLoop(100);
 
-    for (QObject *children : list) {
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-    }
+    // Verify tabs
 
-    std::cout << "\n\n" << std::endl;
+    QVERIFY2( mainWindow->tabs->count() == 3,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of tabs is different from 3");
 
-//    QTabBar *tabBar = mainWindow->tabs->findChild<QTabBar*>("qt_tabwidget_tabbar");
+
+    QVERIFY2( mainWindow->tabs->tabText( 0 ).toStdString() == "Channel 0",
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
+    QVERIFY2( mainWindow->tabs->tabText( 1 ).toStdString() == "Channel 1",
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
+    QVERIFY2( mainWindow->tabs->tabText( 2 ).toStdString() == "Channel 2",
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
+
+    QVERIFY2( mainWindow->tabs->currentIndex() == 0,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: The current tab index is different from zero");
+
+
     QTabBar *tabBar = mainWindow->tabs->tabBar();
 
-    const QObjectList listChildrenTabBar = tabBar->children();
+    QVERIFY2( tabBar,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: tabBar tests false");
 
-    qDebug() << tr( "tabBar->children() listChildrenTabBar.size(): " ) << listChildrenTabBar.size();
+    QVERIFY2( tabBar->count() == 3,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: tabBar->count() is different from 3");
 
-    for (QObject *children : listChildrenTabBar) {
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-    }
-
-
-
-    std::cout << "\n\ntabBar->count(): " << tabBar->count() << std::endl;
-
-    // Display the tab labels
-    for ( int i=0; i< tabBar->count(); i++ ) {
-        std::cout << "count: " << i << ", tab text: " << tabBar->tabText( i ).toStdString()
-                  << ", tabButton widget address QTabBar::LeftSide: " << tabBar->tabButton(i, QTabBar::LeftSide)
-                  << ", tabButton widget address QTabBar::RightSide: " << tabBar->tabButton(i, QTabBar::RightSide)
-                  << "\n";
-    }
-
-
-//    std::cout << "\n\n" << std::endl;
-
-    std::cout << "\n\nmainWindow->tabs->currentIndex(): " << mainWindow->tabs->currentIndex() << std::endl;
 
     // Click on second tab
     int index = 1;
@@ -371,13 +380,15 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
     QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
 
 
-    std::cout << "\n\nAfter click on second tab, mainWindow->tabs->currentIndex(): " << mainWindow->tabs->currentIndex() << std::endl;
-
-
+    QVERIFY2( mainWindow->tabs->currentIndex() == index,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: The current tab index is different from the target");
 
 
     mainWindow->show();
     eventLoop(3000);
+
+
+
 
 
     // File properties (which uses QTableWidget class)

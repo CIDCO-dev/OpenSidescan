@@ -215,7 +215,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
+    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
 
     // Single shot timer for function that will interact with the modal window
     QTimer::singleShot(500, this, SLOT(InteractWithModalWindowActionImport() ) );
@@ -411,18 +411,35 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
 
     // There should be one file in the tree model
-    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  1,
-                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of files in the projectWindow is different from 1");
+
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
+                qPrintable( "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of files in the projectWindow is "
+                + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+                + " instead of 2") );
 
 
-    // Select the file to be sure it is displayed and do a verification
 
-    std::string filename = "scotsman7.xtf";
-    std::vector<std::string> tabNames { "port", "starboard" };
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify {
-                        std::make_pair( "Channels (Sonar)", "2" ) };
+    // Select the first file to be sure it is displayed and do a verification
 
-    selectFileAndVerify( 0, filename, tabNames, propertiesToVerify );
+
+    std::string filename;
+    std::vector<std::string> tabNames;
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
+
+    int indexFileToSelect = 0;
+
+    filename = "plane1.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "Channel 0" );
+    tabNames.push_back( "Channel 1" );
+    tabNames.push_back( "Channel 2" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
 
 
     mainWindow->show();
@@ -638,8 +655,11 @@ void testGUI::InteractWithModalWindowActionImport()
 
     // Path with respect to the application executable
     // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
-    QString filename = QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/scotsman7.xtf" );
+
+    QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
+                                + tr( "data/wrecks/plane1.xtf" ) + "\" "
+                       "\"" + QCoreApplication::applicationDirPath() + "/../"
+                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" "             ;
 
 
     QTest::keyClicks(lineEdit, filename );

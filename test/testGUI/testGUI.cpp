@@ -285,8 +285,6 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
               qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
             + QString::number( fileToSelect ) + ", mainWindow->tabs tests false" ) );
 
-
-
     QVERIFY2( mainWindow->tabs->count() == tabNames.size(),
               qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
             + QString::number( fileToSelect ) + ", the number of tabs is "
@@ -312,7 +310,9 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
     QTabBar *tabBar = mainWindow->tabs->tabBar();
 
     QVERIFY2( tabBar,
-                "testGUI::selectFileAndVerify: tabBar tests false");
+              qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+            + QString::number( fileToSelect ) + ", tabBar tests false" ) );
+
 
     QVERIFY2( tabBar->count() == tabNames.size(),
               qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
@@ -338,44 +338,44 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
     }
 
 
-
-
-
-
-
     // Verifying file properties (which uses QTableWidget class)
 
-    // Verify the number of channels
-    QString searchtext = "Channels (Sonar)";
+    for ( int count = 0; count < properties.size(); count++ ) {
 
-    QList<QTableWidgetItem *> items = mainWindow->fileInfo->propertiesTable->findItems(searchtext, Qt::MatchExactly);
+        QList<QTableWidgetItem *> items = mainWindow->fileInfo->propertiesTable->findItems(
+                                                    QString( properties[count].first.c_str() ), Qt::MatchExactly);
 
-//    std::cout << "\n\nitems.size(): " << items.size() << "\n"
-//              << "items[ 0 ]->row(): " << items[ 0 ]->row() << "\n"
-//              << "items[ 0 ]->column(): " << items[ 0 ]->column() << "\n"
-//              << "items[ 0 ]->data( Qt::DisplayRole ).toString(): " << items[ 0 ]->data( Qt::DisplayRole ).toString().toStdString() << "\n"
-//              << "second column: " << mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString() << "\n"
-//              << std::endl;
+        // It should find the item only once
+        QVERIFY2( items.size() == 1,
+                  qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+                + QString::number( fileToSelect ) + ", findItems of '"
+                + QString( properties[count].first.c_str() ) + "' found " + QString::number( items.size() )
+                + " match(es), it should be 1" ) );
 
-    QVERIFY2( items.size() == 1,
-                "testGUI::selectFileAndVerify: items.size() is different from 1");
 
-    QVERIFY2( items[ 0 ]->column() == 0,
-                "testGUI::selectFileAndVerify: searchtext found in the wrong column");
+        QVERIFY2( items[ 0 ]->column() == 0,
+                qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+              + QString::number( fileToSelect ) + ", item of '"
+              + QString( properties[count].first.c_str() ) + "' was found in column "
+              + QString::number( items[ 0 ]->column() )
+              + ". It should be in column 0" ) );
 
-    std::string nbChannelsString = mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
-    QVERIFY2( nbChannelsString == "3",
-                "testGUI::selectFileAndVerify: wrong number of channels in propertiesTable");
+
+        std::string propertyText = mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
+        QVERIFY2( propertyText == properties[count].second,
+                  qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+                + QString::number( fileToSelect ) + ", property '"
+                + QString( properties[count].first.c_str() )
+                + "', corresponding property value text is '"
+                + QString( propertyText.c_str() ) + "' while it should be '"
+                + QString( properties[count].second.c_str() ) + "'" ) );
+
+    }
+
 
     selectFileAndVerifyReachTheEnd = true;
 
 }
-
-
-
-
-
-
 
 
 
@@ -415,117 +415,13 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
                 "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of files in the projectWindow is different from 1");
 
 
-    // Select the file to be sure it is displayed
-
-    std::vector<std::string> tabNames { "Channel 0", "Channel 1", "Channel 2" };
-
-    std::vector< std::pair< std::string,std::string > > properties { std::make_pair("Channels (Sonar)", "3" ) };
+    // Select the file to be sure it is displayed and do a verification
 
     std::string filename = "plane1.xtf";
+    std::vector<std::string> tabNames { "Channel 0", "Channel 1", "Channel 2" };
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify { std::make_pair( "Channels (Sonar)", "3" ) };
 
-    selectFileAndVerify( 0, filename, tabNames, properties );
-
-
-//    QVERIFY2( selectFileAndVerifyReachTheEnd,
-//                        "verifyResultOfUseToolBarActionImportToLoadSidescanFile: selectFileAndVerifyReachTheEnd is false");
-
-
-//    int fileToSelect = 0;
-//    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
-
-//    // Scroll until it is visible
-//    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
-
-//    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
-
-//    // Verify that the rectangle position corresponds to the same index in the model
-//    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
-//                                    rectFileToSelect.center() );
-
-//    QVERIFY2( indexFileToSelect == indexForPosition,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: indexFileToSelect is different from indexForPosition");
-
-//    // Select the file
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
-//                      Qt::NoModifier,
-//                      rectFileToSelect.center() );
-
-
-//    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
-//    QVERIFY2( currentIndex.row() == fileToSelect,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: currentIndex.row() is different from fileToSelect");
-
-
-////    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-//    // Give a bit of time to be sure the tabs are settled
-//    mainWindow->show();
-//    eventLoop(100);
-
-//    // Verify tabs
-
-//    QVERIFY2( mainWindow->tabs,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile:  mainWindow->tabs tests false");
-
-//    QVERIFY2( mainWindow->tabs->count() == 3,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of tabs is different from 3");
-
-
-//    QVERIFY2( mainWindow->tabs->tabText( 0 ).toStdString() == "Channel 0",
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
-//    QVERIFY2( mainWindow->tabs->tabText( 1 ).toStdString() == "Channel 1",
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
-//    QVERIFY2( mainWindow->tabs->tabText( 2 ).toStdString() == "Channel 2",
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: Channel 0 has the wrong tabText");
-
-//    QVERIFY2( mainWindow->tabs->currentIndex() == 0,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: The current tab index is different from zero");
-
-
-//    QTabBar *tabBar = mainWindow->tabs->tabBar();
-
-//    QVERIFY2( tabBar,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: tabBar tests false");
-
-//    QVERIFY2( tabBar->count() == 3,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: tabBar->count() is different from 3");
-
-
-//    // Click on second tab
-//    int index = 1;
-//    const QPoint tabPos = tabBar->tabRect( index ).center();
-//    QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
-
-//    mainWindow->show();
-//    eventLoop(100);
-
-//    QVERIFY2( mainWindow->tabs->currentIndex() == index,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: The current tab index is different from the target");
-
-
-//    // Verifying file properties (which uses QTableWidget class)
-
-//    // Verify the number of channels
-//    QString searchtext = "Channels (Sonar)";
-
-//    QList<QTableWidgetItem *> items = mainWindow->fileInfo->propertiesTable->findItems(searchtext, Qt::MatchExactly);
-
-////    std::cout << "\n\nitems.size(): " << items.size() << "\n"
-////              << "items[ 0 ]->row(): " << items[ 0 ]->row() << "\n"
-////              << "items[ 0 ]->column(): " << items[ 0 ]->column() << "\n"
-////              << "items[ 0 ]->data( Qt::DisplayRole ).toString(): " << items[ 0 ]->data( Qt::DisplayRole ).toString().toStdString() << "\n"
-////              << "second column: " << mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString() << "\n"
-////              << std::endl;
-
-//    QVERIFY2( items.size() == 1,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: items.size() is different from 1");
-
-//    QVERIFY2( items[ 0 ]->column() == 0,
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: searchtext found in the wrong column");
-
-//    std::string nbChannelsString = mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
-//    QVERIFY2( nbChannelsString == "3",
-//                "verifyResultOfUseToolBarActionImportToLoadSidescanFile: wrong number of channels in propertiesTable");
+    selectFileAndVerify( 0, filename, tabNames, propertiesToVerify );
 
 
     mainWindow->show();

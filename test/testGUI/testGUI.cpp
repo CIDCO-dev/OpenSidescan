@@ -417,9 +417,10 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
 
     // Select the file to be sure it is displayed and do a verification
 
-    std::string filename = "plane1.xtf";
-    std::vector<std::string> tabNames { "Channel 0", "Channel 1", "Channel 2" };
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify { std::make_pair( "Channels (Sonar)", "3" ) };
+    std::string filename = "scotsman7.xtf";
+    std::vector<std::string> tabNames { "port", "starboard" };
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify {
+                        std::make_pair( "Channels (Sonar)", "2" ) };
 
     selectFileAndVerify( 0, filename, tabNames, propertiesToVerify );
 
@@ -521,246 +522,46 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     eventLoop(1000);
 
 
-    // Verify the file names in the projectWindow
-    // TODO:
+    int indexFileToSelect;
+    std::string filename;
+    std::vector<std::string> tabNames;
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
 
+    indexFileToSelect = 4;
 
-    // Select a file
+    filename = "scotsman3.xtf";
 
-    int fileToSelect = 4;
-    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+    tabNames.clear();
+    tabNames.push_back( "port" );
+    tabNames.push_back( "starboard" );
 
-    // Scroll until it is visible
-    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
+    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
 
-    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
-
-    // Verify that the rectangle position corresponds to the same index in the model
-    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
-                                    rectFileToSelect.center() );
-
-    QVERIFY2( indexFileToSelect == indexForPosition,
-                "verifyResultOfUseToolBarActionOpenProject: indexFileToSelect is different from indexForPosition");
-
-    // Select the file
-    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
-                      Qt::NoModifier,
-                      rectFileToSelect.center() );
-
-    // Give a bit of time to be sure the tabs are settled
-    mainWindow->show();
-    eventLoop(100);
-
-    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
-    QVERIFY2( currentIndex.row() == fileToSelect,
-                "verifyResultOfUseToolBarActionOpenProject: currentIndex.row() is different from fileToSelect");
-
-    std::cout << "File name: "
-        << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
-
-
-//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-    // Give a bit of time to be sure the tabs are settled
-    mainWindow->show();
-    eventLoop(100);
-
-
-
-
-
-
-
-//    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
-
-//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-////    // The following does not work to set the current index
-////    mainWindow->projectWindow->tree->setCurrentIndex(
-////                mainWindow->projectWindow->tree->model()->index( 2, 0 ) );
-
-////    view.setCurrentIndex(view.model()->index(row, column));
-
-//    // Click on an item in the treeview
-////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
-
-////    int xPos = mainWindow->projectWindow->tree->columnViewportPosition(0) + 2; // add 2 pixels
-////    int yPos = mainWindow->projectWindow->tree-
-
-//    // The following works
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 60) );
-////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton, Qt::NoModifier, QPoint( 60, 5) );
-
-////    // Entire dimension of tree viewport, not just where they entries are.
-////    QRect a = mainWindow->projectWindow->tree->viewport()->rect();
-
-
-////    int height = a.bottom() - a.top();
-////    int width = a.right() - a.left();
-
-
-////    std::cout << "\n\na.top():    " << a.top() << "\n"
-////                  << "a.bottom(): " << a.bottom() << "\n"
-////                  << "a.left():   " << a.left() << "\n"
-////                  << "a.right():  " << a.right() << "\n"
-////                  << "height:     " << height << "\n"
-////                  << "width:      " << width << "\n"
-////                  << "\n" << std::endl;
-
-////   int indexFileToClick = 1;
-////   int verticalPos = static_cast< int > ( ( indexFileToClick + 1.5 ) * height /
-////                                    ( mainWindow->projectWindow->model->getNbFiles() + 1 ) );
-////   QTest::mouseClick(mainWindow->projectWindow->tree->viewport(),
-////                     Qt::LeftButton, Qt::NoModifier,
-////                     QPoint( width / 2, verticalPos) );
-
-
-
-
-
-
-
-//    currentIndex = mainWindow->projectWindow->tree->currentIndex();
-//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-//    QModelIndexList listSelected = mainWindow->projectWindow->tree->selectionModel()->selectedIndexes();
-
-//    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
-
-
-
-//    if ( currentIndex.isValid() ) {
-//        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
-//            std::cout << "File name: "
-//                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
-//        else
-//            std::cout << "File node is the current index\n" << std::endl;
-//    } else { // e.g. no selection
-//        std::cout << "currentIndex is not valid\n" << std::endl;
-
-//    }
-
-
-
-
-
-
-
-//    std::cout << "\n\nmainWindow->projectWindow->model->rowCount(): "
-//              << mainWindow->projectWindow->model->rowCount() << "\n" << std::endl;
-
-//    std::cout << "\n\nmainWindow->projectWindow->model->getNbFiles(): "
-//                 << mainWindow->projectWindow->model->getNbFiles() << "\n"
-//              << std::endl;
-
-
-
-//    mainWindow->show();
-//    eventLoop(1000);
-
-
-//    int fileToSelect = 4;
-//    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
-
-//    // Scroll until it is visible
-//    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
-
-
-//    // Set the index directly without mouse click
-////    mainWindow->projectWindow->tree->setCurrentIndex( indexFileToSelect );
-
-//    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
-
-
-//    int height = rectFileToSelect.bottom() - rectFileToSelect.top();
-//    int width = rectFileToSelect.right() - rectFileToSelect.left();
-
-
-//    std::cout << "\n\nrectFileToSelect.top():    " << rectFileToSelect.top() << "\n"
-//                  << "rectFileToSelect.bottom(): " << rectFileToSelect.bottom() << "\n"
-//                  << "rectFileToSelect.left():   " << rectFileToSelect.left() << "\n"
-//                  << "rectFileToSelect.right():  " << rectFileToSelect.right() << "\n"
-//                  << "height:     " << height << "\n"
-//                  << "width:      " << width << "\n" << std::endl;
-
-
-//    int horizontalPosition = static_cast<int>( ( rectFileToSelect.right() + rectFileToSelect.left() ) / 2 );
-//    int verticalPosition = static_cast<int>( ( rectFileToSelect.bottom() + rectFileToSelect.top() ) / 2 );
-
-//    std::cout << "\n\nhorizontalPosition:            " << horizontalPosition << "\n"
-//                  << "verticalPosition:              " << verticalPosition << "\n"
-//                  << "rectFileToSelect.center().x(): " << rectFileToSelect.center().x() << "\n"
-//                  << "rectFileToSelect.center().y(): " << rectFileToSelect.center().y() << "\n"
-//                  << std::endl;
-
-//    // Verify that the position corresponds to the same index
-//    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
-//                                    rectFileToSelect.center() );
-
-//    if ( indexFileToSelect == indexForPosition )
-//        std::cout << "\n\nSame Index\n" << std::endl;
-//    else
-//        std::cout << "\n\nDifferent Index\n" << std::endl;
-
-
-
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
-//                      Qt::NoModifier,
-//                      rectFileToSelect.center() );
-
-
-//    currentIndex = mainWindow->projectWindow->tree->currentIndex();
-//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
-
-
-//    std::cout << "\n\nlistSelected.size(): " << listSelected.size() << "\n" << std::endl;
-
-
-
-//    if ( currentIndex.isValid() ) {
-//        if ( mainWindow->projectWindow->model->isFilesNode( currentIndex ) == false )
-//            std::cout << "File name: "
-//                  << mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString() << std::endl;
-//        else
-//            std::cout << "File node is the current index\n" << std::endl;
-//    } else { // e.g. no selection
-//        std::cout << "currentIndex is not valid\n" << std::endl;
-
-//    }
-
-//    mainWindow->show();
-//    eventLoop(1000);
-
-
-//    // Trying to use Right click to remove a file from the project
-
-
-////    QTimer::singleShot(500, this, SLOT(InteractWithContextMenu() ) );
-
-
-//    // Does not work
-//    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton,
-//                      Qt::NoModifier,
-//                      rectFileToSelect.center() );
-
-
-
-
-
-
-
-//    // Does not work: selects the previous file and does trigger context menu
-////    QTest::mouseMove(mainWindow->projectWindow->tree->viewport(),
-////                      rectFileToSelect.center() );
-
-////    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::RightButton );
-
-
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
 
     mainWindow->show();
-    eventLoop(5000);
+    eventLoop(2000);
+
+
+    indexFileToSelect = 0;
+
+    filename = "plane1.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "Channel 0" );
+    tabNames.push_back( "Channel 1" );
+    tabNames.push_back( "Channel 2" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
+    mainWindow->show();
+    eventLoop(2000);
 
 
 
@@ -835,7 +636,7 @@ void testGUI::InteractWithModalWindowActionImport()
     eventLoop(100);
 
     // TODO: relative path
-    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/data/wrecks/plane1.xtf" );
+    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman7.xtf" );
 
     QTest::keyClicks(lineEdit, filename );
 

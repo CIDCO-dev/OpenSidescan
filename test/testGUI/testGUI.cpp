@@ -37,9 +37,6 @@ class testGUI : public QObject
 {
     Q_OBJECT
 
-    // https://www.qtcentre.org/threads/23541-Displaying-GUI-events-with-QtTest
-    // If want to show the GUI
-    void eventLoop(const int msec);
 
 
 public slots:
@@ -112,15 +109,6 @@ private:
 
 };
 
-void testGUI::eventLoop(const int msec)
-{
-    QEventLoop loop;
-    QTimer timer;
-    QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    timer.setSingleShot(true);
-    timer.start(msec);
-    loop.exec();
-}
 
 
 void testGUI::timeOutOccured()
@@ -214,7 +202,8 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 
     mainWindow->show();
-    eventLoop(1200);
+    QTest::qWait(1200);
+
 
 
     QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
@@ -278,15 +267,14 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
                 + " instead of 2") );
 
 
+    // Select the files and verify
 
-    // Select the first file to be sure it is displayed and do a verification
-
-
+    int indexFileToSelect;
     std::string filename;
     std::vector<std::string> tabNames;
     std::vector< std::pair< std::string,std::string > > propertiesToVerify;
 
-    int indexFileToSelect = 0;
+    indexFileToSelect = 0;
 
     filename = "plane1.xtf";
 
@@ -301,9 +289,27 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 
     selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
 
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+    indexFileToSelect = 1;
+
+    filename = "scotsman3.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "port" );
+    tabNames.push_back( "starboard" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
+    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
 
     mainWindow->show();
-    eventLoop(3000);
+    QTest::qWait(3000);
 
 //    QVERIFY2( false, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: false on purpose");
 
@@ -318,7 +324,7 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 
 
     mainWindow->show();
-    eventLoop(1200);
+    QTest::qWait(1200);
 
 
     QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
@@ -420,7 +426,7 @@ void testGUI::useToolBarActionOpenProject()
 
     // Show the mainWindow before opening the modal window
     mainWindow->show();
-    eventLoop(200);
+    QTest::qWait(200);
 
 
     // Time out timer in case there is a failure while interacting with the modal window
@@ -473,7 +479,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
               + " instead of 2") );
 
     mainWindow->show();
-    eventLoop(1000);
+    QTest::qWait(1000);
 
 
     int indexFileToSelect;
@@ -496,7 +502,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
 
     mainWindow->show();
-    eventLoop(2000);
+    QTest::qWait(1000);
 
 
     indexFileToSelect = 0;
@@ -515,7 +521,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
 
     mainWindow->show();
-    eventLoop(2000);
+    QTest::qWait(1000);
 
 
 
@@ -582,7 +588,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
     // Give a bit of time to be sure the tabs are settled
     mainWindow->show();
-    eventLoop(100);
+    QTest::qWait(100);
 
     // Verify tabs
 
@@ -633,7 +639,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
         QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
 
         mainWindow->show();
-        eventLoop(500);
+        QTest::qWait(500);
 
         QVERIFY2( mainWindow->tabs->currentIndex() == count,
                   qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
@@ -689,7 +695,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 //    qDebug() << tr( "Beginning of 'testGUI::afterContextMenu()'" );
 
 //    mainWindow->show();
-//    eventLoop(10000);
+//    QTest::qWait(10000);
 
 //    if ( mainWindow )
 //    {
@@ -708,7 +714,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 
 //    mainWindow->show();
-//    eventLoop(5000);
+//    QTest::qWait(5000);
 
 //}
 
@@ -719,7 +725,7 @@ void testGUI::interactWithModalWindowActionImport()
     qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     QWidget * modalWidget = QApplication::activeModalWidget();    
     QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
@@ -741,7 +747,7 @@ void testGUI::interactWithModalWindowActionImport()
 
 
     mainWindow->show();
-    eventLoop(100);
+    QTest::qWait(100);
 
 
     // Path with respect to the application executable
@@ -790,13 +796,13 @@ void testGUI::interactWithModalWindowActionImport()
 
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     // Click button to close the modal dialog
     QTest::mouseClick(acceptButton, Qt::LeftButton);
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
 
     interactWithModalWindowActionImportReachedTheEnd = true;
@@ -817,7 +823,7 @@ void testGUI::interactWithModalWindowActionSaveAs()
     qDebug() << tr( "Beginning of interactWithModalWindowActionSaveAs()" );
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     QWidget * modalWidget = QApplication::activeModalWidget();
     QVERIFY2( modalWidget, "interactWithModalWindowActionSaveAs: modalWidget tests false");
@@ -839,7 +845,7 @@ void testGUI::interactWithModalWindowActionSaveAs()
 
 
     mainWindow->show();
-    eventLoop(100);
+    QTest::qWait(100);
 
 
     // Path with respect to the application executable
@@ -885,13 +891,13 @@ void testGUI::interactWithModalWindowActionSaveAs()
 
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     // Click button to close the modal dialog
     QTest::mouseClick(saveButton, Qt::LeftButton);
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
 
     interactWithModalWindowActionSaveAsReachedTheEnd = true;
@@ -912,7 +918,7 @@ void testGUI::interactWithModalWindowAlreadyAnActiveProject()
     qDebug() << tr( "Beginning of interactWithModalWindowAlreadyAnActiveProject()" );
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     qDebug() << tr( "After starting AlreadyAnActiveProject modal window" );
 
@@ -991,7 +997,7 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 
 
     mainWindow->show();
-    eventLoop(1200);
+    QTest::qWait(1200);
 
 //    QVERIFY2( false, "interactWithModalWindowToSelectProjectToOpen: false on purpose");
 
@@ -1016,7 +1022,7 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 
 
     mainWindow->show();
-    eventLoop(100);
+    QTest::qWait(100);
 
 
     // Path with respect to the application executable
@@ -1054,13 +1060,13 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     // Click button to close the modal dialog
     QTest::mouseClick(acceptButton, Qt::LeftButton);
 
     mainWindow->show();
-    eventLoop(500);
+    QTest::qWait(500);
 
     interactWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
 

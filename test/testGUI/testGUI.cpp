@@ -53,8 +53,6 @@ public slots:
 
 //    void InteractWithContextMenu();
 
-//    void InteractWithModalWindowDialogPlatform();
-
     void selectFileAndVerify( int fileToSelect, std::string & filename,
                                        std::vector<std::string> & tabNames,
                                        std::vector< std::pair< std::string,std::string > > & properties );
@@ -382,10 +380,18 @@ void testGUI::cleanAfterSaveAs()
 
 void testGUI::useToolBarActionOpenProject()
 {
+    qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
+
+
+    QVERIFY2( verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd,
+                "useToolBarActionOpenProject: verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd is false");
+
+    QVERIFY2( interactWithModalWindowActionSaveAsReachedTheEnd,
+                "useToolBarActionOpenProject: interactWithModalWindowActionSaveAsReachedTheEnd is false");
+
 
 //    QSKIP( "Skip the second test" );
 
-    qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
 
     // In case the previous test did not complete to the end
     if ( mainWindow ) {
@@ -431,6 +437,12 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
 //    QSKIP( "Skip the second test" );
 
+    QVERIFY2( verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd,
+                "useToolBarActionOpenProject: verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd is false");
+
+    QVERIFY2( interactWithModalWindowActionSaveAsReachedTheEnd,
+                "useToolBarActionOpenProject: interactWithModalWindowActionSaveAsReachedTheEnd is false");
+
     timerTimeOut->stop();
 
     std::cout << "\n" << std::endl;
@@ -455,8 +467,10 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionOpenProject: mainWindow tests false");
 
     // There should be five files in the tree model
-    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  5,
-                "verifyResultOfUseToolBarActionOpenProject: the number of files in the projectWindow is different from 5");
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
+              qPrintable( "verifyResultOfUseToolBarActionOpenProject: the number of files in the projectWindow is "
+              + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+              + " instead of 2") );
 
     mainWindow->show();
     eventLoop(1000);
@@ -467,7 +481,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     std::vector<std::string> tabNames;
     std::vector< std::pair< std::string,std::string > > propertiesToVerify;
 
-    indexFileToSelect = 4;
+    indexFileToSelect = 1;
 
     filename = "scotsman3.xtf";
 
@@ -736,7 +750,7 @@ void testGUI::interactWithModalWindowActionImport()
     QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
                                 + tr( "data/wrecks/plane1.xtf" ) + "\" "
                        "\"" + QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" "             ;
+                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" ";
 
 
     QTest::keyClicks(lineEdit, filename );
@@ -932,7 +946,7 @@ void testGUI::interactWithModalWindowAlreadyAnActiveProject()
     QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 60 * 1000 ); // Time large enough to include the time it takes to load the files
+    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
 
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
 
@@ -1007,8 +1021,10 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 
     // Path with respect to the application executable
     // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
-    QString filename = QCoreApplication::applicationDirPath() + "/../"
-                                        + tr( "testProject/TestProject5Files.ssp" );
+//    QString filename = QCoreApplication::applicationDirPath() + "/../"
+//                                        + tr( "testProject/TestProject5Files.ssp" );
+
+    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject.ssp";
 
     QTest::keyClicks(lineEdit, filename );
 

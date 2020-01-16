@@ -635,8 +635,12 @@ void testGUI::InteractWithModalWindowActionImport()
     mainWindow->show();
     eventLoop(100);
 
-    // TODO: relative path
-    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman7.xtf" );
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+    QString filename = QCoreApplication::applicationDirPath() + "/../"
+                                + tr( "data/wrecks/scotsman7.xtf" );
+
 
     QTest::keyClicks(lineEdit, filename );
 
@@ -800,8 +804,11 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
     mainWindow->show();
     eventLoop(100);
 
-    // TODO: relative path
-    QString filename = tr( "/home/chris/Worskpace/OpenSidescan/test/testProject/TestProject5Files.ssp" );
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+    QString filename = QCoreApplication::applicationDirPath() + "/../"
+                                        + tr( "testProject/TestProject5Files.ssp" );
 
     QTest::keyClicks(lineEdit, filename );
 

@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include <QMenu>
 
 #include <QDialogButtonBox>
 
@@ -48,6 +49,8 @@ public slots:
 
     void interactWithModalWindowToSelectProjectToOpen();
 
+    void interactWithModalWindowActionImportJustVerifyWindow();
+
 //    void InteractWithContextMenu();
 
     void selectFileAndVerify( int fileToSelect, std::string & filename,
@@ -77,6 +80,11 @@ private slots:
 
     // Test functions
 
+
+    void useMenuImport();
+    void verifyUseMenuImport();
+
+
     void useToolBarActionImportToLoadSidescanFile();
     void verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs();
     void cleanAfterSaveAs();
@@ -102,6 +110,8 @@ private:
 
     bool interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd;
     bool interactWithModalWindowToSelectProjectToOpenReachedTheEnd;
+
+    bool interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd;
 
     bool selectFileAndVerifyReachTheEnd;
 
@@ -157,6 +167,8 @@ void testGUI::initTestCase()
     interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
     interactWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
 
+    interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = false;
+
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
     connect(timerTimeOut, &QTimer::timeout, this, &testGUI::timeOutOccured );
@@ -178,9 +190,97 @@ void testGUI::cleanupTestCase()
 // Test functions
 
 
-void testGUI::useToolBarActionImportToLoadSidescanFile()
+void testGUI::useMenuImport()
 {
 //    QSKIP( "Skip the first test" );
+
+    qDebug() << tr( "Beginning of 'useMenuImport()'" );
+
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useMenuImport: mainWindow tests false");
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+    // ---- Using shortkeys
+
+    // Keyboard to Project menu
+    QTest::keyClick( mainWindow, 'r', Qt::AltModifier );
+
+    mainWindow->show();
+    QTest::qWait(2000);
+
+
+    const QObjectList list = mainWindow->children();
+
+    qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
+
+    for (QObject *children : list) {
+        qDebug() << children->objectName()
+                 << ", className: " << children->metaObject()->className();
+
+    }
+
+
+
+
+    QMenu *menu = mainWindow->findChild< QMenu * >( "menuBar" );
+//    QVERIFY2( menu, "useMenuImport: menu tests false");
+
+    std::cout << "\n\nmenu: " << menu << "\n" << std::endl;
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 10 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImportJustVerifyWindow() ) );
+
+    // Keyboard for import sidescan file
+//    QTest::keyClick( menu, 'i', Qt::AltModifier );
+    QTest::keyClick( menu, 'i', Qt::AltModifier );
+
+
+}
+
+
+
+
+
+void testGUI::verifyUseMenuImport()
+{
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::verifyUseMenuImport'" );
+
+
+    QVERIFY2( interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd,
+                "verifyUseMenuImport: interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd is false");
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+}
+
+
+
+void testGUI::useToolBarActionImportToLoadSidescanFile()
+{
+    QSKIP( "Skip the first test" );
 
     qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFile()'" );
 
@@ -227,10 +327,9 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 
 
-
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 {
-//    QSKIP( "Skip the first test" );
+    QSKIP( "Skip the first test" );
 
 
     timerTimeOut->stop();
@@ -361,6 +460,8 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 void testGUI::cleanAfterSaveAs()
 {
 
+    QSKIP( "Skip testGUI::cleanAfterSaveAs()" );
+
     timerTimeOut->stop();
 
     std::cout << "\n" << std::endl;
@@ -386,6 +487,8 @@ void testGUI::cleanAfterSaveAs()
 
 void testGUI::useToolBarActionOpenProject()
 {
+    QSKIP( "Skip useToolBarActionOpenProject()" );
+
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
 
 
@@ -441,7 +544,7 @@ void testGUI::useToolBarActionOpenProject()
 
 void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
-//    QSKIP( "Skip the second test" );
+    QSKIP( "Skip verifyResultOfUseToolBarActionOpenProject()" );
 
     QVERIFY2( verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd,
                 "useToolBarActionOpenProject: verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd is false");
@@ -809,6 +912,66 @@ void testGUI::interactWithModalWindowActionImport()
 
 }
 
+
+
+void testGUI::interactWithModalWindowActionImportJustVerifyWindow()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowActionImportJustVerifyWindow()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
+              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
+
+
+    // Find the button to cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonText = tr( "&Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText )
+            cancelButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( cancelButton, "interactWithModalWindowActionImport: acceptButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
+
+
+
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(cancelButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+
+    interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = true;
+
+}
 
 
 

@@ -43,11 +43,13 @@ class testGUI : public QObject
 
 
 public slots:
-    void InteractWithModalWindowActionImport();
+    void interactWithModalWindowActionImport();
 
-    void InteractWithModalWindowAlreadyAnActiveProject();
+    void interactWithModalWindowActionSaveAs();
 
-    void InteractWithModalWindowToSelectProjectToOpen();
+    void interactWithModalWindowAlreadyAnActiveProject();
+
+    void interactWithModalWindowToSelectProjectToOpen();
 
 //    void InteractWithContextMenu();
 
@@ -81,7 +83,8 @@ private slots:
     // Test functions
 
     void useToolBarActionImportToLoadSidescanFile();
-    void verifyResultOfUseToolBarActionImportToLoadSidescanFile();
+    void verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs();
+    void cleanAfterSaveAs();
 
     void useToolBarActionOpenProject();
     void verifyResultOfUseToolBarActionOpenProject();
@@ -96,9 +99,14 @@ private:
 
     MainWindow * mainWindow;
 
-    bool InteractWithModalWindowActionImportReachedTheEnd;
-    bool InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd;
-    bool InteractWithModalWindowToSelectProjectToOpenReachedTheEnd;
+    bool interactWithModalWindowActionImportReachedTheEnd;
+
+    bool interactWithModalWindowActionSaveAsReachedTheEnd;
+
+    bool verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd;
+
+    bool interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd;
+    bool interactWithModalWindowToSelectProjectToOpenReachedTheEnd;
 
     bool selectFileAndVerifyReachTheEnd;
 
@@ -154,9 +162,14 @@ void testGUI::initTestCase()
 {
     mainWindow = nullptr;
 
-    InteractWithModalWindowActionImportReachedTheEnd = false;
-    InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
-    InteractWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
+    interactWithModalWindowActionImportReachedTheEnd = false;
+
+    interactWithModalWindowActionSaveAsReachedTheEnd = false;
+
+    verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd = false;
+
+    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
+    interactWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -218,12 +231,290 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
     timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
 
     // Single shot timer for function that will interact with the modal window
-    QTimer::singleShot(500, this, SLOT(InteractWithModalWindowActionImport() ) );
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImport() ) );
 
     // Click the button to open the modal dialog
     QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
 
 }
+
+
+
+
+void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
+{
+//    QSKIP( "Skip the first test" );
+
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs'" );
+
+
+    if ( interactWithModalWindowActionImportReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowActionImportReachedTheEnd,
+                    "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: interactWithModalWindowActionImportReachedTheEnd is false");
+    }
+
+
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: mainWindow tests false");
+
+
+    // There should be one file in the tree model
+
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
+                qPrintable( "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: the number of files in the projectWindow is "
+                + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+                + " instead of 2") );
+
+
+
+    // Select the first file to be sure it is displayed and do a verification
+
+
+    std::string filename;
+    std::vector<std::string> tabNames;
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
+
+    int indexFileToSelect = 0;
+
+    filename = "plane1.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "Channel 0" );
+    tabNames.push_back( "Channel 1" );
+    tabNames.push_back( "Channel 2" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
+
+    mainWindow->show();
+    eventLoop(3000);
+
+//    QVERIFY2( false, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: false on purpose");
+
+
+    // -----------------------------------------------------------------------------------------
+    // Save As project
+
+    // Get action for project save as
+
+    QAction * actionSaveAs = mainWindow->findChild< QAction * >( "actionSaveAs" );
+    QVERIFY2( actionSaveAs, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: actionSaveAs tests false");
+
+
+    mainWindow->show();
+    eventLoop(1200);
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: mainToolBar tests false");
+
+
+    QWidget *widgetForActionSaveAs = mainToolBar->widgetForAction( actionSaveAs );
+    QVERIFY2( widgetForActionSaveAs, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: widgetForActionSaveAs tests false");
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 10 * 1000 );
+
+    // Single shot timer for function that will interact with the modal window
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionSaveAs() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionSaveAs, Qt::LeftButton);
+
+
+    verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd = true;
+
+
+//    if ( mainWindow ) {
+//        delete mainWindow;
+//        mainWindow = nullptr;
+//    }
+
+
+}
+
+
+
+void testGUI::cleanAfterSaveAs()
+{
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::cleanAfterSaveAs'" );
+
+
+    QVERIFY2( verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd,
+                "cleanAfterSaveAs: verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd is false");
+
+    QVERIFY2( interactWithModalWindowActionSaveAsReachedTheEnd,
+                "cleanAfterSaveAs: interactWithModalWindowActionSaveAsReachedTheEnd is false");
+
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+}
+
+
+
+void testGUI::useToolBarActionOpenProject()
+{
+
+//    QSKIP( "Skip the second test" );
+
+    qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
+
+    // In case the previous test did not complete to the end
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useToolBarActionOpenProject: mainWindow tests false");
+
+
+    // Get action for importing a sidescan file
+
+    QAction * actionOpenProject = mainWindow->findChild< QAction * >( "actionOpenProject" );
+    QVERIFY2( actionOpenProject, "useToolBarActionOpenProject: actionOpenProject tests false");
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionOpenProject: mainToolBar tests false");
+
+
+
+    QWidget *widgetForActionOpenProject = mainToolBar->widgetForAction( actionOpenProject );
+    QVERIFY2( widgetForActionOpenProject, "useToolBarActionOpenProject: widgetForActionOpenProject tests false");
+
+    // Show the mainWindow before opening the modal window
+    mainWindow->show();
+    eventLoop(200);
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 10 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowAlreadyAnActiveProject() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionOpenProject, Qt::LeftButton);
+
+}
+
+void testGUI::verifyResultOfUseToolBarActionOpenProject()
+{
+//    QSKIP( "Skip the second test" );
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
+
+    if ( interactWithModalWindowToSelectProjectToOpenReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowToSelectProjectToOpenReachedTheEnd,
+                    "verifyResultOfUseToolBarActionOpenProject: interactWithModalWindowActionImportReachedTheEnd is false");
+    }
+
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionOpenProject: mainWindow tests false");
+
+    // There should be five files in the tree model
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  5,
+                "verifyResultOfUseToolBarActionOpenProject: the number of files in the projectWindow is different from 5");
+
+    mainWindow->show();
+    eventLoop(1000);
+
+
+    int indexFileToSelect;
+    std::string filename;
+    std::vector<std::string> tabNames;
+    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
+
+    indexFileToSelect = 4;
+
+    filename = "scotsman3.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "port" );
+    tabNames.push_back( "starboard" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
+    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
+    mainWindow->show();
+    eventLoop(2000);
+
+
+    indexFileToSelect = 0;
+
+    filename = "plane1.xtf";
+
+    tabNames.clear();
+    tabNames.push_back( "Channel 0" );
+    tabNames.push_back( "Channel 1" );
+    tabNames.push_back( "Channel 2" );
+
+    propertiesToVerify.clear();
+    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
+    mainWindow->show();
+    eventLoop(2000);
+
+
+
+
+    if ( mainWindow )
+    {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+
+}
+
 
 
 void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
@@ -379,220 +670,6 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 
 
-void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile()
-{
-//    QSKIP( "Skip the first test" );
-
-
-    timerTimeOut->stop();
-
-    std::cout << "\n" << std::endl;
-
-    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFile'" );
-
-
-    if ( InteractWithModalWindowActionImportReachedTheEnd == false )
-    {
-        // Give time for the window to be closed after the instruction to close is sent
-        // in the function responding to the timer
-        QTest::qWait( 200 );
-
-        if ( mainWindow ) {
-            delete mainWindow;
-            mainWindow = nullptr;
-        }
-
-        QVERIFY2( InteractWithModalWindowActionImportReachedTheEnd,
-                    "verifyResultOfUseToolBarActionImportToLoadSidescanFile: InteractWithModalWindowActionImportReachedTheEnd is false");
-    }
-
-
-    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFile: mainWindow tests false");
-
-
-    // There should be one file in the tree model
-
-    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
-                qPrintable( "verifyResultOfUseToolBarActionImportToLoadSidescanFile: the number of files in the projectWindow is "
-                + QString::number( mainWindow->projectWindow->model->getNbFiles() )
-                + " instead of 2") );
-
-
-
-    // Select the first file to be sure it is displayed and do a verification
-
-
-    std::string filename;
-    std::vector<std::string> tabNames;
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
-
-    int indexFileToSelect = 0;
-
-    filename = "plane1.xtf";
-
-    tabNames.clear();
-    tabNames.push_back( "Channel 0" );
-    tabNames.push_back( "Channel 1" );
-    tabNames.push_back( "Channel 2" );
-
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
-    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
-
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
-
-
-    mainWindow->show();
-    eventLoop(3000);
-
-//    QVERIFY2( false, "verifyResultOfUseToolBarActionImportToLoadSidescanFile: false on purpose");
-
-
-    if ( mainWindow ) {
-        delete mainWindow;
-        mainWindow = nullptr;
-    }
-
-
-}
-
-
-void testGUI::useToolBarActionOpenProject()
-{
-
-//    QSKIP( "Skip the second test" );
-
-    qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
-
-    // In case the previous test did not complete to the end
-    if ( mainWindow ) {
-        delete mainWindow;
-        mainWindow = nullptr;
-    }
-
-    mainWindow = new MainWindow;
-
-    QVERIFY2( mainWindow, "useToolBarActionOpenProject: mainWindow tests false");
-
-
-    // Get action for importing a sidescan file
-
-    QAction * actionOpenProject = mainWindow->findChild< QAction * >( "actionOpenProject" );
-    QVERIFY2( actionOpenProject, "useToolBarActionOpenProject: actionOpenProject tests false");
-
-
-    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
-    QVERIFY2( mainToolBar, "useToolBarActionOpenProject: mainToolBar tests false");
-
-
-
-    QWidget *widgetForActionOpenProject = mainToolBar->widgetForAction( actionOpenProject );
-    QVERIFY2( widgetForActionOpenProject, "useToolBarActionOpenProject: widgetForActionOpenProject tests false");
-
-    // Show the mainWindow before opening the modal window
-    mainWindow->show();
-    eventLoop(200);
-
-
-    // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
-
-    QTimer::singleShot(500, this, SLOT(InteractWithModalWindowAlreadyAnActiveProject() ) );
-
-    // Click the button to open the modal dialog
-    QTest::mouseClick(widgetForActionOpenProject, Qt::LeftButton);
-
-}
-
-void testGUI::verifyResultOfUseToolBarActionOpenProject()
-{
-//    QSKIP( "Skip the second test" );
-
-    timerTimeOut->stop();
-
-    std::cout << "\n" << std::endl;
-
-    std::cout << "\n\nBeginning of testGUI::verifyResultOfUseToolBarActionOpenProject()\n" << std::endl;
-
-    if ( InteractWithModalWindowToSelectProjectToOpenReachedTheEnd == false )
-    {
-        // Give time for the window to be closed after the instruction to close is sent
-        // in the function responding to the timer
-        QTest::qWait( 200 );
-
-        if ( mainWindow ) {
-            delete mainWindow;
-            mainWindow = nullptr;
-        }
-
-        QVERIFY2( InteractWithModalWindowToSelectProjectToOpenReachedTheEnd,
-                    "verifyResultOfUseToolBarActionOpenProject: InteractWithModalWindowActionImportReachedTheEnd is false");
-    }
-
-    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionOpenProject: mainWindow tests false");
-
-    // There should be five files in the tree model
-    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  5,
-                "verifyResultOfUseToolBarActionOpenProject: the number of files in the projectWindow is different from 5");
-
-    mainWindow->show();
-    eventLoop(1000);
-
-
-    int indexFileToSelect;
-    std::string filename;
-    std::vector<std::string> tabNames;
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
-
-    indexFileToSelect = 4;
-
-    filename = "scotsman3.xtf";
-
-    tabNames.clear();
-    tabNames.push_back( "port" );
-    tabNames.push_back( "starboard" );
-
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
-    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
-
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
-
-    mainWindow->show();
-    eventLoop(2000);
-
-
-    indexFileToSelect = 0;
-
-    filename = "plane1.xtf";
-
-    tabNames.clear();
-    tabNames.push_back( "Channel 0" );
-    tabNames.push_back( "Channel 1" );
-    tabNames.push_back( "Channel 2" );
-
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
-    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
-
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
-
-    mainWindow->show();
-    eventLoop(2000);
-
-
-
-
-    if ( mainWindow )
-    {
-        delete mainWindow;
-        mainWindow = nullptr;
-    }
-
-
-}
-
-
 //void testGUI::afterContextMenu()
 //{
 //    qDebug() << tr( "Beginning of 'testGUI::afterContextMenu()'" );
@@ -623,22 +700,22 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 
 
-void testGUI::InteractWithModalWindowActionImport()
+void testGUI::interactWithModalWindowActionImport()
 {
-    qDebug() << tr( "Beginning of InteractWithModalWindowActionImport()" );
+    qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
 
     mainWindow->show();
     eventLoop(500);
 
     QWidget * modalWidget = QApplication::activeModalWidget();    
-    QVERIFY2( modalWidget, "InteractWithModalWindowActionImport: modalWidget tests false");
+    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
 
     QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
-              "InteractWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
+              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
 
 
     QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
-    QVERIFY2( lineEdit, "InteractWithModalWindowActionImport: lineEdit tests false");
+    QVERIFY2( lineEdit, "interactWithModalWindowActionImport: lineEdit tests false");
 
 
     // Number of characters currently present in the QLineEdit
@@ -664,7 +741,7 @@ void testGUI::InteractWithModalWindowActionImport()
 
     QTest::keyClicks(lineEdit, filename );
 
-    QVERIFY2( lineEdit->text() == filename, "InteractWithModalWindowActionImport: filename is not the same in the QLineEdit");
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionImport: filename is not the same in the QLineEdit");
 
 
     // Find the button to accept and close the modal window
@@ -672,7 +749,7 @@ void testGUI::InteractWithModalWindowActionImport()
     // The buttons are within a QDialogButtonBox
 
     QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "InteractWithModalWindowActionImport: buttonBox tests false");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
 
 
     // The buttons don't have object names,
@@ -690,8 +767,8 @@ void testGUI::InteractWithModalWindowActionImport()
             acceptButton = static_cast<QPushButton * >( button );
     }
 
-    QVERIFY2( acceptButton, "InteractWithModalWindowActionImport: acceptButton tests false");
-    QVERIFY2( acceptButton->isEnabled(), "InteractWithModalWindowActionImport: acceptButton is not enabled");
+    QVERIFY2( acceptButton, "interactWithModalWindowActionImport: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
 
 
 
@@ -708,25 +785,128 @@ void testGUI::InteractWithModalWindowActionImport()
     eventLoop(500);
 
 
-    InteractWithModalWindowActionImportReachedTheEnd = true;
+    interactWithModalWindowActionImportReachedTheEnd = true;
 
 }
 
 
-void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
+
+
+
+
+
+
+
+
+void testGUI::interactWithModalWindowActionSaveAs()
 {
-    qDebug() << tr( "Beginning of InteractWithModalWindowAlreadyAnActiveProject()" );
+    qDebug() << tr( "Beginning of interactWithModalWindowActionSaveAs()" );
+
+    mainWindow->show();
+    eventLoop(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionSaveAs: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowActionSaveAs: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    eventLoop(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject";
+
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionSaveAs: filename is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionSaveAs: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString saveButtonText = tr( "&Save" );
+    QPushButton * saveButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == saveButtonText )
+            saveButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( saveButton, "interactWithModalWindowActionSaveAs: saveButton tests false");
+    QVERIFY2( saveButton->isEnabled(), "interactWithModalWindowActionSaveAs: saveButton is not enabled");
+
+
+
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    eventLoop(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(saveButton, Qt::LeftButton);
+
+    mainWindow->show();
+    eventLoop(500);
+
+
+    interactWithModalWindowActionSaveAsReachedTheEnd = true;
+
+}
+
+
+
+
+
+
+
+
+
+
+void testGUI::interactWithModalWindowAlreadyAnActiveProject()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowAlreadyAnActiveProject()" );
 
     mainWindow->show();
     eventLoop(500);
 
     qDebug() << tr( "After starting AlreadyAnActiveProject modal window" );
 
-//    QVERIFY2( false, "InteractWithModalWindowAlreadyAnActiveProject: false on purpose");
+//    QVERIFY2( false, "interactWithModalWindowAlreadyAnActiveProject: false on purpose");
 
 
     QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "InteractWithModalWindowAlreadyAnActiveProject: modalWidget tests false");
+    QVERIFY2( modalWidget, "interactWithModalWindowAlreadyAnActiveProject: modalWidget tests false");
 
 //    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
 
@@ -737,7 +917,7 @@ void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
 
 
     QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("qt_msgbox_buttonbox");
-    QVERIFY2( buttonBox, "InteractWithModalWindowAlreadyAnActiveProject: buttonBox tests false");
+    QVERIFY2( buttonBox, "interactWithModalWindowAlreadyAnActiveProject: buttonBox tests false");
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
@@ -749,32 +929,32 @@ void testGUI::InteractWithModalWindowAlreadyAnActiveProject()
             buttonOK = static_cast<QPushButton * >( button );
     }
 
-    QVERIFY2( buttonOK, "InteractWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
+    QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
 
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 60 * 1000 ); // Time large enough to include the time it takes to load the files
 
-    QTimer::singleShot(500, this, SLOT(InteractWithModalWindowToSelectProjectToOpen() ) );
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
 
 
     // Click the button to open the modal dialog
     QTest::mouseClick(buttonOK, Qt::LeftButton);
 
-    InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd = true;
+    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = true;
 
 
 }
 
 
-void testGUI::InteractWithModalWindowToSelectProjectToOpen()
+void testGUI::interactWithModalWindowToSelectProjectToOpen()
 {
 
     std::cout << "\n" << std::endl;
 
-    qDebug() << tr( "Beginning of 'testGUI::InteractWithModalWindowToSelectProjectToOpen'" );
+    qDebug() << tr( "Beginning of 'testGUI::interactWithModalWindowToSelectProjectToOpen'" );
 
 
-    if ( InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
+    if ( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
     {
         // Just in case, stop the timer
         timerTimeOut->stop();
@@ -788,29 +968,29 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
             mainWindow = nullptr;
         }
 
-        QVERIFY2( InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
-                    "InteractWithModalWindowToSelectProjectToOpen: InteractWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
+        QVERIFY2( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
+                    "interactWithModalWindowToSelectProjectToOpen: interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
     }
 
-//    QVERIFY2( mainWindow, "InteractWithModalWindowToSelectProjectToOpen: mainWindow tests false");
+//    QVERIFY2( mainWindow, "interactWithModalWindowToSelectProjectToOpen: mainWindow tests false");
 
 
 
     mainWindow->show();
     eventLoop(1200);
 
-//    QVERIFY2( false, "InteractWithModalWindowToSelectProjectToOpen: false on purpose");
+//    QVERIFY2( false, "interactWithModalWindowToSelectProjectToOpen: false on purpose");
 
 
     QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "InteractWithModalWindowToSelectProjectToOpen: modalWidget tests false");
+    QVERIFY2( modalWidget, "interactWithModalWindowToSelectProjectToOpen: modalWidget tests false");
 
     QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
-              "InteractWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
 
 
     QLineEdit *lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
-    QVERIFY2( lineEdit, "InteractWithModalWindowToSelectProjectToOpen: lineEdit tests false");
+    QVERIFY2( lineEdit, "interactWithModalWindowToSelectProjectToOpen: lineEdit tests false");
 
 
     // Number of characters currently present in the QLineEdit
@@ -832,7 +1012,7 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
 
     QTest::keyClicks(lineEdit, filename );
 
-    QVERIFY2( lineEdit->text() == filename, "InteractWithModalWindowToSelectProjectToOpen: filename is not the same in the QLineEdit");
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowToSelectProjectToOpen: filename is not the same in the QLineEdit");
 
 
     // Find the button to accept and close the modal window
@@ -840,7 +1020,7 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
     // The buttons are within a QDialogButtonBox
 
     QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "InteractWithModalWindowToSelectProjectToOpen: buttonBox tests false");
+    QVERIFY2( buttonBox, "interactWithModalWindowToSelectProjectToOpen: buttonBox tests false");
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
@@ -853,8 +1033,8 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
             acceptButton = static_cast<QPushButton * >( button );
     }
 
-    QVERIFY2( acceptButton, "InteractWithModalWindowToSelectProjectToOpen: acceptButton tests false");
-    QVERIFY2( acceptButton->isEnabled(), "InteractWithModalWindowToSelectProjectToOpen: acceptButton is not enabled");
+    QVERIFY2( acceptButton, "interactWithModalWindowToSelectProjectToOpen: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowToSelectProjectToOpen: acceptButton is not enabled");
 
 
     mainWindow->show();
@@ -866,7 +1046,7 @@ void testGUI::InteractWithModalWindowToSelectProjectToOpen()
     mainWindow->show();
     eventLoop(500);
 
-    InteractWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
+    interactWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
 
 }
 

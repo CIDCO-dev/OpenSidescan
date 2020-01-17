@@ -14,7 +14,9 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include <QMenuBar>
 #include <QMenu>
+
 
 #include <QDialogButtonBox>
 
@@ -234,10 +236,12 @@ void testGUI::useMenuImport()
 
 
 
-    QMenu *menu = mainWindow->findChild< QMenu * >( "menuBar" );
-//    QVERIFY2( menu, "useMenuImport: menu tests false");
+    QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
+    QVERIFY2( menuBar, "useMenuImport: menuBar tests false");
 
-    std::cout << "\n\nmenu: " << menu << "\n" << std::endl;
+
+    QMenu *menuFile = menuBar->findChild< QMenu * >( "menuFile" );
+    QVERIFY2( menuFile, "useMenuImport: menuFile tests false");
 
 
     // Time out timer in case there is a failure while interacting with the modal window
@@ -246,8 +250,8 @@ void testGUI::useMenuImport()
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImportJustVerifyWindow() ) );
 
     // Keyboard for import sidescan file
-//    QTest::keyClick( menu, 'i', Qt::AltModifier );
-    QTest::keyClick( menu, 'i', Qt::AltModifier );
+    QTest::keyClick( menuFile, 'i', Qt::AltModifier );
+
 
 
 }
@@ -919,7 +923,7 @@ void testGUI::interactWithModalWindowActionImportJustVerifyWindow()
     qDebug() << tr( "Beginning of interactWithModalWindowActionImportJustVerifyWindow()" );
 
     mainWindow->show();
-    QTest::qWait(500);
+    QTest::qWait(2500);
 
     QWidget * modalWidget = QApplication::activeModalWidget();
     QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");

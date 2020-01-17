@@ -51,8 +51,6 @@ public slots:
 
     void interactWithModalWindowToSelectProjectToOpen();
 
-//    void interactWithModalWindowActionImportJustVerifyWindow();
-
 
     void verifyResultOfActionImportToLoadSidescanFile();
 
@@ -89,6 +87,11 @@ private slots:
     void useMenuImportToLoadSidescanFile();
     void verifyResultOfUseMenuImportToLoadSidescanFile();
 
+    void cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd();
+
+    void useToolBarActionNewProject();
+    void verifyResultOfUseToolBarActionNewProject();
+
 
     void useToolBarActionImportToLoadSidescanFile();
     void verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs();
@@ -108,6 +111,8 @@ private:
     MainWindow * mainWindow;
 
     bool interactWithModalWindowActionImportReachedTheEnd;
+
+    bool verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd;
 
     bool interactWithModalWindowActionSaveAsReachedTheEnd;
 
@@ -164,6 +169,8 @@ void testGUI::initTestCase()
     mainWindow = nullptr;
 
     interactWithModalWindowActionImportReachedTheEnd = false;
+
+    verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd = false;
 
     interactWithModalWindowActionSaveAsReachedTheEnd = false;
 
@@ -247,65 +254,6 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
 }
 
-//void testGUI::interactWithModalWindowActionImportJustVerifyWindow()
-//{
-//    qDebug() << tr( "Beginning of interactWithModalWindowActionImportJustVerifyWindow()" );
-
-//    mainWindow->show();
-//    QTest::qWait(2500);
-
-//    QWidget * modalWidget = QApplication::activeModalWidget();
-//    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
-
-//    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
-//              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
-
-
-//    // Find the button to cancel the modal window
-
-//    // The buttons are within a QDialogButtonBox
-
-//    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-//    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
-
-
-//    // The buttons don't have object names,
-//    // I have to go through the list of buttons and find the button with
-//    // the desired text
-
-//    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-//    QString cancelButtonText = tr( "&Cancel" );
-//    QPushButton * cancelButton = nullptr;
-
-//    for (QAbstractButton *button : listButtonBox) {
-
-//        if ( button->text() == cancelButtonText )
-//            cancelButton = static_cast<QPushButton * >( button );
-//    }
-
-//    QVERIFY2( cancelButton, "interactWithModalWindowActionImport: acceptButton tests false");
-//    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
-
-
-
-////    std::cout << "\n\n" << std::endl;
-
-
-//    mainWindow->show();
-//    QTest::qWait(500);
-
-//    // Click button to close the modal dialog
-//    QTest::mouseClick(cancelButton, Qt::LeftButton);
-
-//    mainWindow->show();
-//    QTest::qWait(500);
-
-
-//    interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = true;
-
-//}
-
 
 
 
@@ -322,13 +270,46 @@ void testGUI::verifyResultOfUseMenuImportToLoadSidescanFile()
     verifyResultOfActionImportToLoadSidescanFile();
 
 
-//    QVERIFY2( interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd,
-//                "verifyResultOfUseMenuImportToLoadSidescanFile: interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd is false");
 
-    if ( mainWindow ) {
-        delete mainWindow;
-        mainWindow = nullptr;
+
+    verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd = true;
+
+//    if ( mainWindow ) {
+//        delete mainWindow;
+//        mainWindow = nullptr;
+//    }
+
+}
+
+
+void testGUI::cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd()
+{
+
+    if ( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd,
+                    "cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd: verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd is false");
     }
+
+}
+
+void testGUI::useToolBarActionNewProject()
+{
+
+}
+
+
+void testGUI::verifyResultOfUseToolBarActionNewProject()
+{
 
 }
 

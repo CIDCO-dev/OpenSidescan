@@ -83,20 +83,20 @@ private slots:
 
     // Test functions
 
-
+    // Load sidescan files using menubar Import and test toolbar New Project
     void useMenuImportToLoadSidescanFile();
     void verifyResultOfUseMenuImportToLoadSidescanFile();
-
     void cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd();
-
     void useToolBarActionNewProject();
     void verifyResultOfUseToolBarActionNewProject();
+    void cleanAfterToolBarActionNewProject();
 
-
+    // Load sidescan files using toolbar Import and save project with toolbar Save As
     void useToolBarActionImportToLoadSidescanFile();
     void verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs();
     void cleanAfterSaveAs();
 
+    // Open saved project using toolbar Open
     void useToolBarActionOpenProject();
     void verifyResultOfUseToolBarActionOpenProject();
 
@@ -122,6 +122,8 @@ private:
     bool interactWithModalWindowToSelectProjectToOpenReachedTheEnd;
 
     bool interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd;
+
+    bool doInteractWithModalWindowToSelectProjectToOpen;
 
     bool selectFileAndVerifyReachTheEnd;
 
@@ -180,6 +182,8 @@ void testGUI::initTestCase()
     interactWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
 
     interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = false;
+
+    doInteractWithModalWindowToSelectProjectToOpen = false;
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -269,15 +273,7 @@ void testGUI::verifyResultOfUseMenuImportToLoadSidescanFile()
 
     verifyResultOfActionImportToLoadSidescanFile();
 
-
-
-
     verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd = true;
-
-//    if ( mainWindow ) {
-//        delete mainWindow;
-//        mainWindow = nullptr;
-//    }
 
 }
 
@@ -304,12 +300,163 @@ void testGUI::cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReache
 
 void testGUI::useToolBarActionNewProject()
 {
+    // Setup up
+    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
+
+    QVERIFY2( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd,
+                "useToolBarActionNewProject: verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd is false");
+
+    QVERIFY2( mainWindow, "useToolBarActionNewProject: mainWindow tests false");
+
+
+    // Get action for New Project
+
+    QAction * actionNewProject = mainWindow->findChild< QAction * >( "actionNewProject" );
+    QVERIFY2( actionNewProject, "useToolBarActionNewProject: actionNewProject tests false");
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionNewProject: mainToolBar tests false");
+
+
+
+    QWidget *widgetForActionNewProject = mainToolBar->widgetForAction( actionNewProject );
+    QVERIFY2( widgetForActionNewProject, "useToolBarActionNewProject: widgetForActionNewProject tests false");
+
+    // Show the mainWindow before opening the modal window
+    mainWindow->show();
+    QTest::qWait(200);
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 5 * 1000 );
+
+
+    doInteractWithModalWindowToSelectProjectToOpen = false;
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowAlreadyAnActiveProject() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionNewProject, Qt::LeftButton);
+
 
 }
 
 
 void testGUI::verifyResultOfUseToolBarActionNewProject()
 {
+
+    qDebug() << tr( "Beginning of verifyResultOfUseToolBarActionNewProject()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+
+    QVERIFY2( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd,
+                "verifyResultOfUseToolBarActionNewProject: verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd is false");
+
+
+    if ( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
+    {
+        // Just in case, stop the timer
+        timerTimeOut->stop();
+
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
+                    "verifyResultOfUseToolBarActionNewProject: interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
+    }
+
+
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionNewProject: mainWindow tests false");
+
+
+    // There should be 0 files in the tree model
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  0,
+              qPrintable( "verifyResultOfUseToolBarActionNewProject: the number of files in the projectWindow is "
+              + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+              + " instead of 0") );
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+//    std::cout << "\n\nmainWindow->tabs: " << mainWindow->tabs << std::endl;
+//    std::cout << "mainWindow->tabs->count(): " << mainWindow->tabs->count() << std::endl;
+
+    QVERIFY2( mainWindow->tabs->count() == 0,
+              qPrintable( "testGUI::verifyResultOfUseToolBarActionNewProject: the number of tabs is "
+            + QString::number( mainWindow->tabs->count() ) + " instead of the expected 0" ) );
+
+
+    QTabBar *tabBar = mainWindow->tabs->tabBar();
+
+//    std::cout << "tabBar: " << tabBar << std::endl;
+//    std::cout << "tabBar->count(): " << tabBar->count() << std::endl;
+
+    QVERIFY2( tabBar->count() == 0,
+              qPrintable( "testGUI::verifyResultOfUseToolBarActionNewProject: tabBar->count() is "
+            + QString::number( tabBar->count() ) + " instead of the expected 0" ) );
+
+
+    // For an empty table, it should have 0 rows or the function QTableWidget::item
+    // should return nullptr for all its item
+
+//    std::cout << "\n\nmainWindow->fileInfo->propertiesTables: " << mainWindow->fileInfo->propertiesTable << std::endl;
+//    std::cout << "\n\nmainWindow->fileInfo->propertiesTables->rowCount(): " << mainWindow->fileInfo->propertiesTable->rowCount() << std::endl;
+
+    bool tableIsEmpty = true;
+
+    int nbColumns = mainWindow->fileInfo->propertiesTable->columnCount();
+
+    for ( int row = 0; row < mainWindow->fileInfo->propertiesTable->rowCount(); row++ ) {
+
+//        std::cout << "count: " << row << ", ";
+
+        for ( int column = 0; column < nbColumns; column++ ) {
+
+            if ( mainWindow->fileInfo->propertiesTable->item(row, column) != nullptr ) {
+
+//                std::cout << "\"" << mainWindow->fileInfo->propertiesTable->item(row, 0)->text().toStdString() << "\"";
+
+                tableIsEmpty = false;
+            }
+//            else {
+//                std::cout << "nullptr";
+//            }
+
+//            std::cout << " ";
+
+        }
+
+//        std::cout << "\n" ;
+    }
+
+    QVERIFY2( tableIsEmpty, "verifyResultOfUseToolBarActionNewProject: mainWindow->fileInfo->propertiesTable is not empty");
+
+}
+
+void testGUI::cleanAfterToolBarActionNewProject()
+{
+
+//    QSKIP( "Skip testGUI::cleanAfterToolBarActionNewProject()" );
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::cleanAfterToolBarActionNewProject'" );
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
 
 }
 
@@ -321,7 +468,7 @@ void testGUI::verifyResultOfActionImportToLoadSidescanFile()
 
     std::cout << "\n" << std::endl;
 
-    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs'" );
+    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfActionImportToLoadSidescanFile'" );
 
 
     if ( interactWithModalWindowActionImportReachedTheEnd == false )
@@ -719,6 +866,11 @@ void testGUI::useToolBarActionOpenProject()
     qDebug() << tr( "Beginning of 'useToolBarActionOpenProject()'" );
 
 
+    // Setup for test
+    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
+    interactWithModalWindowToSelectProjectToOpenReachedTheEnd = false;
+
+
     QVERIFY2( verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd,
                 "useToolBarActionOpenProject: verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd is false");
 
@@ -735,12 +887,14 @@ void testGUI::useToolBarActionOpenProject()
         mainWindow = nullptr;
     }
 
+
+
     mainWindow = new MainWindow;
 
     QVERIFY2( mainWindow, "useToolBarActionOpenProject: mainWindow tests false");
 
 
-    // Get action for importing a sidescan file
+    // Get action for Open Project
 
     QAction * actionOpenProject = mainWindow->findChild< QAction * >( "actionOpenProject" );
     QVERIFY2( actionOpenProject, "useToolBarActionOpenProject: actionOpenProject tests false");
@@ -762,6 +916,8 @@ void testGUI::useToolBarActionOpenProject()
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 10 * 1000 );
 
+    doInteractWithModalWindowToSelectProjectToOpen = true;
+
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowAlreadyAnActiveProject() ) );
 
     // Click the button to open the modal dialog
@@ -773,6 +929,8 @@ void testGUI::useToolBarActionOpenProject()
 void testGUI::interactWithModalWindowAlreadyAnActiveProject()
 {
     qDebug() << tr( "Beginning of interactWithModalWindowAlreadyAnActiveProject()" );
+
+
 
     mainWindow->show();
     QTest::qWait(500);
@@ -808,10 +966,14 @@ void testGUI::interactWithModalWindowAlreadyAnActiveProject()
 
     QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
 
-    // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
+    if ( doInteractWithModalWindowToSelectProjectToOpen ) {
 
-    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
+        // Time out timer in case there is a failure while interacting with the modal window
+        timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
+
+        QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
+
+    }
 
 
     // Click the button to open the modal dialog

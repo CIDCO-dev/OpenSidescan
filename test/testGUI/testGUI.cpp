@@ -52,7 +52,7 @@ public slots:
     void interactWithModalWindowToSelectProjectToOpen();
 
 
-    void verifyResultOfActionImportToLoadSidescanFile();
+    void verifyResultOfImportToLoadSidescanFile();
 
 //    void InteractWithContextMenu();
 
@@ -114,6 +114,8 @@ private:
 
     bool verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd;
 
+    bool verifyResultOfImportToLoadSidescanFileReachedTheEnd;
+
     bool interactWithModalWindowActionSaveAsReachedTheEnd;
 
     bool verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd;
@@ -174,6 +176,8 @@ void testGUI::initTestCase()
 
     verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd = false;
 
+    verifyResultOfImportToLoadSidescanFileReachedTheEnd = false;
+
     interactWithModalWindowActionSaveAsReachedTheEnd = false;
 
     verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAsReachedTheEnd = false;
@@ -224,6 +228,9 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
     QVERIFY2( mainWindow, "useMenuImportToLoadSidescanFile: mainWindow tests false");
 
+
+//    QVERIFY2( false, "useMenuImportToLoadSidescanFile: false on purpose");
+
     // Enables focus and widget events
     QApplication::setActiveWindow( mainWindow );
 
@@ -270,8 +277,14 @@ void testGUI::verifyResultOfUseMenuImportToLoadSidescanFile()
 
     qDebug() << tr( "Beginning of 'testGUI::verifyResultOfUseMenuImportToLoadSidescanFile'" );
 
+    verifyResultOfImportToLoadSidescanFileReachedTheEnd = false;
 
-    verifyResultOfActionImportToLoadSidescanFile();
+    verifyResultOfImportToLoadSidescanFile();
+
+    QVERIFY2( verifyResultOfImportToLoadSidescanFileReachedTheEnd,
+                "verifyResultOfUseMenuImportToLoadSidescanFile: verifyResultOfImportToLoadSidescanFileReachedTheEnd is false");
+
+    qDebug() << tr( "'testGUI::verifyResultOfUseMenuImportToLoadSidescanFile' after 'verifyResultOfImportToLoadSidescanFile()'" );
 
     verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd = true;
 
@@ -280,6 +293,10 @@ void testGUI::verifyResultOfUseMenuImportToLoadSidescanFile()
 
 void testGUI::cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd()
 {
+    std::cout << "\n\nBeginning of 'testGUI::cleanupIfVerifyResultOfUseMenuImportToLoadSidescanFileDidNotReachedTheEnd()'"
+              << "\nverifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd: " << verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd
+              << "\n" << std::endl;
+
 
     if ( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd == false )
     {
@@ -302,6 +319,11 @@ void testGUI::useToolBarActionNewProject()
 {
     // Setup up
     interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = false;
+
+    std::cout << "\n\nBeginning of 'testGUI::useToolBarActionNewProject()'"
+              << "\nverifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd: " << verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd
+              << "\n" << std::endl;
+
 
     QVERIFY2( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd,
                 "useToolBarActionNewProject: verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd is false");
@@ -348,12 +370,21 @@ void testGUI::verifyResultOfUseToolBarActionNewProject()
 
     qDebug() << tr( "Beginning of verifyResultOfUseToolBarActionNewProject()" );
 
-    mainWindow->show();
-    QTest::qWait(500);
 
+
+    std::cout << "\n\nBeginning of 'testGUI::verifyResultOfUseToolBarActionNewProject'"
+              << "\nverifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd: " << verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd
+              << "\n" << std::endl;
 
     QVERIFY2( verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd,
                 "verifyResultOfUseToolBarActionNewProject: verifyResultOfUseMenuImportToLoadSidescanFileReachedTheEnd is false");
+
+
+    QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionNewProject: mainWindow tests false");
+
+
+    mainWindow->show();
+    QTest::qWait(500);
 
 
     if ( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
@@ -461,14 +492,14 @@ void testGUI::cleanAfterToolBarActionNewProject()
 }
 
 
-void testGUI::verifyResultOfActionImportToLoadSidescanFile()
+void testGUI::verifyResultOfImportToLoadSidescanFile()
 {
 
     timerTimeOut->stop();
 
     std::cout << "\n" << std::endl;
 
-    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfActionImportToLoadSidescanFile'" );
+    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfImportToLoadSidescanFile'" );
 
 
     if ( interactWithModalWindowActionImportReachedTheEnd == false )
@@ -483,7 +514,7 @@ void testGUI::verifyResultOfActionImportToLoadSidescanFile()
         }
 
         QVERIFY2( interactWithModalWindowActionImportReachedTheEnd,
-                    "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: interactWithModalWindowActionImportReachedTheEnd is false");
+                    "verifyResultOfImportToLoadSidescanFile: interactWithModalWindowActionImportReachedTheEnd is false");
     }
 
 
@@ -542,8 +573,11 @@ void testGUI::verifyResultOfActionImportToLoadSidescanFile()
     mainWindow->show();
     QTest::qWait(3000);
 
-//    QVERIFY2( false, "verifyResultOfActionImportToLoadSidescanFile: false on purpose");
+//    QVERIFY2( false, "verifyResultOfImportToLoadSidescanFile: false on purpose");
 
+
+
+    verifyResultOfImportToLoadSidescanFileReachedTheEnd = true;
 
 }
 
@@ -696,8 +730,12 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 {
 //    QSKIP( "Skip the first test" );
 
+    verifyResultOfImportToLoadSidescanFileReachedTheEnd = false;
 
-    verifyResultOfActionImportToLoadSidescanFile();
+    verifyResultOfImportToLoadSidescanFile();
+
+    QVERIFY2( verifyResultOfImportToLoadSidescanFileReachedTheEnd,
+                "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: verifyResultOfImportToLoadSidescanFileReachedTheEnd is false");
 
 
     // -----------------------------------------------------------------------------------------

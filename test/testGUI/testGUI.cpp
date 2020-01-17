@@ -1472,20 +1472,30 @@ void testGUI::interactWithModalWindowToFindObjects()
     QString cancelButtonText = tr( "&Cancel" );
     QPushButton * cancelButton = nullptr;
 
+    QString okButtonText = tr( "&OK" );
+    QPushButton * okButton = nullptr;
+
     for (QAbstractButton *button : listButtonBox) {
 
         if ( button->text() == cancelButtonText )
             cancelButton = static_cast<QPushButton * >( button );
+        else if ( button->text() == okButtonText )
+            okButton = static_cast<QPushButton * >( button );
     }
+
+//    QVERIFY2( false, "interactWithModalWindowToFindObjects: false on purpose");
 
     QVERIFY2( cancelButton, "interactWithModalWindowToFindObjects: cancelButton tests false");
     QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowToFindObjects: cancelButton is not enabled");
+
+    QVERIFY2( okButton, "interactWithModalWindowToFindObjects: okButton tests false");
+    QVERIFY2( okButton->isEnabled(), "interactWithModalWindowToFindObjects: okButton is not enabled");
 
 
     mainWindow->show();
     QTest::qWait(500);
 
-    // Click button to close the modal dialog
+    // Click cancel button to close the modal dialog without finding objects
     QTest::mouseClick(cancelButton, Qt::LeftButton);
 
     mainWindow->show();

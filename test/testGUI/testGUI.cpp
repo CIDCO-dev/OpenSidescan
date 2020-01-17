@@ -223,22 +223,8 @@ void testGUI::useMenuImport()
     QTest::qWait(2000);
 
 
-    const QObjectList list = mainWindow->children();
-
-    qDebug() << tr( "mainWindow's object list.size(): " ) << list.size();
-
-    for (QObject *children : list) {
-        qDebug() << children->objectName()
-                 << ", className: " << children->metaObject()->className();
-
-    }
-
-
-
-
     QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
     QVERIFY2( menuBar, "useMenuImport: menuBar tests false");
-
 
     QMenu *menuFile = menuBar->findChild< QMenu * >( "menuFile" );
     QVERIFY2( menuFile, "useMenuImport: menuFile tests false");
@@ -256,6 +242,64 @@ void testGUI::useMenuImport()
 
 }
 
+void testGUI::interactWithModalWindowActionImportJustVerifyWindow()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowActionImportJustVerifyWindow()" );
+
+    mainWindow->show();
+    QTest::qWait(2500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
+              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
+
+
+    // Find the button to cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonText = tr( "&Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText )
+            cancelButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( cancelButton, "interactWithModalWindowActionImport: acceptButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
+
+
+
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(cancelButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+
+    interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = true;
+
+}
 
 
 
@@ -329,7 +373,94 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 }
 
+void testGUI::interactWithModalWindowActionImport()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
 
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
+              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowActionImport: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+    QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
+                                + tr( "data/wrecks/plane1.xtf" ) + "\" "
+                       "\"" + QCoreApplication::applicationDirPath() + "/../"
+                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" ";
+
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionImport: filename is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString acceptButtonText = tr( "&Open" );
+    QPushButton * acceptButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == acceptButtonText )
+            acceptButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( acceptButton, "interactWithModalWindowActionImport: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
+
+
+
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(acceptButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+
+    interactWithModalWindowActionImportReachedTheEnd = true;
+
+}
 
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 {
@@ -461,6 +592,93 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 
 
 
+void testGUI::interactWithModalWindowActionSaveAs()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowActionSaveAs()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionSaveAs: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowActionSaveAs: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject";
+
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionSaveAs: filename is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionSaveAs: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString saveButtonText = tr( "&Save" );
+    QPushButton * saveButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == saveButtonText )
+            saveButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( saveButton, "interactWithModalWindowActionSaveAs: saveButton tests false");
+    QVERIFY2( saveButton->isEnabled(), "interactWithModalWindowActionSaveAs: saveButton is not enabled");
+
+
+
+//    std::cout << "\n\n" << std::endl;
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(saveButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+
+    interactWithModalWindowActionSaveAsReachedTheEnd = true;
+
+}
+
+
 void testGUI::cleanAfterSaveAs()
 {
 
@@ -545,6 +763,168 @@ void testGUI::useToolBarActionOpenProject()
     QTest::mouseClick(widgetForActionOpenProject, Qt::LeftButton);
 
 }
+
+
+void testGUI::interactWithModalWindowAlreadyAnActiveProject()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowAlreadyAnActiveProject()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    qDebug() << tr( "After starting AlreadyAnActiveProject modal window" );
+
+//    QVERIFY2( false, "interactWithModalWindowAlreadyAnActiveProject: false on purpose");
+
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowAlreadyAnActiveProject: modalWidget tests false");
+
+//    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+
+//    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
+
+//    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
+
+
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("qt_msgbox_buttonbox");
+    QVERIFY2( buttonBox, "interactWithModalWindowAlreadyAnActiveProject: buttonBox tests false");
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString OKButtonText = tr( "&OK" );
+    QPushButton * buttonOK = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+        if ( button->text() == OKButtonText )
+            buttonOK = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
+
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(buttonOK, Qt::LeftButton);
+
+    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = true;
+
+
+}
+
+
+
+void testGUI::interactWithModalWindowToSelectProjectToOpen()
+{
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::interactWithModalWindowToSelectProjectToOpen'" );
+
+
+    if ( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
+    {
+        // Just in case, stop the timer
+        timerTimeOut->stop();
+
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
+                    "interactWithModalWindowToSelectProjectToOpen: interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
+    }
+
+//    QVERIFY2( mainWindow, "interactWithModalWindowToSelectProjectToOpen: mainWindow tests false");
+
+
+
+    mainWindow->show();
+    QTest::qWait(1200);
+
+//    QVERIFY2( false, "interactWithModalWindowToSelectProjectToOpen: false on purpose");
+
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowToSelectProjectToOpen: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+
+    QLineEdit *lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowToSelectProjectToOpen: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+//    QString filename = QCoreApplication::applicationDirPath() + "/../"
+//                                        + tr( "testProject/TestProject5Files.ssp" );
+
+    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject.ssp";
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowToSelectProjectToOpen: filename is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowToSelectProjectToOpen: buttonBox tests false");
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString acceptButtonText = tr( "&Open" );
+    QPushButton * acceptButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == acceptButtonText )
+            acceptButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( acceptButton, "interactWithModalWindowToSelectProjectToOpen: acceptButton tests false");
+    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowToSelectProjectToOpen: acceptButton is not enabled");
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(acceptButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    interactWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
+
+}
+
 
 void testGUI::verifyResultOfUseToolBarActionOpenProject()
 {
@@ -827,417 +1207,29 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 
 
-void testGUI::interactWithModalWindowActionImport()
-{
-    qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
 
-    mainWindow->show();
-    QTest::qWait(500);
 
-    QWidget * modalWidget = QApplication::activeModalWidget();    
-    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
-              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
 
 
-    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
-    QVERIFY2( lineEdit, "interactWithModalWindowActionImport: lineEdit tests false");
 
 
-    // Number of characters currently present in the QLineEdit
-    int nbBackspaces = lineEdit->text().length();
 
-    // Use backspaces to clear the current content
-    for ( int count = 0; count < nbBackspaces; count++ )
-        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
 
 
-    mainWindow->show();
-    QTest::qWait(100);
 
 
-    // Path with respect to the application executable
-    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
 
-    QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/plane1.xtf" ) + "\" "
-                       "\"" + QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" ";
 
 
-    QTest::keyClicks(lineEdit, filename );
 
-    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionImport: filename is not the same in the QLineEdit");
 
 
-    // Find the button to accept and close the modal window
 
-    // The buttons are within a QDialogButtonBox
 
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
 
 
-    // The buttons don't have object names,
-    // I have to go through the list of buttons and find the button with
-    // the desired text
 
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-    QString acceptButtonText = tr( "&Open" );
-    QPushButton * acceptButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        if ( button->text() == acceptButtonText )
-            acceptButton = static_cast<QPushButton * >( button );
-    }
-
-    QVERIFY2( acceptButton, "interactWithModalWindowActionImport: acceptButton tests false");
-    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
-
-
-
-//    std::cout << "\n\n" << std::endl;
-
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    // Click button to close the modal dialog
-    QTest::mouseClick(acceptButton, Qt::LeftButton);
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-
-    interactWithModalWindowActionImportReachedTheEnd = true;
-
-}
-
-
-
-void testGUI::interactWithModalWindowActionImportJustVerifyWindow()
-{
-    qDebug() << tr( "Beginning of interactWithModalWindowActionImportJustVerifyWindow()" );
-
-    mainWindow->show();
-    QTest::qWait(2500);
-
-    QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "interactWithModalWindowActionImport: modalWidget tests false");
-
-    QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
-              "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
-
-
-    // Find the button to cancel the modal window
-
-    // The buttons are within a QDialogButtonBox
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
-
-
-    // The buttons don't have object names,
-    // I have to go through the list of buttons and find the button with
-    // the desired text
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-    QString cancelButtonText = tr( "&Cancel" );
-    QPushButton * cancelButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        if ( button->text() == cancelButtonText )
-            cancelButton = static_cast<QPushButton * >( button );
-    }
-
-    QVERIFY2( cancelButton, "interactWithModalWindowActionImport: acceptButton tests false");
-    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowActionImport: acceptButton is not enabled");
-
-
-
-//    std::cout << "\n\n" << std::endl;
-
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    // Click button to close the modal dialog
-    QTest::mouseClick(cancelButton, Qt::LeftButton);
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-
-    interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = true;
-
-}
-
-
-
-
-
-
-
-
-
-void testGUI::interactWithModalWindowActionSaveAs()
-{
-    qDebug() << tr( "Beginning of interactWithModalWindowActionSaveAs()" );
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "interactWithModalWindowActionSaveAs: modalWidget tests false");
-
-    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
-              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
-
-
-    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
-    QVERIFY2( lineEdit, "interactWithModalWindowActionSaveAs: lineEdit tests false");
-
-
-    // Number of characters currently present in the QLineEdit
-    int nbBackspaces = lineEdit->text().length();
-
-    // Use backspaces to clear the current content
-    for ( int count = 0; count < nbBackspaces; count++ )
-        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
-
-
-    mainWindow->show();
-    QTest::qWait(100);
-
-
-    // Path with respect to the application executable
-    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
-
-    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject";
-
-
-    QTest::keyClicks(lineEdit, filename );
-
-    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionSaveAs: filename is not the same in the QLineEdit");
-
-
-    // Find the button to accept and close the modal window
-
-    // The buttons are within a QDialogButtonBox
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "interactWithModalWindowActionSaveAs: buttonBox tests false");
-
-
-    // The buttons don't have object names,
-    // I have to go through the list of buttons and find the button with
-    // the desired text
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-    QString saveButtonText = tr( "&Save" );
-    QPushButton * saveButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        if ( button->text() == saveButtonText )
-            saveButton = static_cast<QPushButton * >( button );
-    }
-
-    QVERIFY2( saveButton, "interactWithModalWindowActionSaveAs: saveButton tests false");
-    QVERIFY2( saveButton->isEnabled(), "interactWithModalWindowActionSaveAs: saveButton is not enabled");
-
-
-
-//    std::cout << "\n\n" << std::endl;
-
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    // Click button to close the modal dialog
-    QTest::mouseClick(saveButton, Qt::LeftButton);
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-
-    interactWithModalWindowActionSaveAsReachedTheEnd = true;
-
-}
-
-
-
-
-
-
-
-
-
-
-void testGUI::interactWithModalWindowAlreadyAnActiveProject()
-{
-    qDebug() << tr( "Beginning of interactWithModalWindowAlreadyAnActiveProject()" );
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    qDebug() << tr( "After starting AlreadyAnActiveProject modal window" );
-
-//    QVERIFY2( false, "interactWithModalWindowAlreadyAnActiveProject: false on purpose");
-
-
-    QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "interactWithModalWindowAlreadyAnActiveProject: modalWidget tests false");
-
-//    std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
-
-//    qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
-
-//    qDebug() << tr( "modalWidget->windowTitle(): " ) << modalWidget->windowTitle();
-
-
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("qt_msgbox_buttonbox");
-    QVERIFY2( buttonBox, "interactWithModalWindowAlreadyAnActiveProject: buttonBox tests false");
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-    QString OKButtonText = tr( "&OK" );
-    QPushButton * buttonOK = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-        if ( button->text() == OKButtonText )
-            buttonOK = static_cast<QPushButton * >( button );
-    }
-
-    QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
-
-    // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
-
-    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
-
-
-    // Click the button to open the modal dialog
-    QTest::mouseClick(buttonOK, Qt::LeftButton);
-
-    interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd = true;
-
-
-}
-
-
-void testGUI::interactWithModalWindowToSelectProjectToOpen()
-{
-
-    std::cout << "\n" << std::endl;
-
-    qDebug() << tr( "Beginning of 'testGUI::interactWithModalWindowToSelectProjectToOpen'" );
-
-
-    if ( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd == false )
-    {
-        // Just in case, stop the timer
-        timerTimeOut->stop();
-
-        // Give time for the window to be closed after the instruction to close is sent
-        // in the function responding to the timer
-        QTest::qWait( 200 );
-
-        if ( mainWindow ) {
-            delete mainWindow;
-            mainWindow = nullptr;
-        }
-
-        QVERIFY2( interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd,
-                    "interactWithModalWindowToSelectProjectToOpen: interactWithModalWindowAlreadyAnActiveProjectReachedTheEnd is false");
-    }
-
-//    QVERIFY2( mainWindow, "interactWithModalWindowToSelectProjectToOpen: mainWindow tests false");
-
-
-
-    mainWindow->show();
-    QTest::qWait(1200);
-
-//    QVERIFY2( false, "interactWithModalWindowToSelectProjectToOpen: false on purpose");
-
-
-    QWidget * modalWidget = QApplication::activeModalWidget();
-    QVERIFY2( modalWidget, "interactWithModalWindowToSelectProjectToOpen: modalWidget tests false");
-
-    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
-              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
-
-
-    QLineEdit *lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
-    QVERIFY2( lineEdit, "interactWithModalWindowToSelectProjectToOpen: lineEdit tests false");
-
-
-    // Number of characters currently present in the QLineEdit
-    int nbBackspaces = lineEdit->text().length();
-
-    // Use backspaces to clear the current content
-    for ( int count = 0; count < nbBackspaces; count++ )
-        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
-
-
-    mainWindow->show();
-    QTest::qWait(100);
-
-
-    // Path with respect to the application executable
-    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
-//    QString filename = QCoreApplication::applicationDirPath() + "/../"
-//                                        + tr( "testProject/TestProject5Files.ssp" );
-
-    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject.ssp";
-
-    QTest::keyClicks(lineEdit, filename );
-
-    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowToSelectProjectToOpen: filename is not the same in the QLineEdit");
-
-
-    // Find the button to accept and close the modal window
-
-    // The buttons are within a QDialogButtonBox
-
-    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
-    QVERIFY2( buttonBox, "interactWithModalWindowToSelectProjectToOpen: buttonBox tests false");
-
-    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
-
-    QString acceptButtonText = tr( "&Open" );
-    QPushButton * acceptButton = nullptr;
-
-    for (QAbstractButton *button : listButtonBox) {
-
-        if ( button->text() == acceptButtonText )
-            acceptButton = static_cast<QPushButton * >( button );
-    }
-
-    QVERIFY2( acceptButton, "interactWithModalWindowToSelectProjectToOpen: acceptButton tests false");
-    QVERIFY2( acceptButton->isEnabled(), "interactWithModalWindowToSelectProjectToOpen: acceptButton is not enabled");
-
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    // Click button to close the modal dialog
-    QTest::mouseClick(acceptButton, Qt::LeftButton);
-
-    mainWindow->show();
-    QTest::qWait(500);
-
-    interactWithModalWindowToSelectProjectToOpenReachedTheEnd = true;
-
-}
 
 
 QTEST_MAIN(testGUI)

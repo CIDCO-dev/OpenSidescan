@@ -59,6 +59,7 @@ void DetectionWindow::initUI(){
     mainLayout->addWidget(advancedParameters);
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttonBox->setObjectName( "buttonBox" );
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &DetectionWindow::ok);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &DetectionWindow::cancel);

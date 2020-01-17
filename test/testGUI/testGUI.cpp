@@ -51,6 +51,9 @@ public slots:
 
     void interactWithModalWindowToSelectProjectToOpen();
 
+    void interactWithModalWindowToFindObjects();
+
+
 
     void verifyResultOfImportToLoadSidescanFile();
 
@@ -100,6 +103,12 @@ private slots:
     void useToolBarActionOpenProject();
     void verifyResultOfUseToolBarActionOpenProject();
 
+    // Use toolbar find objects to verify that modal window opens
+    void useToolBarActionFindObjects();
+    void cleanAfteruseToolBarActionFindObjects();
+
+    //
+
 //    void afterContextMenu();
 
 //    void finish();
@@ -128,6 +137,8 @@ private:
     bool doInteractWithModalWindowToSelectProjectToOpen;
 
     bool selectFileAndVerifyReachTheEnd;
+
+    bool interactWithModalWindowToFindObjectsReachedTheEnd;
 
     QTimer *timerTimeOut;
 
@@ -188,6 +199,8 @@ void testGUI::initTestCase()
     interactWithModalWindowActionImportJustVerifyWindowReachedTheEnd = false;
 
     doInteractWithModalWindowToSelectProjectToOpen = false;
+
+    interactWithModalWindowToFindObjectsReachedTheEnd = false;
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -1380,6 +1393,120 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 }
 
+
+void testGUI::useToolBarActionFindObjects()
+{
+
+    std::cout << "\n\nBeginning of 'testGUI::useToolBarActionFindObjects()'"<< "\n" << std::endl;
+
+    // Setup up
+    interactWithModalWindowToFindObjectsReachedTheEnd = false;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useToolBarActionFindObjects: mainWindow tests false");
+
+
+    // Get action for FindObjects
+
+    QAction * actionFindObjects = mainWindow->findChild< QAction * >( "actionFindObjects" );
+    QVERIFY2( actionFindObjects, "useToolBarActionFindObjects: actionFindObjects tests false");
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionFindObjects: mainToolBar tests false");
+
+
+
+    QWidget *widgetForActionFindObjects= mainToolBar->widgetForAction( actionFindObjects );
+    QVERIFY2( widgetForActionFindObjects, "useToolBarActionFindObjects: widgetForActionNewProject tests false");
+
+    // Show the mainWindow before opening the modal window
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 5 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToFindObjects() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionFindObjects, Qt::LeftButton);
+}
+
+void testGUI::interactWithModalWindowToFindObjects()
+{
+
+    qDebug() << tr( "Beginning of interactWithModalWindowToFindObjects()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowToFindObjects: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Find Objects" ),
+              "interactWithModalWindowToFindObjects: modalWidget->windowTitle() is not 'Find Objects'" );
+
+
+    // Find the button to Cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowToFindObjects: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonText = tr( "&Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText )
+            cancelButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( cancelButton, "interactWithModalWindowToFindObjects: cancelButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowToFindObjects: cancelButton is not enabled");
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(cancelButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+    interactWithModalWindowToFindObjectsReachedTheEnd = true;
+
+}
+
+
+
+void testGUI::cleanAfteruseToolBarActionFindObjects()
+{
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfteruseToolBarActionFindObjects()'" << std::endl;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+}
 
 
 //void testGUI::afterContextMenu()

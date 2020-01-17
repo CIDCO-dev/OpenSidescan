@@ -52,7 +52,7 @@
     </property>
     <widget class="QMenu" name="menuExport_Inventory">
      <property name="title">
-      <string>Export Inventory</string>
+      <string>E&amp;xport Inventory</string>
      </property>
      <addaction name="actionExportKmlFile"/>
     </widget>
@@ -198,7 +198,7 @@
      <normaloff>:/Images/resources/kml.png</normaloff>:/Images/resources/kml.png</iconset>
    </property>
    <property name="text">
-    <string>Export KML File</string>
+    <string>Export &amp;KML File</string>
    </property>
   </action>
  </widget>

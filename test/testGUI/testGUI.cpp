@@ -94,16 +94,16 @@ private slots:
     void verifyResultOfUseToolBarActionNewProject();
     void cleanAfterToolBarActionNewProject();
 
-    // Load sidescan files using toolbar Import and save project with toolbar Save As
+    // Load sidescan files using toolbar Import and save project with toolbar Save Project As
     void useToolBarActionImportToLoadSidescanFile();
     void verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs();
     void cleanAfterSaveAs();
 
-    // Open saved project using toolbar Open
+    // Open saved project using toolbar Open Project
     void useToolBarActionOpenProject();
     void verifyResultOfUseToolBarActionOpenProject();
 
-    // Use toolbar find objects to verify that modal window opens
+    // Use toolbar Find Objects to verify that modal window opens
     void useToolBarActionFindObjects();
     void cleanAfteruseToolBarActionFindObjects();
 

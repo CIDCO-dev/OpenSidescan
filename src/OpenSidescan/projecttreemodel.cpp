@@ -23,7 +23,7 @@ ProjectTreeModel::ProjectTreeModel(QObject *parent)
     // Set the node "Files"'s data to "Files"
     QVariant data( tr("Sidescan files") );
     fileNode->setData(0, data);
-    fileNode->setSidescanFile( nullptr ); // Node those not have an associated sidescan file
+    fileNode->setSidescanFile( nullptr ); // Node does not have an associated sidescan file
 
 }
 
@@ -31,6 +31,8 @@ ProjectTreeModel::ProjectTreeModel(QObject *parent)
 ProjectTreeModel::~ProjectTreeModel()
 {
     delete rootItem;
+
+    // TODO: call the base class destructor?
 }
 
 
@@ -262,3 +264,21 @@ bool ProjectTreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
+int ProjectTreeModel::getNbFiles() const
+{
+    return fileNode->childCount();
+}
+
+
+QModelIndex ProjectTreeModel::getModelIndexFileIndex( const int fileIndex ) const
+{
+    if ( fileIndex < 0 || fileIndex >= fileNode->childCount() )
+        return QModelIndex();
+
+    ProjectTreeItem *childItem = fileNode->child(fileIndex);
+    if (childItem)
+        return createIndex(fileIndex, 0, childItem);
+    else
+        return QModelIndex();
+
+}

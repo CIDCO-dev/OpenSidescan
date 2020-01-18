@@ -140,6 +140,9 @@ bool ProjectWindow::containsFile(std::string & filename){
 
 void ProjectWindow::customContextMenu(QPoint pos)
 {
+
+    qDebug() << tr( "Beginning of 'void ProjectWindow::customContextMenu(QPoint pos)'" );
+
     // Based on
     // https://www.qtcentre.org/threads/49656-ContextMenu-in-QTreeView
     // https://github.com/qt-creator/qt-creator/blob/master/src/libs/modelinglib/qmt/model_widgets_ui/modeltreeview.cpp

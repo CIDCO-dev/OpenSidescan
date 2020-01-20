@@ -32,6 +32,7 @@
 
 #include "../../src/OpenSidescan/mainwindow.h"
 
+#define DOSKIPTESTS
 
 
 // https://doc.qt.io/qt-5/qtest-overview.html
@@ -43,25 +44,37 @@ class testGUI : public QObject
 
 
 public slots:
+
+#ifndef DOSKIPTESTS
     void interactWithModalWindowActionImport();
+
+    void verifyResultOfImportToLoadSidescanFile();
+
+    void selectFileAndVerify( int fileToSelect, std::string & filename,
+                                       std::vector<std::string> & tabNames,
+                                       std::vector< std::pair< std::string,std::string > > & properties );
+
 
     void interactWithModalWindowActionSaveAs();
 
     void interactWithModalWindowAlreadyAnActiveProject();
 
+
+
     void interactWithModalWindowToSelectProjectToOpen();
 
     void interactWithModalWindowToFindObjects();
 
+#endif
+
+    void interactWithModalWindowToExportKMLfile();
 
 
-    void verifyResultOfImportToLoadSidescanFile();
+
 
 //    void InteractWithContextMenu();
 
-    void selectFileAndVerify( int fileToSelect, std::string & filename,
-                                       std::vector<std::string> & tabNames,
-                                       std::vector< std::pair< std::string,std::string > > & properties );
+
 
     void timeOutOccured();
 
@@ -86,6 +99,10 @@ private slots:
 
     // Test functions
 
+
+#ifndef DOSKIPTESTS
+
+
     // Load sidescan files using menubar Import and test toolbar New Project
     void useMenuImportToLoadSidescanFile();
     void verifyResultOfUseMenuImportToLoadSidescanFile();
@@ -105,9 +122,14 @@ private slots:
 
     // Use toolbar Find Objects to verify that modal window opens
     void useToolBarActionFindObjects();
-    void cleanAfteruseToolBarActionFindObjects();
+    void cleanAfterUseToolBarActionFindObjects();
 
-    //
+#endif
+
+    // Use menubar Object Inventory/Export Inventory/Export KML File to verify that modal window opens
+    void useMenuExportKMLfile();
+    void cleanAfterUseMenuExportKMLfile();
+
 
 //    void afterContextMenu();
 
@@ -139,6 +161,8 @@ private:
     bool selectFileAndVerifyReachTheEnd;
 
     bool interactWithModalWindowToFindObjectsReachedTheEnd;
+
+    bool interactWithModalWindowToExportKMLfileReachedTheEnd;
 
     QTimer *timerTimeOut;
 
@@ -223,6 +247,8 @@ void testGUI::cleanupTestCase()
 // Test functions
 
 
+#ifndef DOSKIPTESTS
+
 void testGUI::useMenuImportToLoadSidescanFile()
 {
 //    QSKIP( "Skip the first test" );
@@ -264,7 +290,6 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
     QMenu *menuFile = menuBar->findChild< QMenu * >( "menuFile" );
     QVERIFY2( menuFile, "useMenuImportToLoadSidescanFile: menuFile tests false");
-
 
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 10 * 1000 );
@@ -1508,15 +1533,181 @@ void testGUI::interactWithModalWindowToFindObjects()
 
 
 
-void testGUI::cleanAfteruseToolBarActionFindObjects()
+void testGUI::cleanAfterUseToolBarActionFindObjects()
 {
-    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfteruseToolBarActionFindObjects()'" << std::endl;
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseToolBarActionFindObjects()'" << std::endl;
 
     if ( mainWindow ) {
         delete mainWindow;
         mainWindow = nullptr;
     }
 }
+
+#endif
+
+
+void testGUI::useMenuExportKMLfile()
+{
+
+    std::cout << "\n\nBeginning of 'testGUI::useMenuExportKMLfile()'"<< "\n" << std::endl;
+
+    // Setup up
+    interactWithModalWindowToExportKMLfileReachedTheEnd = false;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useMenuExportKMLfile: mainWindow tests false");
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+    // ---- Using shortkeys
+
+    // Keyboard to Object Inventory menu
+    QTest::keyClick( mainWindow, 'j', Qt::AltModifier );
+
+    mainWindow->show();
+    QTest::qWait(2000);
+
+
+    QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
+    QVERIFY2( menuBar, "useMenuImportToLoadSidescanFile: menuBar tests false");
+
+    QMenu *menuObject_Inventory = menuBar->findChild< QMenu * >( "menuObject_Inventory" );
+    QVERIFY2( menuObject_Inventory, "useMenuImportToLoadSidescanFile: menuObject_Inventory tests false");
+
+
+
+//    const QObjectList listChildrenMenuObject_Inventory = menuObject_Inventory->children();
+
+//    qDebug() << tr( "listChildrenMenuObject_Inventory.size(): " ) << listChildrenMenuObject_Inventory.size();
+
+//    for (QObject *children : listChildrenMenuObject_Inventory) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+//    }
+
+
+    // Keyboard for Export Inventory
+    QTest::keyClick( menuObject_Inventory, 'x', Qt::AltModifier );
+
+    mainWindow->show();
+    QTest::qWait(2000);
+
+
+    QMenu *menuExport_Inventory = menuObject_Inventory->findChild< QMenu * >( "menuExport_Inventory" );
+    QVERIFY2( menuExport_Inventory, "useMenuImportToLoadSidescanFile: menuExport_Inventory tests false");
+
+
+
+//    const QObjectList listChildrenMenuExport_Inventory = menuExport_Inventory->children();
+
+//    qDebug() << tr( "listChildrenMenuExport_Inventory.size(): " ) << listChildrenMenuExport_Inventory.size();
+
+//    for (QObject *children : listChildrenMenuObject_Inventory) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+//    }
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 5 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowToExportKMLfile() ) );
+
+    // Keyboard for Export Inventory
+    QTest::keyClick( menuExport_Inventory, 'k', Qt::AltModifier );
+
+
+}
+
+void testGUI::interactWithModalWindowToExportKMLfile()
+{
+
+    qDebug() << tr( "Beginning of interactWithModalWindowToExportKMLfile()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowToExportKMLfile: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "KML File" ),
+              "interactWithModalWindowToExportKMLfile: modalWidget->windowTitle() is not 'KML File'" );
+
+
+    // Find the button to Save and to Cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowToExportKMLfile: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonText = tr( "&Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    QString saveButtonText = tr( "&Save" );
+    QPushButton * saveButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText )
+            cancelButton = static_cast<QPushButton * >( button );
+        else if ( button->text() == saveButtonText )
+            saveButton = static_cast<QPushButton * >( button );
+    }
+
+//    QVERIFY2( false, "interactWithModalWindowToExportKMLfile: false on purpose");
+
+    QVERIFY2( cancelButton, "interactWithModalWindowToExportKMLfile: cancelButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowToExportKMLfile: cancelButton is not enabled");
+
+    QVERIFY2( saveButton, "interactWithModalWindowToExportKMLfile: saveButton tests false");
+    QVERIFY2( saveButton->isEnabled() == false, "interactWithModalWindowToExportKMLfile: saveButton is enabled while it should not if no filename is entered/selected");
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click cancel button to close the modal dialog without saving
+    QTest::mouseClick(cancelButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+    interactWithModalWindowToExportKMLfileReachedTheEnd = true;
+
+}
+
+
+
+void testGUI::cleanAfterUseMenuExportKMLfile()
+{
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseMenuExportKMLfile()'" << std::endl;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+}
+
+
 
 
 //void testGUI::afterContextMenu()

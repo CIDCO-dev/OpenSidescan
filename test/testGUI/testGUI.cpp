@@ -32,7 +32,7 @@
 
 #include "../../src/OpenSidescan/mainwindow.h"
 
-#define DOSKIPTESTS
+//#define DOSKIPTESTS
 
 
 // https://doc.qt.io/qt-5/qtest-overview.html
@@ -270,11 +270,14 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
 //    QVERIFY2( false, "useMenuImportToLoadSidescanFile: false on purpose");
 
-    // Enables focus and widget events
-    QApplication::setActiveWindow( mainWindow );
 
     mainWindow->show();
     QTest::qWait(1000);
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+    // Shortcuts won't work unless the window is active
+    QVERIFY2( QTest::qWaitForWindowActive( mainWindow ), "mainWindow is not active" );
 
     // ---- Using shortkeys
 
@@ -1537,6 +1540,10 @@ void testGUI::cleanAfterUseToolBarActionFindObjects()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseToolBarActionFindObjects()'" << std::endl;
 
+
+    QVERIFY2( interactWithModalWindowToFindObjectsReachedTheEnd, "cleanAfterUseToolBarActionFindObjects: interactWithModalWindowToFindObjectsReachedTheEnd is false" );
+
+
     if ( mainWindow ) {
         delete mainWindow;
         mainWindow = nullptr;
@@ -1551,7 +1558,7 @@ void testGUI::useMenuExportKMLfile()
 
     std::cout << "\n\nBeginning of 'testGUI::useMenuExportKMLfile()'"<< "\n" << std::endl;
 
-    // Setup up
+    // Setup
     interactWithModalWindowToExportKMLfileReachedTheEnd = false;
 
     if ( mainWindow ) {
@@ -1563,11 +1570,14 @@ void testGUI::useMenuExportKMLfile()
 
     QVERIFY2( mainWindow, "useMenuExportKMLfile: mainWindow tests false");
 
-    // Enables focus and widget events
-    QApplication::setActiveWindow( mainWindow );
 
     mainWindow->show();
     QTest::qWait(1000);
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+    // Shortcuts won't work unless the window is active
+    QVERIFY2( QTest::qWaitForWindowActive( mainWindow ), "mainWindow is not active" );
 
     // ---- Using shortkeys
 
@@ -1575,7 +1585,8 @@ void testGUI::useMenuExportKMLfile()
     QTest::keyClick( mainWindow, 'j', Qt::AltModifier );
 
     mainWindow->show();
-    QTest::qWait(2000);
+    QTest::qWait(1000);
+
 
 
     QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
@@ -1585,22 +1596,12 @@ void testGUI::useMenuExportKMLfile()
     QVERIFY2( menuObject_Inventory, "useMenuImportToLoadSidescanFile: menuObject_Inventory tests false");
 
 
-
-//    const QObjectList listChildrenMenuObject_Inventory = menuObject_Inventory->children();
-
-//    qDebug() << tr( "listChildrenMenuObject_Inventory.size(): " ) << listChildrenMenuObject_Inventory.size();
-
-//    for (QObject *children : listChildrenMenuObject_Inventory) {
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-//    }
-
-
     // Keyboard for Export Inventory
     QTest::keyClick( menuObject_Inventory, 'x', Qt::AltModifier );
 
     mainWindow->show();
-    QTest::qWait(2000);
+    QTest::qWait(1000);
+
 
 
     QMenu *menuExport_Inventory = menuObject_Inventory->findChild< QMenu * >( "menuExport_Inventory" );
@@ -1608,22 +1609,12 @@ void testGUI::useMenuExportKMLfile()
 
 
 
-//    const QObjectList listChildrenMenuExport_Inventory = menuExport_Inventory->children();
-
-//    qDebug() << tr( "listChildrenMenuExport_Inventory.size(): " ) << listChildrenMenuExport_Inventory.size();
-
-//    for (QObject *children : listChildrenMenuObject_Inventory) {
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-//    }
-
-
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 5 * 1000 );
 
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowToExportKMLfile() ) );
 
-    // Keyboard for Export Inventory
+    // Keyboard for Export KML File
     QTest::keyClick( menuExport_Inventory, 'k', Qt::AltModifier );
 
 
@@ -1700,6 +1691,9 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 void testGUI::cleanAfterUseMenuExportKMLfile()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseMenuExportKMLfile()'" << std::endl;
+
+    QVERIFY2( interactWithModalWindowToExportKMLfileReachedTheEnd, "cleanAfterUseMenuExportKMLfile: interactWithModalWindowToExportKMLfileReachedTheEnd is false" );
+
 
     if ( mainWindow ) {
         delete mainWindow;

@@ -705,10 +705,14 @@ void testGUI::interactWithModalWindowActionImport()
     // Path with respect to the application executable
     // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
 
-    QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/plane1.xtf" ) + "\" "
-                       "\"" + QCoreApplication::applicationDirPath() + "/../"
-                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" ";
+    //
+//    QString filename = "\"" + QCoreApplication::applicationDirPath() + "/../"
+//                                + tr( "data/wrecks/plane1.xtf" ) + "\" "
+//                       "\"" + QCoreApplication::applicationDirPath() + "/../"
+//                                + tr( "data/wrecks/scotsman3.xtf" ) + "\" ";
+
+    QString filename = "\"" + tr( "../../../test/data/wrecks/plane1.xtf" )  + "\" "
+                        "\"" + tr( "../../../test/data/wrecks/scotsman3.xtf" ) + "\" ";
 
 
     QTest::keyClicks(lineEdit, filename );
@@ -856,7 +860,9 @@ void testGUI::interactWithModalWindowActionSaveAs()
     // Path with respect to the application executable
     // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
 
-    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject";
+//    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject";
+
+    QString filename =  tr( "../../../test/testProject/AutomatedTestProject" );
 
 
     QTest::keyClicks(lineEdit, filename );
@@ -1129,7 +1135,10 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 //    QString filename = QCoreApplication::applicationDirPath() + "/../"
 //                                        + tr( "testProject/TestProject5Files.ssp" );
 
-    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject.ssp";
+//    QString filename = QCoreApplication::applicationDirPath() + "/../testProject/AutomatedTestProject.ssp";
+
+    QString filename = tr( "../../../test/testProject/AutomatedTestProject.ssp" );
+
 
     QTest::keyClicks(lineEdit, filename );
 

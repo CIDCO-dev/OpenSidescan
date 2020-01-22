@@ -8,6 +8,7 @@ pipeline {
     version="$major.$minor.$patch"
     exec_name="OpenSidescan-$version"
     publishDir="/var/www/html/$name/$version"
+    publishTestOutputLinuxDir="$publishDir/TestOutputLinux"
     lastPublishDir="/var/www/html/$name/last"
     binMasterPublishDir="$publishDir/Linux"
     binWinx64Dir="windows-x64"
@@ -48,6 +49,22 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }
+
+    stage('TEST MASTER'){
+      agent { label 'master'}
+      steps {
+        sh 'make testGUI'
+      }
+      post {
+        always {
+          sh 'mkdir -p $publishTestOutputLinuxDir'
+          sh 'cp build/test/bin/test-report-OpenSidescan* $publishTestOutputLinuxDir/'
+        }
+      }
+
+    }
+
+
   }
 
 }

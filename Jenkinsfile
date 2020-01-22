@@ -58,7 +58,7 @@ pipeline {
       post {
         always {
           sh 'mkdir -p $publishTestOutputLinuxDir'
-          sh 'cp -r build/test/bin/test-report-OpenSidescan* $publishTestOutputLinuxDir/'
+          sh 'cp build/test/bin/test-report-OpenSidescan* $publishTestOutputLinuxDir/'
         }
       }
 

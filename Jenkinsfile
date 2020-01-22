@@ -57,6 +57,7 @@ pipeline {
       }
       post {
         always {
+          junit 'build/test/bin/test-report-OpenSidescanXUNIT.xml'
           sh 'mkdir -p $publishTestOutputLinuxDir'
           sh 'cp build/test/bin/test-report-OpenSidescan* $publishTestOutputLinuxDir/'
         }

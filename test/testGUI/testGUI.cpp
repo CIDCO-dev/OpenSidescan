@@ -20,7 +20,7 @@
 
 #include <QDialogButtonBox>
 
-
+#include <QObjectList>
 
 #include <QDebug>
 
@@ -192,6 +192,11 @@ void testGUI::timeOutOccured()
         qDebug() << tr( "QApplication::activeModalWidget():" );
 
         std::cout << "\n\nmodalWidget: " << modalWidget << "\n" << std::endl;
+		
+        std::cout << "modalWidget->objectName(): " << modalWidget->objectName().toStdString() << std::endl;
+
+        std::cout << "modalWidget->windowTitle(): " << modalWidget->windowTitle().toStdString() << std::endl;
+		
 
         qDebug() << tr( "modalWidget->objectName(): " ) << modalWidget->objectName();
 
@@ -295,7 +300,7 @@ void testGUI::useMenuImportToLoadSidescanFile()
     QVERIFY2( menuFile, "useMenuImportToLoadSidescanFile: menuFile tests false");
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
+    timerTimeOut->start( 30 * 1000 );
 
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImport() ) );
 
@@ -662,7 +667,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
+    timerTimeOut->start( 50 * 1000 ); // Time large enough to include the time it takes to load the files
 
     // Single shot timer for function that will interact with the modal window
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImport() ) );
@@ -684,6 +689,16 @@ void testGUI::interactWithModalWindowActionImport()
 
     QVERIFY2( modalWidget->windowTitle() == tr( "Import Sidescan Files" ),
               "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
+
+
+//	const QObjectList list = modalWidget->children();
+	
+//	std::cout << "\nmodalWidget list.size(): " << list.size() << std::endl;
+	
+//	for ( QObject *children : list ) {
+//		std::cout << children->objectName().toStdString()
+//			<< ", children: " << children->metaObject()->className() << std::endl;
+//	}
 
 
     QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
@@ -737,7 +752,12 @@ void testGUI::interactWithModalWindowActionImport()
     QString acceptButtonText = tr( "&Open" );
     QPushButton * acceptButton = nullptr;
 
+
+//	std::cout << "interactWithModalWindowActionImport() button text: " << std::endl;
+
     for (QAbstractButton *button : listButtonBox) {
+		
+//		std::cout << "  \"" << button->text().toStdString() << "\"" << std::endl;
 
         if ( button->text() == acceptButtonText )
             acceptButton = static_cast<QPushButton * >( button );
@@ -805,7 +825,7 @@ void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
 
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
+    timerTimeOut->start( 30 * 1000 );
 
     // Single shot timer for function that will interact with the modal window
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionSaveAs() ) );
@@ -1041,20 +1061,29 @@ void testGUI::interactWithModalWindowAlreadyAnActiveProject()
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
-    QString OKButtonText = tr( "&OK" );
+    QString OKButtonTextWithAmpersand = tr( "&OK" );
+	QString OKButtonText = tr( "OK" );
     QPushButton * buttonOK = nullptr;
+	
+//	std::cout << "interactWithModalWindowAlreadyAnActiveProject, button text:" << std::endl;
+	
 
     for (QAbstractButton *button : listButtonBox) {
-        if ( button->text() == OKButtonText )
+		
+//		std::cout << "  " << button->text().toStdString() << std::endl;
+		
+        if ( button->text() == OKButtonText || button->text() == OKButtonTextWithAmpersand )
             buttonOK = static_cast<QPushButton * >( button );
     }
+
+
 
     QVERIFY2( buttonOK, "interactWithModalWindowAlreadyAnActiveProject: buttonOK tests false");
 
     if ( doInteractWithModalWindowToSelectProjectToOpen ) {
 
         // Time out timer in case there is a failure while interacting with the modal window
-        timerTimeOut->start( 30 * 1000 ); // Time large enough to include the time it takes to load the files
+        timerTimeOut->start( 50 * 1000 ); // Time large enough to include the time it takes to load the files
 
         QTimer::singleShot(500, this, SLOT(interactWithModalWindowToSelectProjectToOpen() ) );
 
@@ -1112,6 +1141,15 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
 
     QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
               "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+//	const QObjectList list = modalWidget->children();
+	
+//	std::cout << "\nmodalWidget list.size(): " << list.size() << std::endl;
+	
+//	for ( QObject *children : list ) {
+//		std::cout << children->objectName().toStdString()
+//			<< ", children: " << children->metaObject()->className() << std::endl;
+//	}
 
 
     QLineEdit *lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
@@ -1506,17 +1544,25 @@ void testGUI::interactWithModalWindowToFindObjects()
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
-    QString cancelButtonText = tr( "&Cancel" );
+    // QString cancelButtonText = tr( "&Cancel" );
+    // QPushButton * cancelButton = nullptr;
+
+    // QString okButtonText = tr( "&OK" );
+    // QPushButton * okButton = nullptr;
+	
+    QString cancelButtonTextWithAmpersand = tr( "&Cancel" );
+    QString cancelButtonText = tr( "Cancel" );
     QPushButton * cancelButton = nullptr;
 
-    QString okButtonText = tr( "&OK" );
-    QPushButton * okButton = nullptr;
+    QString okButtonTextWithAmpersand = tr( "&OK" );
+    QString okButtonText = tr( "OK" );
+    QPushButton * okButton = nullptr;	
 
     for (QAbstractButton *button : listButtonBox) {
 
-        if ( button->text() == cancelButtonText )
+        if ( button->text() == cancelButtonText || button->text() == cancelButtonTextWithAmpersand )
             cancelButton = static_cast<QPushButton * >( button );
-        else if ( button->text() == okButtonText )
+        else if ( button->text() == okButtonText || button->text() == okButtonTextWithAmpersand )
             okButton = static_cast<QPushButton * >( button );
     }
 
@@ -1658,7 +1704,8 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 
     QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
 
-    QString cancelButtonText = tr( "&Cancel" );
+    QString cancelButtonTextWithAmpersand = tr( "&Cancel" );
+	QString cancelButtonText = tr( "Cancel" );	
     QPushButton * cancelButton = nullptr;
 
     QString saveButtonText = tr( "&Save" );
@@ -1666,7 +1713,7 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 
     for (QAbstractButton *button : listButtonBox) {
 
-        if ( button->text() == cancelButtonText )
+        if ( button->text() == cancelButtonText || button->text() == cancelButtonTextWithAmpersand )
             cancelButton = static_cast<QPushButton * >( button );
         else if ( button->text() == saveButtonText )
             saveButton = static_cast<QPushButton * >( button );
@@ -1740,31 +1787,6 @@ void testGUI::cleanAfterUseMenuExportKMLfile()
 //    QTest::qWait(5000);
 
 //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

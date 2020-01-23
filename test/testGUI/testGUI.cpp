@@ -686,6 +686,19 @@ void testGUI::interactWithModalWindowActionImport()
               "interactWithModalWindowActionImport: modalWidget->windowTitle() is not 'Import Sidescan Files'" );
 
 
+
+    const QObjectList list = modalWidget->children();
+
+    std::cout << "\nmodalWidget list.size(): " << list.size() << std::endl;
+
+    for (QObject *children : list) {
+
+        std::cout << children->objectName().toStdString()
+                  << ", className: " << children->metaObject()->className() << std::endl;
+
+    }
+
+
     QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
     QVERIFY2( lineEdit, "interactWithModalWindowActionImport: lineEdit tests false");
 

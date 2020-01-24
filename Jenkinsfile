@@ -56,9 +56,14 @@ pipeline {
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-x64-2'}
       steps {
+
+        bat "echo %cd%"
+
         bat "ScriptsTestGUI\\build_test_gui.bat"
         bat "ScriptsTestGUI\\copy_dll_for_test_gui_gui.bat"
         bat "ScriptsTestGUI\\run_test_gui.bat"
+
+        bat "echo %cd%"
 
         archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
         archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescan.xml')

@@ -65,10 +65,10 @@ pipeline {
 
         bat "echo %cd%"
 
-        archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescan.xml')
-        archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        archiveArtifacts('buildTest\\Release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
       }
     }
 

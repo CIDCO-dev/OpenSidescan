@@ -19,6 +19,8 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 4 channel
       case CV_8UC4:
       {
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
+
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
                        static_cast<int>(inMat.step),
@@ -30,6 +32,8 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 3 channel
       case CV_8UC3:
       {
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3\n" << std::endl;
+
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
                        static_cast<int>(inMat.step),
@@ -42,6 +46,9 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       case CV_8UC1:
       {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
+
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n" << std::endl;
+
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
                        static_cast<int>(inMat.step),
@@ -57,7 +64,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
         srand (time(NULL)); // initialize random seed
 
          QVector<QRgb> table( 256 );
-         for( int i = 0; i < 256; ++i )
+         for( int i = 0; i < 255; ++i )
          {
 //             table[i] = qRgb( rand() % 256, rand() % 256, rand() % 256);
              table[i] = qRgb( 255-i, i,  ( i + 128 ) % 256 );
@@ -68,6 +75,14 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
 
          }
 
+         // The found objects' bonding box is displayed with a white rectangle
+         // The color white must be in the color table
+         table[255] = qRgb( 255, 255, 255 );
+
+         // The object names are displayed in black, Does black have to be in the color table?
+
+
+
          image.setColorTable(table);
 
 
@@ -76,6 +91,9 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
 
 
 #else
+
+       std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, NOT( if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0) )\n" << std::endl;
+
          static QVector<QRgb>  sColorTable;
 
          // only create our color table the first time

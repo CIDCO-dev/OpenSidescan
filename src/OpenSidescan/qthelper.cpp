@@ -1,4 +1,10 @@
+
+#include <stdlib.h>     /* srand, rand */
+
+
 #include "qthelper.h"
+
+
 
 QtHelper::QtHelper()
 {
@@ -40,6 +46,35 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
                        inMat.cols, inMat.rows,
                        static_cast<int>(inMat.step),
                        QImage::Format_Grayscale8 );
+
+//        std::cout << "\ninMat.cols:                   " << inMat.cols << "\n"
+//                    << "inMat.rows:                   " << inMat.rows << "\n"
+//                    << "static_cast<int>(inMat.step): " << static_cast<int>(inMat.step) << "\n" << std::endl;
+
+
+        image = image.convertToFormat(QImage::Format_Indexed8);
+
+        srand (time(NULL)); // initialize random seed
+
+         QVector<QRgb> table( 256 );
+         for( int i = 0; i < 256; ++i )
+         {
+//             table[i] = qRgb( rand() % 256, rand() % 256, rand() % 256);
+             table[i] = qRgb( 255-i, i,  ( i + 128 ) % 256 );
+//             table[i] = qRgb( i, i, i ); // Greyscale
+             table[i] = qRgb( i, i, 0 ); // yellow
+
+//             std::cout << static_cast<unsigned int >( table[ i ] ) << "\n";
+
+         }
+
+         image.setColorTable(table);
+
+
+
+
+
+
 #else
          static QVector<QRgb>  sColorTable;
 

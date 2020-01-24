@@ -65,10 +65,16 @@ pipeline {
 
         bat "echo %cd%"
 
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+//        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
+//        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
+//        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
+//        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+
+          archiveArtifacts('test-report-OpenSidescanXUNIT.xml')
+          archiveArtifacts('test-report-OpenSidescan.xml')
+          archiveArtifacts('test-report-OpenSidescanTAP.txt')
+          archiveArtifacts('test-report-OpenSidescanTXT.txt')
+
       }
     }
 
@@ -77,6 +83,10 @@ pipeline {
       steps {
 
         sh 'mkdir -p $publishTestOutputWinx64Dir'
+
+        sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
+        sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
+
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/test-report-OpenSidescan* $publishTestOutputWinx64Dir'
 
       }

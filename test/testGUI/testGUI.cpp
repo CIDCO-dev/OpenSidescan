@@ -916,6 +916,8 @@ void testGUI::interactWithModalWindowActionSaveAs()
     QVERIFY2( saveButton, "interactWithModalWindowActionSaveAs: saveButton tests false");
     QVERIFY2( saveButton->isEnabled(), "interactWithModalWindowActionSaveAs: saveButton is not enabled");
 
+    QVERIFY2( false, "interactWithModalWindowActionSaveAs: false on purpose");
+
 
 
 //    std::cout << "\n\n" << std::endl;

@@ -70,7 +70,11 @@ pipeline {
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
 
-
+      }
+      post {
+        always {
+          junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
+        }
       }
     }
 

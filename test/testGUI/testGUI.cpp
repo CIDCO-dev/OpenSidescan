@@ -857,8 +857,11 @@ void testGUI::interactWithModalWindowActionSaveAs()
     QWidget * modalWidget = QApplication::activeModalWidget();
     QVERIFY2( modalWidget, "interactWithModalWindowActionSaveAs: modalWidget tests false");
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
-              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+//    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+//              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Save Sidescan Project" ),
+              "interactWithModalWindowActionSaveAs: modalWidget->windowTitle() is not 'Save Sidescan Project'" );
 
 
     QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
@@ -1141,8 +1144,13 @@ void testGUI::interactWithModalWindowToSelectProjectToOpen()
     QWidget * modalWidget = QApplication::activeModalWidget();
     QVERIFY2( modalWidget, "interactWithModalWindowToSelectProjectToOpen: modalWidget tests false");
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
-              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+//    QVERIFY2( modalWidget->windowTitle() == tr( "Sidescan Project Files" ),
+//              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Sidescan Project Files'" );
+
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Open Sidescan Project" ),
+              "interactWithModalWindowToSelectProjectToOpen: modalWidget->windowTitle() is not 'Open Sidescan Project'" );
+
 
 //	const QObjectList list = modalWidget->children();
 	
@@ -1688,8 +1696,8 @@ void testGUI::interactWithModalWindowToExportKMLfile()
     QWidget * modalWidget = QApplication::activeModalWidget();
     QVERIFY2( modalWidget, "interactWithModalWindowToExportKMLfile: modalWidget tests false");
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "KML File" ),
-              "interactWithModalWindowToExportKMLfile: modalWidget->windowTitle() is not 'KML File'" );
+    QVERIFY2( modalWidget->windowTitle() == tr( "Export as KML File" ),
+              "interactWithModalWindowToExportKMLfile: modalWidget->windowTitle() is not 'Export as KML File'" );
 
 
     // Find the button to Save and to Cancel the modal window

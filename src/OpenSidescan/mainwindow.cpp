@@ -328,7 +328,7 @@ void MainWindow::actionOpen()
 {
     if(promptProject()){
         QString fileName = QFileDialog::getOpenFileName(this, 
-														tr("Sidescan Project Files"), 
+                                                        tr("Open Sidescan Project"), //tr("Sidescan Project Files"),
 														"", 
 														tr("Sidescan Project Files (*.ssp)"), 
 														nullptr,
@@ -399,7 +399,7 @@ void MainWindow::actionSave()
 void MainWindow::actionSaveAs(){
     if(currentProject){
         QString fileName = QFileDialog::getSaveFileName( this, 
-		                                                  tr("Sidescan Project Files"), 
+                                                          tr("Save Sidescan Project"), // tr("Sidescan Project Files"),
 														  "", 
 														  tr("Sidescan Project Files (*.ssp)"), 
 															nullptr,
@@ -422,7 +422,7 @@ void MainWindow::actionExportKmlFile(){
     if(currentProject){
         //QFileDialog::setDefaultSuffix(QString::fromStdString(".kml"));
         QString fileName = QFileDialog::getSaveFileName( this, 
-														tr("KML File"),
+                                                        tr("Export as KML File"), // tr("KML File"),
 														"",
 														tr("KML File (*.kml)"), 
 															nullptr,

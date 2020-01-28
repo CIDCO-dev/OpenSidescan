@@ -6,12 +6,14 @@
 #include "qthelper.h"
 
 // Conversion based on
-// # https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
+// https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
 double fn( const double n,
            const double h360,
            const double saturation01,
            const double value01 )
-{
+{    
+    // f(n) = V - V * S * max( min( k, 4-k, 1 ), 0 )
+
     double k = fmod( n + h360 / 60, 6.0 );
 
     double minimum = k;
@@ -29,7 +31,6 @@ double fn( const double n,
     else
         maximum = 0.0;
 
-
     return value01 - value01 * saturation01 * maximum;
 }
 
@@ -38,7 +39,7 @@ void HSVtoRGB( const double h360,
                const double value01,
                std::vector<int> & rgb )
 {
-    // Each of R, G, B, is within [0, 1]
+    // Each of R, G, B, as computed by fn, is within [0, 1]
 
     if ( rgb.size() != 3 )
         rgb.resize( 3 );
@@ -48,12 +49,38 @@ void HSVtoRGB( const double h360,
     rgb[ 2 ] = static_cast<int>( fn( 1, h360, saturation01, value01 ) * 256 );
 }
 
-
+// Inspired from https://stackoverflow.com/questions/7531981/how-to-instantiate-a-static-vector-of-object
+QVector<QRgb> QtHelper::colorTable;
+bool QtHelper::helperVariable = instantiateVector();
 
 
 QtHelper::QtHelper()
 {
 
+}
+
+bool QtHelper::instantiateVector()
+{
+    colorTable.resize( 256 );
+    colorTable.squeeze(); // Releases any memory not required to store the items
+
+    double hue360 = 39.069767441860456;
+    double saturation = 0.9005235602094241;
+
+    std::vector<int> rgb;
+
+    for( int i = 0; i < 255; ++i )
+    {
+        HSVtoRGB( hue360, saturation, i / 256.0, rgb );
+
+        colorTable[i] = qRgb( rgb[ 0 ], rgb[ 1 ] , rgb[ 2 ] );
+    }
+
+    // The found objects' bonding box is displayed with a white rectangle
+    // The color white must be in the color table
+    colorTable[255] = qRgb( 255, 255, 255 );
+
+    return true;
 }
 
 
@@ -64,7 +91,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 4 channel
       case CV_8UC4:
       {
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -77,7 +104,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 3 channel
       case CV_8UC3:
       {
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3\n" << std::endl;
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -92,53 +119,18 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
 
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n" << std::endl;
-
-//         QImage image( inMat.data,
-//                       inMat.cols, inMat.rows,
-//                       static_cast<int>(inMat.step),
-//                       QImage::Format_Grayscale8 );
-
-//        image = image.convertToFormat(QImage::Format_Indexed8 );
-
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
                        static_cast<int>(inMat.step),
                        QImage::Format_Indexed8 );
 
-//        std::cout << "\ninMat.cols:                   " << inMat.cols << "\n"
-//                    << "inMat.rows:                   " << inMat.rows << "\n"
-//                    << "static_cast<int>(inMat.step): " << static_cast<int>(inMat.step) << "\n" << std::endl;
-
-
-         double hue360 = 39.069767441860456;
-         double saturation = 0.9005235602094241;
-
-         std::vector<int> rgb;
-
-         QVector<QRgb> table( 256 );
-         for( int i = 0; i < 255; ++i )
-         {
-             HSVtoRGB( hue360, saturation, i / 256.0, rgb );
-
-             table[i] = qRgb( rgb[ 0 ], rgb[ 1 ] , rgb[ 2 ] );
-
-//             std::cout << std::hex << static_cast<unsigned int >( table[ i ] ) << std::dec << "\n";
-         }
-
-         // The found objects' bonding box is displayed with a white rectangle
-         // The color white must be in the color table
-         table[255] = qRgb( 255, 255, 255 );
-
-         // The object names are displayed in black, Does black have to be in the color table?
-
-         image.setColorTable(table);
-
+         image.setColorTable(colorTable);
 
 #else
 
-       std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, NOT( if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0) )\n" << std::endl;
+//       std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, NOT( if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0) )\n" << std::endl;
 
          static QVector<QRgb>  sColorTable;
 

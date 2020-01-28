@@ -80,7 +80,14 @@ void ImageTab::saveImage(){
     if(saveDialog.exec()){
         QString fileName = saveDialog.selectedFiles().at(0);
         if(fileName.size() > 0){
-            cv::imwrite(fileName.toStdString(),image.getImage());
+
+//            cv::imwrite(fileName.toStdString(),image.getImage());
+
+            const QPixmap *pixmap = imageLabel->pixmap();
+
+            if ( pixmap != nullptr ) {
+                pixmap->save( fileName );
+            }
         }
     }
 }

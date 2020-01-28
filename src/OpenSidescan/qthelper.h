@@ -17,7 +17,7 @@ public:
 
 private:
 
-    static bool instantiateVector();
+    static bool buildColorTable();
 
     static bool helperVariable;
     static QVector<QRgb> colorTable;

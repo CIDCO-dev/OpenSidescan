@@ -1,5 +1,3 @@
-
-#include <stdlib.h>     /* srand, rand */
 #include <math.h>       /* fmod */
 
 
@@ -51,7 +49,7 @@ void HSVtoRGB( const double h360,
 
 // Inspired from https://stackoverflow.com/questions/7531981/how-to-instantiate-a-static-vector-of-object
 QVector<QRgb> QtHelper::colorTable;
-bool QtHelper::helperVariable = instantiateVector();
+bool QtHelper::helperVariable = buildColorTable();
 
 
 QtHelper::QtHelper()
@@ -59,7 +57,7 @@ QtHelper::QtHelper()
 
 }
 
-bool QtHelper::instantiateVector()
+bool QtHelper::buildColorTable()
 {
     colorTable.resize( 256 );
     colorTable.squeeze(); // Releases any memory not required to store the items

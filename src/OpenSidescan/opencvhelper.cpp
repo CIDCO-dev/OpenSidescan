@@ -1,7 +1,8 @@
 #include "opencvhelper.h"
 
-#include <sstream>
+#include "../thirdParty/MBES-lib/src/utils/Exception.hpp"
 
+#include <sstream>
 
 
 void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool showFeatureMarkers,bool mergeOverlappingObjects){
@@ -123,8 +124,14 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
     }
 
     for(auto i=rois.begin();i!=rois.end();i++){
-        GeoreferencedObject * object = new GeoreferencedObject(file,image,(*i).x,(*i).y,(*i).width,(*i).height);
-        objects.push_back(object);
+        try {
+            GeoreferencedObject * object = new GeoreferencedObject(file,image,(*i).x,(*i).y,(*i).width,(*i).height);
+            objects.push_back(object);
+        }
+        catch (Exception * error) {
+            std::cerr << "OpencvHelper::detectObjects(): " << error->what()
+                      << "\nFilename: \"" << file.getFilename() << "\n" << std::endl;
+        }
     }
 }
 

@@ -1,6 +1,9 @@
 #include "georeferencedobject.h"
 
 #include "../thirdParty/MBES-lib/src/math/Distance.hpp"
+
+#include "../thirdParty/MBES-lib/src/utils/Exception.hpp"
+
 #include <algorithm>
 
 GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
@@ -38,7 +41,15 @@ void GeoreferencedObject::computeDimensions(){
 
     if( y < image.getPings().size() && y+pixelHeight < image.getPings().size() ){
         Position * pos1 = image.getPings()[y]->getPosition();
+
+        if ( pos1 == nullptr )
+            throw new Exception( "GeoreferencedObject::computeDimensions(): pos1 is nullptr (y: " + std::to_string( y ) + ")" );
+
         Position * pos2  = image.getPings()[y+pixelHeight]->getPosition();
+
+        if ( pos2 == nullptr )
+            throw new Exception( "GeoreferencedObject::computeDimensions(): pos2 is nullptr (y: " + std::to_string( y )
+                                    + ", pixelHeight: " + std::to_string( pixelHeight) + ")" );
 
         height = Distance::haversine(pos1->getLongitude(),pos1->getLatitude(),pos2->getLongitude(),pos2->getLatitude());
     }
@@ -53,9 +64,12 @@ void GeoreferencedObject::computePosition(){
 
     if(yCenter < image.getPings().size()){
         SidescanPing * ping = image.getPings()[yCenter];
-        position = ping->getPosition();
+        position = ping->getPosition();                          
     }
     else{
         position = NULL;
     }
+
+    if ( position == nullptr )
+        throw new Exception( "GeoreferencedObject::computePosition(): position is nullptr" );
 }

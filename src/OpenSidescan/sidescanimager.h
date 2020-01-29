@@ -68,14 +68,14 @@ public:
 
             cv::Mat img(channels[i]->size(),channels[i]->at(0)->getSamples().size(), CV_64F,cv::Scalar(0));
 
-            //std::cerr << "Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
+            std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
 
             unsigned int positionIndex =0 ;
 
             for(unsigned int j=0;j<channels[i]->size();j++){ //j indexes rows
 
-                //Grab position data IF AVAILABLE
-                if(channels[i]->at(j)->getPosition() != NULL && ! positions.empty()){
+                // If ping does not have a position and the position vector is not empty: interpolate the position
+                if(channels[i]->at(j)->getPosition() == NULL && ! positions.empty()){
                     //find position for ping
                     while(positionIndex + 1 < positions.size() && positions[positionIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
                         positionIndex++;
@@ -95,6 +95,7 @@ public:
 
                     channels[i]->at(j)->setPosition(pingPosition);
                 }
+
 
                 //generate pixel row
                 for(unsigned int k=0;k<channels[i]->at(j)->getSamples().size();k++){ //k indexes cols

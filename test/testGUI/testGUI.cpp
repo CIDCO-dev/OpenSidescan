@@ -32,7 +32,7 @@
 
 #include "../../src/OpenSidescan/mainwindow.h"
 
-//#define DOSKIPTESTS
+#define DOSKIPTESTS
 
 
 // https://doc.qt.io/qt-5/qtest-overview.html
@@ -45,14 +45,18 @@ class testGUI : public QObject
 
 public slots:
 
-#ifndef DOSKIPTESTS
-    void interactWithModalWindowActionImport();
-
-    void verifyResultOfImportToLoadSidescanFile();
-
     void selectFileAndVerify( int fileToSelect, std::string & filename,
                                        std::vector<std::string> & tabNames,
                                        std::vector< std::pair< std::string,std::string > > & properties );
+
+
+    void interactWithModalWindowActionImport();
+
+#ifndef DOSKIPTESTS
+
+    void verifyResultOfImportToLoadSidescanFile();
+
+
 
 
     void interactWithModalWindowActionSaveAs();
@@ -65,9 +69,11 @@ public slots:
 
     void interactWithModalWindowToFindObjects();
 
+    void interactWithModalWindowToExportKMLfile();
+
 #endif
 
-    void interactWithModalWindowToExportKMLfile();
+
 
 
 
@@ -124,11 +130,20 @@ private slots:
     void useToolBarActionFindObjects();
     void cleanAfterUseToolBarActionFindObjects();
 
-#endif
-
     // Use menubar Object Inventory/Export Inventory/Export KML File to verify that modal window opens
     void useMenuExportKMLfile();
     void cleanAfterUseMenuExportKMLfile();
+#endif
+
+    // Verify using mouse to create an object, then saving the object image
+    void useToolBarActionImportToLoadSidescanFileForFindingObjects();
+    void operateMouseToCreateObjects();
+    void cleanAfterFindingObjects();
+
+
+
+
+
 
 
 //    void afterContextMenu();
@@ -567,7 +582,6 @@ void testGUI::verifyResultOfImportToLoadSidescanFile()
     QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: mainWindow tests false");
 
 
-    // There should be one file in the tree model
 
     QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
                 qPrintable( "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: the number of files in the projectWindow is "
@@ -677,6 +691,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 }
 
+#endif
 void testGUI::interactWithModalWindowActionImport()
 {
     qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
@@ -788,7 +803,7 @@ void testGUI::interactWithModalWindowActionImport()
 }
 
 
-
+#ifndef DOSKIPTESTS
 
 
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
@@ -1325,7 +1340,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 }
 
-
+#endif
 
 void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
                                    std::vector<std::string> & tabNames,
@@ -1478,6 +1493,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 }
 
+#ifndef DOSKIPTESTS
 
 void testGUI::useToolBarActionFindObjects()
 {
@@ -1615,7 +1631,7 @@ void testGUI::cleanAfterUseToolBarActionFindObjects()
     }
 }
 
-#endif
+
 
 
 void testGUI::useMenuExportKMLfile()
@@ -1766,6 +1782,226 @@ void testGUI::cleanAfterUseMenuExportKMLfile()
         mainWindow = nullptr;
     }
 }
+
+
+
+#endif
+
+
+void testGUI::useToolBarActionImportToLoadSidescanFileForFindingObjects()
+{
+    qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFileForFindingObjects()'" );
+
+    // setup for the test
+    interactWithModalWindowActionImportReachedTheEnd = false;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useToolBarActionImportToLoadSidescanFileForFindingObjects: mainWindow tests false");
+
+
+    // Get action for importing a sidescan file
+
+    QAction * actionImport = mainWindow->findChild< QAction * >( "actionImport" );
+    QVERIFY2( actionImport, "useToolBarActionImportToLoadSidescanFileForFindingObjects: actionImport tests false");
+
+
+    mainWindow->show();
+    QTest::qWait(1200);
+
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionImportToLoadSidescanFileForFindingObjects: mainToolBar tests false");
+
+
+    QWidget *widgetForActionImport = mainToolBar->widgetForAction( actionImport );
+    QVERIFY2( widgetForActionImport, "useToolBarActionImportToLoadSidescanFileForFindingObjects: widgetForActionImport tests false");
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 50 * 1000 ); // Time large enough to include the time it takes to load the files
+
+    // Single shot timer for function that will interact with the modal window
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImport() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
+}
+
+
+void testGUI::operateMouseToCreateObjects()
+{
+
+
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::verifyResultOfImportToLoadSidescanFile'" );
+
+
+    if ( interactWithModalWindowActionImportReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowActionImportReachedTheEnd,
+                    "operateMouseToCreateObjects: interactWithModalWindowActionImportReachedTheEnd is false");
+    }
+
+
+    QVERIFY2( mainWindow, "operateMouseToCreateObjects: mainWindow tests false");
+
+
+
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
+                qPrintable( "operateMouseToCreateObjects: the number of files in the projectWindow is "
+                + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+                + " instead of 2") );
+
+
+
+    // Select the files and verify
+
+    int fileToSelect = 0;
+
+    std::string filename = "plane1.xtf";
+
+
+
+// ----------------------------------------------------------
+
+
+
+
+    // Select the file to be sure it is displayed
+
+    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+
+    // Scroll until it is visible
+    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+
+    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
+
+    // Verify that the rectangle position corresponds to the same index in the model
+    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
+                                    rectFileToSelect.center() );
+
+    QVERIFY2( indexFileToSelect == indexForPosition,
+              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect " + QString::number( fileToSelect )
+                          + ":, indexFileToSelect is different from indexForPosition" ) );
+
+
+
+    // Select the file
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
+                      Qt::NoModifier,
+                      rectFileToSelect.center() );
+
+
+    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    QVERIFY2( currentIndex.row() == fileToSelect,
+              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect " + QString::number( fileToSelect )
+                          + ":, currentIndex.row() is different from fileToSelect" ) );
+
+    std::string modelFilename = mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString();
+
+    QVERIFY2( modelFilename == filename,
+              qPrintable( "testGUI::operateMouseToCreateObjects: filename for fileToSelect "
+            + QString::number( fileToSelect ) + " has wrong text of '" +  tr( modelFilename.c_str() )
+            + "' instead of the expected '" + tr( filename.c_str() ) + "'" ) );
+
+
+
+//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+    // Give a bit of time to be sure the tabs are settled
+    mainWindow->show();
+    QTest::qWait(100);
+
+    // Verify tabs
+
+    QVERIFY2( mainWindow->tabs,
+              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
+            + QString::number( fileToSelect ) + ", mainWindow->tabs tests false" ) );
+
+
+    // Verify that the first tab is selected
+
+    QVERIFY2( mainWindow->tabs->currentIndex() == 0,
+                qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
+              + QString::number( fileToSelect ) + ", The current tab index is different from zero") );
+
+
+    QTabBar *tabBar = mainWindow->tabs->tabBar();
+
+    QVERIFY2( tabBar,
+              qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+            + QString::number( fileToSelect ) + ", tabBar tests false" ) );
+
+
+    // click second tab
+    int tabIndex = 1;
+
+    const QPoint tabPos = tabBar->tabRect( tabIndex ).center();
+    QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QVERIFY2( mainWindow->tabs->currentIndex() == tabIndex,
+              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
+            + QString::number( fileToSelect ) + ", the current tab index of "
+            + QString::number( mainWindow->tabs->currentIndex() ) + " is different from the target of "
+            + QString::number( tabIndex ) ) );
+
+
+
+
+
+
+
+// -----------------------------------------------------------
+
+
+
+
+
+
+
+    mainWindow->show();
+    QTest::qWait(10000);
+
+    std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
+
+
+}
+
+void testGUI::cleanAfterFindingObjects()
+{
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterFindingObjects()'" << std::endl;
+
+
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+}
+
+
 
 
 

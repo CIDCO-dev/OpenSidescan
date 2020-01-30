@@ -2,9 +2,12 @@
 
 #include <QFile>
 #include <QtXml>
+#include <QPixmap>
 
 #include <cstring>
 #include "sidescanimager.h"
+#include "qthelper.h"
+
 
 Project::Project()
 {
@@ -188,4 +191,119 @@ void Project::exportInventoryAsKml(std::string & filename){
     xmlWriter.writeEndElement();
 
     file.close();
+}
+
+void Project::saveObjectImages( const QString & folder )
+{
+    std::cout << "\nBeginning of Project::saveObjectImages()\n"
+        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
+
+
+    // First test, not using the object's name but aonly a base name
+    QString baseFilename ="objectImage";
+    int countObject = 0;
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+
+
+            // k is an iterator to (GeoreferencedObject *)
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+
+//                this->inventoryTable->setRowCount(row+1);
+
+//                InventoryTableItem * rowFirst = new InventoryTableItem(QString::fromStdString((*k)->getName()));
+
+                // Name to save file
+                QString fileName = folder + "/" + baseFilename + QString::number( countObject ) + ".jpg";
+
+                std::cout << "\ncountObject: " << countObject << ", \"" << fileName.toStdString() << "\"" << std::endl;
+
+
+
+
+
+                std::cout << "Before cv::Mat image = (*j)->getImage();" << std::endl;
+                cv::Mat image = (*j)->getImage();
+
+                int cols = image.cols;
+                int rows = image.rows;
+                std::cout << "cols: " << cols << ", rows: " << rows << std::endl;
+
+
+
+
+                // Build a new image for the rect of the object
+
+                // Build cv mat for the object
+
+
+//                cv::Mat temp = (*j)->getImage()(cv::Rect((*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight())) ;
+
+                std::cout << "Before cv::Mat objectMat" << std::endl;
+                cv::Mat objectMat;
+
+
+
+
+
+                int x = (*k)->getX();
+                int y = (*k)->getY();
+                int width = (*k)->getPixelWidth();
+                int height = (*k)->getPixelHeight();
+
+
+                std::cout << "x: " << x << ", y: " << y
+                          << ", width: " << width
+                          << ", height: " << height << std::endl;
+
+//                if ( x < 0 )
+//                    x = 0;
+//                if ( x >= cols )
+//                    x = cols - 1;
+
+//                if ( y < 0 )
+//                    y = 0;
+//                if ( y >= rows)
+//                    y = rows - 1;
+
+
+//                if ( x + width >= cols ) {
+//                    width
+
+//                }
+
+                std::cout << "Before cv::Rect rect" << std::endl;
+                cv::Rect rect( x, y, width, height) ;
+                std::cout << rect << std::endl;
+
+                std::cout << "Before image( rect ).copyTo( objectMat );" << std::endl;
+                image( rect ).copyTo( objectMat );
+
+
+//                (*j)->getImage()(cv::Rect((*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight())).copyTo( objectMat );
+
+
+                // Create a QImage
+                // cvMatToQImage( inMat )
+
+                // Create a QPixmap
+                QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
+
+                // Save pixmap
+                pixmap.save( fileName );
+
+
+
+                countObject++;
+
+            }
+        }
+    }
+
+
 }

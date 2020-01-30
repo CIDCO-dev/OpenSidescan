@@ -109,12 +109,21 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
         //Adjust x and width
         if(x < 0){
             x = 0;
+        }        
+
+        if(x > image.getDisplayedImage().size().width -1){
+            x = image.getDisplayedImage().size().width-1;
         }
-        
+
+        if( x + width > image.getDisplayedImage().size().width - 1){
+            width = std::max((int)(image.getDisplayedImage().size().width-x-1),0);
+        }
+
         //TODO: adjust width
         //std::cerr << x << "," << y << " (" << width << " x " << height << ")" << std::endl; 
+
         
-        cv::Rect object(x,y,roi.width,height);
+        cv::Rect object(x,y,width,height);
         rois.push_back(object);
     }
 

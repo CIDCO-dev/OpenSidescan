@@ -2,6 +2,9 @@
 #define PROJECT_H
 
 #include <vector>
+
+#include <QString>
+
 #include "sidescanfile.h"
 
 class Project
@@ -20,6 +23,9 @@ public:
 
     std::string & getFilename(){ return filename;}
     void          setFilename(std::string & fileName){ filename=fileName;}
+
+    void saveObjectImages( const QString & folder );
+
 
 
 private:

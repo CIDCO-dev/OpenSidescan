@@ -168,3 +168,4 @@ void InventoryWindow::refreshInventoryTable(){
         }
     }
 }
+

@@ -295,6 +295,71 @@ void MainWindow::actionFindObjects(){
     }
 }
 
+
+void MainWindow::actionSaveObjectImages(){
+    std::cout << "\nMainWindow::actionSaveObjectImages()\n" << std::endl;
+
+
+    if( ! currentProject)
+        return;
+
+    QFileDialog dialog( this,
+                         tr( "Folder Where to Save Object Images"),
+                        "",
+                        tr( "All Files (*)") );
+
+
+
+    dialog.setFileMode( QFileDialog::Directory ); // Get a single existing file
+    dialog.setLabelText( QFileDialog::Accept, tr( "Select" ) ) ; // Name of the button, to replace the default "Open"
+
+    dialog.setViewMode( QFileDialog::Detail );
+    dialog.setOptions( QFileDialog::DontConfirmOverwrite );
+    dialog.setOption( QFileDialog::ShowDirsOnly, true );
+    dialog.setOption( QFileDialog::DontUseNativeDialog, true );
+
+    QStringList fileNames;
+
+    if ( dialog.exec() )
+        fileNames = dialog.selectedFiles();
+
+
+    if ( fileNames.size() <= 0 )
+        return;
+
+
+
+    QString folder = fileNames.at( 0 );
+    std::cout << "\nFolder: \"" << folder.toStdString() << "\"\n" << std::endl;
+
+
+    // Verify that the folder exist
+
+    QFileInfo fileInfo( folder );
+
+
+    if ( fileInfo.exists() == false || fileInfo.isDir() == false )
+    {
+        std::string toDisplay = "Invalid path where to save images\n\n\"" + folder.toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return;
+    }
+
+
+    std::cout << "\nAfter verifying folder\n" << std::endl;
+
+    currentProject->saveObjectImages( folder );
+
+
+}
+
+
+
+
 void MainWindow::refreshTabs(){
     if(tabs){
         for(unsigned int i=0;i<tabs->count();i++){

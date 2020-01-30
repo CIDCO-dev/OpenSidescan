@@ -209,8 +209,6 @@ void Project::saveObjectImages( const QString & folder )
         // j is an iterator to a (SidescanImage* )
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
 
-
-
             // k is an iterator to (GeoreferencedObject *)
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
@@ -223,73 +221,11 @@ void Project::saveObjectImages( const QString & folder )
 
                 std::cout << "\ncountObject: " << countObject << ", \"" << fileName.toStdString() << "\"" << std::endl;
 
-
-
-
-
-                std::cout << "Before cv::Mat image = (*j)->getImage();" << std::endl;
-                cv::Mat image = (*j)->getImage();
-
-                int cols = image.cols;
-                int rows = image.rows;
-                std::cout << "cols: " << cols << ", rows: " << rows << std::endl;
-
-
-
-
-                // Build a new image for the rect of the object
-
-                // Build cv mat for the object
-
-
-//                cv::Mat temp = (*j)->getImage()(cv::Rect((*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight())) ;
-
                 std::cout << "Before cv::Mat objectMat" << std::endl;
                 cv::Mat objectMat;
 
-
-
-
-
-                int x = (*k)->getX();
-                int y = (*k)->getY();
-                int width = (*k)->getPixelWidth();
-                int height = (*k)->getPixelHeight();
-
-
-                std::cout << "x: " << x << ", y: " << y
-                          << ", width: " << width
-                          << ", height: " << height << std::endl;
-
-//                if ( x < 0 )
-//                    x = 0;
-//                if ( x >= cols )
-//                    x = cols - 1;
-
-//                if ( y < 0 )
-//                    y = 0;
-//                if ( y >= rows)
-//                    y = rows - 1;
-
-
-//                if ( x + width >= cols ) {
-//                    width
-
-//                }
-
-                std::cout << "Before cv::Rect rect" << std::endl;
-                cv::Rect rect( x, y, width, height) ;
-                std::cout << rect << std::endl;
-
-                std::cout << "Before image( rect ).copyTo( objectMat );" << std::endl;
-                image( rect ).copyTo( objectMat );
-
-
-//                (*j)->getImage()(cv::Rect((*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight())).copyTo( objectMat );
-
-
-                // Create a QImage
-                // cvMatToQImage( inMat )
+                std::cout << "Before copy" << std::endl;
+                (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
 
                 // Create a QPixmap
                 QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );

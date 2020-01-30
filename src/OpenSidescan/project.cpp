@@ -195,13 +195,8 @@ void Project::exportInventoryAsKml(std::string & filename){
 
 void Project::saveObjectImages( const QString & folder )
 {
-    std::cout << "\nBeginning of Project::saveObjectImages()\n"
-        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
-
-
-    // First test, not using the object's name but aonly a base name
-    QString baseFilename ="objectImage";
-    int countObject = 0;
+//    std::cout << "\nBeginning of Project::saveObjectImages()\n"
+//        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
 
     // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
@@ -212,34 +207,34 @@ void Project::saveObjectImages( const QString & folder )
             // k is an iterator to (GeoreferencedObject *)
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-//                this->inventoryTable->setRowCount(row+1);
-
-//                InventoryTableItem * rowFirst = new InventoryTableItem(QString::fromStdString((*k)->getName()));
-
-                // Name to save file
-                QString fileName = folder + "/" + baseFilename + QString::number( countObject ) + ".jpg";
-
-                std::cout << "\ncountObject: " << countObject << ", \"" << fileName.toStdString() << "\"" << std::endl;
-
-                std::cout << "Before cv::Mat objectMat" << std::endl;
+                // Copy the part of the cv::Mat with the object into a new cv::Mat
                 cv::Mat objectMat;
-
-                std::cout << "Before copy" << std::endl;
                 (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
 
                 // Create a QPixmap
                 QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
+                // Find filename that does not already exist
+                QString objectName = QString::fromStdString( (*k)->getName() );
+
+                QString fileExtension = "png";
+
+                QString fileName = folder + "/" + objectName + "." + fileExtension;
+
+                QFileInfo fileInfo( fileName );
+
+                int count = 0;
+
+                while ( fileInfo.exists() ) {
+                    fileName = folder + "/" + objectName + "_" + QString::number( count ) + "." + fileExtension;
+                    fileInfo.setFile( fileName );
+                    count++;
+                }
+
                 // Save pixmap
                 pixmap.save( fileName );
-
-
-
-                countObject++;
-
             }
         }
     }
-
 
 }

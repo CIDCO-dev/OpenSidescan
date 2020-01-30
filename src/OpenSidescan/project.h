@@ -26,8 +26,6 @@ public:
 
     void saveObjectImages( const QString & folder );
 
-
-
 private:
     std::vector<SidescanFile *>   files; 
 

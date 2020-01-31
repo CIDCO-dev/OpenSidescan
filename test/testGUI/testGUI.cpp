@@ -55,6 +55,9 @@ public slots:
                                        std::vector<std::string> & tabNames,
                                        std::vector< std::pair< std::string,std::string > > & properties );
 
+    void useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
+                                        int topLeftCornerX, int topLeftCornerY,
+                                        int bottomRightCornerX, int bottomRightCornerY );
 
     void interactWithModalWindowActionImport();
 
@@ -1897,16 +1900,78 @@ void testGUI::operateMouseToCreateObjects()
 
     // Select the files and verify
 
-    int fileToSelect = 0;
 
-    std::string filename = "plane1.xtf";
+    std::string filenames[] = { "plane1.xtf", "scotsman3.xtf" };
 
-
-
-// ----------------------------------------------------------
+    const int nbCols = 6;
+    const int nbObjects = 4;
 
 
+    int dataForSelection[ nbObjects ][ nbCols ] = {
+        //  fileToSelect    tabIndex,   topLeftCornerX,     topLeftCornerY,     bottomRightCornerX,     bottomRightCornerY
+        {   0,              1,          40,                 60,                 90,                     100 },
+        {   0,              1,          20,                 120,                60,                     150 },
+        {   0,              0,          20,                 120,                60,                     150 },
+        {   1,              1,          40,                 60,                 90,                     100 },
+        };
 
+//    int fileToSelect = 0;
+//    int tabIndex = 1;
+//    int topLeftCornerX = 40;
+//    int topLeftCornerY = 60;
+//    int bottomRightCornerX = 300;
+//    int bottomRightCornerY = 100;
+
+    for ( int count = 0; count < nbObjects; count++ ) {
+
+
+        interactWithModalWindowObjectInformationReachedTheEnd = false;
+
+        int * row = dataForSelection[ count ];
+
+        useMouseToFormObjectBound( row[ 0 ], filenames[ row[ 0 ] ],
+                                    row[ 1 ],
+                                   row[ 2 ], row[ 3 ],
+                                   row[ 4 ], row[ 5 ] );
+
+
+        mainWindow->show();
+        QTest::qWait(3000); // This time must be less than the timeout's time
+
+        timerTimeOut->stop();
+
+        std::cout << "\nAfter timerTimeOut->stop()\n"
+                  << "interactWithModalWindowObjectInformationReachedTheEnd:" <<  interactWithModalWindowObjectInformationReachedTheEnd << std::endl;
+
+
+        QVERIFY2( interactWithModalWindowObjectInformationReachedTheEnd,
+                  qPrintable( "testGUI::operateMouseToCreateObjects: interactWithModalWindowObjectInformationReachedTheEnd is false for count="
+                              +QString::number( count ) ) );
+
+//        mainWindow->show();
+//        QTest::qWait(3000);
+
+    }
+
+
+    // Verify that the inventory contain the correct number of objects
+
+    // Save object images
+
+
+
+
+    std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
+
+
+}
+
+void testGUI::useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
+                                    int topLeftCornerX, int topLeftCornerY,
+                                    int bottomRightCornerX, int bottomRightCornerY )
+{
+
+    std::cout << "\nBeginning of testGUI::useMouseToFormObjectBound()\n" << std::endl;
 
     // Select the file to be sure it is displayed
 
@@ -1922,7 +1987,7 @@ void testGUI::operateMouseToCreateObjects()
                                     rectFileToSelect.center() );
 
     QVERIFY2( indexFileToSelect == indexForPosition,
-              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect " + QString::number( fileToSelect )
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect " + QString::number( fileToSelect )
                           + ":, indexFileToSelect is different from indexForPosition" ) );
 
 
@@ -1935,47 +2000,38 @@ void testGUI::operateMouseToCreateObjects()
 
     QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
     QVERIFY2( currentIndex.row() == fileToSelect,
-              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect " + QString::number( fileToSelect )
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect " + QString::number( fileToSelect )
                           + ":, currentIndex.row() is different from fileToSelect" ) );
 
     std::string modelFilename = mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString();
 
     QVERIFY2( modelFilename == filename,
-              qPrintable( "testGUI::operateMouseToCreateObjects: filename for fileToSelect "
+              qPrintable( "testGUI::useMouseToFormObjectBound: filename for fileToSelect "
             + QString::number( fileToSelect ) + " has wrong text of '" +  tr( modelFilename.c_str() )
             + "' instead of the expected '" + tr( filename.c_str() ) + "'" ) );
 
 
 
-//    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+    //    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
 
     // Give a bit of time to be sure the tabs are settled
     mainWindow->show();
     QTest::qWait(100);
 
     // Verify tabs
-
     QVERIFY2( mainWindow->tabs,
-              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
             + QString::number( fileToSelect ) + ", mainWindow->tabs tests false" ) );
-
-
-    // Verify that the first tab is selected
-
-    QVERIFY2( mainWindow->tabs->currentIndex() == 0,
-                qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
-              + QString::number( fileToSelect ) + ", The current tab index is different from zero") );
 
 
     QTabBar *tabBar = mainWindow->tabs->tabBar();
 
     QVERIFY2( tabBar,
-              qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
             + QString::number( fileToSelect ) + ", tabBar tests false" ) );
 
 
-    // click second tab
-    int tabIndex = 1;
+    // click on the tab
 
     const QPoint tabPos = tabBar->tabRect( tabIndex ).center();
     QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
@@ -1984,7 +2040,7 @@ void testGUI::operateMouseToCreateObjects()
     QTest::qWait(500);
 
     QVERIFY2( mainWindow->tabs->currentIndex() == tabIndex,
-              qPrintable( "testGUI::operateMouseToCreateObjects: fileToSelect "
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
             + QString::number( fileToSelect ) + ", the current tab index of "
             + QString::number( mainWindow->tabs->currentIndex() ) + " is different from the target of "
             + QString::number( tabIndex ) ) );
@@ -1992,76 +2048,23 @@ void testGUI::operateMouseToCreateObjects()
 
     // Get a handle on the label that displays the image
 
-    // class ImageTab : public QWidget
-
     QWidget * imageTab = mainWindow->tabs->currentWidget();
-    std::cout << "\nimageTab->metaObject()->className(): " << imageTab->metaObject()->className() << "\n" << std::endl;
 
-//    ImageTab * imageTab = static_cast<ImageTab*>( mainWindow->tabs->currentWidget() );
-
-    std::cout << "\nimageTab: object name: " << imageTab->objectName().toStdString() << "\n" << std::endl;
-
-    QSize size = imageTab->size();
-
-    std::cout << "\nimageTab: width: " << size.width()
-              << "\n          height: " << size.height() << "\n" << std::endl;
-
-
-
-
-    // Member variable of ImageTab: ImageTabLabel * imageLabel
-    // ImageTabLabel inherits from QLabel
-
-//    const QObjectList listImageTab = imageTab->children();
-
-//    qDebug() << tr( "listImageTab.size(): " ) << listImageTab.size();
-
-//    for (QObject *children : listImageTab) {
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-
-//    }
+//    QSize size = imageTab->size();
+//    std::cout << "\nimageTab: width: " << size.width()
+//              << "\n          height: " << size.height() << "\n" << std::endl;
 
     QScrollArea * scrollArea = imageTab->findChild< QScrollArea * >( "scrollArea which holds the imageLabel" );
 
-//    const QObjectList listQScrollArea = scrollArea->children();
-
-//    qDebug() << tr( "listQScrollArea.size(): " ) << listQScrollArea.size();
-
-//    for (QObject *children : listQScrollArea) {
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-
-//    }
-
-
     QWidget * scrollAreaViewport = imageTab->findChild< QWidget * >( "qt_scrollarea_viewport" );
-
-//    const QObjectList listScrollAreaViewport = scrollAreaViewport->children();
-
-//    qDebug() << tr( "listScrollAreaViewport.size(): " ) << listScrollAreaViewport.size();
-
-//    for (QObject *children : listScrollAreaViewport) {
-//        qDebug() << children->objectName()
-//                 << ", className: " << children->metaObject()->className();
-
-//    }
-
 
     ImageTabLabel * imageTablabel = scrollAreaViewport->findChild< ImageTabLabel * >( "imageLabel" );
 
-    // Get dimensions of the label, to know what maximum size an object could have
+//    // Get dimensions of the label, to know what maximum size an object could have
+//    size = imageTablabel->size();
+//    std::cout << "\nimageTablabel: width: " << size.width()
+//              << "\n               height: " << size.height() << "\n" << std::endl;
 
-    size = imageTablabel->size();
-
-    std::cout << "\nimageTablabel: width: " << size.width()
-              << "\n               height: " << size.height() << "\n" << std::endl;
-
-
-    // Set up callback funtion that will interact with the modal window
-    // once part of the image is selected
-
-    interactWithModalWindowObjectInformationReachedTheEnd = false;
 
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 5 * 1000 );
@@ -2069,36 +2072,17 @@ void testGUI::operateMouseToCreateObjects()
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowObjectInformation() ) );
 
     // Press mouse's left button
-    QTest::mousePress( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(20,10) );
+    QTest::mousePress( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(topLeftCornerX,topLeftCornerY) );
 
-    int posX = 50;
-    int posY = 80;
     // Move mouse
-    QTest::mouseMove( imageTablabel, QPoint(posX,posY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
+    QTest::mouseMove( imageTablabel, QPoint(bottomRightCornerX,bottomRightCornerY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
 
     // Release mouse's left button
-    QTest::mouseRelease( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(posX,posY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
-
-
-
-// -----------------------------------------------------------
-
-
-    mainWindow->show();
-    QTest::qWait(3000); // This time must be less than the timeout's time
-
-    timerTimeOut->stop();
-
-    std::cout << "\nAfter timerTimeOut->stop()\n"
-              << "interactWithModalWindowObjectInformationReachedTheEnd:" <<  interactWithModalWindowObjectInformationReachedTheEnd << std::endl;
-
-
-    QVERIFY2( interactWithModalWindowObjectInformationReachedTheEnd, "testGUI::operateMouseToCreateObjects: interactWithModalWindowObjectInformationReachedTheEnd is false");
-
-    std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
-
+    QTest::mouseRelease( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(bottomRightCornerX,bottomRightCornerY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
 
 }
+
+
 
 
 
@@ -2113,10 +2097,10 @@ void testGUI::interactWithModalWindowObjectInformation()
     QVERIFY2( modalWidget, "interactWithModalWindowObjectInformation: modalWidget tests false");
 
     QVERIFY2( modalWidget->windowTitle() == tr( "Object Information" ),
-              "interactWithModalWindowObjectInformation: modalWidget->windowTitle() is not 'Export as KML File'" );
+              "interactWithModalWindowObjectInformation: modalWidget->windowTitle() is not 'Object Information'" );
 
 
-    // Find the button to Save and to Cancel the modal window
+    // Find the button to Accept and to Cancel the modal window
 
     // The buttons are within a QDialogButtonBox
 
@@ -2164,12 +2148,8 @@ void testGUI::interactWithModalWindowObjectInformation()
     mainWindow->show();
     QTest::qWait(100);
 
-
     interactWithModalWindowObjectInformationReachedTheEnd = true;
-
 }
-
-
 
 
 

@@ -110,6 +110,9 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
                 emit inventoryChanged();
             }
 
+//            std::cout << "\nImageTabLabel::mouseReleaseEvent(): width: " << width << ", height: " << height << "\n" << std::endl;
+
+
             // determine selection, for example using QRect::intersects()
             // and QRect::contains().
         }

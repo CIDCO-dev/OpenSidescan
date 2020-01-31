@@ -2,9 +2,12 @@
 
 #include <QFile>
 #include <QtXml>
+#include <QPixmap>
 
 #include <cstring>
 #include "sidescanimager.h"
+#include "qthelper.h"
+
 
 Project::Project()
 {
@@ -188,4 +191,50 @@ void Project::exportInventoryAsKml(std::string & filename){
     xmlWriter.writeEndElement();
 
     file.close();
+}
+
+void Project::saveObjectImages( const QString & folder )
+{
+//    std::cout << "\nBeginning of Project::saveObjectImages()\n"
+//        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            // k is an iterator to (GeoreferencedObject *)
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+
+                // Copy the part of the cv::Mat with the object into a new cv::Mat
+                cv::Mat objectMat;
+                (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
+
+                // Create a QPixmap
+                QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
+
+                // Find filename that does not already exist
+                QString objectName = QString::fromStdString( (*k)->getName() );
+
+                QString fileExtension = "png";
+
+                QString fileName = folder + "/" + objectName + "." + fileExtension;
+
+                QFileInfo fileInfo( fileName );
+
+                int count = 0;
+
+                while ( fileInfo.exists() ) {
+                    fileName = folder + "/" + objectName + "_" + QString::number( count ) + "." + fileExtension;
+                    fileInfo.setFile( fileName );
+                    count++;
+                }
+
+                // Save pixmap
+                pixmap.save( fileName );
+            }
+        }
+    }
+
 }

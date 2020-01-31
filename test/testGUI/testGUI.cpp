@@ -26,11 +26,17 @@
 
 #include <QMetaObject>
 
+#include <QGuiApplication>  // To get screen size
+#include <QScreen>          // To get screen size
+
 
 
 
 
 #include "../../src/OpenSidescan/mainwindow.h"
+
+#include "../../src/OpenSidescan/imagetab.h"
+
 
 //#define DOSKIPTESTS
 
@@ -45,14 +51,21 @@ class testGUI : public QObject
 
 public slots:
 
-#ifndef DOSKIPTESTS
-    void interactWithModalWindowActionImport();
-
-    void verifyResultOfImportToLoadSidescanFile();
-
     void selectFileAndVerify( int fileToSelect, std::string & filename,
                                        std::vector<std::string> & tabNames,
                                        std::vector< std::pair< std::string,std::string > > & properties );
+
+    void useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
+                                        int topLeftCornerX, int topLeftCornerY,
+                                        int bottomRightCornerX, int bottomRightCornerY );
+
+    void interactWithModalWindowActionImport();
+
+#ifndef DOSKIPTESTS
+
+    void verifyResultOfImportToLoadSidescanFile();
+
+
 
 
     void interactWithModalWindowActionSaveAs();
@@ -65,9 +78,14 @@ public slots:
 
     void interactWithModalWindowToFindObjects();
 
+    void interactWithModalWindowToExportKMLfile();
+
 #endif
 
-    void interactWithModalWindowToExportKMLfile();
+
+    void interactWithModalWindowObjectInformation();
+
+    void interactWithModalWindowActionSaveObjectImages();
 
 
 
@@ -124,11 +142,20 @@ private slots:
     void useToolBarActionFindObjects();
     void cleanAfterUseToolBarActionFindObjects();
 
-#endif
-
     // Use menubar Object Inventory/Export Inventory/Export KML File to verify that modal window opens
     void useMenuExportKMLfile();
     void cleanAfterUseMenuExportKMLfile();
+#endif
+
+    // Verify using mouse to create an object, then saving the object image
+    void useToolBarActionImportToLoadSidescanFileForFindingObjects();
+    void operateMouseToCreateObjects();
+    void cleanAfterFindingObjects();
+
+
+
+
+
 
 
 //    void afterContextMenu();
@@ -163,6 +190,11 @@ private:
     bool interactWithModalWindowToFindObjectsReachedTheEnd;
 
     bool interactWithModalWindowToExportKMLfileReachedTheEnd;
+
+    bool interactWithModalWindowObjectInformationReachedTheEnd;
+
+    bool interactWithModalWindowActionSaveObjectImagesReachedTheEnd;
+
 
     QTimer *timerTimeOut;
 
@@ -567,7 +599,6 @@ void testGUI::verifyResultOfImportToLoadSidescanFile()
     QVERIFY2( mainWindow, "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: mainWindow tests false");
 
 
-    // There should be one file in the tree model
 
     QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
                 qPrintable( "verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs: the number of files in the projectWindow is "
@@ -677,6 +708,7 @@ void testGUI::useToolBarActionImportToLoadSidescanFile()
 
 }
 
+#endif
 void testGUI::interactWithModalWindowActionImport()
 {
     qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
@@ -788,7 +820,7 @@ void testGUI::interactWithModalWindowActionImport()
 }
 
 
-
+#ifndef DOSKIPTESTS
 
 
 void testGUI::verifyResultOfUseToolBarActionImportToLoadSidescanFileThenSaveAs()
@@ -1325,7 +1357,7 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 }
 
-
+#endif
 
 void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
                                    std::vector<std::string> & tabNames,
@@ -1478,6 +1510,7 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 }
 
+#ifndef DOSKIPTESTS
 
 void testGUI::useToolBarActionFindObjects()
 {
@@ -1615,7 +1648,7 @@ void testGUI::cleanAfterUseToolBarActionFindObjects()
     }
 }
 
-#endif
+
 
 
 void testGUI::useMenuExportKMLfile()
@@ -1766,6 +1799,530 @@ void testGUI::cleanAfterUseMenuExportKMLfile()
         mainWindow = nullptr;
     }
 }
+
+
+
+#endif
+
+
+void testGUI::useToolBarActionImportToLoadSidescanFileForFindingObjects()
+{
+    qDebug() << tr( "Beginning of 'useToolBarActionImportToLoadSidescanFileForFindingObjects()'" );
+
+    // setup for the test
+    interactWithModalWindowActionImportReachedTheEnd = false;
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+
+    mainWindow = new MainWindow;
+
+    QVERIFY2( mainWindow, "useToolBarActionImportToLoadSidescanFileForFindingObjects: mainWindow tests false");
+
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+
+    float factorScreenSize = 0.7f;
+
+    mainWindow->resize( static_cast<int>( floor( screenGeometry.width() * factorScreenSize ) ),
+                  static_cast<int>( floor( screenGeometry.height() * factorScreenSize) ) );
+
+
+//    mainWindow->showMaximized();
+
+    // Get action for importing a sidescan file
+
+    QAction * actionImport = mainWindow->findChild< QAction * >( "actionImport" );
+    QVERIFY2( actionImport, "useToolBarActionImportToLoadSidescanFileForFindingObjects: actionImport tests false");
+
+
+    mainWindow->show();
+    QTest::qWait(1200);
+
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "useToolBarActionImportToLoadSidescanFileForFindingObjects: mainToolBar tests false");
+
+
+    QWidget *widgetForActionImport = mainToolBar->widgetForAction( actionImport );
+    QVERIFY2( widgetForActionImport, "useToolBarActionImportToLoadSidescanFileForFindingObjects: widgetForActionImport tests false");
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 50 * 1000 ); // Time large enough to include the time it takes to load the files
+
+    // Single shot timer for function that will interact with the modal window
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionImport() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionImport, Qt::LeftButton);
+}
+
+
+void testGUI::operateMouseToCreateObjects()
+{
+    timerTimeOut->stop();
+
+    std::cout << "\n" << std::endl;
+
+    qDebug() << tr( "Beginning of 'testGUI::operateMouseToCreateObjects'" );
+
+
+    if ( interactWithModalWindowActionImportReachedTheEnd == false )
+    {
+        // Give time for the window to be closed after the instruction to close is sent
+        // in the function responding to the timer
+        QTest::qWait( 200 );
+
+        if ( mainWindow ) {
+            delete mainWindow;
+            mainWindow = nullptr;
+        }
+
+        QVERIFY2( interactWithModalWindowActionImportReachedTheEnd,
+                    "operateMouseToCreateObjects: interactWithModalWindowActionImportReachedTheEnd is false");
+    }
+
+
+    QVERIFY2( mainWindow, "operateMouseToCreateObjects: mainWindow tests false");
+
+
+    QVERIFY2( mainWindow->projectWindow->model->getNbFiles() ==  2,
+                qPrintable( "operateMouseToCreateObjects: the number of files in the projectWindow is "
+                + QString::number( mainWindow->projectWindow->model->getNbFiles() )
+                + " instead of 2") );
+
+
+    // Files, tabs, and coordinates for objects
+
+    std::string filenames[] = { "plane1.xtf", "scotsman3.xtf" };
+
+    const int nbCols = 6;
+    const int nbObjects = 4;
+
+    int dataForSelection[ nbObjects ][ nbCols ] = {
+        //  fileToSelect    tabIndex,   topLeftCornerX,     topLeftCornerY,     bottomRightCornerX,     bottomRightCornerY
+        {   0,              1,          40,                 60,                 90,                     100 },
+        {   0,              1,          20,                 120,                60,                     150 },
+        {   0,              0,          20,                 120,                60,                     150 },
+        {   1,              1,          40,                 60,                 90,                     100 },
+        };
+
+
+    for ( int count = 0; count < nbObjects; count++ ) {
+
+        interactWithModalWindowObjectInformationReachedTheEnd = false;
+
+        int * row = dataForSelection[ count ];
+
+        useMouseToFormObjectBound( row[ 0 ], filenames[ row[ 0 ] ],
+                                    row[ 1 ],
+                                   row[ 2 ], row[ 3 ],
+                                   row[ 4 ], row[ 5 ] );
+
+        mainWindow->show();
+        QTest::qWait(3000); // This time must be less than the timeout's time set inside useMouseToFormObjectBound()
+
+        timerTimeOut->stop();
+
+//        std::cout << "\nAfter timerTimeOut->stop()\n"
+//                  << "interactWithModalWindowObjectInformationReachedTheEnd: " << std::boolalpha
+//                  <<  interactWithModalWindowObjectInformationReachedTheEnd << std::noboolalpha << std::endl;
+
+        QVERIFY2( interactWithModalWindowObjectInformationReachedTheEnd,
+                  qPrintable( "testGUI::operateMouseToCreateObjects: interactWithModalWindowObjectInformationReachedTheEnd is false for count="
+                              + QString::number( count ) ) );
+
+//        mainWindow->show();
+//        QTest::qWait(3000);
+
+    }
+
+
+    // Verify that the inventory contains the correct number of objects
+
+    // inventoryWindow (which uses QTableWidget class)
+
+    std::cout << "\n\nmainWindow->inventoryWindow->inventoryTable->rowCount(): " << mainWindow->inventoryWindow->inventoryTable->rowCount()
+              << "\nmainWindow->inventoryWindow->inventoryTable->columnCount(): " << mainWindow->inventoryWindow->inventoryTable->columnCount()<< std::endl;
+
+    for ( int i=0; i< mainWindow->inventoryWindow->inventoryTable->rowCount(); i++ ) {
+        std::cout << "count: " << i << ", \""
+                  << mainWindow->inventoryWindow->inventoryTable->item(i, 0)->text().toStdString()
+                  << "\": \"" << mainWindow->inventoryWindow->inventoryTable->item(i, 1)->text().toStdString()
+                  << "\"\n";
+    }
+
+
+    QVERIFY2( mainWindow->inventoryWindow->inventoryTable->rowCount() ==  nbObjects,
+                qPrintable( "operateMouseToCreateObjects: the number of objects in inventoryWindow is "
+                + QString::number( mainWindow->inventoryWindow->inventoryTable->rowCount() )
+                + " instead of the expected " + QString::number( nbObjects ) ) );
+
+
+//    mainWindow->show();
+//    QTest::qWait(1000);
+
+    // Save object images
+
+    // Get action for project actionSaveObjectImages
+
+    QAction * actionSaveObjectImages = mainWindow->findChild< QAction * >( "actionSaveObjectImages" );
+    QVERIFY2( actionSaveObjectImages, "operateMouseToCreateObjects: actionSaveObjectImages tests false");
+
+    QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
+    QVERIFY2( mainToolBar, "operateMouseToCreateObjects: mainToolBar tests false");
+
+    QWidget *widgetForActionSaveObjectImages = mainToolBar->widgetForAction( actionSaveObjectImages );
+    QVERIFY2( widgetForActionSaveObjectImages, "operateMouseToCreateObjects: widgetForActionSaveObjectImages tests false");
+
+
+    interactWithModalWindowActionSaveObjectImagesReachedTheEnd = false;
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 10 * 1000 );
+
+    // Single shot timer for function that will interact with the modal window
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionSaveObjectImages() ) );
+
+    // Click the button to open the modal dialog
+    QTest::mouseClick(widgetForActionSaveObjectImages, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(8000); // This time must be less than the timeout's time
+
+    timerTimeOut->stop();
+
+//    std::cout << "\nAfter timerTimeOut->stop()\n"
+//              << "interactWithModalWindowActionSaveObjectImagesReachedTheEnd: " << std::boolalpha
+//              <<  interactWithModalWindowActionSaveObjectImagesReachedTheEnd << std::noboolalpha << std::endl;
+
+    QVERIFY2( interactWithModalWindowActionSaveObjectImagesReachedTheEnd,
+              "testGUI::operateMouseToCreateObjects: interactWithModalWindowActionSaveObjectImagesReachedTheEnd is false" );
+
+    // Verify that the files are saved
+    // Name pattern:
+//    "Unknown"
+//    "Unknown_0"
+//    "Unknown_1"
+//    "Unknown_2"
+
+    QString extension = "png";
+
+    for ( int count = 0; count < nbObjects; count++ ) {
+
+        QString name = "Unknown";
+
+        if ( count > 0 )
+            name += "_" + QString::number( count - 1 );
+
+        name += "." + extension;
+
+        QString filename = tr( "../../../test/testProject/" ) + name;
+        QFileInfo fileInfo( filename );
+
+        QVERIFY2( fileInfo.exists(),
+                    qPrintable( "operateMouseToCreateObjects: Problem saving object images: count: "
+                                + QString::number( count ) + ", the file \""
+                                + filename + "\" does not exist" ) );
+
+
+//        std::cout << "count: " << count << ", size: " << fileInfo.size() << std::endl;
+
+        QVERIFY2( fileInfo.size() > 0,
+                    qPrintable( "operateMouseToCreateObjects: Problem saving object images: count: "
+                                + QString::number( count ) + ", file size: "
+                                + QString::number( fileInfo.size() ) ) );
+    }
+
+    std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
+
+
+}
+
+void testGUI::useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
+                                    int topLeftCornerX, int topLeftCornerY,
+                                    int bottomRightCornerX, int bottomRightCornerY )
+{
+
+    std::cout << "\nBeginning of testGUI::useMouseToFormObjectBound()\n" << std::endl;
+
+    // Select the file to be sure it is displayed
+
+    QModelIndex indexFileToSelect = mainWindow->projectWindow->model->getModelIndexFileIndex( fileToSelect );
+
+    // Scroll until it is visible
+    mainWindow->projectWindow->tree->scrollTo( indexFileToSelect );
+
+    QRect rectFileToSelect = mainWindow->projectWindow->tree->visualRect( indexFileToSelect );
+
+    // Verify that the rectangle position corresponds to the same index in the model
+    QModelIndex indexForPosition = mainWindow->projectWindow->tree->indexAt(
+                                    rectFileToSelect.center() );
+
+    QVERIFY2( indexFileToSelect == indexForPosition,
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect " + QString::number( fileToSelect )
+                          + ":, indexFileToSelect is different from indexForPosition" ) );
+
+
+    // Select the file
+    QTest::mouseClick(mainWindow->projectWindow->tree->viewport(), Qt::LeftButton,
+                      Qt::NoModifier,
+                      rectFileToSelect.center() );
+
+
+    QModelIndex currentIndex = mainWindow->projectWindow->tree->currentIndex();
+    QVERIFY2( currentIndex.row() == fileToSelect,
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect " + QString::number( fileToSelect )
+                          + ":, currentIndex.row() is different from fileToSelect" ) );
+
+    std::string modelFilename = mainWindow->projectWindow->model->data(currentIndex, Qt::DisplayRole).toString().toStdString();
+
+    QVERIFY2( modelFilename == filename,
+              qPrintable( "testGUI::useMouseToFormObjectBound: filename for fileToSelect "
+            + QString::number( fileToSelect ) + " has wrong text of '" +  tr( modelFilename.c_str() )
+            + "' instead of the expected '" + tr( filename.c_str() ) + "'" ) );
+
+    //    std::cout << "\n\ncurrentIndex.row(): " << currentIndex.row() << std::endl;
+
+    // Give a bit of time to be sure the tabs are settled
+    mainWindow->show();
+    QTest::qWait(100);
+
+    // Verify tabs
+    QVERIFY2( mainWindow->tabs,
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
+            + QString::number( fileToSelect ) + ", mainWindow->tabs tests false" ) );
+
+
+    QTabBar *tabBar = mainWindow->tabs->tabBar();
+
+    QVERIFY2( tabBar,
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
+            + QString::number( fileToSelect ) + ", tabBar tests false" ) );
+
+
+    // click on the tab
+
+    const QPoint tabPos = tabBar->tabRect( tabIndex ).center();
+    QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QVERIFY2( mainWindow->tabs->currentIndex() == tabIndex,
+              qPrintable( "testGUI::useMouseToFormObjectBound: fileToSelect "
+            + QString::number( fileToSelect ) + ", the current tab index of "
+            + QString::number( mainWindow->tabs->currentIndex() ) + " is different from the target of "
+            + QString::number( tabIndex ) ) );
+
+
+    // Get a handle on the label that displays the image
+
+    QWidget * imageTab = mainWindow->tabs->currentWidget();
+
+//    QSize size = imageTab->size();
+//    std::cout << "\nimageTab: width: " << size.width()
+//              << "\n          height: " << size.height() << "\n" << std::endl;
+
+    QScrollArea * scrollArea = imageTab->findChild< QScrollArea * >( "scrollArea which holds the imageLabel" );
+
+    QWidget * scrollAreaViewport = imageTab->findChild< QWidget * >( "qt_scrollarea_viewport" );
+
+    ImageTabLabel * imageTablabel = scrollAreaViewport->findChild< ImageTabLabel * >( "imageLabel" );
+
+//    // Get dimensions of the label, to know what maximum size an object could have
+//    size = imageTablabel->size();
+//    std::cout << "\nimageTablabel: width: " << size.width()
+//              << "\n               height: " << size.height() << "\n" << std::endl;
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 5 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowObjectInformation() ) );
+
+    // Press mouse's left button
+    QTest::mousePress( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(topLeftCornerX,topLeftCornerY) );
+
+    // Move mouse
+    QTest::mouseMove( imageTablabel, QPoint(bottomRightCornerX,bottomRightCornerY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
+
+    // Release mouse's left button
+    QTest::mouseRelease( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(bottomRightCornerX,bottomRightCornerY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
+
+}
+
+
+void testGUI::interactWithModalWindowObjectInformation()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowObjectInformation()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowObjectInformation: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Object Information" ),
+              "interactWithModalWindowObjectInformation: modalWidget->windowTitle() is not 'Object Information'" );
+
+
+    // Find the button to Accept and to Cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowObjectInformation: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonTextWithAmpersand = tr( "&Cancel" );
+    QString cancelButtonText = tr( "Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    QString OKButtonTextWithAmpersand = tr( "&OK" );
+    QString OKButtonText = tr( "OK" );
+    QPushButton * buttonOK = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText || button->text() == cancelButtonTextWithAmpersand )
+            cancelButton = static_cast<QPushButton * >( button );
+        else if ( button->text() == OKButtonText || button->text() == OKButtonTextWithAmpersand )
+            buttonOK = static_cast<QPushButton * >( button );
+    }
+
+//    QVERIFY2( false, "interactWithModalWindowObjectInformation: false on purpose");
+
+    QVERIFY2( cancelButton, "interactWithModalWindowObjectInformation: cancelButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowObjectInformation: cancelButton is not enabled");
+
+    QVERIFY2( buttonOK, "interactWithModalWindowObjectInformation: buttonOK tests false");
+    QVERIFY2( buttonOK->isEnabled(), "interactWithModalWindowObjectInformation: buttonOK is not enabled");
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+    // Click OK button to keep the object
+    QTest::mouseClick(buttonOK, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+    interactWithModalWindowObjectInformationReachedTheEnd = true;
+}
+
+
+
+void testGUI::interactWithModalWindowActionSaveObjectImages()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowActionSaveObjectImages()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowActionSaveObjectImages: modalWidget tests false");
+
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Folder Where to Save Object Images" ),
+              "interactWithModalWindowActionSaveObjectImages: modalWidget->windowTitle() is not 'Folder Where to Save Object Images'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowActionSaveObjectImages: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+
+    QString filename =  tr( "../../../test/testProject/" );
+
+
+    QTest::keyClicks(lineEdit, filename );
+
+    QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionSaveObjectImages: filename is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowActionSaveObjectImages: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString saveButtonText = tr( "Select" );
+    QPushButton * saveButton = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == saveButtonText )
+            saveButton = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( saveButton, "interactWithModalWindowActionSaveObjectImages: saveButton tests false");
+    QVERIFY2( saveButton->isEnabled(), "interactWithModalWindowActionSaveObjectImages: saveButton is not enabled");
+
+//    QVERIFY2( false, "interactWithModalWindowActionSaveObjectImages: false on purpose");
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(saveButton, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    interactWithModalWindowActionSaveObjectImagesReachedTheEnd = true;
+}
+
+
+
+
+void testGUI::cleanAfterFindingObjects()
+{
+    std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterFindingObjects()'" << std::endl;
+
+
+
+    if ( mainWindow ) {
+        delete mainWindow;
+        mainWindow = nullptr;
+    }
+}
+
+
 
 
 

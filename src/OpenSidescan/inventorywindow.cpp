@@ -1,6 +1,9 @@
 #include "inventorywindow.h"
 
 #include <sstream>
+
+#include <QFileInfo>
+
 #include "georeferencedobjectwindow.h"
 
 class InventoryTableItem : public QTableWidgetItem{
@@ -78,7 +81,16 @@ void InventoryWindow::refreshInventoryTable(){
 
                     this->inventoryTable->setItem(row,0,rowFirst);
 
-                    QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString((*i)->getFilename()));
+
+//                    QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString((*i)->getFilename()));
+
+                    QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
+
+                    QString filenameWithoutPath = fileInfo.fileName();
+
+                    QTableWidgetItem * item = new QTableWidgetItem( filenameWithoutPath );
+
+
                     item->setTextAlignment(Qt::AlignHCenter);
 
                     this->inventoryTable->setItem(row,1,item);
@@ -156,3 +168,4 @@ void InventoryWindow::refreshInventoryTable(){
         }
     }
 }
+

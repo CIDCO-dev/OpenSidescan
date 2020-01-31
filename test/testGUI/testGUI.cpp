@@ -80,7 +80,7 @@ public slots:
 #endif
 
 
-
+    void interactWithModalWindowObjectInformation();
 
 
 
@@ -184,6 +184,9 @@ private:
     bool interactWithModalWindowToFindObjectsReachedTheEnd;
 
     bool interactWithModalWindowToExportKMLfileReachedTheEnd;
+
+    bool interactWithModalWindowObjectInformationReachedTheEnd;
+
 
     QTimer *timerTimeOut;
 
@@ -2058,6 +2061,13 @@ void testGUI::operateMouseToCreateObjects()
     // Set up callback funtion that will interact with the modal window
     // once part of the image is selected
 
+    interactWithModalWindowObjectInformationReachedTheEnd = false;
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 5 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowObjectInformation() ) );
+
     // Press mouse's left button
     QTest::mousePress( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(20,10) );
 
@@ -2074,18 +2084,94 @@ void testGUI::operateMouseToCreateObjects()
 // -----------------------------------------------------------
 
 
-
-
-
-
-
     mainWindow->show();
-    QTest::qWait(10000);
+    QTest::qWait(3000); // This time must be less than the timeout's time
+
+    timerTimeOut->stop();
+
+    std::cout << "\nAfter timerTimeOut->stop()\n"
+              << "interactWithModalWindowObjectInformationReachedTheEnd:" <<  interactWithModalWindowObjectInformationReachedTheEnd << std::endl;
+
+
+    QVERIFY2( interactWithModalWindowObjectInformationReachedTheEnd, "testGUI::operateMouseToCreateObjects: interactWithModalWindowObjectInformationReachedTheEnd is false");
 
     std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
 
 
 }
+
+
+
+void testGUI::interactWithModalWindowObjectInformation()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowObjectInformation()" );
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowObjectInformation: modalWidget tests false");
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Object Information" ),
+              "interactWithModalWindowObjectInformation: modalWidget->windowTitle() is not 'Export as KML File'" );
+
+
+    // Find the button to Save and to Cancel the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowObjectInformation: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString cancelButtonTextWithAmpersand = tr( "&Cancel" );
+    QString cancelButtonText = tr( "Cancel" );
+    QPushButton * cancelButton = nullptr;
+
+    QString OKButtonTextWithAmpersand = tr( "&OK" );
+    QString OKButtonText = tr( "OK" );
+    QPushButton * buttonOK = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == cancelButtonText || button->text() == cancelButtonTextWithAmpersand )
+            cancelButton = static_cast<QPushButton * >( button );
+        else if ( button->text() == OKButtonText || button->text() == OKButtonTextWithAmpersand )
+            buttonOK = static_cast<QPushButton * >( button );
+    }
+
+//    QVERIFY2( false, "interactWithModalWindowObjectInformation: false on purpose");
+
+    QVERIFY2( cancelButton, "interactWithModalWindowObjectInformation: cancelButton tests false");
+    QVERIFY2( cancelButton->isEnabled(), "interactWithModalWindowObjectInformation: cancelButton is not enabled");
+
+    QVERIFY2( buttonOK, "interactWithModalWindowObjectInformation: buttonOK tests false");
+    QVERIFY2( buttonOK->isEnabled(), "interactWithModalWindowObjectInformation: buttonOK is not enabled");
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+    // Click OK button to keep the object
+    QTest::mouseClick(buttonOK, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    interactWithModalWindowObjectInformationReachedTheEnd = true;
+
+}
+
+
+
+
 
 void testGUI::cleanAfterFindingObjects()
 {

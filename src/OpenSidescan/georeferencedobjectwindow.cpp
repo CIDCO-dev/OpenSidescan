@@ -56,6 +56,7 @@ void GeoreferencedObjectWindow::initUI(){
 
     //buttons
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttonBox->setObjectName( "buttonBox" );
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &GeoreferencedObjectWindow::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &GeoreferencedObjectWindow::close);

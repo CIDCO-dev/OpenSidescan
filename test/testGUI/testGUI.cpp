@@ -1898,14 +1898,12 @@ void testGUI::operateMouseToCreateObjects()
 
 
 
-    // Select the files and verify
-
+    // Files, tabs, and coordinates where to create objects
 
     std::string filenames[] = { "plane1.xtf", "scotsman3.xtf" };
 
     const int nbCols = 6;
     const int nbObjects = 4;
-
 
     int dataForSelection[ nbObjects ][ nbCols ] = {
         //  fileToSelect    tabIndex,   topLeftCornerX,     topLeftCornerY,     bottomRightCornerX,     bottomRightCornerY
@@ -1915,15 +1913,8 @@ void testGUI::operateMouseToCreateObjects()
         {   1,              1,          40,                 60,                 90,                     100 },
         };
 
-//    int fileToSelect = 0;
-//    int tabIndex = 1;
-//    int topLeftCornerX = 40;
-//    int topLeftCornerY = 60;
-//    int bottomRightCornerX = 300;
-//    int bottomRightCornerY = 100;
 
     for ( int count = 0; count < nbObjects; count++ ) {
-
 
         interactWithModalWindowObjectInformationReachedTheEnd = false;
 
@@ -1934,19 +1925,19 @@ void testGUI::operateMouseToCreateObjects()
                                    row[ 2 ], row[ 3 ],
                                    row[ 4 ], row[ 5 ] );
 
-
         mainWindow->show();
-        QTest::qWait(3000); // This time must be less than the timeout's time
+        QTest::qWait(3000); // This time must be less than the timeout's time set inside useMouseToFormObjectBound()
 
         timerTimeOut->stop();
 
         std::cout << "\nAfter timerTimeOut->stop()\n"
-                  << "interactWithModalWindowObjectInformationReachedTheEnd:" <<  interactWithModalWindowObjectInformationReachedTheEnd << std::endl;
+                  << "interactWithModalWindowObjectInformationReachedTheEnd:" << std::boolalpha
+                  <<  interactWithModalWindowObjectInformationReachedTheEnd << std::noboolalpha << std::endl;
 
 
         QVERIFY2( interactWithModalWindowObjectInformationReachedTheEnd,
                   qPrintable( "testGUI::operateMouseToCreateObjects: interactWithModalWindowObjectInformationReachedTheEnd is false for count="
-                              +QString::number( count ) ) );
+                              + QString::number( count ) ) );
 
 //        mainWindow->show();
 //        QTest::qWait(3000);
@@ -1954,7 +1945,29 @@ void testGUI::operateMouseToCreateObjects()
     }
 
 
-    // Verify that the inventory contain the correct number of objects
+    // Verify that the inventory contains the correct number of objects
+
+    // inventoryWindow (which uses QTableWidget class)
+
+    std::cout << "\n\nmainWindow->inventoryWindow->inventoryTable->rowCount(): " << mainWindow->inventoryWindow->inventoryTable->rowCount()
+              << "\nmainWindow->inventoryWindow->inventoryTable->columnCount(): " << mainWindow->inventoryWindow->inventoryTable->columnCount()<< std::endl;
+
+    for ( int i=0; i< mainWindow->inventoryWindow->inventoryTable->rowCount(); i++ ) {
+        std::cout << "count: " << i << ", \""
+                  << mainWindow->inventoryWindow->inventoryTable->item(i, 0)->text().toStdString()
+                  << "\": \"" << mainWindow->inventoryWindow->inventoryTable->item(i, 1)->text().toStdString()
+                  << "\"\n";
+    }
+
+
+
+    QVERIFY2( mainWindow->inventoryWindow->inventoryTable->rowCount() ==  nbObjects,
+                qPrintable( "operateMouseToCreateObjects: the number of objects in inventoryWindow is "
+                + QString::number( mainWindow->inventoryWindow->inventoryTable->rowCount() )
+                + " instead of the expected " + QString::number( nbObjects ) ) );
+
+
+
 
     // Save object images
 

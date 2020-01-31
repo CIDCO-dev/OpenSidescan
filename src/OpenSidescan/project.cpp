@@ -203,45 +203,114 @@ void Project::saveObjectImages( const QString & folder )
 
     QString fileNameHTML = folder + "/" + "description.html";
 
-    std::ofstream outFile;
-    outFile.open( fileNameHTML.toStdString(), std::ofstream::out );
+    QFile file( fileNameHTML );
+    bool isfileForHTMLopened = file.open(QIODevice::WriteOnly);
 
-    if( outFile.is_open() )
+    QXmlStreamWriter xmlWriter(&file);
+
+    if( isfileForHTMLopened )
     {
-        outFile << "<!DOCTYPE html>" << "\n";
-        outFile << "<html>" << "\n";
-        outFile << "<head>" << "\n";
-        outFile << "<style>" << "\n";
-        outFile << "table, th, td {" << "\n";
-        outFile << "  border: 1px solid black;" << "\n";
-        outFile << "  border-collapse: collapse;" << "\n";
-        outFile << "}" << "\n";
-        outFile << "th, td {" << "\n";
-        outFile << "  padding: 5px;" << "\n";
-        outFile << "}" << "\n";
-        outFile << "th {" << "\n";
-        outFile << "  text-align: left;" << "\n";
-        outFile << "}" << "\n";
-        outFile << "</style>" << "\n";
-        outFile << "</head>" << "\n";
-        outFile << "<body>" << "\n";
 
-        outFile << "<h2>Left-align Headings</h2>" << "\n";
-        outFile << "<p>To left-align the table headings, use the CSS text-align property.</p>" << "\n";
 
-//        outFile << "<table style="width:100%">" << "\n";
-        outFile << "<table style=\"width:100%\">" << "\n";
-        outFile << "  <tr>" << "\n";
-        outFile << "    <th>Name</th>" << "\n";
-        outFile << "    <th>File</th>" << "\n";
-        outFile << "    <th>Channel</th>" << "\n";
-        outFile << "    <th>Longitude</th>" << "\n";
-        outFile << "    <th>Latitude</th>" << "\n";
-        outFile << "    <th>Width (m)</th>" << "\n";
-        outFile << "    <th>Height (m)</th>" << "\n";
-        outFile << "    <th>Image</th>" << "\n";
-        outFile << "  </tr>" << "\n";
-        outFile << "  <tr>" << "\n";
+        xmlWriter.setAutoFormatting(true);
+        xmlWriter.writeStartDocument();
+
+
+
+
+//        outFile << "<!DOCTYPE html>" << "\n";
+
+
+
+        xmlWriter.writeStartElement("html");
+        xmlWriter.writeStartElement("head");
+        xmlWriter.writeStartElement("style");
+
+        xmlWriter.writeCharacters( "table, th, td {\n" );
+        xmlWriter.writeCharacters( "  border: 1px solid black;\n" );
+        xmlWriter.writeCharacters( "  border-collapse: collapse;\n" );
+
+
+        xmlWriter.writeCharacters( "}\n" );
+        xmlWriter.writeCharacters( "th, td {\n" );
+        xmlWriter.writeCharacters( "  padding: 5px;\n" );
+        xmlWriter.writeCharacters( "}\n" );
+        xmlWriter.writeCharacters( "th {\n" );
+        xmlWriter.writeCharacters( "  text-align: left;\n" );
+        xmlWriter.writeCharacters( "}\n" );
+
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+
+
+        xmlWriter.writeStartElement("h2");
+        xmlWriter.writeCharacters( "Left-align Headings" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("p");
+        xmlWriter.writeCharacters( "To left-align the table headings, use the CSS text-align property." );
+        xmlWriter.writeEndElement();
+
+
+////        outFile << "<table style="width:100%">" << "\n";
+
+
+//        xmlWriter.writeCharacters( "<table style=\"width:100%\">" );
+
+
+        xmlWriter.writeStartElement( "table style=\"width:100%\"" );
+
+        xmlWriter.writeStartElement("tr");
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Name" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "File" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Channel" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Longitude" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Latitude" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Width (m)" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Height (m)" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Image" );
+        xmlWriter.writeEndElement();
+
+
+        xmlWriter.writeEndElement(); // tr
+
+//
+//        outFile << "<table style=\"width:100%\">" << "\n";
+//        outFile << "  <tr>" << "\n";
+//        outFile << "    <th>Name</th>" << "\n";
+//        outFile << "    <th>File</th>" << "\n";
+//        outFile << "    <th>Channel</th>" << "\n";
+//        outFile << "    <th>Longitude</th>" << "\n";
+//        outFile << "    <th>Latitude</th>" << "\n";
+//        outFile << "    <th>Width (m)</th>" << "\n";
+//        outFile << "    <th>Height (m)</th>" << "\n";
+//        outFile << "    <th>Image</th>" << "\n";
+//        outFile << "  </tr>" << "\n";
+//        outFile << "  <tr>" << "\n";
     }
 
 
@@ -286,55 +355,87 @@ void Project::saveObjectImages( const QString & folder )
                 pixmap.save( objectImageFileNameWithPath );
 
 
-                if( outFile.is_open() )
+                if( isfileForHTMLopened )
                 {
-                    outFile << "  <tr>" << "\n";
-                    outFile << "    <td>" << objectName.toStdString() << "</td>" << "\n";
+                    xmlWriter.writeStartElement("tr");
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( objectName );
+                    xmlWriter.writeEndElement();
 
                     QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
                     QString filenameWithoutPath = fileInfo.fileName();
 
-                    outFile << "    <td>" << filenameWithoutPath.toStdString() << "</td>" << "\n";
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( filenameWithoutPath );
+                    xmlWriter.writeEndElement();
 
-                    outFile << "    <td>" << QString::fromStdString((*j)->getChannelName()).toStdString() << "</td>" << "\n";
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters(  QString::fromStdString((*j)->getChannelName()) );
+                    xmlWriter.writeEndElement();
 
-
-                    outFile << std::setprecision(15);
 
                     Position * pos = (*k)->getPosition();
 
                     if(pos){
-                        outFile << "    <td>" << pos->getLongitude() << "</td>" << "\n";
-                        outFile << "    <td>" << pos->getLatitude() << "</td>" << "\n";
+
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters(  QString::number(pos->getLongitude(), 'f', 15) );
+                        xmlWriter.writeEndElement();
+
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters(  QString::number(pos->getLatitude(), 'f', 15) );
+                        xmlWriter.writeEndElement();
                     }
                     else{
-                        outFile << "    <td>N/A</td>" << "\n";
-                        outFile << "    <td>N/A</td>" << "\n";
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
+
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
                     }
 
-                    outFile << std::setprecision(3);
 
 
                     if((*k)->getWidth() > 0){
-                        outFile << "    <td>" << (*k)->getWidth()  << "</td>" << "\n";
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( QString::number( (*k)->getWidth(), 'f', 3) );
+                        xmlWriter.writeEndElement();
                     }
                     else{
-                        outFile << "    <td>N/A</td>" << "\n";
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
                     }
 
 
                     if((*k)->getHeight() > 0){
-                        outFile << "    <td>" << (*k)->getHeight()  << "</td>" << "\n";
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( QString::number( (*k)->getHeight(), 'f', 3) );
+                        xmlWriter.writeEndElement();
                     }
                     else{
-                        outFile << "    <td>N/A</td>" << "\n";
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
                     }
 
 
-                    outFile << "    <td><img src=\"" << objectImageFileName.toStdString() << "\" alt=\"" << objectImageFileName.toStdString()
-                            << "\"></td>" << "\n";
+//                    outFile << "    <td><img src=\"" << objectImageFileName.toStdString() << "\" alt=\"" << objectImageFileName.toStdString()
+//                            << "\"></td>" << "\n";
 
-                    outFile << "  </tr>" << std::endl;
+                    xmlWriter.writeStartElement("td");
+
+//                    xmlWriter.writeStartElement("td");
+
+                    QString imageString = "<img src=\"" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\">";
+                    xmlWriter.writeCharacters( imageString );
+
+                    xmlWriter.writeEndElement(); // td
+
+                    xmlWriter.writeEndElement(); // tr
 
                 }
 
@@ -342,11 +443,15 @@ void Project::saveObjectImages( const QString & folder )
         }
     }
 
-    if( outFile.is_open() )
+    if( isfileForHTMLopened )
     {
-        outFile << "</table>" << "\n";
-        outFile << "</body>" << "\n";
-        outFile << "</html>" << "\n";
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+
+//        outFile << "</table>" << "\n";
+//        outFile << "</body>" << "\n";
+//        outFile << "</html>" << "\n";
     }
 
 

@@ -68,7 +68,7 @@ public:
 
             cv::Mat img(channels[i]->size(),channels[i]->at(0)->getSamples().size(), CV_64F,cv::Scalar(0));
 
-            std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
+//            std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
 
             unsigned int positionIndex =0 ;
 

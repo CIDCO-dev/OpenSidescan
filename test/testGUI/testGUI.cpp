@@ -2055,19 +2055,19 @@ void testGUI::operateMouseToCreateObjects()
               << "\n               height: " << size.height() << "\n" << std::endl;
 
 
-
-
-
-
     // Set up callback funtion that will interact with the modal window
     // once part of the image is selected
 
-    // Press mouse
+    // Press mouse's left button
+    QTest::mousePress( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(20,10) );
 
+    int posX = 50;
+    int posY = 80;
     // Move mouse
+    QTest::mouseMove( imageTablabel, QPoint(posX,posY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
 
-    // Release mouse
-
+    // Release mouse's left button
+    QTest::mouseRelease( imageTablabel, Qt::LeftButton, Qt::NoModifier, QPoint(posX,posY), 20 ); // Necessary to put delay value in the function call even if there was a QTest::qWait(500) before the function call
 
 
 

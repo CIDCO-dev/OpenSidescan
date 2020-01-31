@@ -120,7 +120,7 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
         }
 
         //TODO: adjust width
-        //std::cerr << x << "," << y << " (" << width << " x " << height << ")" << std::endl; 
+        //std::cerr << x << "," << y << " (" << width << " x " << height << ")" << std::endl;
 
         
         cv::Rect object(x,y,width,height);

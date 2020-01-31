@@ -51,9 +51,12 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
     imageLabel->setBackgroundRole(QPalette::Base);
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     imageLabel->setScaledContents(true);
+    imageLabel->setObjectName( "imageLabel" );
+
 
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(imageLabel);
+    scrollArea->setObjectName( "scrollArea which holds the imageLabel" );
 
     refreshImage();
 

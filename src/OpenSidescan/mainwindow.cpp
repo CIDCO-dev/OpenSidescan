@@ -216,6 +216,7 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
         for(auto i= selectedFile->getImages().begin();i!=selectedFile->getImages().end();i++){
 
             ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
+            newTab->setObjectName( "imageTab with n=" + QString::number( n ) );
             connect(newTab,&ImageTab::inventoryChanged,this,&MainWindow::refreshObjectInventory);
 
             tabs->addTab(

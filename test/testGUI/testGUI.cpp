@@ -26,11 +26,17 @@
 
 #include <QMetaObject>
 
+#include <QGuiApplication>  // To get screen size
+#include <QScreen>          // To get screen size
+
 
 
 
 
 #include "../../src/OpenSidescan/mainwindow.h"
+
+#include "../../src/OpenSidescan/imagetab.h"
+
 
 #define DOSKIPTESTS
 
@@ -1805,6 +1811,19 @@ void testGUI::useToolBarActionImportToLoadSidescanFileForFindingObjects()
     QVERIFY2( mainWindow, "useToolBarActionImportToLoadSidescanFileForFindingObjects: mainWindow tests false");
 
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+
+    float factorScreenSize = 0.7f;
+
+    mainWindow->resize( static_cast<int>( floor( screenGeometry.width() * factorScreenSize ) ),
+                  static_cast<int>( floor( screenGeometry.height() * factorScreenSize) ) );
+
+
+//    mainWindow->showMaximized();
+
+
+
     // Get action for importing a sidescan file
 
     QAction * actionImport = mainWindow->findChild< QAction * >( "actionImport" );
@@ -1968,7 +1987,86 @@ void testGUI::operateMouseToCreateObjects()
             + QString::number( tabIndex ) ) );
 
 
+    // Get a handle on the label that displays the image
 
+    // class ImageTab : public QWidget
+
+    QWidget * imageTab = mainWindow->tabs->currentWidget();
+    std::cout << "\nimageTab->metaObject()->className(): " << imageTab->metaObject()->className() << "\n" << std::endl;
+
+//    ImageTab * imageTab = static_cast<ImageTab*>( mainWindow->tabs->currentWidget() );
+
+    std::cout << "\nimageTab: object name: " << imageTab->objectName().toStdString() << "\n" << std::endl;
+
+    QSize size = imageTab->size();
+
+    std::cout << "\nimageTab: width: " << size.width()
+              << "\n          height: " << size.height() << "\n" << std::endl;
+
+
+
+
+    // Member variable of ImageTab: ImageTabLabel * imageLabel
+    // ImageTabLabel inherits from QLabel
+
+//    const QObjectList listImageTab = imageTab->children();
+
+//    qDebug() << tr( "listImageTab.size(): " ) << listImageTab.size();
+
+//    for (QObject *children : listImageTab) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+
+//    }
+
+    QScrollArea * scrollArea = imageTab->findChild< QScrollArea * >( "scrollArea which holds the imageLabel" );
+
+//    const QObjectList listQScrollArea = scrollArea->children();
+
+//    qDebug() << tr( "listQScrollArea.size(): " ) << listQScrollArea.size();
+
+//    for (QObject *children : listQScrollArea) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+
+//    }
+
+
+    QWidget * scrollAreaViewport = imageTab->findChild< QWidget * >( "qt_scrollarea_viewport" );
+
+//    const QObjectList listScrollAreaViewport = scrollAreaViewport->children();
+
+//    qDebug() << tr( "listScrollAreaViewport.size(): " ) << listScrollAreaViewport.size();
+
+//    for (QObject *children : listScrollAreaViewport) {
+//        qDebug() << children->objectName()
+//                 << ", className: " << children->metaObject()->className();
+
+//    }
+
+
+    ImageTabLabel * imageTablabel = scrollAreaViewport->findChild< ImageTabLabel * >( "imageLabel" );
+
+    // Get dimensions of the label, to know what maximum size an object could have
+
+    size = imageTablabel->size();
+
+    std::cout << "\nimageTablabel: width: " << size.width()
+              << "\n               height: " << size.height() << "\n" << std::endl;
+
+
+
+
+
+
+    // Set up callback funtion that will interact with the modal window
+    // once part of the image is selected
+
+    // Press mouse
+
+    // Move mouse
+
+    // Release mouse
 
 
 

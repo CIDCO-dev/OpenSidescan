@@ -198,6 +198,53 @@ void Project::saveObjectImages( const QString & folder )
 //    std::cout << "\nBeginning of Project::saveObjectImages()\n"
 //        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
 
+
+    // Open file, write beginning of the file
+
+    QString fileNameHTML = folder + "/" + "description.html";
+
+    std::ofstream outFile;
+    outFile.open( fileNameHTML.toStdString(), std::ofstream::out );
+
+    if( outFile.is_open() )
+    {
+        outFile << "<!DOCTYPE html>" << "\n";
+        outFile << "<html>" << "\n";
+        outFile << "<head>" << "\n";
+        outFile << "<style>" << "\n";
+        outFile << "table, th, td {" << "\n";
+        outFile << "  border: 1px solid black;" << "\n";
+        outFile << "  border-collapse: collapse;" << "\n";
+        outFile << "}" << "\n";
+        outFile << "th, td {" << "\n";
+        outFile << "  padding: 5px;" << "\n";
+        outFile << "}" << "\n";
+        outFile << "th {" << "\n";
+        outFile << "  text-align: left;" << "\n";
+        outFile << "}" << "\n";
+        outFile << "</style>" << "\n";
+        outFile << "</head>" << "\n";
+        outFile << "<body>" << "\n";
+
+        outFile << "<h2>Left-align Headings</h2>" << "\n";
+        outFile << "<p>To left-align the table headings, use the CSS text-align property.</p>" << "\n";
+
+//        outFile << "<table style="width:100%">" << "\n";
+        outFile << "<table style=\"width:100%\">" << "\n";
+        outFile << "  <tr>" << "\n";
+        outFile << "    <th>Name</th>" << "\n";
+        outFile << "    <th>File</th>" << "\n";
+        outFile << "    <th>Channel</th>" << "\n";
+        outFile << "    <th>Longitude</th>" << "\n";
+        outFile << "    <th>Latitude</th>" << "\n";
+        outFile << "    <th>Width (m)</th>" << "\n";
+        outFile << "    <th>Height (m)</th>" << "\n";
+        outFile << "    <th>Image</th>" << "\n";
+        outFile << "  </tr>" << "\n";
+        outFile << "  <tr>" << "\n";
+    }
+
+
     // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
 
@@ -219,22 +266,91 @@ void Project::saveObjectImages( const QString & folder )
 
                 QString fileExtension = "png";
 
-                QString fileName = folder + "/" + objectName + "." + fileExtension;
+                QString objectImageFileName = objectName + "." + fileExtension;
 
-                QFileInfo fileInfo( fileName );
+                QString objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+
+                QFileInfo fileInfo( objectImageFileNameWithPath );
 
                 int count = 0;
 
                 while ( fileInfo.exists() ) {
-                    fileName = folder + "/" + objectName + "_" + QString::number( count ) + "." + fileExtension;
-                    fileInfo.setFile( fileName );
+
+                    objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
+                    objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                    fileInfo.setFile( objectImageFileNameWithPath );
                     count++;
                 }
 
                 // Save pixmap
-                pixmap.save( fileName );
+                pixmap.save( objectImageFileNameWithPath );
+
+
+                if( outFile.is_open() )
+                {
+                    outFile << "  <tr>" << "\n";
+                    outFile << "    <td>" << objectName.toStdString() << "</td>" << "\n";
+
+                    QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
+                    QString filenameWithoutPath = fileInfo.fileName();
+
+                    outFile << "    <td>" << filenameWithoutPath.toStdString() << "</td>" << "\n";
+
+                    outFile << "    <td>" << QString::fromStdString((*j)->getChannelName()).toStdString() << "</td>" << "\n";
+
+
+                    outFile << std::setprecision(15);
+
+                    Position * pos = (*k)->getPosition();
+
+                    if(pos){
+                        outFile << "    <td>" << pos->getLongitude() << "</td>" << "\n";
+                        outFile << "    <td>" << pos->getLatitude() << "</td>" << "\n";
+                    }
+                    else{
+                        outFile << "    <td>N/A</td>" << "\n";
+                        outFile << "    <td>N/A</td>" << "\n";
+                    }
+
+                    outFile << std::setprecision(3);
+
+
+                    if((*k)->getWidth() > 0){
+                        outFile << "    <td>" << (*k)->getWidth()  << "</td>" << "\n";
+                    }
+                    else{
+                        outFile << "    <td>N/A</td>" << "\n";
+                    }
+
+
+                    if((*k)->getHeight() > 0){
+                        outFile << "    <td>" << (*k)->getHeight()  << "</td>" << "\n";
+                    }
+                    else{
+                        outFile << "    <td>N/A</td>" << "\n";
+                    }
+
+
+                    outFile << "    <td><img src=\"" << objectImageFileName.toStdString() << "\" alt=\"" << objectImageFileName.toStdString()
+                            << "\"></td>" << "\n";
+
+                    outFile << "  </tr>" << std::endl;
+
+                }
+
             }
         }
     }
+
+    if( outFile.is_open() )
+    {
+        outFile << "</table>" << "\n";
+        outFile << "</body>" << "\n";
+        outFile << "</html>" << "\n";
+    }
+
+
+
+
 
 }

@@ -250,21 +250,21 @@ void MainWindow::actionAbout(){
 
 void MainWindow::fileSelected(const QItemSelection & selection){
 
-    qDebug() << tr("MainWindow::fileSelected()");
+//    qDebug() << tr("MainWindow::fileSelected()");
 
     if(!selection.indexes().empty()){
 
-        qDebug() << tr("if(!selection.indexes().empty())");
+//        qDebug() << tr("if(!selection.indexes().empty())");
 
         if(projectWindow){
 
-            qDebug() << tr("if(projectWindow)");
+//            qDebug() << tr("if(projectWindow)");
 
             SidescanFile * file = projectWindow->getSelectedFile();
 
             if(file){
 
-                qDebug() << tr("if(file)");
+//                qDebug() << tr("if(file)");
 
                 updateSelectedFile(file);
             }
@@ -542,7 +542,7 @@ void MainWindow::actionClose(){
 
 void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 {
-    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
+//    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
 
 
 //    // TODO: remove found objects
@@ -566,7 +566,7 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
     // TODO: remove found objects
     refreshProjectUI();
 
-    qDebug() << tr("After refreshProjectUI");
+//    qDebug() << tr("After refreshProjectUI");
 
     // If no files left in the project, make sure nothing is displayed
     if( !currentProject || currentProject->getFiles().size() == 0 ) {

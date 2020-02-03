@@ -55,11 +55,11 @@ QVariant ProjectTreeItem::data(int column) const
 
 bool ProjectTreeItem::insertChildren(int position, int count, int columns)
 {
-    qDebug() << QObject::tr("bool ProjectTreeItem::insertChildren, position ") << position
-              << QObject::tr(", count ") << count
-              << QObject::tr(", columns ") << columns;
+//    qDebug() << QObject::tr("bool ProjectTreeItem::insertChildren, position ") << position
+//              << QObject::tr(", count ") << count
+//              << QObject::tr(", columns ") << columns;
 
-//    qDebug() << QObject::tr("bool ProjectTreeItem::insertChildren, position ");
+
 
 
     if (position < 0 || position > childItems.size())

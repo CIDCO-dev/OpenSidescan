@@ -52,7 +52,7 @@ void ProjectTreeModel::appendFile( QString &filename, SidescanFile *sidescanFile
 SidescanFile * ProjectTreeModel::getSidescanFile(const QModelIndex &index) const
 {
 
-    qDebug() << tr( "ProjectTreeModel::getSidescanFile" );
+//    qDebug() << tr( "ProjectTreeModel::getSidescanFile" );
 
     if (index.isValid() == false)
         return nullptr;
@@ -64,11 +64,11 @@ SidescanFile * ProjectTreeModel::getSidescanFile(const QModelIndex &index) const
 
         // If it is not the file node
         if (item != fileNode) {
-            qDebug() << tr( "item != fileNode" );
+//            qDebug() << tr( "item != fileNode" );
             return item->getSidescanFile();
         }
         else {
-            qDebug() << tr( "item == fileNode" );
+//            qDebug() << tr( "item == fileNode" );
             return nullptr;
         }
     }

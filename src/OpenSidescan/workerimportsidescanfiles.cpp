@@ -82,7 +82,7 @@ void WorkerImportSidescanFiles::doWork() {
     }
 
 
-    qDebug() << tr( "End of DoWork" );
+//    qDebug() << tr( "End of DoWork" );
 
     progressInt(2*nbFiles); // To close the progress dialog
 

@@ -193,10 +193,106 @@ void Project::exportInventoryAsKml(std::string & filename){
     file.close();
 }
 
-void Project::saveObjectImages( const QString & folder )
+//void Project::saveObjectImages( const QString & folder )
+void Project::saveObjectImages( const QString & absolutePath,
+                       const QString & fileNameWithoutExtension )
 {
 //    std::cout << "\nBeginning of Project::saveObjectImages()\n"
 //        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
+
+
+    // Open file, write beginning of the file
+
+//    QString fileNameHTML = folder + "/" + "description.html";
+
+    QString fileNameHTML = absolutePath + "/" + fileNameWithoutExtension + ".html";
+
+    QFile file( fileNameHTML );
+    bool isfileForHTMLopened = file.open(QIODevice::WriteOnly);
+
+    QXmlStreamWriter xmlWriter(&file);
+
+    if( isfileForHTMLopened )
+    {
+        xmlWriter.setAutoFormatting(true);
+        xmlWriter.writeStartDocument();
+
+        xmlWriter.writeDTD( "<!DOCTYPE html>" );
+
+        xmlWriter.writeStartElement("html");
+
+        // Style
+
+        xmlWriter.writeStartElement("head");
+        xmlWriter.writeStartElement("style");
+
+        xmlWriter.writeCharacters( "table, th, td {\n" );
+        xmlWriter.writeCharacters( "  border: 1px solid black;\n" );
+        xmlWriter.writeCharacters( "  border-collapse: collapse;\n" );
+        xmlWriter.writeCharacters( "}\n" );
+        xmlWriter.writeCharacters( "th, td {\n" );
+        xmlWriter.writeCharacters( "  padding: 5px;\n" );
+        xmlWriter.writeCharacters( "}\n" );
+        xmlWriter.writeCharacters( "th {\n" );
+        xmlWriter.writeCharacters( "  text-align: left;\n" );
+        xmlWriter.writeCharacters( "}\n" );
+
+        xmlWriter.writeEndElement(); // style
+        xmlWriter.writeEndElement(); // head
+
+        // Body
+
+        xmlWriter.writeStartElement("body");
+
+        xmlWriter.writeStartElement("h2"); // Left-align Headings
+        xmlWriter.writeCharacters( "Objects" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("p");
+        xmlWriter.writeCharacters( "List of objects" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement( "table style=\"width:100%\"" );
+
+        // Table header
+        xmlWriter.writeStartElement("tr");
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Name" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "File" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Channel" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Longitude" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Latitude" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Width (m)" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Height (m)" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Image" );
+        xmlWriter.writeEndElement();
+
+
+        xmlWriter.writeEndElement(); // tr
+    }
+
 
     // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
@@ -219,22 +315,116 @@ void Project::saveObjectImages( const QString & folder )
 
                 QString fileExtension = "png";
 
-                QString fileName = folder + "/" + objectName + "." + fileExtension;
+                QString objectImageFileName = objectName + "." + fileExtension;
 
-                QFileInfo fileInfo( fileName );
+                QString objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+
+                QFileInfo fileInfo( objectImageFileNameWithPath );
 
                 int count = 0;
 
                 while ( fileInfo.exists() ) {
-                    fileName = folder + "/" + objectName + "_" + QString::number( count ) + "." + fileExtension;
-                    fileInfo.setFile( fileName );
+
+                    objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
+                    objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+                    fileInfo.setFile( objectImageFileNameWithPath );
                     count++;
                 }
 
                 // Save pixmap
-                pixmap.save( fileName );
+                pixmap.save( objectImageFileNameWithPath );
+
+
+                if( isfileForHTMLopened )
+                {
+                    xmlWriter.writeStartElement("tr");
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( objectName );
+                    xmlWriter.writeEndElement();
+
+                    QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
+                    QString filenameWithoutPath = fileInfo.fileName();
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( filenameWithoutPath );
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters(  QString::fromStdString((*j)->getChannelName()) );
+                    xmlWriter.writeEndElement();
+
+
+                    Position * pos = (*k)->getPosition();
+
+                    if(pos){
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters(  QString::number(pos->getLongitude(), 'f', 15) );
+                        xmlWriter.writeEndElement();
+
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters(  QString::number(pos->getLatitude(), 'f', 15) );
+                        xmlWriter.writeEndElement();
+                    }
+                    else{
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
+
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
+                    }
+
+
+                    if((*k)->getWidth() > 0){
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( QString::number( (*k)->getWidth(), 'f', 3) );
+                        xmlWriter.writeEndElement();
+                    }
+                    else{
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
+                    }
+
+
+                    if((*k)->getHeight() > 0){
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( QString::number( (*k)->getHeight(), 'f', 3) );
+                        xmlWriter.writeEndElement();
+                    }
+                    else{
+                        xmlWriter.writeStartElement("td");
+                        xmlWriter.writeCharacters( "N/A" );
+                        xmlWriter.writeEndElement();
+                    }
+
+                    xmlWriter.writeStartElement("td");
+
+                    QString imageString = "img src=\"" + fileNameWithoutExtension + "/" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
+                    xmlWriter.writeStartElement( imageString );
+                    xmlWriter.writeEndElement(); // imageString
+
+                    xmlWriter.writeEndElement(); // td
+
+                    xmlWriter.writeEndElement(); // tr
+
+                }
+
             }
         }
+    }
+
+    if( isfileForHTMLopened )
+    {
+//        xmlWriter.writeEndElement(); // table
+//        xmlWriter.writeEndElement(); // body
+//        xmlWriter.writeEndElement(); // html
+
+        xmlWriter.writeEndDocument(); // Closes all remaining open start elements and writes a newline.
+
+        file.close();
     }
 
 }

@@ -25,7 +25,7 @@ ProjectWindow::ProjectWindow(QWidget *parent)
     model = new ProjectTreeModel(this);
     tree->setModel(model);
 
-    qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
+//    qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
 
     connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
 
@@ -47,7 +47,7 @@ SidescanFile * ProjectWindow::getSelectedFile() {
         QModelIndex index = tree->selectionModel()->currentIndex();
 
         if ( model->isFilesNode( index ) ) {
-            qDebug() << tr("Selected node is file node");
+//            qDebug() << tr("Selected node is file node");
             return NULL;
         }
         else {
@@ -141,7 +141,7 @@ bool ProjectWindow::containsFile(std::string & filename){
 void ProjectWindow::customContextMenu(QPoint pos)
 {
 
-    qDebug() << tr( "Beginning of 'void ProjectWindow::customContextMenu(QPoint pos)'" );
+//    qDebug() << tr( "Beginning of 'void ProjectWindow::customContextMenu(QPoint pos)'" );
 
     // Based on
     // https://www.qtcentre.org/threads/49656-ContextMenu-in-QTreeView
@@ -154,7 +154,7 @@ void ProjectWindow::customContextMenu(QPoint pos)
         if ( model->isFilesNode( index ) ) {
             // No right-click menu
 
-            qDebug() << tr("MainWindow::customContextMenu() Selected node is file node");
+//            qDebug() << tr("ProjectWindow::customContextMenu() Selected node is file node");
             return;
         }
 
@@ -170,7 +170,7 @@ void ProjectWindow::customContextMenu(QPoint pos)
 
 void ProjectWindow::removeFileFromProject()
 {
-    qDebug() << tr("Inside 'ProjectWindow::removeFileFromProject()'");
+//    qDebug() << tr("Inside 'ProjectWindow::removeFileFromProject()'");
 
     QModelIndex index = tree->selectionModel()->currentIndex();
 

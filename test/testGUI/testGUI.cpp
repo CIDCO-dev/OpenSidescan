@@ -1982,6 +1982,10 @@ void testGUI::operateMouseToCreateObjects()
 
     interactWithModalWindowActionSaveObjectImagesReachedTheEnd = false;
 
+    QDateTime timeBeforeModalWindowCall( QDateTime::currentDateTime() );
+
+//    std::cout << "\n\ntimeBeforeModalWindowCall.toString().toStdString(): " << timeBeforeModalWindowCall.toString( "yyyy-MM-dd_hh:mm:ss.zzz" ).toStdString() << "\n" << std::endl;
+
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 10 * 1000 );
 
@@ -2004,6 +2008,32 @@ void testGUI::operateMouseToCreateObjects()
               "testGUI::operateMouseToCreateObjects: interactWithModalWindowActionSaveObjectImagesReachedTheEnd is false" );
 
     // Verify that the files are saved
+
+
+    QString filenameHTML = tr( "../../../test/testProject/images.html" );
+    QFileInfo fileInfoHTML( filenameHTML );
+
+    QVERIFY2( fileInfoHTML.exists(),
+                "operateMouseToCreateObjects: Problem saving object images images.html" );
+
+    QDateTime timeHTML( fileInfoHTML.lastModified() );
+
+//    std::cout << "\n\ntimeBeforeModalWindowCall.secsTo( timeHTML ):  " << timeBeforeModalWindowCall.secsTo( timeHTML ) << "\n";
+//    std::cout <<     "timeBeforeModalWindowCall.msecsTo( timeHTML ): " << timeBeforeModalWindowCall.msecsTo( timeHTML ) << "\n" << std::endl;
+
+    QVERIFY2( abs( timeBeforeModalWindowCall.msecsTo( timeHTML ) ) <= 10000,
+                "operateMouseToCreateObjects: Difference between timeBeforeModalWindowCall and timeHTML larger than 10 seconds. This may be caused by the image files existing prior to the current test run" );
+
+
+    QString folder = tr( "../../../test/testProject/images" );
+    QFileInfo folderInfo( folder );
+
+    QVERIFY2( folderInfo.exists(),
+                "operateMouseToCreateObjects: Problem saving object images, folder does not exist" );
+
+    QVERIFY2( folderInfo.isDir(),
+                "operateMouseToCreateObjects: Problem saving object images, folder is not a directory" );
+
     // Name pattern:
 //    "Unknown"
 //    "Unknown_0"
@@ -2021,14 +2051,23 @@ void testGUI::operateMouseToCreateObjects()
 
         name += "." + extension;
 
-        QString filename = tr( "../../../test/testProject/" ) + name;
+//        QString filename = tr( "../../../test/testProject/" ) + name;
+        QString filename = tr( "../../../test/testProject/images/" ) + name;
         QFileInfo fileInfo( filename );
 
         QVERIFY2( fileInfo.exists(),
                     qPrintable( "operateMouseToCreateObjects: Problem saving object images: count: "
-                                + QString::number( count ) + ", the file \""
+                                + QString::number( count ) + ", the file \"images/"
                                 + filename + "\" does not exist" ) );
 
+        QDateTime timeImage( fileInfo.lastModified() );
+
+//        std::cout << "\n\ntimeBeforeModalWindowCall.msecsTo( timeImage ):  " << timeBeforeModalWindowCall.msecsTo( timeImage ) << "\n" << std::endl;
+
+        QVERIFY2( abs( timeBeforeModalWindowCall.msecsTo( timeImage ) ) <= 10000,
+                  qPrintable( "operateMouseToCreateObjects: Problem saving object images: count: "
+                              + QString::number( count ) + ", Difference between timeBeforeModalWindowCall and time for the file \"images/"
+                              + filename + "\" is larger than 10 seconds. This may be caused by the image files existing prior to the current test run" ) );
 
 //        std::cout << "count: " << count << ", size: " << fileInfo.size() << std::endl;
 
@@ -2235,8 +2274,12 @@ void testGUI::interactWithModalWindowActionSaveObjectImages()
     QVERIFY2( modalWidget, "interactWithModalWindowActionSaveObjectImages: modalWidget tests false");
 
 
-    QVERIFY2( modalWidget->windowTitle() == tr( "Folder Where to Save Object Images" ),
-              "interactWithModalWindowActionSaveObjectImages: modalWidget->windowTitle() is not 'Folder Where to Save Object Images'" );
+//    QVERIFY2( modalWidget->windowTitle() == tr( "Folder Where to Save Object Images" ),
+//              "interactWithModalWindowActionSaveObjectImages: modalWidget->windowTitle() is not 'Folder Where to Save Object Images'" );
+
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Save Object Images" ),
+              "interactWithModalWindowActionSaveObjectImages: modalWidget->windowTitle() is not 'Save Object Images'" );
 
 
     QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("fileNameEdit");
@@ -2259,7 +2302,8 @@ void testGUI::interactWithModalWindowActionSaveObjectImages()
     // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
 
 
-    QString filename =  tr( "../../../test/testProject/" );
+//    QString filename =  tr( "../../../test/testProject/" );
+    QString filename =  tr( "../../../test/testProject/images.html" );
 
 
     QTest::keyClicks(lineEdit, filename );

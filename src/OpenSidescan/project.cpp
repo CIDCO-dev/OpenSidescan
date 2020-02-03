@@ -193,7 +193,9 @@ void Project::exportInventoryAsKml(std::string & filename){
     file.close();
 }
 
-void Project::saveObjectImages( const QString & folder )
+//void Project::saveObjectImages( const QString & folder )
+void Project::saveObjectImages( const QString & absolutePath,
+                       const QString & fileNameWithoutExtension )
 {
 //    std::cout << "\nBeginning of Project::saveObjectImages()\n"
 //        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
@@ -201,7 +203,9 @@ void Project::saveObjectImages( const QString & folder )
 
     // Open file, write beginning of the file
 
-    QString fileNameHTML = folder + "/" + "description.html";
+//    QString fileNameHTML = folder + "/" + "description.html";
+
+    QString fileNameHTML = absolutePath + "/" + fileNameWithoutExtension + ".html";
 
     QFile file( fileNameHTML );
     bool isfileForHTMLopened = file.open(QIODevice::WriteOnly);
@@ -313,7 +317,7 @@ void Project::saveObjectImages( const QString & folder )
 
                 QString objectImageFileName = objectName + "." + fileExtension;
 
-                QString objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                QString objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
 
                 QFileInfo fileInfo( objectImageFileNameWithPath );
 
@@ -322,7 +326,7 @@ void Project::saveObjectImages( const QString & folder )
                 while ( fileInfo.exists() ) {
 
                     objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
-                    objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                    objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
                     fileInfo.setFile( objectImageFileNameWithPath );
                     count++;
                 }
@@ -398,7 +402,7 @@ void Project::saveObjectImages( const QString & folder )
 
                     xmlWriter.writeStartElement("td");
 
-                    QString imageString = "img src=\"" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
+                    QString imageString = "img src=\"" + fileNameWithoutExtension + "/" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
                     xmlWriter.writeStartElement( imageString );
                     xmlWriter.writeEndElement(); // imageString
 

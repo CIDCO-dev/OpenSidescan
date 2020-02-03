@@ -24,7 +24,9 @@ public:
     std::string & getFilename(){ return filename;}
     void          setFilename(std::string & fileName){ filename=fileName;}
 
-    void saveObjectImages( const QString & folder );
+//    void saveObjectImages( const QString & folder );
+    void saveObjectImages( const QString & absolutePath,
+                           const QString & fileNameWithoutExtension );
 
 private:
     std::vector<SidescanFile *>   files; 

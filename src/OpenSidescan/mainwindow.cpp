@@ -304,17 +304,18 @@ void MainWindow::actionSaveObjectImages(){
     if( ! currentProject )
         return;
 
+
     QFileDialog dialog( this,
-                         tr( "Folder Where to Save Object Images"),
+                         tr( "Save Object Images"),
                         "",
                         tr( "All Files (*)") );
 
-    dialog.setFileMode( QFileDialog::Directory ); // Get a single existing file
+    dialog.setFileMode( QFileDialog::AnyFile );
+
     dialog.setLabelText( QFileDialog::Accept, tr( "Select" ) ) ; // Name of the button, to replace the default "Open"
 
     dialog.setViewMode( QFileDialog::Detail );
     dialog.setOptions( QFileDialog::DontConfirmOverwrite );
-//    dialog.setOption( QFileDialog::ShowDirsOnly, true );
     dialog.setOption( QFileDialog::DontUseNativeDialog, true );
 
     QStringList fileNames;
@@ -325,15 +326,19 @@ void MainWindow::actionSaveObjectImages(){
     if ( fileNames.size() <= 0 )
         return;
 
-    QString folder = fileNames.at( 0 );
+    QString file = fileNames.at( 0 );
 
-    // Verify that the folder exist
+    QFileInfo fileInfo( file );
 
-    QFileInfo fileInfo( folder );
+    if ( fileInfo.suffix() != "html" ) {
+        file += ".html";
+        fileInfo.setFile( file );
+    }
 
-    if ( fileInfo.exists() == false || fileInfo.isDir() == false )
-    {
-        std::string toDisplay = "Invalid path where to save images\n\n\"" + folder.toStdString() + "\"\n";
+    // Verify if the file name alread exists
+    if ( fileInfo.exists() ) {
+
+        std::string toDisplay = "The file \n\n\"" + file.toStdString() + "\"\n\nalready exists";
 
         qDebug() << tr( toDisplay.c_str() );
 
@@ -343,9 +348,41 @@ void MainWindow::actionSaveObjectImages(){
     }
 
 
+    // Verify if a folder with the corresponding name (without .html) already exists
+    QString folder = fileInfo.absolutePath() + "/" + fileInfo.completeBaseName();
+
+    QFileInfo folderInfo( folder );
+
+    if ( folderInfo.exists() && folderInfo.isDir() )
+    {
+        std::string toDisplay = "The folder \n\n\"" + folder.toStdString() + "\"\n\nalready exists";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return;
+    }
+
+
+    // Try and create the folder in which to put the images
+    QDir dir( fileInfo.absolutePath() );
+
+    if ( ! dir.mkdir( fileInfo.completeBaseName() ) )
+    {
+        std::string toDisplay = "Could not create the folder \n\n\"" + fileInfo.completeBaseName().toStdString()
+                + "\"\n\nin the path \"\n\n" + fileInfo.absolutePath().toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return;
+    }
+
 //    std::cout << "\nAfter verifying folder\n" << std::endl;
 
-    currentProject->saveObjectImages( folder );
+    currentProject->saveObjectImages( fileInfo.absolutePath(), fileInfo.completeBaseName() );
 }
 
 

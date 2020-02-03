@@ -423,6 +423,8 @@ void Project::saveObjectImages( const QString & absolutePath,
 //        xmlWriter.writeEndElement(); // html
 
         xmlWriter.writeEndDocument(); // Closes all remaining open start elements and writes a newline.
+
+        file.close();
     }
 
 }

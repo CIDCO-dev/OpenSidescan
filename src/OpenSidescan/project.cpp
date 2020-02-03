@@ -210,27 +210,21 @@ void Project::saveObjectImages( const QString & folder )
 
     if( isfileForHTMLopened )
     {
-
-
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();
 
-
-
-
-//        outFile << "<!DOCTYPE html>" << "\n";
-
-
+        xmlWriter.writeDTD( "<!DOCTYPE html>" );
 
         xmlWriter.writeStartElement("html");
+
+        // Style
+
         xmlWriter.writeStartElement("head");
         xmlWriter.writeStartElement("style");
 
         xmlWriter.writeCharacters( "table, th, td {\n" );
         xmlWriter.writeCharacters( "  border: 1px solid black;\n" );
         xmlWriter.writeCharacters( "  border-collapse: collapse;\n" );
-
-
         xmlWriter.writeCharacters( "}\n" );
         xmlWriter.writeCharacters( "th, td {\n" );
         xmlWriter.writeCharacters( "  padding: 5px;\n" );
@@ -239,28 +233,24 @@ void Project::saveObjectImages( const QString & folder )
         xmlWriter.writeCharacters( "  text-align: left;\n" );
         xmlWriter.writeCharacters( "}\n" );
 
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement(); // style
+        xmlWriter.writeEndElement(); // head
 
+        // Body
 
-        xmlWriter.writeStartElement("h2");
-        xmlWriter.writeCharacters( "Left-align Headings" );
+        xmlWriter.writeStartElement("body");
+
+        xmlWriter.writeStartElement("h2"); // Left-align Headings
+        xmlWriter.writeCharacters( "Objects" );
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("p");
-        xmlWriter.writeCharacters( "To left-align the table headings, use the CSS text-align property." );
+        xmlWriter.writeCharacters( "List of objects" );
         xmlWriter.writeEndElement();
-
-
-////        outFile << "<table style="width:100%">" << "\n";
-
-
-//        xmlWriter.writeCharacters( "<table style=\"width:100%\">" );
-
 
         xmlWriter.writeStartElement( "table style=\"width:100%\"" );
 
+        // Table header
         xmlWriter.writeStartElement("tr");
 
         xmlWriter.writeStartElement("th");
@@ -297,20 +287,6 @@ void Project::saveObjectImages( const QString & folder )
 
 
         xmlWriter.writeEndElement(); // tr
-
-//
-//        outFile << "<table style=\"width:100%\">" << "\n";
-//        outFile << "  <tr>" << "\n";
-//        outFile << "    <th>Name</th>" << "\n";
-//        outFile << "    <th>File</th>" << "\n";
-//        outFile << "    <th>Channel</th>" << "\n";
-//        outFile << "    <th>Longitude</th>" << "\n";
-//        outFile << "    <th>Latitude</th>" << "\n";
-//        outFile << "    <th>Width (m)</th>" << "\n";
-//        outFile << "    <th>Height (m)</th>" << "\n";
-//        outFile << "    <th>Image</th>" << "\n";
-//        outFile << "  </tr>" << "\n";
-//        outFile << "  <tr>" << "\n";
     }
 
 
@@ -378,7 +354,6 @@ void Project::saveObjectImages( const QString & folder )
                     Position * pos = (*k)->getPosition();
 
                     if(pos){
-
                         xmlWriter.writeStartElement("td");
                         xmlWriter.writeCharacters(  QString::number(pos->getLongitude(), 'f', 15) );
                         xmlWriter.writeEndElement();
@@ -396,7 +371,6 @@ void Project::saveObjectImages( const QString & folder )
                         xmlWriter.writeCharacters( "N/A" );
                         xmlWriter.writeEndElement();
                     }
-
 
 
                     if((*k)->getWidth() > 0){
@@ -422,16 +396,11 @@ void Project::saveObjectImages( const QString & folder )
                         xmlWriter.writeEndElement();
                     }
 
-
-//                    outFile << "    <td><img src=\"" << objectImageFileName.toStdString() << "\" alt=\"" << objectImageFileName.toStdString()
-//                            << "\"></td>" << "\n";
-
                     xmlWriter.writeStartElement("td");
 
-//                    xmlWriter.writeStartElement("td");
-
-                    QString imageString = "<img src=\"" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\">";
-                    xmlWriter.writeCharacters( imageString );
+                    QString imageString = "img src=\"" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
+                    xmlWriter.writeStartElement( imageString );
+                    xmlWriter.writeEndElement(); // imageString
 
                     xmlWriter.writeEndElement(); // td
 
@@ -445,17 +414,11 @@ void Project::saveObjectImages( const QString & folder )
 
     if( isfileForHTMLopened )
     {
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
-        xmlWriter.writeEndElement();
+//        xmlWriter.writeEndElement(); // table
+//        xmlWriter.writeEndElement(); // body
+//        xmlWriter.writeEndElement(); // html
 
-//        outFile << "</table>" << "\n";
-//        outFile << "</body>" << "\n";
-//        outFile << "</html>" << "\n";
+        xmlWriter.writeEndDocument(); // Closes all remaining open start elements and writes a newline.
     }
-
-
-
-
 
 }

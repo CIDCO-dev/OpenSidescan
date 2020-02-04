@@ -170,7 +170,7 @@ void Project::exportInventoryAsKml(std::string & filename){
                     //Point coordinates
                     std::stringstream ss;
                     ss << std::setprecision(15);
-                    ss << (*k)->getPosition()->getLatitude() << "," << (*k)->getPosition()->getLongitude();
+                    ss << (*k)->getPosition()->getLongitude() << "," << (*k)->getPosition()->getLatitude() ;
 
                     xmlWriter.writeStartElement("Point");
 

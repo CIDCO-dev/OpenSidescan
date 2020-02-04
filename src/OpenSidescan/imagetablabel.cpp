@@ -110,7 +110,10 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
                     emit inventoryChanged();
                 } else {
                     // User pressed Cancel on the dialog, don't add the object to the inventory
+
                     img.getObjects().pop_back();
+
+                    delete obj;
 
                     parent.refreshImage();
                 }

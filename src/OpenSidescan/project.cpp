@@ -59,7 +59,6 @@ void Project::read(std::string & filename){
                 else if(strncmp(name.c_str(),"Object",5)==0){
                     //Inventory Objects
                     if(currentFile){
-                        SidescanImage * img = NULL;
                         for(auto i = currentFile->getImages().begin();i!=currentFile->getImages().end();i++){
                             if(strncmp((*i)->getChannelName().c_str(),currentImage.c_str(),currentImage.size())==0){
                                 //instanciate object
@@ -75,10 +74,6 @@ void Project::read(std::string & filename){
                             }
                         }
 
-                        if(!img){
-                            //no image...wtf
-                            std::cerr << "Malformed Project File: No image associated with object" << std::endl;
-                        }
                     }
                     else{
                         //No file...wtf

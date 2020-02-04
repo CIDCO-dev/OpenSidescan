@@ -88,12 +88,12 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
             rubberBand->hide();
 
             //upper left
-            int x1 = (std::min)( (std::max)( (std::min)( selectionOrigin.x(), p.x() ) , 0 ) , img.getImage().cols);
-            int y1 = (std::min)( (std::max)( (std::min)( selectionOrigin.y(),p.y() ) , 0 ) , img.getImage().rows);
+            int x1 = (std::min)( (std::max)( (std::min)( selectionOrigin.x(), p.x() ) , 0 ) , img.getImage().cols - 1 );
+            int y1 = (std::min)( (std::max)( (std::min)( selectionOrigin.y(),p.y() ) , 0 ) , img.getImage().rows - 1 );
 
             //lower right
-            int x2 = (std::min)( (std::max)( (std::max)( selectionOrigin.x(),p.x() ), 0 ) , img.getImage().cols);
-            int y2 = (std::min)( (std::max)( (std::max)( selectionOrigin.y(),p.y() ), 0 ) , img.getImage().rows);
+            int x2 = (std::min)( (std::max)( (std::max)( selectionOrigin.x(),p.x() ), 0 ) , img.getImage().cols - 1 );
+            int y2 = (std::min)( (std::max)( (std::max)( selectionOrigin.y(),p.y() ), 0 ) , img.getImage().rows - 1 );
 
             int width  = x2-x1;
             int height = y2-y1;
@@ -102,12 +102,22 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
                 GeoreferencedObject*  obj = new GeoreferencedObject(file,img,x1,y1,width, height);
                 img.getObjects().push_back(obj);
 
-
                 parent.refreshImage();
 
                 GeoreferencedObjectWindow newObjectWindow(obj);
-                newObjectWindow.exec();
-                emit inventoryChanged();
+
+                if ( newObjectWindow.exec() ) {
+                    emit inventoryChanged();
+                } else {
+                    // User pressed Cancel on the dialog, don't add the object to the inventory
+
+                    img.getObjects().pop_back();
+
+                    delete obj;
+
+                    parent.refreshImage();
+                }
+
             }
 
 //            std::cout << "\nImageTabLabel::mouseReleaseEvent(): width: " << width << ", height: " << height << "\n" << std::endl;

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/plane1.xtf">
+        <Image channelName="Channel 0">
+            <Object x="0" y="0" pixelWidth="964" pixelHeight="2008" name="Unknown" description=""/>
+        </Image>
+        <Image channelName="Channel 1">
+            <Object x="243" y="0" pixelWidth="391" pixelHeight="511" name="Unknown" description=""/>
+            <Object x="75" y="1299" pixelWidth="444" pixelHeight="358" name="Unknown" description=""/>
+            <Object x="871" y="515" pixelWidth="152" pixelHeight="127" name="Unknown" description=""/>
+            <Object x="83" y="1662" pixelWidth="197" pixelHeight="319" name="Unknown" description=""/>
+            <Object x="222" y="873" pixelWidth="214" pixelHeight="388" name="Unknown" description=""/>
+            <Object x="770" y="1593" pixelWidth="106" pixelHeight="151" name="Unknown" description=""/>
+            <Object x="179" y="607" pixelWidth="133" pixelHeight="236" name="Unknown" description=""/>
+            <Object x="766" y="504" pixelWidth="97" pixelHeight="118" name="Unknown" description=""/>
+            <Object x="708" y="50" pixelWidth="143" pixelHeight="159" name="Unknown" description=""/>
+            <Object x="72" y="920" pixelWidth="84" pixelHeight="98" name="Unknown" description=""/>
+            <Object x="449" y="864" pixelWidth="285" pixelHeight="276" name="Unknown" description=""/>
+            <Object x="638" y="1895" pixelWidth="129" pixelHeight="108" name="Unknown" description=""/>
+            <Object x="724" y="1276" pixelWidth="103" pixelHeight="130" name="Unknown" description=""/>
+            <Object x="666" y="1666" pixelWidth="98" pixelHeight="145" name="Unknown" description=""/>
+            <Object x="72" y="754" pixelWidth="68" pixelHeight="83" name="Unknown" description=""/>
+            <Object x="125" y="418" pixelWidth="102" pixelHeight="156" name="Unknown" description=""/>
+        </Image>
+        <Image channelName="Channel 2">
+            <Object x="145" y="45" pixelWidth="146" pixelHeight="171" name="Unknown" description=""/>
+            <Object x="345" y="733" pixelWidth="375" pixelHeight="753" name="Unknown" description=""/>
+            <Object x="329" y="1525" pixelWidth="357" pixelHeight="420" name="Unknown" description=""/>
+            <Object x="934" y="48" pixelWidth="89" pixelHeight="198" name="Unknown" description=""/>
+            <Object x="547" y="0" pixelWidth="268" pixelHeight="336" name="Unknown" description=""/>
+            <Object x="713" y="1681" pixelWidth="141" pixelHeight="207" name="Unknown" description=""/>
+            <Object x="590" y="410" pixelWidth="144" pixelHeight="200" name="Unknown" description=""/>
+            <Object x="797" y="429" pixelWidth="196" pixelHeight="97" name="Unknown" description=""/>
+        </Image>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman-iver2.xtf">
+        <Image channelName="PORT"/>
+        <Image channelName="STARBOARD">
+            <Object x="14" y="164" pixelWidth="248" pixelHeight="235" name="Unknown" description=""/>
+        </Image>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman1.xtf">
+        <Image channelName="port">
+            <Object x="0" y="1994" pixelWidth="111" pixelHeight="113" name="Unknown" description=""/>
+        </Image>
+        <Image channelName="starboard">
+            <Object x="741" y="1607" pixelWidth="196" pixelHeight="162" name="Unknown" description=""/>
+            <Object x="388" y="885" pixelWidth="456" pixelHeight="350" name="Unknown" description=""/>
+            <Object x="420" y="2267" pixelWidth="143" pixelHeight="133" name="Unknown" description=""/>
+            <Object x="123" y="1290" pixelWidth="76" pixelHeight="164" name="Unknown" description=""/>
+            <Object x="699" y="2181" pixelWidth="103" pixelHeight="182" name="Unknown" description=""/>
+            <Object x="818" y="2387" pixelWidth="84" pixelHeight="106" name="Unknown" description=""/>
+        </Image>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman2.xtf">
+        <Image channelName="port">
+            <Object x="0" y="2832" pixelWidth="274" pixelHeight="163" name="Unknown" description=""/>
+            <Object x="164" y="703" pixelWidth="418" pixelHeight="305" name="Unknown" description=""/>
+            <Object x="563" y="1469" pixelWidth="125" pixelHeight="125" name="Unknown" description=""/>
+            <Object x="312" y="517" pixelWidth="110" pixelHeight="122" name="Unknown" description=""/>
+        </Image>
+        <Image channelName="starboard">
+            <Object x="192" y="2831" pixelWidth="75" pixelHeight="113" name="Unknown" description=""/>
+            <Object x="770" y="2732" pixelWidth="98" pixelHeight="98" name="Unknown" description=""/>
+        </Image>
+    </File>
+    <File filename="/home/chris/Worskpace/OpenSidescan/test/data/wrecks/scotsman3.xtf">
+        <Image channelName="port">
+            <Object x="317" y="66" pixelWidth="128" pixelHeight="231" name="Unknown" description=""/>
+        </Image>
+        <Image channelName="starboard">
+            <Object x="320" y="555" pixelWidth="589" pixelHeight="477" name="Unknown" description=""/>
+            <Object x="556" y="41" pixelWidth="141" pixelHeight="123" name="Unknown" description=""/>
+            <Object x="687" y="422" pixelWidth="81" pixelHeight="72" name="Unknown" description=""/>
+        </Image>
+    </File>
+</Project>

@@ -102,12 +102,19 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
                 GeoreferencedObject*  obj = new GeoreferencedObject(file,img,x1,y1,width, height);
                 img.getObjects().push_back(obj);
 
-
                 parent.refreshImage();
 
                 GeoreferencedObjectWindow newObjectWindow(obj);
-                newObjectWindow.exec();
-                emit inventoryChanged();
+
+                if ( newObjectWindow.exec() ) {
+                    emit inventoryChanged();
+                } else {
+                    // User pressed Cancel on the dialog, don't add the object to the inventory
+                    img.getObjects().pop_back();
+
+                    parent.refreshImage();
+                }
+
             }
 
 //            std::cout << "\nImageTabLabel::mouseReleaseEvent(): width: " << width << ", height: " << height << "\n" << std::endl;

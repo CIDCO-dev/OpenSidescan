@@ -5,8 +5,39 @@
 #include <QPixmap>
 
 #include <cstring>
+
+
+#include <set>
+#include <utility>      // std::pair, std::make_pair
+
+#include <vector>
+
+
+
 #include "sidescanimager.h"
 #include "qthelper.h"
+
+// For ordering the set
+struct compare
+{
+    bool operator()( const std::pair<int,int> & lhs, const std::pair<int,int> & rhs ) const
+    {
+
+        if ( lhs.first > rhs.first )
+            return false;
+
+        if ( lhs.first < rhs.first )
+            return true;
+
+        // First is equal, look at second
+
+        if ( lhs.second <= rhs.second )
+            return true;
+        else
+            return false;
+    }
+};
+
 
 
 Project::Project()
@@ -421,5 +452,279 @@ void Project::saveObjectImages( const QString & absolutePath,
 
         file.close();
     }
+
+}
+
+void Project::createAndSaveTrainingObjectSamples( const QString & folder )
+{
+    std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
+
+
+    // Build background images and bg.txt file
+
+    QString fileNameBgDotTxt = folder + "/" + "bg.txt";
+
+    std::ofstream outFile;
+    outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
+
+    if ( outFile.is_open() == false ) {
+        // TODO: warning dialog window
+        std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n"
+                  << "Cannot open file for bg.txt" << std::endl;
+
+        return;
+    }
+
+
+    // Find maximum height and width for positive sample objects
+
+    int maxObjectWidth = 0;
+    int maxObjectHeight = 0;
+
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            // k is an iterator to (GeoreferencedObject *)
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+
+                if ( (*k)->getPixelWidth() > maxObjectWidth )
+                    maxObjectWidth = (*k)->getPixelWidth();
+
+                if ( (*k)->getPixelHeight() > maxObjectHeight )
+                    maxObjectHeight = (*k)->getPixelHeight();
+            }
+        }
+    }
+
+    std::cout << "maxObjectWidth:  " << maxObjectWidth << "\n"
+              << "maxObjectHeight: " << maxObjectHeight << "\n" << std::endl;
+
+
+    // Go through each image
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        std::cout << "\nSidescanFile's filename: " << (*i)->getFilename() << "\n" << std::endl;
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            std::cout << "\n\n  SidescanImage's channelName: " << (*j)->getChannelName() << "\n" << std::endl;
+
+            int imageOverallWidth = (*j)->getImage().cols;
+            int imageOverallHeight = (*j)->getImage().rows;
+
+            std::cout << "imageOverallWidth:  " << imageOverallWidth << "\n"
+                      << "maxObjectWidth:           " << maxObjectWidth << std::endl;
+            std::cout << "imageOverallHeight: " << imageOverallHeight << "\n"
+                      << "maxObjectHeight:          " << maxObjectHeight << std::endl;
+
+
+            if ( imageOverallWidth < maxObjectWidth ) {
+                std::cout << "\nimageOverallWidth: " << imageOverallWidth << "\n"
+                            << "maxObjectWidth:    " << maxObjectWidth << std::endl;
+                continue;
+            }
+
+            if ( imageOverallHeight < maxObjectHeight) {
+                std::cout << "\nimageOverallHeight: " << imageOverallHeight << "\n"
+                            << "maxObjectHeight:    " << maxObjectHeight << std::endl;
+                continue;
+            }
+
+
+            if ( (*j)->getObjects().size() == 0 ) {
+
+                // no objects, save the entire image as background
+                std::cout << "    Image as no objects, background would start at height 0 and end at " << imageOverallHeight - 1 << std::endl;
+
+                saveBackgroundImage( *j, folder, outFile, 0, imageOverallHeight - 1 );
+
+            } else {
+
+                std::cout << "    Image DOES HAVE objects\n" << std::endl;
+
+                std::vector< std::pair <int,int> > objectsVerticalPositions;
+
+                computeObjectsVerticalOccupancy( *j, objectsVerticalPositions );
+
+                std::cout << "    back from call to computeObjectsVerticalOccupancy()\n" << std::endl;
+
+
+                int backgroundTop = 0;
+
+                for ( int count = 0; count < objectsVerticalPositions.size(); count++ )
+                {
+                    int backgroundBottom = objectsVerticalPositions[ count ].first - 1;
+
+                    if ( backgroundBottom - backgroundTop + 1 >= maxObjectHeight) {
+                         // Save Image
+                        std::cout << "    Image background would start at height " << backgroundTop
+                                   << " and end at " << backgroundBottom << std::endl;
+
+                        saveBackgroundImage( *j, folder, outFile, backgroundTop, backgroundBottom );
+                    }
+
+                    backgroundTop = objectsVerticalPositions[ count ].second + 1;
+
+                }
+
+
+                // Background from the last object to the bottom of the overall image
+
+                if ( backgroundTop < imageOverallHeight
+                     && imageOverallHeight - backgroundTop + 1 >= maxObjectHeight ) {
+                    // Save Image
+                    std::cout << "    Image background would start at height " << backgroundTop
+                              << " and end at " << imageOverallHeight << std::endl;
+
+                    saveBackgroundImage( *j, folder, outFile, backgroundTop, imageOverallHeight - 1 );
+                }
+
+
+
+            }
+
+
+
+        }
+
+    }
+
+    std::cout << "\End of Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
+
+}
+
+void Project::computeObjectsVerticalOccupancy( SidescanImage * image, std::vector< std::pair <int,int> > & verticalPositions)
+{
+
+    std::multiset< std::pair<int,int>, compare> set;
+
+    std::pair <int,int> beginEnd;
+
+    // k is an iterator to (GeoreferencedObject *)
+    for( auto k = image->getObjects().begin(); k != image->getObjects().end(); k++ ){
+
+        beginEnd = std::make_pair( (*k)->getY(), (*k)->getY() + (*k)->getPixelHeight() -1 );
+        set.insert( beginEnd );
+
+    }
+
+    // Display
+    std::multiset< std::pair <int,int> >::iterator it;
+    std::cout << "\nset contains:\n\n";
+    for ( it = set.begin(); it != set.end(); ++it )
+        std::cout << " " << it->first << ", " << it->second << "\n";
+
+    std::cout << "\n" << std::endl;
+
+
+    // Combine object overlaps
+
+    verticalPositions.clear();
+
+    int setSize = set.size();
+
+    // TODO: check if the size of the set is zero
+    // if ( setSize == 0 )
+    // {
+
+    // }
+
+
+    int beginning = set.begin()->first;
+    int end = set.begin()->second;
+
+    it = set.begin();
+    it++;
+
+    for ( int count = 1; count < setSize; count++ )
+    {
+        // if ( end >= it->first )
+        if ( end >= it->first - 1 ) // With integers, if one object ends at 100 and the next object starts at 101, assume they are continuous
+        {
+            end = it->second;
+        }
+        else
+        {
+            std::pair <int,int> newPair = std::make_pair( beginning, end );
+
+            verticalPositions.push_back( newPair );
+
+            beginning = it->first;
+            end = it->second;
+        }
+
+        ++it;
+    }
+
+    std::pair <int,int> newPair = std::make_pair( beginning, end );
+    verticalPositions.push_back( newPair );
+
+    // Display
+    std::vector< std::pair <int,int> >::iterator itVec;
+    std::cout << "\nverticalPositions contains:\n\n";
+    for ( itVec = verticalPositions.begin(); itVec != verticalPositions.end(); ++itVec )
+        std::cout << " " << itVec->first << ", " << itVec->second << "\n";
+
+    std::cout << "\n" << std::endl;
+
+
+}
+void Project::saveBackgroundImage( SidescanImage * image, const QString & folder, std::ofstream & outFile,
+                                   int backgroundTop, int backgroundBottom )
+{
+    std::cout << "\nBeginning of Project::saveBackgroundImage()\n" << std::endl;
+
+    int height = backgroundBottom - backgroundTop + 1;
+
+    // Copy the part of the cv::Mat with the object into a new cv::Mat
+    cv::Mat objectMat;
+    image->getImage()( cv::Rect( 0, backgroundTop, image->getImage().cols, height ) ).copyTo( objectMat );
+
+    // Create a QPixmap
+    QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
+
+    // Find filename that does not already exist
+    QString objectName = QString::fromStdString( "background" );
+
+    QString fileExtension = "png";
+
+    QString objectImageFileName = objectName + "." + fileExtension;
+
+//    QString objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+
+    QString objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+
+    QFileInfo fileInfo( objectImageFileNameWithPath );
+
+    int count = 0;
+
+    while ( fileInfo.exists() ) {
+
+        objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
+//        objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+        objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+
+        fileInfo.setFile( objectImageFileNameWithPath );
+
+        count++;
+    }
+
+    // Save pixmap
+    pixmap.save( objectImageFileNameWithPath );
+
+
+    if ( outFile.is_open() ) {
+        outFile << objectImageFileNameWithPath.toStdString() << std::endl;
+    }
+
+    std::cout << "\nEnd of Project::saveBackgroundImage()\n" << std::endl;
+
 
 }

@@ -386,7 +386,19 @@ void MainWindow::actionSaveObjectImages(){
 }
 
 
+void MainWindow::actionExportTrainingObjectSamples()
+{
+    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
+    if( ! currentProject )
+        return;
+
+
+    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
+
+    currentProject->createAndSaveTrainingObjectSamples( folder );
+
+}
 
 void MainWindow::refreshTabs(){
     if(tabs){

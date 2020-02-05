@@ -50,6 +50,9 @@ public slots:
     void actionAbout();
     void actionFindObjects();
     void actionSaveObjectImages();
+
+    void actionExportTrainingObjectSamples();
+
     void actionExportKmlFile();
 
     void fileSelected(const QItemSelection & selection);

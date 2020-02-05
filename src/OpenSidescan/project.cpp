@@ -481,7 +481,6 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
     int maxObjectWidth = 0;
     int maxObjectHeight = 0;
 
-
     // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
 
@@ -504,7 +503,7 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
               << "maxObjectHeight: " << maxObjectHeight << "\n" << std::endl;
 
 
-    // Go through each image
+    // Go through each image and save images of background region large enough
 
     // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
@@ -563,7 +562,7 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
                     int backgroundBottom = objectsVerticalPositions[ count ].first - 1;
 
                     if ( backgroundBottom - backgroundTop + 1 >= maxObjectHeight) {
-                         // Save Image
+
                         std::cout << "    Image background would start at height " << backgroundTop
                                    << " and end at " << backgroundBottom << std::endl;
 
@@ -577,9 +576,9 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
 
                 // Background from the last object to the bottom of the overall image
 
-                if ( backgroundTop < imageOverallHeight
-                     && imageOverallHeight - backgroundTop + 1 >= maxObjectHeight ) {
-                    // Save Image
+                if ( backgroundTop < imageOverallHeight - 1
+                        && ( imageOverallHeight - 1 ) - backgroundTop + 1 >= maxObjectHeight ) {
+
                     std::cout << "    Image background would start at height " << backgroundTop
                               << " and end at " << imageOverallHeight << std::endl;
 
@@ -596,7 +595,90 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
 
     }
 
-    std::cout << "\End of Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
+
+    // Go through each object and use "opencv_createsamples"
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            // k is an iterator to (GeoreferencedObject *)
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+
+
+                // Copy the part of the cv::Mat with the object into a new cv::Mat
+                cv::Mat objectMat;
+                (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
+
+                // Create a QPixmap
+                QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
+
+                // Find filename that does not already exist
+                QString objectName = QString::fromStdString( (*k)->getName() );
+
+                QString fileExtension = "png";
+
+                QString objectImageFileName = objectName + "." + fileExtension;
+
+                QString objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+
+                QFileInfo fileInfo( objectImageFileNameWithPath );
+
+                int count = 0;
+
+                while ( fileInfo.exists() ) {
+
+                    objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
+                    objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                    fileInfo.setFile( objectImageFileNameWithPath );
+                    count++;
+                }
+
+                // Save pixmap
+                pixmap.save( objectImageFileNameWithPath );
+
+                // System call opencv_createsamples
+
+                // Check whether a command processor is available through the "system()" function, without invoking any command."
+                if ( ! system(NULL) )
+                {
+                    std::cout << "\n  A command processor is NOT available, exiting\n\n";
+                    break;
+                }
+
+                int nbDistortions = 10;
+
+                // opencv_createsamples -img DescriptionObjectNoObject/PlaneWithShadow.png -bg bg.txt -num 10 -vec test.vec -show -w 500 -h 500
+
+
+                std::string fullCommand = "opencv_createsamples -img " + objectImageFileNameWithPath.toStdString()
+                                            +  " -bg " + folder.toStdString() + "/bg.txt"
+                                            + " -num " + std::to_string( nbDistortions )
+                                            + " -vec " + objectImageFileNameWithPath.toStdString() + ".vec"
+                                            + " -w " + std::to_string( (*k)->getPixelWidth() )
+                                            + " -h " + std::to_string( (*k)->getPixelHeight() );
+
+                std::cout << "\nfullCommand: \"" << fullCommand << "\"\n" << std::endl;
+
+                // Invoke the command
+                int returnedValue = system( fullCommand.c_str() );
+
+                std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
+
+
+
+
+            }
+        }
+    }
+
+
+
+
+
+    std::cout << "\nEnd of Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
 
 }
 
@@ -676,6 +758,9 @@ void Project::computeObjectsVerticalOccupancy( SidescanImage * image, std::vecto
 
 
 }
+
+
+
 void Project::saveBackgroundImage( SidescanImage * image, const QString & folder, std::ofstream & outFile,
                                    int backgroundTop, int backgroundBottom )
 {
@@ -721,7 +806,8 @@ void Project::saveBackgroundImage( SidescanImage * image, const QString & folder
 
 
     if ( outFile.is_open() ) {
-        outFile << objectImageFileNameWithPath.toStdString() << std::endl;
+        // Image's path written in the file must be relative to outFile's location
+        outFile << objectImageFileName.toStdString() << std::endl;
     }
 
     std::cout << "\nEnd of Project::saveBackgroundImage()\n" << std::endl;

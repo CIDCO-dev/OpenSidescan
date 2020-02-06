@@ -12,6 +12,9 @@
 
 #include <vector>
 
+#include "opencv2/core.hpp"
+#include "../thirdParty/opencv/apps/createsamples/utility.hpp"
+
 
 
 #include "sidescanimager.h"
@@ -653,21 +656,75 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
                 // opencv_createsamples -img DescriptionObjectNoObject/PlaneWithShadow.png -bg bg.txt -num 10 -vec test.vec -show -w 500 -h 500
 
 
-                std::string fullCommand = "opencv_createsamples -img " + objectImageFileNameWithPath.toStdString()
-                                            +  " -bg " + folder.toStdString() + "/bg.txt"
-                                            + " -num " + std::to_string( nbDistortions )
-                                            + " -vec " + objectImageFileNameWithPath.toStdString() + ".vec"
-                                            + " -w " + std::to_string( (*k)->getPixelWidth() )
-                                            + " -h " + std::to_string( (*k)->getPixelHeight() );
+//                std::string fullCommand = "opencv_createsamples -img " + objectImageFileNameWithPath.toStdString()
+//                                            +  " -bg " + folder.toStdString() + "/bg.txt"
+//                                            + " -num " + std::to_string( nbDistortions )
+//                                            + " -vec " + objectImageFileNameWithPath.toStdString() + ".vec"
+//                                            + " -w " + std::to_string( (*k)->getPixelWidth() )
+//                                            + " -h " + std::to_string( (*k)->getPixelHeight() );
 
-                std::cout << "\nfullCommand: \"" << fullCommand << "\"\n" << std::endl;
+//                std::cout << "\nfullCommand: \"" << fullCommand << "\"\n" << std::endl;
 
-                // Invoke the command
-                int returnedValue = system( fullCommand.c_str() );
+//                // Invoke the command
+//                int returnedValue = system( fullCommand.c_str() );
 
-                std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
+//                std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
 
 
+
+//                // Default variable values in
+//                // https://github.com/opencv/opencv/blob/master/apps/createsamples/createsamples.cpp
+
+                int num = 1000;
+                int bgcolor = 0;
+                int bgthreshold = 80;
+                int invert = 0;
+                int maxintensitydev = 40;
+                double maxxangle = 1.1;
+                double maxyangle = 1.1;
+                double maxzangle = 0.5;
+                int showsamples = 0;
+                /* the samples are adjusted to this scale in the sample preview window */
+//                double scale = 4.0;
+                int width  = 24;
+                int height = 24;
+//                double maxscale = -1.0;
+                int rngseed = 12345;
+
+                cv::setRNGSeed( rngseed );
+
+
+                num = nbDistortions;
+
+                width = (*k)->getPixelWidth();
+                height = (*k)->getPixelHeight();
+
+
+                std::string imagenameString = objectImageFileNameWithPath.toStdString();
+                std::string bgfilenameString = std::string( folder.toStdString() + "/bg.txt" );
+                std::string vecnameString = std::string( objectImageFileNameWithPath.toStdString() + ".vec" );
+
+                const char * imagename = imagenameString.c_str();
+                const char * bgfilename = bgfilenameString.c_str();
+                const char * vecname = vecnameString.c_str();
+
+                std::cout << "\n"
+                          << "imagename: \"" << imagename << "\"\n"
+                          << "bgfilename: \"" << bgfilename << "\"\n"
+                          << "vecname: \"" << vecname << "\"\n" << std::endl;
+
+//                std::cout << "\n  Before strcpy( imagename," << std::endl;
+
+
+                std::cout << "\n  Before call to cvCreateTrainingSamples()" << std::endl;
+
+                cvCreateTrainingSamples( vecname, imagename, bgcolor, bgthreshold, bgfilename,
+                                         num, invert, maxintensitydev,
+                                         maxxangle, maxyangle, maxzangle,
+                                         showsamples, width, height );
+
+
+                std::cout << "\n  After call to cvCreateTrainingSamples()\n" << std::endl;
 
 
             }

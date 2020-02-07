@@ -458,7 +458,8 @@ void Project::saveObjectImages( const QString & absolutePath,
 
 }
 
-void Project::createAndSaveTrainingObjectSamples( const QString & folder )
+void Project::createAndSaveTrainingObjectSamples( const QString & folder,
+                                                  const ParameterscvCreateTrainingSamples & parameterscvCreateTrainingSamples )
 {
     std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
 
@@ -642,62 +643,48 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
                 // Save pixmap
                 pixmap.save( objectImageFileNameWithPath );
 
-                // System call opencv_createsamples
-
-                // Check whether a command processor is available through the "system()" function, without invoking any command."
-                if ( ! system(NULL) )
-                {
-                    std::cout << "\n  A command processor is NOT available, exiting\n\n";
-                    break;
-                }
-
-                int nbDistortions = 10;
-
-                // opencv_createsamples -img DescriptionObjectNoObject/PlaneWithShadow.png -bg bg.txt -num 10 -vec test.vec -show -w 500 -h 500
-
-
-//                std::string fullCommand = "opencv_createsamples -img " + objectImageFileNameWithPath.toStdString()
-//                                            +  " -bg " + folder.toStdString() + "/bg.txt"
-//                                            + " -num " + std::to_string( nbDistortions )
-//                                            + " -vec " + objectImageFileNameWithPath.toStdString() + ".vec"
-//                                            + " -w " + std::to_string( (*k)->getPixelWidth() )
-//                                            + " -h " + std::to_string( (*k)->getPixelHeight() );
-
-//                std::cout << "\nfullCommand: \"" << fullCommand << "\"\n" << std::endl;
-
-//                // Invoke the command
-//                int returnedValue = system( fullCommand.c_str() );
-
-//                std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
 
 
 
-//                // Default variable values in
-//                // https://github.com/opencv/opencv/blob/master/apps/createsamples/createsamples.cpp
+//                int nbDistortions = 10;
 
-                int num = 1000;
-                int bgcolor = 0;
-                int bgthreshold = 80;
-                int invert = 0;
-                int maxintensitydev = 40;
-                double maxxangle = 1.1;
-                double maxyangle = 1.1;
-                double maxzangle = 0.5;
+
+//                int num = 1000;
+//                int bgcolor = 0;
+//                int bgthreshold = 80;
+//                int invert = 0;
+//                int maxintensitydev = 40;
+//                double maxxangle = 1.1;
+//                double maxyangle = 1.1;
+//                double maxzangle = 0.5;
+
                 int showsamples = 0;
+
                 /* the samples are adjusted to this scale in the sample preview window */
 //                double scale = 4.0;
                 int width  = 24;
                 int height = 24;
 //                double maxscale = -1.0;
-                int rngseed = 12345;
+//                int rngseed = 12345;
 
-                cv::setRNGSeed( rngseed );
+                cv::setRNGSeed( parameterscvCreateTrainingSamples.rngseed );
 
 
-                num = nbDistortions;
+                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageWidthAsBasis )
+                    width = (*k)->getPixelWidth() + parameterscvCreateTrainingSamples.nbPixelsChangeFromObjectImageWidth;
+                else
+                    width = parameterscvCreateTrainingSamples.width;
 
-                width = (*k)->getPixelWidth();
-                height = (*k)->getPixelHeight();
+                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageHeightAsBasis )
+                    height = (*k)->getPixelHeight() + parameterscvCreateTrainingSamples.nbPixelsChangeFromObjectImageHeight;
+                else
+                    height = parameterscvCreateTrainingSamples.height;
+
+
+//                num = nbDistortions;
+
+
+
 
 
                 std::string imagenameString = objectImageFileNameWithPath.toStdString();
@@ -718,9 +705,15 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder )
 
                 std::cout << "\n  Before call to cvCreateTrainingSamples()" << std::endl;
 
-                cvCreateTrainingSamples( vecname, imagename, bgcolor, bgthreshold, bgfilename,
-                                         num, invert, maxintensitydev,
-                                         maxxangle, maxyangle, maxzangle,
+                cvCreateTrainingSamples( vecname, imagename,
+                                         parameterscvCreateTrainingSamples.bgcolor,
+                                         parameterscvCreateTrainingSamples.bgthreshold, bgfilename,
+                                         parameterscvCreateTrainingSamples.num,
+                                         parameterscvCreateTrainingSamples.invert,
+                                         parameterscvCreateTrainingSamples.maxintensitydev,
+                                         parameterscvCreateTrainingSamples.maxxangle,
+                                         parameterscvCreateTrainingSamples.maxyangle,
+                                         parameterscvCreateTrainingSamples.maxzangle,
                                          showsamples, width, height );
 
 

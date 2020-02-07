@@ -26,6 +26,10 @@
 #include "workerimportsidescanfiles.h"
 #include "workeropenproject.h"
 
+#include "parameterscvCreateTrainingSamples.h"
+
+#include "trainingsampleswindow.h"
+
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -394,9 +398,37 @@ void MainWindow::actionExportTrainingObjectSamples()
         return;
 
 
+    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
+
     QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
 
-    currentProject->createAndSaveTrainingObjectSamples( folder );
+
+
+
+    TrainingSamplesWindow * dialog = new TrainingSamplesWindow( folder, parameterscvCreateTrainingSamples);
+
+    // TODO ? non native
+
+    dialog->setWindowModality( Qt::WindowModal );
+
+    dialog->exec();
+
+//    if ( dialog->getUserDidCancel() == false )
+//    {
+//        // TODO: get parameters and folders
+
+//        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
+
+//    }
+
+
+
+
+
+
+
+
+
 
 }
 

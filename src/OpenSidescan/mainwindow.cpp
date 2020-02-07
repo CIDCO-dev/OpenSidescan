@@ -427,6 +427,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
+    std::cout << "\nEnd of MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
 
 

@@ -13,6 +13,8 @@
 #include <QLabel>
 //#include <QIntValidator>
 
+#include <QPalette>
+
 
 #include "parameterscvCreateTrainingSamples.h"
 
@@ -26,29 +28,31 @@ public:
 
     bool getUserDidCancel();
 
-    void getFolder( QString & folder );
+//    void getFolder( QString & folder );
 
-    void getParameters( ParameterscvCreateTrainingSamples & parameters );
+//    void getParameters( ParameterscvCreateTrainingSamples & parameters );
 
 
 public slots:
 
-//    void reject() override; // Respond to Escape key
+    void reject() override; // Respond to Escape key
 
-//    void lineEditTextEdited( const QString &text );
+    void lineEditTextEdited( const QString &text );
 
-//    void cancelButtonClicked();
-//    void OKButtonClicked();
+    void cancelButtonClicked();
+    void OKButtonClicked();
 
 private:
 
     void initUI();
 
     QGroupBox * createColorsAndIntensityBox();
+    QGroupBox * createMaxRotationBox();
 
 
+    void setButtonsState();
     bool validateLineEditValues();
-    void updateValues();
+//    void updateValues();
 
 
 
@@ -68,6 +72,19 @@ private:
     QLineEdit * bgthreshLineEdit;
     QComboBox * colorsInversionComboBox;
     QLineEdit * maxidevLineEdit;
+
+    QLineEdit * maxXdegreesLineEdit;
+    QLineEdit * maxYdegreesLineEdit;
+    QLineEdit * maxZdegreesLineEdit;
+
+
+    QDialogButtonBox * buttonBox;
+
+
+
+
+    QPalette * paletteLineEditDefault;
+    QPalette * paletteLineEditRedBackgroud;
 
 
 //    void createFastParameterBox(QFormLayout * advancedParametersLayout);

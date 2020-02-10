@@ -1,5 +1,6 @@
 
 
+#include <iostream>
 
 #include <QDebug>
 
@@ -7,32 +8,71 @@
 
 #include <QFormLayout>
 #include <QGridLayout>
-#include <QStringListModel>
+//#include <QStringListModel>
 
 
 #include "trainingsampleswindow.h"
 
 
 
-TrainingSamplesWindow::TrainingSamplesWindow( const QString & folder,
+TrainingSamplesWindow::TrainingSamplesWindow( QWidget *parent,
+                                              const QString & folder,
                                  const ParameterscvCreateTrainingSamples & parameters )
-    : folder( folder ), parameters( parameters ),
+    : QDialog( parent ),
+      folder( folder ), parameters( parameters ),
       userDidCancel( false )
 {
+    qDebug() << "Beginning of TrainingSamplesWindow::TrainingSamplesWindow()\n";
+
+    std::cout << "this: " << this << "\n" << std::endl;
+
     initUI();
+
+    qDebug() << "After call to initUI()\n";
+
 
     // Palette to change background color of line edits having invalid values
     paletteLineEditDefault = new QPalette( numLineEdit->palette() );
     paletteLineEditRedBackgroud = new QPalette( numLineEdit->palette() );
     QColor red( 255, 102, 102 );
     paletteLineEditRedBackgroud->setColor(QPalette::Base, red );
+
+    qDebug() << "paletteLineEditDefault: red: "
+             << paletteLineEditDefault->color(QPalette::Window).red()
+             << ", green: " << paletteLineEditDefault->color(QPalette::Window).green()
+             << ", blue: " << paletteLineEditDefault->color(QPalette::Window).blue();
+
+    qDebug() << "paletteLineEditDefault: red: "
+             << paletteLineEditDefault->color(QPalette::Base).red()
+             << ", green: " << paletteLineEditDefault->color(QPalette::Base).green()
+             << ", blue: " << paletteLineEditDefault->color(QPalette::Base).blue();
+
+    qDebug() << "paletteLineEditRedBackgroud: red: "
+             << paletteLineEditRedBackgroud->color(QPalette::Base).red()
+             << ", green: " << paletteLineEditRedBackgroud->color(QPalette::Base).green()
+             << ", blue: " << paletteLineEditRedBackgroud->color(QPalette::Base).blue();
+
+    qDebug() << "numLineEdit->styleSheet(): " << numLineEdit->styleSheet();
+
+    qDebug() << "styleSheet(): " << styleSheet();
+
+
+
+    qDebug() << "End of TrainingSamplesWindow::TrainingSamplesWindow()\n";
+
+}
+
+
+TrainingSamplesWindow::~TrainingSamplesWindow()
+{
+    qDebug() << "In TrainingSamplesWindow::~TrainingSamplesWindow()\n";
 }
 
 void TrainingSamplesWindow::initUI(){
-    this->setWindowTitle("Parameters to Create Positive Samples");
 
+    qDebug() << "Beginning of initUI()\n";
 
-
+    setWindowTitle("Parameters to Create Positive Samples");
 
 
 
@@ -111,7 +151,7 @@ void TrainingSamplesWindow::initUI(){
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
-
+    qDebug() << "Before QGridLayout *layoutPath= new QGridLayout;\n";
 
     // Layout for path
     QGridLayout *layoutPath= new QGridLayout;
@@ -132,6 +172,8 @@ void TrainingSamplesWindow::initUI(){
     layoutPath->addWidget( pathBrowseButton, 0, 2 );
 
 
+    qDebug() << "Before QFormLayout * numLayout = new QFormLayout();\n";
+
     // num
     QFormLayout * numLayout = new QFormLayout();
 
@@ -144,9 +186,20 @@ void TrainingSamplesWindow::initUI(){
 
     numLayout->addRow( new QLabel(tr("Number of positive samples to create per object")), numLineEdit);
 
+
+    qDebug() << "Before mainLayout->addWidget( createColorsAndIntensityBox() );\n";
+
     mainLayout->addWidget( createColorsAndIntensityBox() );
 
+
+
+    qDebug() << "Before mainLayout->addWidget( createMaxRotationBox() );\n";
+
     mainLayout->addWidget( createMaxRotationBox() );
+
+
+    qDebug() << "Before connect\n";
+
 
     connect( numLineEdit, &QLineEdit::textEdited, this, &TrainingSamplesWindow::lineEditTextEdited );
 
@@ -155,7 +208,7 @@ void TrainingSamplesWindow::initUI(){
 
 
 
-
+    qDebug() << "Before buttonBox\n";
 
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -169,30 +222,9 @@ void TrainingSamplesWindow::initUI(){
 
     setLayout(mainLayout);
 
+    qDebug() << "End of initUI()\n";
 
-//    mainLayout->addWidget(createDisplayParameterBox());
 
-//    //advanced parameters box
-//    advancedParameters = new QGroupBox(tr("Advanced Parameters"));
-
-//    QFormLayout * advancedParametersLayout = new QFormLayout();
-//    advancedParameters->setLayout(advancedParametersLayout);
-
-//    createFastParameterBox(advancedParametersLayout);
-//    createMserParameterBox(advancedParametersLayout);
-//    createDbscanParameterBox(advancedParametersLayout);
-
-//    mainLayout->addWidget(advancedParameters);
-
-//    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-//    buttonBox->setObjectName( "buttonBox" );
-
-//    connect(buttonBox, &QDialogButtonBox::accepted, this, &TrainingSamplesWindow::ok);
-//    connect(buttonBox, &QDialogButtonBox::rejected, this, &TrainingSamplesWindow::cancel);
-
-//    mainLayout->addWidget(buttonBox);
-
-//    this->setLayout(mainLayout);
 }
 
 
@@ -202,12 +234,15 @@ void TrainingSamplesWindow::initUI(){
 
 QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
 {
+    qDebug() << "Beginning of TrainingSamplesWindow::createColorsAndIntensityBox()\n";
 
-    QGroupBox * groupBoxColor = new QGroupBox( tr("Colors and Intensity") );
+    QGroupBox * colorsGroupBox = new QGroupBox( tr("Colors and Intensity") );
+//    colorsGroupBox = new QGroupBox( tr("Colors and Intensity") );
+
 
     QFormLayout * colorLayout = new QFormLayout();
 
-    groupBoxColor->setLayout( colorLayout );
+    colorsGroupBox->setLayout( colorLayout );
 
     bgcolorLineEdit = new QLineEdit();
     bgcolorLineEdit->setAlignment(Qt::AlignRight);
@@ -222,6 +257,7 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     // Combo box
 
     QStringListModel * model = new QStringListModel(this);
+//    model = new QStringListModel(this);
 
     QStringList comboOptions;
 
@@ -240,7 +276,10 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     maxidevLineEdit->setText( QString::number( parameters.maxintensitydev) );
     colorLayout->addRow( new QLabel(tr("Maximal Intensity Deviation of Pixels in Foreground Samples")), maxidevLineEdit);
 
-    return groupBoxColor;
+    qDebug() << "End of TrainingSamplesWindow::createColorsAndIntensityBox()\n";
+
+
+    return colorsGroupBox;
 
 }
 
@@ -248,11 +287,16 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
 
 QGroupBox * TrainingSamplesWindow::createMaxRotationBox()
 {
-    QGroupBox * groupBoxRotation = new QGroupBox( tr("Maximal Rotation Angles") );
+
+    qDebug() << "Beginning of TrainingSamplesWindow::createMaxRotationBox()\n";
+
+    QGroupBox * rotationGroupBox = new QGroupBox( tr("Maximal Rotation Angles") );
+//    rotationGroupBox = new QGroupBox( tr("Maximal Rotation Angles") );
+
 
     QFormLayout * rotationlayout = new QFormLayout();
 
-    groupBoxRotation->setLayout( rotationlayout );
+    rotationGroupBox->setLayout( rotationlayout );
 
     // TODO Write function to convert angles
 
@@ -271,11 +315,15 @@ QGroupBox * TrainingSamplesWindow::createMaxRotationBox()
     maxZdegreesLineEdit->setText( QString::number( parameters.maxzangle * 180 / 3.1416, 'f', 1 ) );
     rotationlayout->addRow( new QLabel(tr("Maximal rotation angle towards z-axis (deg)")), maxZdegreesLineEdit);
 
-    return groupBoxRotation;
+    qDebug() << "End of TrainingSamplesWindow::createMaxRotationBox()\n";
+
+    return rotationGroupBox;
 }
 
 bool TrainingSamplesWindow::getUserDidCancel()
 {
+     qDebug() << "Beginning of getUserDidCancel()\n";
+
     return userDidCancel;
 }
 
@@ -296,6 +344,7 @@ void TrainingSamplesWindow::cancelButtonClicked()
 
     emit QDialog::done( 0 );
 }
+
 void TrainingSamplesWindow::OKButtonClicked()
 {
 
@@ -315,31 +364,41 @@ void TrainingSamplesWindow::OKButtonClicked()
 
 void TrainingSamplesWindow::lineEditTextEdited( const QString &text )
 {
+    qDebug() << "In TrainingSamplesWindow::lineEditTextEdited()\n";
+
     setButtonsState();
 }
 
 void TrainingSamplesWindow::setButtonsState()
 {
+    qDebug() << "In TrainingSamplesWindow::setButtonsState()\n";
+
     if ( validateLineEditValues() == true )
     {
+        qDebug() << "In if of setButtonsState\n";
+
         buttonBox->button( QDialogButtonBox::Ok )->setEnabled( true );
     }
     else
     {
+        qDebug() << "In else of setButtonsState\n";
+
         buttonBox->button( QDialogButtonBox::Ok )->setEnabled( false );
     }
 }
 
 
+
+
+
+
 bool TrainingSamplesWindow::validateLineEditValues()
 {
+    qDebug() << "In TrainingSamplesWindow::validateLineEditValues()\n";
+
     bool allOK = true;
 
     bool OK = true;
-
-
-
-
 
 //    QLineEdit * numLineEdit;
 
@@ -358,13 +417,37 @@ bool TrainingSamplesWindow::validateLineEditValues()
     int numberInt;
     double numberDouble;
 
+    qDebug() << "Before text = numLineEdit->text();\n";
+
     text = numLineEdit->text();
+
+    qDebug() << "After text = numLineEdit->text();\n";
+
+
+    qDebug() << "test:" << text;
+
+
+
+
+
     numberInt = text.toInt( &OK );
-    if( OK  && numberInt > 0 )
-        numLineEdit->setPalette( *paletteLineEditDefault );
+
+    if( OK  && numberInt > 0 ) {
+        qDebug() << "In if\n";
+//        numLineEdit->setPalette( *paletteLineEditDefault );
+
+        numLineEdit->setStyleSheet( "background-color: #19232D" );
+
+
+    }
     else
     {
-        numLineEdit->setPalette( *paletteLineEditRedBackgroud );
+        qDebug() << "In else\n";
+
+//        numLineEdit->setPalette( *paletteLineEditRedBackgroud );
+
+        numLineEdit->setStyleSheet( "background-color: #FF6666" );
+
         allOK = false;
     }
 

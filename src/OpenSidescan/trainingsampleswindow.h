@@ -13,6 +13,9 @@
 #include <QLabel>
 //#include <QIntValidator>
 
+#include <QStringListModel>
+
+
 #include <QPalette>
 
 
@@ -23,8 +26,10 @@ class TrainingSamplesWindow : public QDialog
     Q_OBJECT
 
 public:
-    TrainingSamplesWindow( const QString & folder,
-                                     const ParameterscvCreateTrainingSamples & parameters );
+    TrainingSamplesWindow( QWidget *parent, const QString & folder,
+                           const ParameterscvCreateTrainingSamples & parameters );
+
+    virtual ~TrainingSamplesWindow();
 
     bool getUserDidCancel();
 
@@ -64,13 +69,20 @@ private:
     bool userDidCancel;
 
 
+//    QGroupBox * colorsGroupBox;
+//    QGroupBox * rotationGroupBox;
+
+
     QLineEdit * pathLineEdit;
 
     QLineEdit * numLineEdit;
 
     QLineEdit * bgcolorLineEdit;
     QLineEdit * bgthreshLineEdit;
+
+//    QStringListModel * model;
     QComboBox * colorsInversionComboBox;
+
     QLineEdit * maxidevLineEdit;
 
     QLineEdit * maxXdegreesLineEdit;
@@ -85,6 +97,12 @@ private:
 
     QPalette * paletteLineEditDefault;
     QPalette * paletteLineEditRedBackgroud;
+
+
+
+
+
+
 
 
 //    void createFastParameterBox(QFormLayout * advancedParametersLayout);

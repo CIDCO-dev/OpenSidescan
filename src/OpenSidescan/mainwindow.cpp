@@ -405,13 +405,34 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    TrainingSamplesWindow * dialog = new TrainingSamplesWindow( folder, parameterscvCreateTrainingSamples);
+//    TrainingSamplesWindow * dialog = new TrainingSamplesWindow( this, folder,
+//                                                 parameterscvCreateTrainingSamples);
+
+
+//    // TODO ? non native
+
+//    dialog->setWindowModality( Qt::WindowModal );
+
+//    dialog->exec();
+
+//    if ( dialog->getUserDidCancel() == false )
+//    {
+//        // TODO: get parameters and folders
+
+//        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
+
+//    }
+
+
+
+    TrainingSamplesWindow dialog( this, folder,
+                                                 parameterscvCreateTrainingSamples);
 
     // TODO ? non native
 
-    dialog->setWindowModality( Qt::WindowModal );
+    dialog.setWindowModality( Qt::WindowModal );
 
-    dialog->exec();
+    dialog.exec();
 
 //    if ( dialog->getUserDidCancel() == false )
 //    {

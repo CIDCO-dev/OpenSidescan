@@ -9,6 +9,12 @@
 #include <QFormLayout>
 #include <QGridLayout>
 //#include <QStringListModel>
+#include <QIntValidator>
+
+#include <QFileDialog>
+#include <QMessageBox>
+
+#include "../thirdParty/opencv/apps/createsamples/utility.hpp"
 
 
 #include "trainingsampleswindow.h"
@@ -31,30 +37,7 @@ TrainingSamplesWindow::TrainingSamplesWindow( QWidget *parent,
     qDebug() << "After call to initUI()\n";
 
 
-    // Palette to change background color of line edits having invalid values
-    paletteLineEditDefault = new QPalette( numLineEdit->palette() );
-    paletteLineEditRedBackgroud = new QPalette( numLineEdit->palette() );
-    QColor red( 255, 102, 102 );
-    paletteLineEditRedBackgroud->setColor(QPalette::Base, red );
 
-    qDebug() << "paletteLineEditDefault: red: "
-             << paletteLineEditDefault->color(QPalette::Window).red()
-             << ", green: " << paletteLineEditDefault->color(QPalette::Window).green()
-             << ", blue: " << paletteLineEditDefault->color(QPalette::Window).blue();
-
-    qDebug() << "paletteLineEditDefault: red: "
-             << paletteLineEditDefault->color(QPalette::Base).red()
-             << ", green: " << paletteLineEditDefault->color(QPalette::Base).green()
-             << ", blue: " << paletteLineEditDefault->color(QPalette::Base).blue();
-
-    qDebug() << "paletteLineEditRedBackgroud: red: "
-             << paletteLineEditRedBackgroud->color(QPalette::Base).red()
-             << ", green: " << paletteLineEditRedBackgroud->color(QPalette::Base).green()
-             << ", blue: " << paletteLineEditRedBackgroud->color(QPalette::Base).blue();
-
-    qDebug() << "numLineEdit->styleSheet(): " << numLineEdit->styleSheet();
-
-    qDebug() << "styleSheet(): " << styleSheet();
 
 
 
@@ -162,6 +145,7 @@ void TrainingSamplesWindow::initUI(){
     QLabel * pathLabel = new QLabel( tr( "Path" ) );
 
     pathLineEdit = new QLineEdit;
+    pathLineEdit->setText( folder );
 
     pathLabel->setBuddy( pathLineEdit );
 
@@ -172,6 +156,10 @@ void TrainingSamplesWindow::initUI(){
     layoutPath->addWidget( pathBrowseButton, 0, 2 );
 
 
+    connect( pathBrowseButton, &QPushButton::clicked, this, &TrainingSamplesWindow::pathBrowseButtonClicked );
+
+
+
     qDebug() << "Before QFormLayout * numLayout = new QFormLayout();\n";
 
     // num
@@ -180,6 +168,9 @@ void TrainingSamplesWindow::initUI(){
     mainLayout->addLayout( numLayout );
 
     numLineEdit = new QLineEdit();
+    numLineEdit->setValidator( new QIntValidator(1, 1000000, this) );
+    // TODO: the validator let me enter a value of 0
+    // How to deal with that?
 
     numLineEdit->setAlignment(Qt::AlignRight);
     numLineEdit->setText( QString::number( parameters.num ) );
@@ -198,15 +189,6 @@ void TrainingSamplesWindow::initUI(){
     mainLayout->addWidget( createMaxRotationBox() );
 
 
-    qDebug() << "Before connect\n";
-
-
-    connect( numLineEdit, &QLineEdit::textEdited, this, &TrainingSamplesWindow::lineEditTextEdited );
-
-
-
-
-
 
     qDebug() << "Before buttonBox\n";
 
@@ -218,6 +200,10 @@ void TrainingSamplesWindow::initUI(){
     connect(buttonBox, &QDialogButtonBox::rejected, this, &TrainingSamplesWindow::cancelButtonClicked);
 
     mainLayout->addWidget(buttonBox);
+
+
+
+
 
 
     setLayout(mainLayout);
@@ -336,6 +322,34 @@ void TrainingSamplesWindow::reject()
     QDialog::reject();
 }
 
+void TrainingSamplesWindow::pathBrowseButtonClicked()
+{
+    QFileDialog dialog( this,
+                         tr( "Path"), pathLineEdit->text(),
+                        tr( "All Files (*)") );
+
+
+    dialog.setFileMode( QFileDialog::Directory ); // Get a single existing file
+    dialog.setLabelText( QFileDialog::Accept, tr( "Select" ) ) ; // Name of the button, to replace the default "Open"
+
+    dialog.setViewMode( QFileDialog::Detail );
+    dialog.setOptions( QFileDialog::DontConfirmOverwrite );
+    dialog.setOption( QFileDialog::ShowDirsOnly, true );
+
+    QStringList fileNames;
+
+    if ( dialog.exec() )
+        fileNames = dialog.selectedFiles();
+
+    if ( fileNames.size() > 0 )
+    {
+        QString fileName = fileNames.at( 0 );
+        pathLineEdit->setText( fileName );
+    }
+
+}
+
+
 void TrainingSamplesWindow::cancelButtonClicked()
 {
     qDebug() << "In TrainingSamplesWindow::cancelButtonClicked()\n";
@@ -351,52 +365,31 @@ void TrainingSamplesWindow::OKButtonClicked()
 
     qDebug() << "In TrainingSamplesWindow::OKButtonClicked()\n";
 
-//    if ( validateLineEditValues() == true )
-//    {
-//        updateValues();
-//        emit QDialog::done( 0 );
-//    }
-
-    // TODO remove from here
-    emit QDialog::done( 0 );
-
-}
-
-void TrainingSamplesWindow::lineEditTextEdited( const QString &text )
-{
-    qDebug() << "In TrainingSamplesWindow::lineEditTextEdited()\n";
-
-    setButtonsState();
-}
-
-void TrainingSamplesWindow::setButtonsState()
-{
-    qDebug() << "In TrainingSamplesWindow::setButtonsState()\n";
-
     if ( validateLineEditValues() == true )
     {
-        qDebug() << "In if of setButtonsState\n";
-
-        buttonBox->button( QDialogButtonBox::Ok )->setEnabled( true );
+        updateValues();
+        emit QDialog::done( 0 );
     }
-    else
-    {
-        qDebug() << "In else of setButtonsState\n";
 
-        buttonBox->button( QDialogButtonBox::Ok )->setEnabled( false );
-    }
+//    // TODO: remove done() from here, keep it only if validation is true
+//    emit QDialog::done( 0 );
+
 }
 
+void TrainingSamplesWindow::displayWarning( std::string & text )
+{
+    qDebug() << tr( text.c_str() );
+
+    QMessageBox::warning( this, tr("Warning"), tr( text.c_str() ), QMessageBox::Ok );
 
 
-
-
+}
 
 bool TrainingSamplesWindow::validateLineEditValues()
 {
     qDebug() << "In TrainingSamplesWindow::validateLineEditValues()\n";
 
-    bool allOK = true;
+//    bool allOK = true;
 
     bool OK = true;
 
@@ -417,53 +410,98 @@ bool TrainingSamplesWindow::validateLineEditValues()
     int numberInt;
     double numberDouble;
 
+
+    // Validate that the path exist and is a folder
+
+    QFileInfo fileInfo( pathLineEdit->text() );
+
+    std::string path = pathLineEdit->text().toLocal8Bit().constData();
+
+    if ( fileInfo.exists() == false || fileInfo.isDir() == false )
+    {
+        std::string toDisplay = "Invalid path\n\n\"" + path + "\"\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+
     qDebug() << "Before text = numLineEdit->text();\n";
 
     text = numLineEdit->text();
 
     qDebug() << "After text = numLineEdit->text();\n";
 
-
     qDebug() << "test:" << text;
-
-
-
-
 
     numberInt = text.toInt( &OK );
 
-    if( OK  && numberInt > 0 ) {
-        qDebug() << "In if\n";
-//        numLineEdit->setPalette( *paletteLineEditDefault );
-
-        numLineEdit->setStyleSheet( "background-color: #19232D" );
-
-
-    }
-    else
-    {
-        qDebug() << "In else\n";
-
-//        numLineEdit->setPalette( *paletteLineEditRedBackgroud );
-
-        numLineEdit->setStyleSheet( "background-color: #FF6666" );
-
-        allOK = false;
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Number of positive samples to create per object into an integer number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberInt <= 0) {
+        std::string toDisplay = "The Number of positive samples to create per object must be an integer number larger than zero.\n";
+        displayWarning( toDisplay );
+        return false;
     }
 
 
-//    text = numLineEdit->text();
-//    numberInt = text.toInt( &OK );
-//    if( OK)
-//        numLineEdit->setPalette( *paletteLineEditDefault );
-//    else
-//    {
-//        numLineEdit->setPalette( *paletteLineEditRedBackgroud );
-//        allOK = false;
-//    }
 
 
 
 
-    return allOK;
+
+
+
+    return true;
+}
+
+void TrainingSamplesWindow::updateValues()
+{
+    if ( validateLineEditValues() == false )
+        return;
+
+
+    folder = pathLineEdit->text();
+
+    // TODO: update values
+
+    bool OK;
+//    QString text;
+
+
+    parameters.num = numLineEdit->text().toInt( &OK );
+
+    parameters.bgcolor = bgcolorLineEdit->text().toInt( &OK );
+
+    parameters.bgthreshold = bgthreshLineEdit->text().toInt( &OK );
+
+
+    parameters.invert = colorsInversionComboBox->currentIndex();
+
+    if ( parameters.invert == 2 )
+        parameters.invert = CV_RANDOM_INVERT;
+
+    qDebug() << "TrainingSamplesWindow::updateValues(), parameters.invert: "
+             << parameters.invert <<"\n";
+
+    parameters.maxintensitydev = maxidevLineEdit->text().toInt( &OK );
+
+    parameters.maxxangle = maxXdegreesLineEdit->text().toDouble( &OK );
+    parameters.maxyangle = maxYdegreesLineEdit->text().toDouble( &OK );
+    parameters.maxzangle = maxXdegreesLineEdit->text().toDouble( &OK );
+
+
+
+//    int width;
+//    int height;
+//    int rngseed;
+
+//    bool useOriginalObjectImageWidthAsBasis; 		// Default value of true
+//    bool useOriginalObjectImageHeightAsBasis;		// Default value of true
+
+//    int nbPixelsChangeFromObjectImageWidth;     // Used when useOriginalObjectImageWidthAsBasis == true
+//    int nbPixelsChangeFromObjectImageHeight;
+
+
 }

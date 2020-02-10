@@ -11,12 +11,10 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QLabel>
-//#include <QIntValidator>
 
 #include <QStringListModel>
 
 
-#include <QPalette>
 
 
 #include "parameterscvCreateTrainingSamples.h"
@@ -42,10 +40,11 @@ public slots:
 
     void reject() override; // Respond to Escape key
 
-    void lineEditTextEdited( const QString &text );
 
     void cancelButtonClicked();
     void OKButtonClicked();
+
+    void pathBrowseButtonClicked();
 
 private:
 
@@ -54,10 +53,13 @@ private:
     QGroupBox * createColorsAndIntensityBox();
     QGroupBox * createMaxRotationBox();
 
-
-    void setButtonsState();
     bool validateLineEditValues();
-//    void updateValues();
+
+
+    void displayWarning( std::string & text );
+
+
+    void updateValues();
 
 
 
@@ -95,8 +97,7 @@ private:
 
 
 
-    QPalette * paletteLineEditDefault;
-    QPalette * paletteLineEditRedBackgroud;
+
 
 
 

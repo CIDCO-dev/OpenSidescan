@@ -31,9 +31,9 @@ public:
 
     bool getUserDidCancel();
 
-//    void getFolder( QString & folder );
+    void getFolder( QString & folderOUT );
 
-//    void getParameters( ParameterscvCreateTrainingSamples & parameters );
+    void getParameters( ParameterscvCreateTrainingSamples & parametersOUT );
 
 
 public slots:

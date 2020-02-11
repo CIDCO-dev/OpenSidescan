@@ -371,6 +371,7 @@ QGroupBox * TrainingSamplesWindow::createWidthBox()
 
 
     widthLineEdit = new QLineEdit();
+    widthLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
     widthLineEdit->setAlignment(Qt::AlignRight);
     widthLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageWidth ) );
 
@@ -405,6 +406,7 @@ QGroupBox * TrainingSamplesWindow::createHeightBox()
 
 
     heightLineEdit = new QLineEdit();
+    heightLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
     heightLineEdit->setAlignment(Qt::AlignRight);
     heightLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageHeight ) );
 
@@ -644,6 +646,65 @@ bool TrainingSamplesWindow::validateLineEditValues()
         return false;
     }
 
+
+    text = widthLineEdit->text();
+
+    numberInt = text.toInt( &OK );
+
+    if ( useOriginalWidthAsBasisCheckBox->isChecked() ) {
+
+        if ( OK == false ) {
+            std::string toDisplay = "Could not convert the Number of Pixels Change From Object Image Width into an integer number.\n";
+            displayWarning( toDisplay );
+            return false;
+        }
+
+        // The Number of Pixels Change can be positive or negative
+
+
+    } else {
+
+        if ( OK == false ) {
+            std::string toDisplay = "Could not convert the Width (pixels) into an integer number.\n";
+            displayWarning( toDisplay );
+            return false;
+        } else if ( numberInt <= 0  ) {
+            std::string toDisplay = "The Width (pixels) must be an integer number larger than zero.\n";
+            displayWarning( toDisplay );
+            return false;
+        }
+    }
+
+
+    text = heightLineEdit->text();
+
+    numberInt = text.toInt( &OK );
+
+    if ( useOriginalHeightAsBasisCheckBox->isChecked() ) {
+
+        if ( OK == false ) {
+            std::string toDisplay = "Could not convert the Number of Pixels Change From Object Image Height into an integer number.\n";
+            displayWarning( toDisplay );
+            return false;
+        }
+
+        // The Number of Pixels Change can be positive or negative
+
+
+    } else {
+
+        if ( OK == false ) {
+            std::string toDisplay = "Could not convert the Height (pixels) into an integer number.\n";
+            displayWarning( toDisplay );
+            return false;
+        } else if ( numberInt <= 0  ) {
+            std::string toDisplay = "The Height (pixels) must be an integer number larger than zero.\n";
+            displayWarning( toDisplay );
+            return false;
+        }
+    }
+
+
     return true;
 }
 
@@ -693,16 +754,28 @@ void TrainingSamplesWindow::updateValues()
         parameters.maxzangle = PI;
 
 
+    int numberInt;
 
-//    int width;
-//    int height;
-//    int rngseed;
+    numberInt = widthLineEdit->text().toInt( &OK );
 
-//    bool useOriginalObjectImageWidthAsBasis; 		// Default value of true
-//    bool useOriginalObjectImageHeightAsBasis;		// Default value of true
+    parameters.useOriginalObjectImageWidthAsBasis = useOriginalWidthAsBasisCheckBox->isChecked();
 
-//    int nbPixelsChangeFromObjectImageWidth;     // Used when useOriginalObjectImageWidthAsBasis == true
-//    int nbPixelsChangeFromObjectImageHeight;
+    if ( parameters.useOriginalObjectImageWidthAsBasis ) {
+        parameters.nbPixelsChangeFromObjectImageWidth = numberInt;
+    } else {
+        parameters.width = numberInt;
+    }
+
+
+    numberInt = heightLineEdit->text().toInt( &OK );
+
+    parameters.useOriginalObjectImageHeightAsBasis = useOriginalHeightAsBasisCheckBox->isChecked();
+
+    if ( parameters.useOriginalObjectImageHeightAsBasis ) {
+        parameters.nbPixelsChangeFromObjectImageHeight = numberInt;
+    } else {
+        parameters.height = numberInt;
+    }
 
 
 }
@@ -712,9 +785,12 @@ void TrainingSamplesWindow::useOriginalWidthAsBasisCheckBoxStateChanged( int par
     if ( useOriginalWidthAsBasisCheckBox->isChecked() ) {
         widthLabel->setText( tr("Number of Pixels Change From Object Image Width") );
         widthLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageWidth ) );
+        widthLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
+
     } else {
         widthLabel->setText( tr("Width (pixels)") );
         widthLineEdit->setText( QString::number( parameters.width ) );
+        widthLineEdit->setValidator( new QIntValidator(1, 1000000, this) );
    }
 
 }
@@ -725,11 +801,23 @@ void TrainingSamplesWindow::useOriginalHeightAsBasisCheckBoxStateChanged( int pa
     if ( useOriginalHeightAsBasisCheckBox->isChecked() ) {
         heightLabel->setText( tr("Number of Pixels Change From Object Image Height") );
         heightLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageHeight ) );
+        heightLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
+
 
     } else {
         heightLabel->setText( tr("Height (pixels)") );
         heightLineEdit->setText( QString::number( parameters.height ) );
-
+        heightLineEdit->setValidator( new QIntValidator(1, 1000000, this) );
    }
 
+}
+
+void TrainingSamplesWindow::getFolder( QString & folderOUT )
+{
+    folderOUT = folder;
+}
+
+void TrainingSamplesWindow::getParameters( ParameterscvCreateTrainingSamples & parametersOUT )
+{
+    parametersOUT = parameters;
 }

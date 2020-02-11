@@ -426,7 +426,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
     TrainingSamplesWindow dialog( this, folder,
-                                                 parameterscvCreateTrainingSamples);
+                          parameterscvCreateTrainingSamples);
 
     // TODO ? non native
 
@@ -434,16 +434,18 @@ void MainWindow::actionExportTrainingObjectSamples()
 
     dialog.exec();
 
-//    if ( dialog.getUserDidCancel() == false )
-//    {
-//        qDebug() << "User did not cancel\n";
+    if ( dialog.getUserDidCancel() == false )
+    {
+        qDebug() << "User did not cancel\n";
 
 
-//        // TODO: get parameters and folders
+        dialog.getFolder( folder );
+        dialog.getParameters( parameterscvCreateTrainingSamples );
 
-////        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
+//        currentProject->createAndSaveTrainingObjectSamples( folder,
+//                                                           parameterscvCreateTrainingSamples );
 
-//    }
+    }
 
 
 

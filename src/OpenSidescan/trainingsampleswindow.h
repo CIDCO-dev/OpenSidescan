@@ -54,13 +54,13 @@ public slots:
 
 private:
 
-//    void initUI();
+    void initUI();
 
-//    QGroupBox * createColorsAndIntensityBox();
-//    QGroupBox * createMaxRotationBox();
+    QGroupBox * createColorsAndIntensityBox();
+    QGroupBox * createMaxRotationBox();
 
-//    QGroupBox * createWidthBox();
-//    QGroupBox * createHeightBox();
+    QGroupBox * createWidthBox();
+    QGroupBox * createHeightBox();
 
 
     bool validateLineEditValues();

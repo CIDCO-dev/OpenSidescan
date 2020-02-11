@@ -797,6 +797,7 @@ void TrainingSamplesWindow::reject()
     userDidCancel = true;
 
     QDialog::reject();
+
 }
 
 void TrainingSamplesWindow::pathBrowseButtonClicked()
@@ -833,7 +834,9 @@ void TrainingSamplesWindow::cancelButtonClicked()
 
     userDidCancel = true;
 
-    emit QDialog::done( 0 );
+//    emit QDialog::done( 0 );
+    QDialog::reject();
+
 }
 
 void TrainingSamplesWindow::OKButtonClicked()
@@ -845,7 +848,8 @@ void TrainingSamplesWindow::OKButtonClicked()
     if ( validateLineEditValues() == true )
     {
         updateValues();
-        emit QDialog::done( 0 );
+//        emit QDialog::done( 0 );
+        accept();
     }
 
 //    // TODO: remove done() from here, keep it only if validation is true

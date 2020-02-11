@@ -46,12 +46,19 @@ public slots:
 
     void pathBrowseButtonClicked();
 
+    void useOriginalWidthAsBasisCheckBoxStateChanged( int param );
+    void useOriginalHeightAsBasisCheckBoxStateChanged( int param );
+
 private:
 
     void initUI();
 
     QGroupBox * createColorsAndIntensityBox();
     QGroupBox * createMaxRotationBox();
+
+    QGroupBox * createWidthBox();
+    QGroupBox * createHeightBox();
+
 
     bool validateLineEditValues();
 
@@ -90,6 +97,16 @@ private:
     QLineEdit * maxXdegreesLineEdit;
     QLineEdit * maxYdegreesLineEdit;
     QLineEdit * maxZdegreesLineEdit;
+
+
+    QCheckBox * useOriginalWidthAsBasisCheckBox;
+    QLabel * widthLabel;
+    QLineEdit * widthLineEdit;
+
+
+    QCheckBox * useOriginalHeightAsBasisCheckBox;
+    QLabel * heightLabel;
+    QLineEdit * heightLineEdit;
 
 
     QDialogButtonBox * buttonBox;

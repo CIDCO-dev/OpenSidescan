@@ -142,14 +142,14 @@ void TrainingSamplesWindow::initUI(){
     qDebug() << "Before QGridLayout *layoutPath= new QGridLayout;\n";
 
     // Layout for path
-    QGridLayout *layoutPath= new QGridLayout;
+    QGridLayout *layoutPath= new QGridLayout();
 
     mainLayout->addLayout( layoutPath );
 
 
     QLabel * pathLabel = new QLabel( tr( "Path" ) );
 
-    pathLineEdit = new QLineEdit;
+    pathLineEdit = new QLineEdit();
     pathLineEdit->setText( folder );
 
     pathLabel->setBuddy( pathLineEdit );
@@ -194,6 +194,15 @@ void TrainingSamplesWindow::initUI(){
     mainLayout->addWidget( createMaxRotationBox() );
 
 
+    qDebug() << "Before mainLayout->addWidget( createWidthBox() );\n";
+
+    mainLayout->addWidget( createWidthBox() );
+
+
+    qDebug() << "Before mainLayout->addWidget( createHeightBox() );\n";
+
+    mainLayout->addWidget( createHeightBox() );
+
 
     qDebug() << "Before buttonBox\n";
 
@@ -203,6 +212,15 @@ void TrainingSamplesWindow::initUI(){
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &TrainingSamplesWindow::OKButtonClicked);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &TrainingSamplesWindow::cancelButtonClicked);
+
+
+    connect( useOriginalWidthAsBasisCheckBox, &QCheckBox::stateChanged,
+             this, &TrainingSamplesWindow::useOriginalWidthAsBasisCheckBoxStateChanged );
+
+    connect( useOriginalHeightAsBasisCheckBox, &QCheckBox::stateChanged,
+             this, &TrainingSamplesWindow::useOriginalHeightAsBasisCheckBoxStateChanged );
+
+
 
     mainLayout->addWidget(buttonBox);
 
@@ -262,6 +280,14 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     colorsInversionComboBox->setModel( model );
     colorsInversionComboBox->setEditable( false );
 
+    int index = parameters.invert;
+    if ( index == CV_RANDOM_INVERT )
+        index = 2;
+
+    colorsInversionComboBox->setCurrentIndex( index );
+
+
+
     colorLayout->addRow( new QLabel(tr("Colors inversion")), colorsInversionComboBox);
 
     maxidevLineEdit = new QLineEdit();
@@ -316,6 +342,79 @@ QGroupBox * TrainingSamplesWindow::createMaxRotationBox()
 
     return rotationGroupBox;
 }
+
+
+
+
+
+QGroupBox * TrainingSamplesWindow::createWidthBox()
+{
+
+    qDebug() << "Beginning of TrainingSamplesWindow::createWidthBox()\n";
+
+    QGroupBox * widthGroupBox = new QGroupBox( tr("Width") );
+
+
+    QVBoxLayout * widthLayout = new QVBoxLayout();
+
+    widthGroupBox->setLayout( widthLayout );
+
+    widthLabel = new QLabel( tr("Number of Pixels Change From Object Image Width") );
+
+
+    useOriginalWidthAsBasisCheckBox = new QCheckBox(tr("Use Original Object Image Width as Basis"),this);
+    useOriginalWidthAsBasisCheckBox->setChecked( parameters.useOriginalObjectImageWidthAsBasis );
+    widthLayout->addWidget(useOriginalWidthAsBasisCheckBox);
+
+
+    QFormLayout * widthFormLayout = new QFormLayout();
+
+    widthLayout->addLayout( widthFormLayout );
+
+
+    widthLineEdit = new QLineEdit();
+    widthLineEdit->setAlignment(Qt::AlignRight);
+    widthLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageWidth ) );
+
+    widthFormLayout->addRow( widthLabel, widthLineEdit);
+
+    return widthGroupBox;
+}
+
+QGroupBox * TrainingSamplesWindow::createHeightBox()
+{
+
+    qDebug() << "Beginning of TrainingSamplesWindow::createHeightBox()\n";
+
+    QGroupBox * heightGroupBox = new QGroupBox( tr("Height") );
+
+
+    QVBoxLayout *heightLayout = new QVBoxLayout();
+
+    heightGroupBox->setLayout( heightLayout );
+
+    heightLabel = new QLabel( tr("Number of Pixels Change From Object Image Height") );
+
+
+    useOriginalHeightAsBasisCheckBox = new QCheckBox(tr("Use Original Object Image Height as Basis"),this);
+    useOriginalHeightAsBasisCheckBox->setChecked( parameters.useOriginalObjectImageHeightAsBasis );
+    heightLayout->addWidget(useOriginalHeightAsBasisCheckBox);
+
+
+    QFormLayout * heightFormLayout = new QFormLayout();
+
+    heightLayout->addLayout( heightFormLayout );
+
+
+    heightLineEdit = new QLineEdit();
+    heightLineEdit->setAlignment(Qt::AlignRight);
+    heightLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageHeight ) );
+
+    heightFormLayout->addRow( heightLabel, heightLineEdit);
+
+    return heightGroupBox;
+}
+
 
 bool TrainingSamplesWindow::getUserDidCancel()
 {
@@ -603,5 +702,32 @@ void TrainingSamplesWindow::updateValues()
 //    int nbPixelsChangeFromObjectImageWidth;     // Used when useOriginalObjectImageWidthAsBasis == true
 //    int nbPixelsChangeFromObjectImageHeight;
 
+
+}
+
+void TrainingSamplesWindow::useOriginalWidthAsBasisCheckBoxStateChanged( int param )
+{
+    if ( useOriginalWidthAsBasisCheckBox->isChecked() ) {
+        widthLabel->setText( tr("Number of Pixels Change From Object Image Width") );
+        widthLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageWidth ) );
+    } else {
+        widthLabel->setText( tr("Width (pixels)") );
+        widthLineEdit->setText( QString::number( parameters.width ) );
+   }
+
+}
+
+
+void TrainingSamplesWindow::useOriginalHeightAsBasisCheckBoxStateChanged( int param )
+{
+    if ( useOriginalHeightAsBasisCheckBox->isChecked() ) {
+        heightLabel->setText( tr("Number of Pixels Change From Object Image Height") );
+        heightLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageHeight ) );
+
+    } else {
+        heightLabel->setText( tr("Height (pixels)") );
+        heightLineEdit->setText( QString::number( parameters.height ) );
+
+   }
 
 }

@@ -434,11 +434,14 @@ void MainWindow::actionExportTrainingObjectSamples()
 
     dialog.exec();
 
-//    if ( dialog->getUserDidCancel() == false )
+//    if ( dialog.getUserDidCancel() == false )
 //    {
+//        qDebug() << "User did not cancel\n";
+
+
 //        // TODO: get parameters and folders
 
-//        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
+////        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
 
 //    }
 
@@ -448,7 +451,11 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    std::cout << "\nEnd of MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+//    std::cout << "\nEnd of MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+
+
+//    qDebug() <<  "End of MainWindow::actionExportTrainingObjectSamples()\n";
+
 
 
 

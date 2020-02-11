@@ -16,9 +16,14 @@
 
 #include "../thirdParty/opencv/apps/createsamples/utility.hpp"
 
+//#include "../thirdParty/MBES-lib/src/utils/Constants.hpp"
+// TODO: M_PI is POSIX. Add #include <cmath> to MBES-lib's Constants.hpp so that M_PI will be defined
+#define PI 3.14159265358979323846
+#define R2D ((double)180/(double)PI)
+#define D2R ((double)PI/(double)180)
+
 
 #include "trainingsampleswindow.h"
-
 
 
 TrainingSamplesWindow::TrainingSamplesWindow( QWidget *parent,
@@ -231,11 +236,13 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     colorsGroupBox->setLayout( colorLayout );
 
     bgcolorLineEdit = new QLineEdit();
+    bgcolorLineEdit->setValidator( new QIntValidator(0, 255, this) );
     bgcolorLineEdit->setAlignment(Qt::AlignRight);
     bgcolorLineEdit->setText( QString::number( parameters.bgcolor) );
-    colorLayout->addRow( new QLabel(tr("Background color (currently grayscale images are assumed)")), bgcolorLineEdit);
+    colorLayout->addRow( new QLabel(tr("Background Color (currently grayscale images are assumed)")), bgcolorLineEdit);
 
     bgthreshLineEdit = new QLineEdit();
+    bgthreshLineEdit->setValidator( new QIntValidator(0, 255, this) );
     bgthreshLineEdit->setAlignment(Qt::AlignRight);
     bgthreshLineEdit->setText( QString::number( parameters.bgthreshold) );
     colorLayout->addRow( new QLabel(tr("Background Color Threshold")), bgthreshLineEdit);
@@ -258,6 +265,7 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     colorLayout->addRow( new QLabel(tr("Colors inversion")), colorsInversionComboBox);
 
     maxidevLineEdit = new QLineEdit();
+    maxidevLineEdit->setValidator( new QIntValidator(0, 255, this) );
     maxidevLineEdit->setAlignment(Qt::AlignRight);
     maxidevLineEdit->setText( QString::number( parameters.maxintensitydev) );
     colorLayout->addRow( new QLabel(tr("Maximal Intensity Deviation of Pixels in Foreground Samples")), maxidevLineEdit);
@@ -287,18 +295,21 @@ QGroupBox * TrainingSamplesWindow::createMaxRotationBox()
     // TODO Write function to convert angles
 
     maxXdegreesLineEdit = new QLineEdit();
+    maxXdegreesLineEdit->setValidator( new QDoubleValidator(0, 180, 1, this) );
     maxXdegreesLineEdit->setAlignment(Qt::AlignRight);
-    maxXdegreesLineEdit->setText( QString::number( parameters.maxxangle * 180 / 3.1416, 'f', 1 ) );
+    maxXdegreesLineEdit->setText( QString::number( parameters.maxxangle * R2D, 'f', 1 ) );
     rotationlayout->addRow( new QLabel(tr("Maximal rotation angle towards x-axis (deg)")), maxXdegreesLineEdit);
 
     maxYdegreesLineEdit = new QLineEdit();
+    maxYdegreesLineEdit->setValidator( new QDoubleValidator(0, 180, 1, this) );
     maxYdegreesLineEdit->setAlignment(Qt::AlignRight);
-    maxYdegreesLineEdit->setText( QString::number( parameters.maxyangle * 180 / 3.1416, 'f', 1 ) );
+    maxYdegreesLineEdit->setText( QString::number( parameters.maxyangle * R2D, 'f', 1 ) );
     rotationlayout->addRow( new QLabel(tr("Maximal rotation angle towards y-axis (deg)")), maxYdegreesLineEdit);
 
     maxZdegreesLineEdit = new QLineEdit();
+    maxZdegreesLineEdit->setValidator( new QDoubleValidator(0, 180, 1, this) );
     maxZdegreesLineEdit->setAlignment(Qt::AlignRight);
-    maxZdegreesLineEdit->setText( QString::number( parameters.maxzangle * 180 / 3.1416, 'f', 1 ) );
+    maxZdegreesLineEdit->setText( QString::number( parameters.maxzangle * R2D, 'f', 1 ) );
     rotationlayout->addRow( new QLabel(tr("Maximal rotation angle towards z-axis (deg)")), maxZdegreesLineEdit);
 
     qDebug() << "End of TrainingSamplesWindow::createMaxRotationBox()\n";
@@ -393,25 +404,12 @@ bool TrainingSamplesWindow::validateLineEditValues()
 
     bool OK = true;
 
-//    QLineEdit * numLineEdit;
-
-//    QLineEdit * bgcolorLineEdit;
-//    QLineEdit * bgthreshLineEdit;
-//    QComboBox * colorsInversionComboBox;
-//    QLineEdit * maxidevLineEdit;
-
-
-
-//    QLineEdit * maxXdegreesLineEdit;
-//    QLineEdit * maxYdegreesLineEdit;
-//    QLineEdit * maxZdegreesLineEdit;
-
     QString text;
     int numberInt;
     double numberDouble;
 
 
-    // Validate that the path exist and is a folder
+    // Validate that the path exists and is a folder
 
     QFileInfo fileInfo( pathLineEdit->text() );
 
@@ -431,7 +429,7 @@ bool TrainingSamplesWindow::validateLineEditValues()
 
     qDebug() << "After text = numLineEdit->text();\n";
 
-    qDebug() << "test:" << text;
+    qDebug() << "text:" << text;
 
     numberInt = text.toInt( &OK );
 
@@ -447,11 +445,103 @@ bool TrainingSamplesWindow::validateLineEditValues()
 
 
 
+    text = bgcolorLineEdit->text();
+
+    numberInt = text.toInt( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Background Color into an integer number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberInt < 0 || numberInt > 255) {
+        std::string toDisplay = "The Background Color must be an integer number within 0 to 255 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
 
 
+    text = bgthreshLineEdit->text();
+
+    numberInt = text.toInt( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Background Color Threshold into an integer number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberInt < 0 || numberInt > 255) {
+        std::string toDisplay = "The Background Color Threshold must be an integer number within 0 to 255 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
 
 
+    // maxintensitydev value between 0 and 255 inclusively
+    // Reference: Function "icvPlaceDistortedSample()" of file openv/apps/createsamples/utility.cpp
+    // forecolordev = theRNG().uniform( -maxintensitydev, maxintensitydev );
+    // uchar chartmp = (uchar) MAX( 0, MIN( 255, forecolordev + img.at<uchar>(r, c)) );
 
+    text = maxidevLineEdit->text();
+
+    numberInt = text.toInt( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Maximal Intensity Deviation of Pixels in Foreground Samples into an integer number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberInt < 0 || numberInt > 255) {
+        std::string toDisplay = "The Maximal Intensity Deviation of Pixels in Foreground Samples must be an integer number within 0 to 255 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+
+    // Max angle text between 0 and 180 degrees inclusively
+    // Reference: Function "icvRandomQuad()" of file openv/apps/createsamples/utility.cpp
+    // uses an uniform distribution over the range -maxxangle to maxxangle.
+
+    text = maxXdegreesLineEdit->text();
+
+    numberDouble = text.toDouble( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Maximal rotation angle towards x-axis (deg) into a double floating point number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberDouble < 0 || numberDouble > 180 ) {
+        std::string toDisplay = "The Maximal rotation angle towards x-axis (deg) must be within 0 to 180 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+
+    text = maxYdegreesLineEdit->text();
+
+    numberDouble = text.toDouble( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Maximal rotation angle towards y-axis (deg) into a double floating point number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberDouble < 0 || numberDouble > 180 ) {
+        std::string toDisplay = "The Maximal rotation angle towards y-axis (deg) must be within 0 to 180 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+
+    text = maxZdegreesLineEdit->text();
+
+    numberDouble = text.toDouble( &OK );
+
+    if ( OK == false ) {
+        std::string toDisplay = "Could not convert the Maximal rotation angle towards z-axis (deg) into a double floating point number.\n";
+        displayWarning( toDisplay );
+        return false;
+    } else if ( numberDouble < 0 || numberDouble > 180 ) {
+        std::string toDisplay = "The Maximal rotation angle towards z-axis (deg) must be within 0 to 180 inclusively.\n";
+        displayWarning( toDisplay );
+        return false;
+    }
 
     return true;
 }
@@ -464,11 +554,7 @@ void TrainingSamplesWindow::updateValues()
 
     folder = pathLineEdit->text();
 
-    // TODO: update values
-
     bool OK;
-//    QString text;
-
 
     parameters.num = numLineEdit->text().toInt( &OK );
 
@@ -487,9 +573,23 @@ void TrainingSamplesWindow::updateValues()
 
     parameters.maxintensitydev = maxidevLineEdit->text().toInt( &OK );
 
-    parameters.maxxangle = maxXdegreesLineEdit->text().toDouble( &OK );
-    parameters.maxyangle = maxYdegreesLineEdit->text().toDouble( &OK );
-    parameters.maxzangle = maxXdegreesLineEdit->text().toDouble( &OK );
+    parameters.maxxangle = maxXdegreesLineEdit->text().toDouble( &OK ) * D2R;
+    if ( parameters.maxxangle < 0 )
+        parameters.maxxangle = 0;
+    else if ( parameters.maxxangle > PI )
+        parameters.maxxangle = PI;
+
+    parameters.maxyangle = maxYdegreesLineEdit->text().toDouble( &OK ) * D2R;
+    if ( parameters.maxyangle < 0 )
+        parameters.maxyangle = 0;
+    else if ( parameters.maxyangle > PI )
+        parameters.maxyangle = PI;
+
+    parameters.maxzangle = maxZdegreesLineEdit->text().toDouble( &OK ) * D2R;
+    if ( parameters.maxzangle < 0 )
+        parameters.maxzangle = 0;
+    else if ( parameters.maxzangle > PI )
+        parameters.maxzangle = PI;
 
 
 

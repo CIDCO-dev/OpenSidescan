@@ -400,8 +400,9 @@ void MainWindow::actionExportTrainingObjectSamples()
 
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
-    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
+//    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
 
+    QString folder = "";
 
 
 
@@ -442,8 +443,8 @@ void MainWindow::actionExportTrainingObjectSamples()
         dialog.getFolder( folder );
         dialog.getParameters( parameterscvCreateTrainingSamples );
 
-//        currentProject->createAndSaveTrainingObjectSamples( folder,
-//                                                           parameterscvCreateTrainingSamples );
+        currentProject->createAndSaveTrainingObjectSamples( folder,
+                                                           parameterscvCreateTrainingSamples );
 
     }
 

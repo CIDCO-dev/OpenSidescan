@@ -644,46 +644,32 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
                 pixmap.save( objectImageFileNameWithPath );
 
 
-
-
-//                int nbDistortions = 10;
-
-
-//                int num = 1000;
-//                int bgcolor = 0;
-//                int bgthreshold = 80;
-//                int invert = 0;
-//                int maxintensitydev = 40;
-//                double maxxangle = 1.1;
-//                double maxyangle = 1.1;
-//                double maxzangle = 0.5;
-
                 int showsamples = 0;
-
-                /* the samples are adjusted to this scale in the sample preview window */
-//                double scale = 4.0;
-                int width  = 24;
-                int height = 24;
-//                double maxscale = -1.0;
-//                int rngseed = 12345;
+                int width;
+                int height;
 
                 cv::setRNGSeed( parameterscvCreateTrainingSamples.rngseed );
 
 
-                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageWidthAsBasis )
+                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageWidthAsBasis ) {
                     width = (*k)->getPixelWidth() + parameterscvCreateTrainingSamples.nbPixelsChangeFromObjectImageWidth;
-                else
+
+                    if ( width <= 0 )
+                        width = (*k)->getPixelWidth(); // TODO: display a warning?
+
+                } else {
                     width = parameterscvCreateTrainingSamples.width;
+                }
 
-                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageHeightAsBasis )
+                if ( parameterscvCreateTrainingSamples.useOriginalObjectImageHeightAsBasis ) {
                     height = (*k)->getPixelHeight() + parameterscvCreateTrainingSamples.nbPixelsChangeFromObjectImageHeight;
-                else
+
+                    if ( height <= 0 )
+                        height = (*k)->getPixelHeight(); // TODO: display a warning?
+
+                } else {
                     height = parameterscvCreateTrainingSamples.height;
-
-
-//                num = nbDistortions;
-
-
+                }
 
 
 

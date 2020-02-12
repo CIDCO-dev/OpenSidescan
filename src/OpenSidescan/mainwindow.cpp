@@ -26,7 +26,7 @@
 #include "workerimportsidescanfiles.h"
 #include "workeropenproject.h"
 
-#include "parameterscvCreateTrainingSamples.h"
+//#include "parameterscvCreateTrainingSamples.h"
 
 #include "trainingsampleswindow.h"
 
@@ -430,7 +430,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
+//    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
 //    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
 

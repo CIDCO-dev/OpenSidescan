@@ -16,6 +16,12 @@
 #include "sidescanfile.h"
 #include "project.h"
 
+#include "parameterscvCreateTrainingSamples.h"
+
+
+//#include "parameterscvCreateTrainingSamples.h"
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -93,6 +99,8 @@ private:
     int    mserMaximumAreaValue                 = 14400;
     bool   showFeatureMarkersValue              = false;
     bool   mergeOverlappingBoundingBoxesValue   = true;
+
+    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
 };
 

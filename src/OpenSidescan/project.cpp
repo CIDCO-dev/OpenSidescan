@@ -850,3 +850,37 @@ void Project::saveBackgroundImage( SidescanImage * image, const QString & folder
 
 
 }
+
+bool Project::areThereFiles() const
+{
+    if ( files.size() != 0 )
+        return true;
+    else
+        return false;
+}
+bool Project::areThereObjects() const
+{
+    if ( areThereFiles() == false )
+        return false;
+
+    bool thereAreObjects = false;
+
+    auto i = files.begin(); // i is an iterator to a ( SidescanFile * )
+
+    while ( thereAreObjects == false && i != files.end() ) {
+
+        auto j=(*i)->getImages().begin(); // j is an iterator to a (SidescanImage* )
+
+        while ( thereAreObjects == false && j!=(*i)->getImages().end() ) {
+
+            if ( (*j)->getObjects().size() != 0 )
+                thereAreObjects = true;
+
+            ++j;
+        }
+
+        ++i;
+    }
+
+    return thereAreObjects;
+}

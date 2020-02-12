@@ -394,8 +394,61 @@ void MainWindow::actionExportTrainingObjectSamples()
 {
     std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
-    if( ! currentProject )
+    if( ! currentProject ) {
+
+        std::string toDisplay = "There is no current project.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
         return;
+    }
+
+
+    const std::vector<SidescanFile *> & files = currentProject->getFiles();
+
+    if ( files.size() == 0 ) {
+
+        std::string toDisplay = "There are no sidescan files.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
+    bool thereAreNoObjects = true;
+
+    auto i = files.begin(); // i is an iterator to a ( SidescanFile * )
+
+    while ( thereAreNoObjects && i != files.end() ) {
+
+        auto j=(*i)->getImages().begin(); // j is an iterator to a (SidescanImage* )
+
+        while ( thereAreNoObjects && j!=(*i)->getImages().end() ) {
+
+            if ( (*j)->getObjects().size() != 0 )
+                thereAreNoObjects = false;
+
+            ++j;
+        }
+
+        ++i;
+    }
+
+
+    if ( thereAreNoObjects ) {
+
+        std::string toDisplay = "There are no objects.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
 
 
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;

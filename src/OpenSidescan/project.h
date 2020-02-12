@@ -37,6 +37,9 @@ public:
     void saveBackgroundImage( SidescanImage * image, const QString & folder, std::ofstream & outFile,
                                    int backgroundTop, int backgroundBottom );
 
+    bool areThereFiles() const;
+    bool areThereObjects() const;
+
 private:
 
 //    std::vector< std::pair <int,int> > computeObjectsVerticalOccupancy( SidescanImage * image );

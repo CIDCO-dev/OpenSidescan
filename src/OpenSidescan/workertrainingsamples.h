@@ -51,6 +51,8 @@ public slots:
 signals:
     void progress(int);
 
+    void done();
+
 //    void continueWhatYourDoingIsNowFalse();
 
 private:

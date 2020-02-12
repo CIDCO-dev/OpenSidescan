@@ -13,24 +13,25 @@
 
 #include <QDebug>
 
-#include <QProgressDialog>
+#include <QDialog>
+#include <QString>
+#include <QLabel>
+#include <QProgressBar>
+#include <QPushButton>
 
 
-class ProgressDialogTrainingSamples : public QProgressDialog
+
+class ProgressDialogTrainingSamples : public QDialog
 {
     Q_OBJECT
 
 public:
-    ProgressDialogTrainingSamples(const QString &labelText,
+    ProgressDialogTrainingSamples( const QString &labelText,
                                   const QString &cancelButtonText,
                                   int minimum,
                                   int maximum,
-                                  QWidget *parent = nullptr,
-                                  Qt::WindowFlags f = Qt::WindowFlags())
-        : QProgressDialog( labelText, cancelButtonText, minimum, maximum, parent, f)
-    {
+                                  QWidget *parent = nullptr );
 
-    }
 
 
 //    virtual ~ProgressDialogTrainingSamples(){}
@@ -40,21 +41,24 @@ public:
 
 public slots:
 
-//    virtual void cancel() override;
+    void closeDialog();
 
-    void closeWindow()
-    {
-        QDialog::done( 0 );
-    }
+    void cancelButtonClicked();
 
+    void setValue( int value );
 
 
 
 signals:
-//    void canceled() override;
 
 private:
 
+    QLabel * label;
+    QProgressBar * bar;
+
+    QPushButton * cancelButton;
+
+    bool * continueWhatYourDoing;
 
 };
 

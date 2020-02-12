@@ -68,7 +68,7 @@ public slots:
 
     void addFileToProjectWindow( SidescanFile * file);
 
-    void createAndSaveTrainingObjectSamplesProgressDialogCancel();
+//    void createAndSaveTrainingObjectSamplesProgressDialogCancel();
 
 
 

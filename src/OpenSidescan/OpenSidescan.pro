@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     projecttreemodel.cpp \
     parameterscvCreateTrainingSamples.cpp \
     trainingsampleswindow.cpp \
-    workertrainingsamples.cpp
+    workertrainingsamples.cpp \
+    progressdialogtrainingsamples.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \

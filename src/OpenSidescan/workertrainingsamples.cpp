@@ -71,8 +71,9 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
 void WorkerTrainingSamples::doWork() {
 
     if ( *continueWhatYourDoing == false ) {
-        progress( numberOfObjects + 2 ); // To close the progress dialog
+//        progress( numberOfObjects + 2 ); // To close the progress dialog
 //        emit continueWhatYourDoingIsNowFalse();
+        emit done();
         return;
     }
     std::vector<SidescanFile *> & files = project->getFiles();
@@ -108,8 +109,10 @@ void WorkerTrainingSamples::doWork() {
 
 
     if ( *continueWhatYourDoing == false ) {
-        progress( numberOfObjects + 2 ); // To close the progress dialog
+//        progress( numberOfObjects + 2 ); // To close the progress dialog
 //        emit continueWhatYourDoingIsNowFalse();
+        emit done();
+
         return;
     }
 
@@ -211,8 +214,10 @@ void WorkerTrainingSamples::doWork() {
 
     if ( *continueWhatYourDoing == false )
     {
-        progress( numberOfObjects + 2 ); // To close the progress dialog
+//        progress( numberOfObjects + 2 ); // To close the progress dialog
 //        emit continueWhatYourDoingIsNowFalse();
+        emit done();
+
         return;
     }
 
@@ -232,8 +237,10 @@ void WorkerTrainingSamples::doWork() {
 
                 if ( *continueWhatYourDoing == false ) {
                     qDebug() << "-------- DoWork, *continueWhatYourDoing == false  --------------\n";
-                    progress( numberOfObjects + 2 ); // To close the progress dialog
+//                    progress( numberOfObjects + 2 ); // To close the progress dialog
 //                    emit continueWhatYourDoingIsNowFalse();
+                    emit done();
+
                     return;
                 }
 
@@ -337,6 +344,7 @@ void WorkerTrainingSamples::doWork() {
 
                 std::cout << "\n  After call to cvCreateTrainingSamples()\n" << std::endl;
 
+                countObjects++;
                 progress( countObjects + 2 );
             }
         }
@@ -345,6 +353,9 @@ void WorkerTrainingSamples::doWork() {
     qDebug() << "-------- End of DoWork --------------\n";
 
     progress( numberOfObjects + 2 ); // To close the progress dialog
+
+    emit done();
+
 }
 
 

@@ -375,7 +375,7 @@ void MainWindow::actionSaveObjectImages(){
     if ( ! dir.mkdir( fileInfo.completeBaseName() ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\"" + fileInfo.completeBaseName().toStdString()
-                + "\"\n\nin the path \"\n\n" + fileInfo.absolutePath().toStdString() + "\"\n";
+                + "\"\n\nin the path\n\n\"" + fileInfo.absolutePath().toStdString() + "\"\n";
 
         qDebug() << tr( toDisplay.c_str() );
 
@@ -396,7 +396,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
     if( ! currentProject ) {
 
-        std::string toDisplay = "There is no current project.\n";
+        std::string toDisplay = "There is no active project.\n";
 
         qDebug() << tr( toDisplay.c_str() );
 
@@ -405,9 +405,8 @@ void MainWindow::actionExportTrainingObjectSamples()
     }
 
 
-    const std::vector<SidescanFile *> & files = currentProject->getFiles();
 
-    if ( files.size() == 0 ) {
+    if ( currentProject->areThereFiles() == false ) {
 
         std::string toDisplay = "There are no sidescan files.\n";
 
@@ -418,27 +417,7 @@ void MainWindow::actionExportTrainingObjectSamples()
     }
 
 
-    bool thereAreNoObjects = true;
-
-    auto i = files.begin(); // i is an iterator to a ( SidescanFile * )
-
-    while ( thereAreNoObjects && i != files.end() ) {
-
-        auto j=(*i)->getImages().begin(); // j is an iterator to a (SidescanImage* )
-
-        while ( thereAreNoObjects && j!=(*i)->getImages().end() ) {
-
-            if ( (*j)->getObjects().size() != 0 )
-                thereAreNoObjects = false;
-
-            ++j;
-        }
-
-        ++i;
-    }
-
-
-    if ( thereAreNoObjects ) {
+    if ( currentProject->areThereObjects() == false ) {
 
         std::string toDisplay = "There are no objects.\n";
 
@@ -456,8 +435,6 @@ void MainWindow::actionExportTrainingObjectSamples()
 //    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
 
     QString folder = "";
-
-
 
 //    TrainingSamplesWindow * dialog = new TrainingSamplesWindow( this, folder,
 //                                                 parameterscvCreateTrainingSamples);

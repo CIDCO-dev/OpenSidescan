@@ -71,6 +71,8 @@ private:
 
     void updateValues();
 
+    bool createFolders();
+
 
 
     QString folder;
@@ -79,6 +81,10 @@ private:
 
 
     bool userDidCancel;
+
+    const std::string originalObjectImages;
+    const std::string outputPositiveSamples;
+    const std::string background;
 
 
 //    QGroupBox * colorsGroupBox;

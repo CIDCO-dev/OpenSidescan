@@ -464,9 +464,33 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
     std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
 
 
+    if ( areThereObjects() == false )
+        return;
+
+
+
+    // Create folder structure
+
+    std::string originalObjectImages = "OriginalObjectImages";
+    std::string outputPositiveSamples = "OutputPositiveSamples";
+    std::string background = "Background";
+
+
+    QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
+    QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
+    QString folderBackground = folder + "/" + QObject::tr( background.c_str() );
+
+
+
+
+
+
+
     // Build background images and bg.txt file
 
-    QString fileNameBgDotTxt = folder + "/" + "bg.txt";
+
+
+    QString fileNameBgDotTxt = folderBackground + "/" + "bg.txt";
 
     std::ofstream outFile;
     outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
@@ -546,7 +570,7 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
                 // no objects, save the entire image as background
                 std::cout << "    Image as no objects, background would start at height 0 and end at " << imageOverallHeight - 1 << std::endl;
 
-                saveBackgroundImage( *j, folder, outFile, 0, imageOverallHeight - 1 );
+                saveBackgroundImage( *j, folderBackground, outFile, 0, imageOverallHeight - 1 );
 
             } else {
 
@@ -570,7 +594,7 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
                         std::cout << "    Image background would start at height " << backgroundTop
                                    << " and end at " << backgroundBottom << std::endl;
 
-                        saveBackgroundImage( *j, folder, outFile, backgroundTop, backgroundBottom );
+                        saveBackgroundImage( *j, folderBackground, outFile, backgroundTop, backgroundBottom );
                     }
 
                     backgroundTop = objectsVerticalPositions[ count ].second + 1;
@@ -586,7 +610,7 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
                     std::cout << "    Image background would start at height " << backgroundTop
                               << " and end at " << imageOverallHeight << std::endl;
 
-                    saveBackgroundImage( *j, folder, outFile, backgroundTop, imageOverallHeight - 1 );
+                    saveBackgroundImage( *j, folderBackground, outFile, backgroundTop, imageOverallHeight - 1 );
                 }
 
 
@@ -626,7 +650,8 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
 
                 QString objectImageFileName = objectName + "." + fileExtension;
 
-                QString objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                QString objectImageFileNameWithPath = folderOriginalObjectImages
+                                                        + "/" + objectImageFileName;
 
                 QFileInfo fileInfo( objectImageFileNameWithPath );
 
@@ -635,7 +660,8 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
                 while ( fileInfo.exists() ) {
 
                     objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
-                    objectImageFileNameWithPath = folder + "/" + objectImageFileName;
+                    objectImageFileNameWithPath = folderOriginalObjectImages
+                                                    + "/" + objectImageFileName;
                     fileInfo.setFile( objectImageFileNameWithPath );
                     count++;
                 }
@@ -674,8 +700,13 @@ void Project::createAndSaveTrainingObjectSamples( const QString & folder,
 
 
                 std::string imagenameString = objectImageFileNameWithPath.toStdString();
-                std::string bgfilenameString = std::string( folder.toStdString() + "/bg.txt" );
-                std::string vecnameString = std::string( objectImageFileNameWithPath.toStdString() + ".vec" );
+                std::string bgfilenameString = std::string( folderBackground.toStdString() + "/bg.txt" );
+//                std::string vecnameString = std::string( objectImageFileNameWithPath.toStdString() + ".vec" );
+                std::string vecnameString = std::string(  ( folderOutputPositiveSamples + "/" + objectImageFileName
+                                                            + QString::number( width ) + "x" + QString::number( height )
+                                                            + ".vec" ).toStdString() );
+
+
 
                 const char * imagename = imagenameString.c_str();
                 const char * bgfilename = bgfilenameString.c_str();

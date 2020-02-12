@@ -4,7 +4,7 @@
 
 ParameterscvCreateTrainingSamples::ParameterscvCreateTrainingSamples()
 
-    : num( 1000 ),
+    : num( 10 ),
       bgcolor( 0 ),
       bgthreshold( 90 ),
       invert( 0 ),

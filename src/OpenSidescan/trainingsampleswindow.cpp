@@ -26,12 +26,16 @@
 #include "trainingsampleswindow.h"
 
 
+
 TrainingSamplesWindow::TrainingSamplesWindow( QWidget *parent,
                                               const QString & folder,
                                  const ParameterscvCreateTrainingSamples & parameters )
     : QDialog( parent ),
       folder( folder ), parameters( parameters ),
-      userDidCancel( false )
+      userDidCancel( false ),
+      originalObjectImages( "OriginalObjectImages" ),
+      outputPositiveSamples( "OutputPositiveSamples"),
+      background("Background" )
 {
     qDebug() << "Beginning of TrainingSamplesWindow::TrainingSamplesWindow()\n";
 
@@ -480,6 +484,10 @@ void TrainingSamplesWindow::OKButtonClicked()
 
     if ( validateLineEditValues() == true )
     {
+        if ( createFolders() == false ) {
+            return;
+        }
+
         updateValues();
 //        emit QDialog::done( 0 );
         accept();
@@ -524,6 +532,36 @@ bool TrainingSamplesWindow::validateLineEditValues()
         displayWarning( toDisplay );
         return false;
     }
+
+
+    fileInfo.setFile( pathLineEdit->text() + "/" + tr( originalObjectImages.c_str() ) );
+
+    if ( fileInfo.exists() ) {
+        std::string toDisplay = "\"" + originalObjectImages
+                + "\" already exists. Please choose a different path where to write the file structure\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+
+    fileInfo.setFile( pathLineEdit->text() + "/" + tr( outputPositiveSamples.c_str() ) );
+
+    if ( fileInfo.exists() ) {
+        std::string toDisplay = "\"" + outputPositiveSamples
+                + "\" already exists. Please choose a different path where to write the file structure\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
+    fileInfo.setFile( pathLineEdit->text() + "/" + tr( background.c_str() ) );
+
+    if ( fileInfo.exists() ) {
+        std::string toDisplay = "\"" + background
+                + "\" already exists. Please choose a different path where to write the file structure\n";
+        displayWarning( toDisplay );
+        return false;
+    }
+
 
 
     qDebug() << "Before text = numLineEdit->text();\n";
@@ -708,12 +746,68 @@ bool TrainingSamplesWindow::validateLineEditValues()
     return true;
 }
 
+
+bool TrainingSamplesWindow::createFolders()
+{
+
+    QFileInfo fileInfo( pathLineEdit->text() );
+
+
+    // Make the folder structure
+
+    fileInfo.setFile( pathLineEdit->text() );
+
+    // Try and create the folder in which to put the images
+    QDir dir( fileInfo.absolutePath() );
+
+
+    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( originalObjectImages.c_str() ) ) )
+    {
+        std::string toDisplay = "Could not create the folder \n\n\""
+                + originalObjectImages
+                + "\"\n\nin the path \n\n\"" + pathLineEdit->text().toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return false;
+    }
+
+    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( outputPositiveSamples.c_str() ) ) )
+    {
+        std::string toDisplay = "Could not create the folder \n\n\""
+                + outputPositiveSamples
+                + "\"\n\nin the path \n\n\"" + pathLineEdit->text().toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return false;
+    }
+
+    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( background.c_str() ) ) )
+    {
+        std::string toDisplay = "Could not create the folder \n\n\""
+                + background
+                + "\"\n\nin the path \n\n\"" + pathLineEdit->text().toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+
+        return false;
+    }
+
+    return true;
+}
+
+
+
+
 void TrainingSamplesWindow::updateValues()
 {
-    if ( validateLineEditValues() == false )
-        return;
-
-
     folder = pathLineEdit->text();
 
     bool OK;

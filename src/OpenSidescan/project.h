@@ -40,6 +40,8 @@ public:
     bool areThereFiles() const;
     bool areThereObjects() const;
 
+    int computeNumberOfObjects() const;
+
 private:
 
 //    std::vector< std::pair <int,int> > computeObjectsVerticalOccupancy( SidescanImage * image );

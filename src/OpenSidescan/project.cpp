@@ -915,3 +915,26 @@ bool Project::areThereObjects() const
 
     return thereAreObjects;
 }
+
+int Project::computeNumberOfObjects() const
+{
+
+    if ( areThereFiles() == false )
+        return 0;
+
+    int numberOfObjects = 0;
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            numberOfObjects += (*j)->getObjects().size();
+
+        }
+    }
+
+    return numberOfObjects;
+}
+

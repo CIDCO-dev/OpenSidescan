@@ -429,6 +429,12 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
+    qDebug() << "currentProject->computeNumberOfObjects(): "
+             << currentProject->computeNumberOfObjects() << "\n";
+
+
+
+
 
 //    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 

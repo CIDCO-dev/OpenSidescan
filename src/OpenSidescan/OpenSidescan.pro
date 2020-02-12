@@ -72,7 +72,8 @@ SOURCES += main.cpp\
     projecttreeitem.cpp \
     projecttreemodel.cpp \
     parameterscvCreateTrainingSamples.cpp \
-    trainingsampleswindow.cpp
+    trainingsampleswindow.cpp \
+    workertrainingsamples.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -98,7 +99,9 @@ HEADERS  += mainwindow.h \
     projecttreeitem.h \
     projecttreemodel.h \
     parameterscvCreateTrainingSamples.h \
-    trainingsampleswindow.h
+    trainingsampleswindow.h \
+    workertrainingsamples.h \
+    progressdialogtrainingsamples.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

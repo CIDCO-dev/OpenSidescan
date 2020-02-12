@@ -18,9 +18,7 @@
 
 #include "parameterscvCreateTrainingSamples.h"
 
-
-//#include "parameterscvCreateTrainingSamples.h"
-
+//#include "progressdialogtrainingsamples.h"
 
 namespace Ui {
 class MainWindow;
@@ -70,6 +68,9 @@ public slots:
 
     void addFileToProjectWindow( SidescanFile * file);
 
+    void createAndSaveTrainingObjectSamplesProgressDialogCancel();
+
+
 
 private:
 
@@ -77,6 +78,9 @@ private:
     bool promptProject();
     void refreshProjectUI();
     void selectImageTab(GeoreferencedObject * object);
+
+    void createAndSaveTrainingObjectSamples( const QString & folder,
+                        const ParameterscvCreateTrainingSamples & parameters );
 
     Ui::MainWindow       * ui;
     QTabWidget           * tabs;
@@ -101,6 +105,8 @@ private:
     bool   mergeOverlappingBoundingBoxesValue   = true;
 
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
+
+    bool continueToCreateAndSaveTrainingObjectSamples;
 
 };
 

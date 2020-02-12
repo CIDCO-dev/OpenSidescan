@@ -26,6 +26,9 @@
 #include "workerimportsidescanfiles.h"
 #include "workeropenproject.h"
 
+#include "workertrainingsamples.h"
+
+
 //#include "parameterscvCreateTrainingSamples.h"
 
 #include "trainingsampleswindow.h"
@@ -37,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
     currentProject(NULL),
-    fileInfo(NULL)
+    fileInfo(NULL),
+    continueToCreateAndSaveTrainingObjectSamples( false )
 {
     ui->setupUi(this);
     buildUI();
@@ -429,8 +433,8 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    qDebug() << "currentProject->computeNumberOfObjects(): "
-             << currentProject->computeNumberOfObjects() << "\n";
+//    qDebug() << "currentProject->computeNumberOfObjects(): "
+//             << currentProject->computeNumberOfObjects() << "\n";
 
 
 
@@ -479,8 +483,8 @@ void MainWindow::actionExportTrainingObjectSamples()
         dialog.getFolder( folder );
         dialog.getParameters( parameterscvCreateTrainingSamples );
 
-        currentProject->createAndSaveTrainingObjectSamples( folder,
-                                                           parameterscvCreateTrainingSamples );
+        createAndSaveTrainingObjectSamples( folder,
+                                 parameterscvCreateTrainingSamples );
 
     }
 
@@ -498,6 +502,127 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
+}
+
+
+
+
+void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
+                    const ParameterscvCreateTrainingSamples & parameters )
+{
+
+
+    int numberOfObjects = currentProject->computeNumberOfObjects();
+
+    if ( numberOfObjects == 0 )
+        return;
+
+
+
+    // Create folder structure
+
+    std::string originalObjectImages = "OriginalObjectImages";
+    std::string outputPositiveSamples = "OutputPositiveSamples";
+    std::string background = "Background";
+
+
+    QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
+    QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
+    QString folderBackground = folder + "/" + QObject::tr( background.c_str() );
+
+
+    // Open bg.txt file
+
+    QString fileNameBgDotTxt = folderBackground + "/" + "bg.txt";
+
+    std::ofstream outFile;
+    outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
+
+    if ( outFile.is_open() == false ) {
+        // TODO: warning dialog window
+        std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n"
+                  << "Cannot open file for bg.txt" << std::endl;
+
+        return;
+    }
+
+    // TODO TODO TODO
+
+    continueToCreateAndSaveTrainingObjectSamples = true;
+
+    QProgressDialog progress("Creating and Saving Training Object Samples...",
+                             "Cancel", 0, numberOfObjects + 2, this );
+
+//    ProgressDialogTrainingSamples progress("Creating and Saving Training Object Samples...",
+//                             "Cancel", 0, numberOfObjects + 2, this );
+
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint
+                            | Qt::WindowTitleHint);
+
+    progress.setValue(0);
+    progress.setMinimumDuration( 0 );
+
+//    progress.setAutoClose( false );
+
+//    progress.setAutoReset( false );
+
+    QThread * workerThread = new QThread( this );
+
+    WorkerTrainingSamples * worker = new WorkerTrainingSamples( currentProject,
+                                           numberOfObjects,
+                                            parameters,
+
+                                            folderOriginalObjectImages,
+                                            folderOutputPositiveSamples,
+                                            folderBackground,
+
+                                            outFile,
+                                            &continueToCreateAndSaveTrainingObjectSamples );
+
+    worker->moveToThread(workerThread);
+
+    connect( workerThread, &QThread::finished, worker, &WorkerTrainingSamples::deleteLater );
+    connect( workerThread, &QThread::started, worker, &WorkerTrainingSamples::doWork );
+
+    connect( worker, &WorkerTrainingSamples::progress, &progress, &QProgressDialog::setValue);
+
+
+//    connect( &progress, &QProgressDialog::canceled,
+//             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
+
+//    disconnect( &progress, &QProgressDialog::canceled, &progress, &QProgressDialog::cancel );
+
+//    connect( &progress, &ProgressDialogTrainingSamples::canceled,
+//             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
+
+//    connect( worker, &WorkerTrainingSamples::continueWhatYourDoingIsNowFalse,
+//             &progress, &ProgressDialogTrainingSamples::closeWindow );
+
+
+
+
+    connect( &progress, &QProgressDialog::canceled,
+             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
+
+    workerThread->start();
+
+    progress.exec();
+
+    workerThread->quit();
+    workerThread->wait();
+
+
+
+
+
+
+
+}
+
+void MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel()
+{
+    continueToCreateAndSaveTrainingObjectSamples = false;
 }
 
 void MainWindow::refreshTabs(){

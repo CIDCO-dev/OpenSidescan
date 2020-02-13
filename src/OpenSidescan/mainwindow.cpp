@@ -43,8 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs(new QTabWidget),
     currentProject(NULL),
     fileInfo(NULL),
-    folderCreateTrainingSamples( "" ),
-    continueToCreateAndSaveTrainingObjectSamples( false )
+    folderCreateTrainingSamples( "" )
 {
     ui->setupUi(this);
     buildUI();
@@ -501,7 +500,8 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     }
 
 
-    continueToCreateAndSaveTrainingObjectSamples = true;
+    bool continueToCreateAndSaveTrainingObjectSamples = true;
+
 
     ProgressDialogTrainingSamples progress(
                              0, numberOfObjects + 2,

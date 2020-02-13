@@ -104,9 +104,6 @@ private:
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
     QString folderCreateTrainingSamples;
-
-    bool continueToCreateAndSaveTrainingObjectSamples;
-
 };
 
 #endif // MAINWINDOW_H

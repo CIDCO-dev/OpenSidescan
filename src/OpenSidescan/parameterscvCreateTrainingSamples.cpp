@@ -6,7 +6,7 @@ ParameterscvCreateTrainingSamples::ParameterscvCreateTrainingSamples()
 
     : num( 10 ),
       bgcolor( 0 ),
-      bgthreshold( 90 ),
+      bgthreshold( 80 ),
       invert( 0 ),
       maxintensitydev( 40 ),
       maxxangle( 1.1 ),

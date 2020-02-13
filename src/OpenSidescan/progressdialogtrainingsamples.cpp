@@ -18,7 +18,7 @@
 ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
                               int minimum,
                               int maximum,
-                              bool * continueWhatYourDoing,
+                                BoolWithMutex * continueWhatYourDoing,
                               QWidget *parent )
     : QDialog( parent ),
       continueWhatYourDoing( continueWhatYourDoing )
@@ -59,9 +59,6 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
 
 void ProgressDialogTrainingSamples::cancelButtonClicked()
 {
-    qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked()" );
-
-
     cancelButton->setEnabled( false );
 
     cancelButton->setText( "Stopping..." );
@@ -71,13 +68,7 @@ void ProgressDialogTrainingSamples::cancelButtonClicked()
     bar->setMaximum( 0 );
     bar->setValue( 0 );
 
-    qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked(), Before '*continueWhatYourDoing = false'" );
-
-
-    *continueWhatYourDoing = false;
-
-    qDebug() << tr( "End of ProgressDialogTrainingSamples::cancelButtonClicked()" );
-
+    continueWhatYourDoing->setValue( false );
 }
 
 

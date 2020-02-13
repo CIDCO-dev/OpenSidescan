@@ -102,7 +102,8 @@ HEADERS  += mainwindow.h \
     parameterscvCreateTrainingSamples.h \
     trainingsampleswindow.h \
     workertrainingsamples.h \
-    progressdialogtrainingsamples.h
+    progressdialogtrainingsamples.h \
+    boolwithmutex.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

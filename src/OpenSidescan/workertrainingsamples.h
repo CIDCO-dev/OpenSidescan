@@ -19,6 +19,7 @@
 
 #include "parameterscvCreateTrainingSamples.h"
 
+#include "boolwithmutex.h"
 
 class WorkerTrainingSamples : public QObject
 {
@@ -34,13 +35,12 @@ public:
                             const QString & folderBackground,
 
                             std::ofstream & outFile,
-                            bool * continueWhatYourDoing );
+                            BoolWithMutex * continueWhatYourDoing );
 
 //    virtual ~WorkerTrainingSamples(){}
 
 public slots:
     void doWork();
-
 
 signals:
     void progress(int);
@@ -69,8 +69,7 @@ private:
 
     std::ofstream & outFile;
 
-    bool * continueWhatYourDoing;
-
+    BoolWithMutex * continueWhatYourDoing;
 };
 
 #endif // WORKERTRAININGSAMPLES_H

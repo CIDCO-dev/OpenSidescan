@@ -9,12 +9,11 @@
 #ifndef PROGRESSDIALOGTRAININGSAMPLES_H
 #define PROGRESSDIALOGTRAININGSAMPLES_H
 
-
 #include <QDialog>
 #include <QProgressBar>
 #include <QPushButton>
 
-
+#include "boolwithmutex.h"
 
 class ProgressDialogTrainingSamples : public QDialog
 {
@@ -23,15 +22,11 @@ class ProgressDialogTrainingSamples : public QDialog
 public:
     ProgressDialogTrainingSamples( int minimum,
                                   int maximum,
-                                  bool * continueWhatYourDoing,
+//                                  bool * continueWhatYourDoing,
+                                   BoolWithMutex * continueWhatYourDoing,
                                   QWidget *parent = nullptr );
 
-
-
 //    virtual ~ProgressDialogTrainingSamples(){}
-
-
-
 
 public slots:
 
@@ -42,7 +37,6 @@ public slots:
     void setValue( int value );
 
 
-
 signals:
 
 private:
@@ -51,8 +45,7 @@ private:
 
     QPushButton * cancelButton;
 
-    bool * continueWhatYourDoing;
-
+    BoolWithMutex * continueWhatYourDoing;
 };
 
 

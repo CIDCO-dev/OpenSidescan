@@ -55,7 +55,7 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
                                               const QString & folderBackground,
 
                                               std::ofstream & outFile,
-                                              bool * continueWhatYourDoing )
+                                              BoolWithMutex * continueWhatYourDoing  )
     : project( project ),
       numberOfObjects( numberOfObjects ),
       parameters( parameters ),
@@ -70,7 +70,7 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
 
 void WorkerTrainingSamples::doWork() {
 
-    if ( *continueWhatYourDoing == false ) {
+    if ( continueWhatYourDoing->getValue() == false ) {
         emit done();
         return;
     }
@@ -104,7 +104,7 @@ void WorkerTrainingSamples::doWork() {
               << "maxObjectHeight: " << maxObjectHeight << "\n" << std::endl;
 
 
-    if ( *continueWhatYourDoing == false ) {
+    if ( continueWhatYourDoing->getValue() == false ) {
         emit done();
         return;
     }
@@ -122,7 +122,7 @@ void WorkerTrainingSamples::doWork() {
         // j is an iterator to a (SidescanImage* )
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
 
-            if ( *continueWhatYourDoing == false )
+            if ( continueWhatYourDoing->getValue() == false )
             {
                 emit done();
                 return;
@@ -209,7 +209,7 @@ void WorkerTrainingSamples::doWork() {
 
     qDebug() << "-------- Done saving backgrounds --------------\n";
 
-    if ( *continueWhatYourDoing == false )
+    if ( continueWhatYourDoing->getValue() == false )
     {
         emit done();
         return;
@@ -231,7 +231,7 @@ void WorkerTrainingSamples::doWork() {
             // k is an iterator to (GeoreferencedObject *)
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-                if ( *continueWhatYourDoing == false ) {
+                if ( continueWhatYourDoing->getValue() == false ) {
                     emit done();
                     return;
                 }
@@ -348,7 +348,6 @@ void WorkerTrainingSamples::doWork() {
 }
 
 
-
 void WorkerTrainingSamples::computeObjectsVerticalOccupancy( SidescanImage * image, std::vector< std::pair <int,int> > & verticalPositions)
 {
 
@@ -422,10 +421,7 @@ void WorkerTrainingSamples::computeObjectsVerticalOccupancy( SidescanImage * ima
         std::cout << " " << itVec->first << ", " << itVec->second << "\n";
 
     std::cout << "\n" << std::endl;
-
-
 }
-
 
 
 void WorkerTrainingSamples::saveBackgroundImage( SidescanImage * image,
@@ -480,6 +476,4 @@ void WorkerTrainingSamples::saveBackgroundImage( SidescanImage * image,
     }
 
     std::cout << "\nEnd of WorkerTrainingSamples::saveBackgroundImage()\n" << std::endl;
-
-
 }

@@ -35,6 +35,8 @@
 
 #include "progressdialogtrainingsamples.h"
 
+#include "boolwithmutex.h"
+
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -500,7 +502,7 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     }
 
 
-    bool continueToCreateAndSaveTrainingObjectSamples = true;
+    BoolWithMutex continueToCreateAndSaveTrainingObjectSamples( true );
 
 
     ProgressDialogTrainingSamples progress(

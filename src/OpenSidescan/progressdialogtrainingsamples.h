@@ -30,6 +30,7 @@ public:
                                   const QString &cancelButtonText,
                                   int minimum,
                                   int maximum,
+                                  bool * continueWhatYourDoing,
                                   QWidget *parent = nullptr );
 
 

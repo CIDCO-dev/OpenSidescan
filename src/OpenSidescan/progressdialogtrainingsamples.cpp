@@ -16,8 +16,10 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples( const QString &lab
                               const QString &cancelButtonText,
                               int minimum,
                               int maximum,
+                              bool * continueWhatYourDoing,
                               QWidget *parent )
-    : QDialog( parent )
+    : QDialog( parent ),
+      continueWhatYourDoing( continueWhatYourDoing )
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
@@ -45,9 +47,17 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples( const QString &lab
 
 void ProgressDialogTrainingSamples::cancelButtonClicked()
 {
+    qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked()" );
+
+
     cancelButton->setEnabled( false );
 
+    qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked(), Before '*continueWhatYourDoing = false'" );
+
+
     *continueWhatYourDoing = false;
+
+    qDebug() << tr( "End of ProgressDialogTrainingSamples::cancelButtonClicked()" );
 
 }
 

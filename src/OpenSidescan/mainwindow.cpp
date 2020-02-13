@@ -491,10 +491,13 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
 
     if ( outFile.is_open() == false ) {
-        // TODO: warning dialog window
-        std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n"
-                  << "Cannot open file for bg.txt" << std::endl;
 
+        std::string toDisplay = "Cannot create file\n\n\""
+                                    + fileNameBgDotTxt.toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
         return;
     }
 

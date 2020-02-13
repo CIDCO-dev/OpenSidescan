@@ -71,8 +71,6 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
 void WorkerTrainingSamples::doWork() {
 
     if ( *continueWhatYourDoing == false ) {
-//        progress( numberOfObjects + 2 ); // To close the progress dialog
-//        emit continueWhatYourDoingIsNowFalse();
         emit done();
         return;
     }
@@ -105,16 +103,13 @@ void WorkerTrainingSamples::doWork() {
     std::cout << "maxObjectWidth:  " << maxObjectWidth << "\n"
               << "maxObjectHeight: " << maxObjectHeight << "\n" << std::endl;
 
-    progress( 1 );
-
 
     if ( *continueWhatYourDoing == false ) {
-//        progress( numberOfObjects + 2 ); // To close the progress dialog
-//        emit continueWhatYourDoingIsNowFalse();
         emit done();
-
         return;
     }
+
+    progress( 1 );
 
 
     // Go through each image and save images of background region large enough
@@ -126,6 +121,13 @@ void WorkerTrainingSamples::doWork() {
 
         // j is an iterator to a (SidescanImage* )
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            if ( *continueWhatYourDoing == false )
+            {
+                emit done();
+                return;
+            }
+
 
             std::cout << "\n\n  SidescanImage's channelName: " << (*j)->getChannelName() << "\n" << std::endl;
 
@@ -185,7 +187,7 @@ void WorkerTrainingSamples::doWork() {
 
                     backgroundTop = objectsVerticalPositions[ count ].second + 1;
 
-                }
+                }                             
 
 
                 // Background from the last object to the bottom of the overall image
@@ -199,27 +201,21 @@ void WorkerTrainingSamples::doWork() {
                     saveBackgroundImage( *j, folderBackground, outFile, backgroundTop, imageOverallHeight - 1 );
                 }
 
-
-
             }
-
-
 
         }
 
     }
 
     qDebug() << "-------- Done saving backgrounds --------------\n";
-    progress( 2 );
 
     if ( *continueWhatYourDoing == false )
     {
-//        progress( numberOfObjects + 2 ); // To close the progress dialog
-//        emit continueWhatYourDoingIsNowFalse();
         emit done();
-
         return;
     }
+
+    progress( 2 );
 
 
     // Go through each object and use "opencv_createsamples"
@@ -236,11 +232,7 @@ void WorkerTrainingSamples::doWork() {
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
                 if ( *continueWhatYourDoing == false ) {
-                    qDebug() << "-------- DoWork, *continueWhatYourDoing == false  --------------\n";
-//                    progress( numberOfObjects + 2 ); // To close the progress dialog
-//                    emit continueWhatYourDoingIsNowFalse();
                     emit done();
-
                     return;
                 }
 
@@ -352,10 +344,7 @@ void WorkerTrainingSamples::doWork() {
 
     qDebug() << "-------- End of DoWork --------------\n";
 
-    progress( numberOfObjects + 2 ); // To close the progress dialog
-
     emit done();
-
 }
 
 

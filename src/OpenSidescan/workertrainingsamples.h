@@ -11,15 +11,13 @@
 
 #include <utility>      // std::pair, std::make_pair
 
-#include <QDebug>
+#include <QObject>
 
 #include <QString>
 
 #include "project.h"
 
 #include "parameterscvCreateTrainingSamples.h"
-
-
 
 
 class WorkerTrainingSamples : public QObject
@@ -40,20 +38,13 @@ public:
 
 //    virtual ~WorkerTrainingSamples(){}
 
-
-
-//    std::string getExceptionString() const;
-
 public slots:
     void doWork();
 
 
 signals:
     void progress(int);
-
     void done();
-
-//    void continueWhatYourDoingIsNowFalse();
 
 private:
 
@@ -72,7 +63,6 @@ private:
 
     const ParameterscvCreateTrainingSamples & parameters;
 
-
     const QString & folderOriginalObjectImages;
     const QString & folderOutputPositiveSamples;
     const QString & folderBackground;
@@ -83,6 +73,4 @@ private:
 
 };
 
-
 #endif // WORKERTRAININGSAMPLES_H
-

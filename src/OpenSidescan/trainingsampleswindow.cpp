@@ -65,7 +65,7 @@ void TrainingSamplesWindow::initUI(){
 
     qDebug() << "Beginning of initUI()\n";
 
-    setWindowTitle("Parameters to Create Positive Samples");
+    setWindowTitle("Export Training Object Samples");
 
 
     /* Parameters to cvCreateTrainingSamples()

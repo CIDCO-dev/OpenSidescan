@@ -100,7 +100,7 @@ void MainWindow::actionCreate(){
 bool MainWindow::promptProject(){
     if(this->currentProject){
         //Prompt user if he wants to override current project
-        QMessageBox msgBox;
+        QMessageBox msgBox( this );
         msgBox.setText("There's already an active project. Are you sure you want to continue?");
         msgBox.setInformativeText("All unsaved changes will be lost.");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);

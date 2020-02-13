@@ -3,6 +3,9 @@
 #include <QProgressDialog>
 #include <QCoreApplication>
 
+#include <QStyledItemDelegate>
+
+
 #include <QThread>
 
 #include "workerdetection.h"
@@ -78,6 +81,14 @@ void DetectionWindow::createFastParameterBox(QFormLayout * advancedParametersLay
     advancedParametersLayout->addRow(new QLabel(tr("FAST Corner Intensity Threshold")),fastThreshold);
 
     fastType = new QComboBox(this);
+
+    // Issue with combobox and dark style sheet
+    // QComboBox expands the last chosen item
+    // https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/200
+    // Somewhat of a fix provided in the comments
+    QStyledItemDelegate * delegate = new QStyledItemDelegate();
+    fastType->setItemDelegate( delegate );
+
     //fastType->lineEdit()->setAlignment(Qt::AlignRight);
     fastType->addItem(tr("5-8"),cv::FastFeatureDetector::TYPE_5_8);
     fastType->addItem(tr("7-12"),cv::FastFeatureDetector::TYPE_7_12);

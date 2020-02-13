@@ -14,6 +14,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <QStyledItemDelegate>
+
 #include "../thirdParty/opencv/apps/createsamples/utility.hpp"
 
 //#include "../thirdParty/MBES-lib/src/utils/Constants.hpp"
@@ -279,6 +281,14 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     model->setStringList( comboOptions );
 
     colorsInversionComboBox = new QComboBox(this);
+
+    // Issue with combobox and dark style sheet
+    // QComboBox expands the last chosen item
+    // https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/200
+    // Somewhat of a fix provided in the comments
+    QStyledItemDelegate * delegate = new QStyledItemDelegate();
+    colorsInversionComboBox->setItemDelegate( delegate );
+
     colorsInversionComboBox->setModel( model );
     colorsInversionComboBox->setEditable( false );
 

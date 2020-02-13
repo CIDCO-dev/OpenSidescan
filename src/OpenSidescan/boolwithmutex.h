@@ -17,25 +17,25 @@
 class BoolWithMutex
 {
 public:
-    BoolWithMutex( bool stateStart )
-    : state( stateStart )
+    BoolWithMutex( bool value )
+    : value( value )
     {
     }
 
     bool getValue() {
         QMutexLocker ml(&mutex);
-        return state;
+        return value;
     }
 
-    bool setValue( bool stateIn ) {
+    bool setValue( bool valueIn ) {
         QMutexLocker ml(&mutex);
-        state = stateIn;
-        return state;
+        value = valueIn;
+        return value;
     }
 
 private:
     QMutex mutex;
-    bool state;
+    bool value;
 };
 
 #endif // BOOLWITHMUTEX_H

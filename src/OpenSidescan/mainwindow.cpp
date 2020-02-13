@@ -617,8 +617,7 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
 
 
     ProgressDialogTrainingSamples progress(
-                            "Creating and Saving Training Object Samples...",
-                             "Cancel", 0, numberOfObjects + 2,
+                             0, numberOfObjects + 2,
                             &continueToCreateAndSaveTrainingObjectSamples, this );
 
 

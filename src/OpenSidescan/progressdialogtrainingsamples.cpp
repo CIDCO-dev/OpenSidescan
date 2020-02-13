@@ -12,8 +12,7 @@
 #include "progressdialogtrainingsamples.h"
 
 
-ProgressDialogTrainingSamples::ProgressDialogTrainingSamples( const QString &labelText,
-                              const QString &cancelButtonText,
+ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
                               int minimum,
                               int maximum,
                               bool * continueWhatYourDoing,
@@ -23,7 +22,7 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples( const QString &lab
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
-    label = new QLabel( labelText );
+    label = new QLabel( "Creating and Saving Training Object Samples..." );
     layout->addWidget( label );
 
     bar = new QProgressBar( this );
@@ -34,7 +33,7 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples( const QString &lab
     layout->addWidget( bar );
 
 
-    cancelButton = new QPushButton( cancelButtonText);
+    cancelButton = new QPushButton( "Stop" );
 
     layout->addWidget( cancelButton );
 
@@ -51,6 +50,10 @@ void ProgressDialogTrainingSamples::cancelButtonClicked()
 
 
     cancelButton->setEnabled( false );
+
+    cancelButton->setText( "Stopping..." );
+
+
 
     qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked(), Before '*continueWhatYourDoing = false'" );
 

@@ -26,9 +26,7 @@ class ProgressDialogTrainingSamples : public QDialog
     Q_OBJECT
 
 public:
-    ProgressDialogTrainingSamples( const QString &labelText,
-                                  const QString &cancelButtonText,
-                                  int minimum,
+    ProgressDialogTrainingSamples( int minimum,
                                   int maximum,
                                   bool * continueWhatYourDoing,
                                   QWidget *parent = nullptr );

@@ -435,37 +435,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-//    qDebug() << "currentProject->computeNumberOfObjects(): "
-//             << currentProject->computeNumberOfObjects() << "\n";
-
-
-
-
-
-//    ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
-
-//    QString folder = "/home/chris/Documents/TestAutoSaveTrainingSamples";
-
     QString folder = "";
-
-//    TrainingSamplesWindow * dialog = new TrainingSamplesWindow( this, folder,
-//                                                 parameterscvCreateTrainingSamples);
-
-
-//    // TODO ? non native
-
-//    dialog->setWindowModality( Qt::WindowModal );
-
-//    dialog->exec();
-
-//    if ( dialog->getUserDidCancel() == false )
-//    {
-//        // TODO: get parameters and folders
-
-//        currentProject->createAndSaveTrainingObjectSamples( folder, parameterscvCreateTrainingSamples );
-
-//    }
-
 
 
     TrainingSamplesWindow dialog( this, folder,
@@ -481,52 +451,32 @@ void MainWindow::actionExportTrainingObjectSamples()
     {
         qDebug() << "User did not cancel\n";
 
-
         dialog.getFolder( folder );
         dialog.getParameters( parameterscvCreateTrainingSamples );
 
         createAndSaveTrainingObjectSamples( folder,
                                  parameterscvCreateTrainingSamples );
-
     }
-
-
-
-
-
 
 
 //    std::cout << "\nEnd of MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
-
 //    qDebug() <<  "End of MainWindow::actionExportTrainingObjectSamples()\n";
 
-
-
-
 }
-
-
 
 
 void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
                     const ParameterscvCreateTrainingSamples & parameters )
 {
-
-
     int numberOfObjects = currentProject->computeNumberOfObjects();
 
     if ( numberOfObjects == 0 )
         return;
 
-
-
-    // Create folder structure
-
     std::string originalObjectImages = "OriginalObjectImages";
     std::string outputPositiveSamples = "OutputPositiveSamples";
     std::string background = "Background";
-
 
     QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
     QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
@@ -548,78 +498,13 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
         return;
     }
 
-    // TODO TODO TODO
 
     continueToCreateAndSaveTrainingObjectSamples = true;
-
-//    QProgressDialog progress("Creating and Saving Training Object Samples...",
-//                             "Cancel", 0, numberOfObjects + 2, this );
-
-////    ProgressDialogTrainingSamples progress("Creating and Saving Training Object Samples...",
-////                             "Cancel", 0, numberOfObjects + 2, this );
-
-//    progress.setWindowModality(Qt::WindowModal);
-//    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint
-//                            | Qt::WindowTitleHint);
-
-//    progress.setValue(0);
-//    progress.setMinimumDuration( 0 );
-
-////    progress.setAutoClose( false );
-
-////    progress.setAutoReset( false );
-
-//    QThread * workerThread = new QThread( this );
-
-//    WorkerTrainingSamples * worker = new WorkerTrainingSamples( currentProject,
-//                                           numberOfObjects,
-//                                            parameters,
-
-//                                            folderOriginalObjectImages,
-//                                            folderOutputPositiveSamples,
-//                                            folderBackground,
-
-//                                            outFile,
-//                                            &continueToCreateAndSaveTrainingObjectSamples );
-
-//    worker->moveToThread(workerThread);
-
-//    connect( workerThread, &QThread::finished, worker, &WorkerTrainingSamples::deleteLater );
-//    connect( workerThread, &QThread::started, worker, &WorkerTrainingSamples::doWork );
-
-//    connect( worker, &WorkerTrainingSamples::progress, &progress, &QProgressDialog::setValue);
-
-
-////    connect( &progress, &QProgressDialog::canceled,
-////             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
-
-////    disconnect( &progress, &QProgressDialog::canceled, &progress, &QProgressDialog::cancel );
-
-////    connect( &progress, &ProgressDialogTrainingSamples::canceled,
-////             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
-
-////    connect( worker, &WorkerTrainingSamples::continueWhatYourDoingIsNowFalse,
-////             &progress, &ProgressDialogTrainingSamples::closeWindow );
-
-
-
-
-//    connect( &progress, &QProgressDialog::canceled,
-//             this, &MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel );
-
-//    workerThread->start();
-
-//    progress.exec();
-
-//    workerThread->quit();
-//    workerThread->wait();
-
-
 
     ProgressDialogTrainingSamples progress(
                              0, numberOfObjects + 2,
                             &continueToCreateAndSaveTrainingObjectSamples, this );
-
+    // TODO ? non native
 
     progress.setWindowModality(Qt::WindowModal);
     progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint
@@ -638,8 +523,6 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
                                             outFile,
                                             &continueToCreateAndSaveTrainingObjectSamples );
 
-
-
     worker->moveToThread(workerThread);
 
     connect( workerThread, &QThread::finished, worker, &WorkerTrainingSamples::deleteLater );
@@ -648,11 +531,8 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     connect( worker, &WorkerTrainingSamples::progress,
              &progress, &ProgressDialogTrainingSamples::setValue);
 
-
     connect( worker, &WorkerTrainingSamples::done,
              &progress, &ProgressDialogTrainingSamples::closeDialog );
-
-
 
     workerThread->start();
 
@@ -660,26 +540,9 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
 
     workerThread->quit();
     workerThread->wait();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
-//void MainWindow::createAndSaveTrainingObjectSamplesProgressDialogCancel()
-//{
-//    continueToCreateAndSaveTrainingObjectSamples = false;
-//}
+
 
 void MainWindow::refreshTabs(){
     if(tabs){

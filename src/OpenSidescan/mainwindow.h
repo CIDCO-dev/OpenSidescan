@@ -103,6 +103,8 @@ private:
 
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
+    QString folderCreateTrainingSamples;
+
     bool continueToCreateAndSaveTrainingObjectSamples;
 
 };

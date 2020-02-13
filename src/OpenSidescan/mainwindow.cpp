@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs(new QTabWidget),
     currentProject(NULL),
     fileInfo(NULL),
+    folderCreateTrainingSamples( "" ),
     continueToCreateAndSaveTrainingObjectSamples( false )
 {
     ui->setupUi(this);
@@ -435,10 +436,8 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    QString folder = "";
 
-
-    TrainingSamplesWindow dialog( this, folder,
+    TrainingSamplesWindow dialog( this, folderCreateTrainingSamples,
                           parameterscvCreateTrainingSamples);
 
     // TODO ? non native
@@ -451,10 +450,10 @@ void MainWindow::actionExportTrainingObjectSamples()
     {
         qDebug() << "User did not cancel\n";
 
-        dialog.getFolder( folder );
+        dialog.getFolder( folderCreateTrainingSamples );
         dialog.getParameters( parameterscvCreateTrainingSamples );
 
-        createAndSaveTrainingObjectSamples( folder,
+        createAndSaveTrainingObjectSamples( folderCreateTrainingSamples,
                                  parameterscvCreateTrainingSamples );
     }
 

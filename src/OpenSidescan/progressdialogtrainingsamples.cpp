@@ -49,7 +49,10 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
     layout->addWidget( buttonBox );
 
 
-    connect( cancelButton, SIGNAL( clicked() ), this, SLOT( cancelButtonClicked() ) );
+//    connect( cancelButton, SIGNAL( clicked() ), this, SLOT( cancelButtonClicked() ) );
+
+    connect( cancelButton, &QPushButton::clicked,
+             this, &ProgressDialogTrainingSamples::cancelButtonClicked );
 
     setLayout(layout);
 

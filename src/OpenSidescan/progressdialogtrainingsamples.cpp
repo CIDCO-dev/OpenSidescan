@@ -65,7 +65,10 @@ void ProgressDialogTrainingSamples::cancelButtonClicked()
 
     cancelButton->setText( "Stopping..." );
 
-
+    // Change progress bar to a busy indicator
+    bar->setMinimum( 0 );
+    bar->setMaximum( 0 );
+    bar->setValue( 0 );
 
     qDebug() << tr( "ProgressDialogTrainingSamples::cancelButtonClicked(), Before '*continueWhatYourDoing = false'" );
 

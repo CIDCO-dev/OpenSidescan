@@ -5,7 +5,10 @@
  /*
  * \author Christian Bouchard
  */
-
+#include <QDebug>
+#include <QString>
+#include <QLabel>
+#include <QDialogButtonBox>
 
 #include <QVBoxLayout>
 
@@ -22,7 +25,7 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
-    label = new QLabel( "Creating and Saving Training Object Samples..." );
+    QLabel * label = new QLabel( "Creating and Saving Training Object Samples..." );
     layout->addWidget( label );
 
     bar = new QProgressBar( this );
@@ -35,7 +38,16 @@ ProgressDialogTrainingSamples::ProgressDialogTrainingSamples(
 
     cancelButton = new QPushButton( "Stop" );
 
-    layout->addWidget( cancelButton );
+
+//    layout->addWidget( cancelButton );
+
+
+    QDialogButtonBox * buttonBox= new QDialogButtonBox(Qt::Horizontal);
+
+    buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+    layout->addWidget( buttonBox );
+
 
     connect( cancelButton, SIGNAL( clicked() ), this, SLOT( cancelButtonClicked() ) );
 

@@ -10,12 +10,7 @@
 #define PROGRESSDIALOGTRAININGSAMPLES_H
 
 
-
-#include <QDebug>
-
 #include <QDialog>
-#include <QString>
-#include <QLabel>
 #include <QProgressBar>
 #include <QPushButton>
 
@@ -52,7 +47,6 @@ signals:
 
 private:
 
-    QLabel * label;
     QProgressBar * bar;
 
     QPushButton * cancelButton;

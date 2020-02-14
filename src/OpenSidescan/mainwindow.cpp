@@ -33,7 +33,7 @@
 
 #include "trainingsampleswindow.h"
 
-#include "progressdialogtrainingsamples.h"
+#include "progressdialognotclosingrightawayoncancel.h"
 
 #include "boolwithmutex.h"
 
@@ -505,9 +505,12 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     BoolWithMutex continueToCreateAndSaveTrainingObjectSamples( true );
 
 
-    ProgressDialogTrainingSamples progress(
+    ProgressDialogNotClosingRightAwayOnCancel progress(
+                            "Creating and Saving Training Object Samples...",
+                            "Stop", "Stopping...",
                              0, numberOfObjects + 2,
-                            &continueToCreateAndSaveTrainingObjectSamples, this );
+                            &continueToCreateAndSaveTrainingObjectSamples,
+                            true, this );
     // TODO ? non native
 
     progress.setWindowModality(Qt::WindowModal);
@@ -533,10 +536,10 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     connect( workerThread, &QThread::started, worker, &WorkerTrainingSamples::doWork );
 
     connect( worker, &WorkerTrainingSamples::progress,
-             &progress, &ProgressDialogTrainingSamples::setValue);
+             &progress, &ProgressDialogNotClosingRightAwayOnCancel::setValue);
 
     connect( worker, &WorkerTrainingSamples::done,
-             &progress, &ProgressDialogTrainingSamples::closeDialog );
+             &progress, &ProgressDialogNotClosingRightAwayOnCancel::closeDialog );
 
     workerThread->start();
 

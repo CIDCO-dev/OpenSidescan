@@ -15,15 +15,18 @@
 
 #include "boolwithmutex.h"
 
-class ProgressDialogTrainingSamples : public QDialog
+class ProgressDialogNotClosingRightAwayOnCancel : public QDialog
 {
     Q_OBJECT
 
 public:
-    ProgressDialogTrainingSamples( int minimum,
-                                  int maximum,
-//                                  bool * continueWhatYourDoing,
+    ProgressDialogNotClosingRightAwayOnCancel( const QString &labelText,
+                                   const QString &cancelButtonText,
+                                   const QString &cancelButtonTextWhileCancelling,
+                                   const int minimum,
+                                  const int maximum,
                                    BoolWithMutex * continueWhatYourDoing,
+                                   const bool doChangeToBusyIndicatorWhileCancelling = true,
                                   QWidget *parent = nullptr );
 
 //    virtual ~ProgressDialogTrainingSamples(){}
@@ -45,7 +48,13 @@ private:
 
     QPushButton * cancelButton;
 
+    const QString cancelButtonTextWhileCancelling;
+
     BoolWithMutex * continueWhatYourDoing;
+
+    const bool doChangeToBusyIndicatorWhileCancelling;
+
+
 };
 
 

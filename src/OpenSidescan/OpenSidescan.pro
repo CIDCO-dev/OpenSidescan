@@ -74,7 +74,7 @@ SOURCES += main.cpp\
     parameterscvCreateTrainingSamples.cpp \
     trainingsampleswindow.cpp \
     workertrainingsamples.cpp \
-    progressdialogtrainingsamples.cpp
+    progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -102,7 +102,7 @@ HEADERS  += mainwindow.h \
     parameterscvCreateTrainingSamples.h \
     trainingsampleswindow.h \
     workertrainingsamples.h \
-    progressdialogtrainingsamples.h \
+    progressdialognotclosingrightawayoncancel.h \
     boolwithmutex.h
 
 FORMS    += mainwindow.ui \

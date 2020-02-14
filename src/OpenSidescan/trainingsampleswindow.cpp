@@ -261,13 +261,13 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     bgcolorLineEdit->setValidator( new QIntValidator(0, 255, this) );
     bgcolorLineEdit->setAlignment(Qt::AlignRight);
     bgcolorLineEdit->setText( QString::number( parameters.bgcolor) );
-    colorLayout->addRow( new QLabel(tr("Background Color (currently grayscale images are assumed)")), bgcolorLineEdit);
+    colorLayout->addRow( new QLabel(tr("Background color (currently grayscale images are assumed)")), bgcolorLineEdit);
 
     bgthreshLineEdit = new QLineEdit();
     bgthreshLineEdit->setValidator( new QIntValidator(0, 255, this) );
     bgthreshLineEdit->setAlignment(Qt::AlignRight);
     bgthreshLineEdit->setText( QString::number( parameters.bgthreshold) );
-    colorLayout->addRow( new QLabel(tr("Background Color Threshold")), bgthreshLineEdit);
+    colorLayout->addRow( new QLabel(tr("Background color threshold")), bgthreshLineEdit);
 
     // Combo box
 
@@ -306,7 +306,7 @@ QGroupBox * TrainingSamplesWindow::createColorsAndIntensityBox()
     maxidevLineEdit->setValidator( new QIntValidator(0, 255, this) );
     maxidevLineEdit->setAlignment(Qt::AlignRight);
     maxidevLineEdit->setText( QString::number( parameters.maxintensitydev) );
-    colorLayout->addRow( new QLabel(tr("Maximal Intensity Deviation of Pixels in Foreground Samples")), maxidevLineEdit);
+    colorLayout->addRow( new QLabel(tr("Maximal intensity deviation of pixels in foreground samples")), maxidevLineEdit);
 
     qDebug() << "End of TrainingSamplesWindow::createColorsAndIntensityBox()\n";
 
@@ -371,10 +371,10 @@ QGroupBox * TrainingSamplesWindow::createWidthBox()
 
     widthGroupBox->setLayout( widthLayout );
 
-    widthLabel = new QLabel( tr("Number of Pixels Change From Object Image Width") );
+    widthLabel = new QLabel( tr("Number of pixels change from object image width") );
 
 
-    useOriginalWidthAsBasisCheckBox = new QCheckBox(tr("Use Original Object Image Width as Basis"),this);
+    useOriginalWidthAsBasisCheckBox = new QCheckBox(tr("Use original object image width as basis"),this);
     useOriginalWidthAsBasisCheckBox->setChecked( parameters.useOriginalObjectImageWidthAsBasis );
     widthLayout->addWidget(useOriginalWidthAsBasisCheckBox);
 
@@ -406,10 +406,10 @@ QGroupBox * TrainingSamplesWindow::createHeightBox()
 
     heightGroupBox->setLayout( heightLayout );
 
-    heightLabel = new QLabel( tr("Number of Pixels Change From Object Image Height") );
+    heightLabel = new QLabel( tr("Number of pixels change from object image height") );
 
 
-    useOriginalHeightAsBasisCheckBox = new QCheckBox(tr("Use Original Object Image Height as Basis"),this);
+    useOriginalHeightAsBasisCheckBox = new QCheckBox(tr("Use original object image height as basis"),this);
     useOriginalHeightAsBasisCheckBox->setChecked( parameters.useOriginalObjectImageHeightAsBasis );
     heightLayout->addWidget(useOriginalHeightAsBasisCheckBox);
 
@@ -601,11 +601,11 @@ bool TrainingSamplesWindow::validateLineEditValues()
     numberInt = text.toInt( &OK );
 
     if ( OK == false ) {
-        std::string toDisplay = "Could not convert the Background Color into an integer number.\n";
+        std::string toDisplay = "Could not convert the Background color into an integer number.\n";
         displayWarning( toDisplay );
         return false;
     } else if ( numberInt < 0 || numberInt > 255) {
-        std::string toDisplay = "The Background Color must be an integer number within 0 to 255 inclusively.\n";
+        std::string toDisplay = "The Background color must be an integer number within 0 to 255 inclusively.\n";
         displayWarning( toDisplay );
         return false;
     }
@@ -616,11 +616,11 @@ bool TrainingSamplesWindow::validateLineEditValues()
     numberInt = text.toInt( &OK );
 
     if ( OK == false ) {
-        std::string toDisplay = "Could not convert the Background Color Threshold into an integer number.\n";
+        std::string toDisplay = "Could not convert the Background color threshold into an integer number.\n";
         displayWarning( toDisplay );
         return false;
     } else if ( numberInt < 0 || numberInt > 255) {
-        std::string toDisplay = "The Background Color Threshold must be an integer number within 0 to 255 inclusively.\n";
+        std::string toDisplay = "The Background color threshold must be an integer number within 0 to 255 inclusively.\n";
         displayWarning( toDisplay );
         return false;
     }
@@ -636,11 +636,11 @@ bool TrainingSamplesWindow::validateLineEditValues()
     numberInt = text.toInt( &OK );
 
     if ( OK == false ) {
-        std::string toDisplay = "Could not convert the Maximal Intensity Deviation of Pixels in Foreground Samples into an integer number.\n";
+        std::string toDisplay = "Could not convert the Maximal intensity deviation of pixels in foreground samples into an integer number.\n";
         displayWarning( toDisplay );
         return false;
     } else if ( numberInt < 0 || numberInt > 255) {
-        std::string toDisplay = "The Maximal Intensity Deviation of Pixels in Foreground Samples must be an integer number within 0 to 255 inclusively.\n";
+        std::string toDisplay = "The Maximal intensity deviation of pixels in foreground samples must be an integer number within 0 to 255 inclusively.\n";
         displayWarning( toDisplay );
         return false;
     }
@@ -702,7 +702,7 @@ bool TrainingSamplesWindow::validateLineEditValues()
     if ( useOriginalWidthAsBasisCheckBox->isChecked() ) {
 
         if ( OK == false ) {
-            std::string toDisplay = "Could not convert the Number of Pixels Change From Object Image Width into an integer number.\n";
+            std::string toDisplay = "Could not convert the Number of pixels change from object image width into an integer number.\n";
             displayWarning( toDisplay );
             return false;
         }
@@ -731,7 +731,7 @@ bool TrainingSamplesWindow::validateLineEditValues()
     if ( useOriginalHeightAsBasisCheckBox->isChecked() ) {
 
         if ( OK == false ) {
-            std::string toDisplay = "Could not convert the Number of Pixels Change From Object Image Height into an integer number.\n";
+            std::string toDisplay = "Could not convert the Number of pixels change from object image height into an integer number.\n";
             displayWarning( toDisplay );
             return false;
         }
@@ -887,7 +887,7 @@ void TrainingSamplesWindow::updateValues()
 void TrainingSamplesWindow::useOriginalWidthAsBasisCheckBoxStateChanged( int param )
 {
     if ( useOriginalWidthAsBasisCheckBox->isChecked() ) {
-        widthLabel->setText( tr("Number of Pixels Change From Object Image Width") );
+        widthLabel->setText( tr("Number of pixels change from object image width") );
         widthLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageWidth ) );
         widthLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
 
@@ -903,7 +903,7 @@ void TrainingSamplesWindow::useOriginalWidthAsBasisCheckBoxStateChanged( int par
 void TrainingSamplesWindow::useOriginalHeightAsBasisCheckBoxStateChanged( int param )
 {
     if ( useOriginalHeightAsBasisCheckBox->isChecked() ) {
-        heightLabel->setText( tr("Number of Pixels Change From Object Image Height") );
+        heightLabel->setText( tr("Number of pixels change from object image height") );
         heightLineEdit->setText( QString::number( parameters.nbPixelsChangeFromObjectImageHeight ) );
         heightLineEdit->setValidator( new QIntValidator(-1000000, 1000000, this) );
 

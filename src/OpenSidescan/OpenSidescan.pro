@@ -114,6 +114,8 @@ RESOURCES +=  ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
 
 CONFIG+=link_pkgconfig
 
+#CONFIG -= precompile_header
+
 unix{
         PKGCONFIG+=opencv eigen3
 }

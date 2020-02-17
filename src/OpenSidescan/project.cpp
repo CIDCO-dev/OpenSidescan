@@ -5,8 +5,23 @@
 #include <QPixmap>
 
 #include <cstring>
+
+
+//#include <set>
+//#include <utility>      // std::pair, std::make_pair
+
+#include <vector>
+
+//#include "opencv2/core.hpp"
+//#include "../thirdParty/opencv/apps/createsamples/utility.hpp"
+
+
+
 #include "sidescanimager.h"
 #include "qthelper.h"
+
+
+
 
 
 Project::Project()
@@ -423,3 +438,134 @@ void Project::saveObjectImages( const QString & absolutePath,
     }
 
 }
+
+//void Project::createAndSaveTrainingObjectSamples( const QString & folder,
+//                                                  const ParameterscvCreateTrainingSamples & parameterscvCreateTrainingSamples )
+//{
+//    std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
+
+
+//    int numberOfObjects = computeNumberOfObjects();
+
+//    if ( numberOfObjects == 0 )
+//        return;
+
+
+
+//    // Create folder structure
+
+//    std::string originalObjectImages = "OriginalObjectImages";
+//    std::string outputPositiveSamples = "OutputPositiveSamples";
+//    std::string background = "Background";
+
+
+//    QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
+//    QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
+//    QString folderBackground = folder + "/" + QObject::tr( background.c_str() );
+
+
+
+
+
+
+
+//    // Build background images and bg.txt file
+
+
+
+//    QString fileNameBgDotTxt = folderBackground + "/" + "bg.txt";
+
+//    std::ofstream outFile;
+//    outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
+
+//    if ( outFile.is_open() == false ) {
+//        // TODO: warning dialog window
+//        std::cout << "\nBeginning Project::createAndSaveTrainingObjectSamples()\n"
+//                  << "Cannot open file for bg.txt" << std::endl;
+
+//        return;
+//    }
+
+//    // TODO TODO TODO
+
+
+//    QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
+
+//    progress.setWindowModality(Qt::WindowModal);
+//    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
+
+//    progress.setValue(0);
+//    progress.setMinimumDuration( 0 );
+
+
+
+
+
+
+
+//    std::cout << "\nEnd of Project::createAndSaveTrainingObjectSamples()\n" << std::endl;
+
+//}
+
+
+
+
+
+
+
+bool Project::areThereFiles() const
+{
+    if ( files.size() != 0 )
+        return true;
+    else
+        return false;
+}
+bool Project::areThereObjects() const
+{
+    if ( areThereFiles() == false )
+        return false;
+
+    bool thereAreObjects = false;
+
+    auto i = files.begin(); // i is an iterator to a ( SidescanFile * )
+
+    while ( thereAreObjects == false && i != files.end() ) {
+
+        auto j=(*i)->getImages().begin(); // j is an iterator to a (SidescanImage* )
+
+        while ( thereAreObjects == false && j!=(*i)->getImages().end() ) {
+
+            if ( (*j)->getObjects().size() != 0 )
+                thereAreObjects = true;
+
+            ++j;
+        }
+
+        ++i;
+    }
+
+    return thereAreObjects;
+}
+
+int Project::computeNumberOfObjects() const
+{
+
+    if ( areThereFiles() == false )
+        return 0;
+
+    int numberOfObjects = 0;
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            numberOfObjects += (*j)->getObjects().size();
+
+        }
+    }
+
+    return numberOfObjects;
+}
+

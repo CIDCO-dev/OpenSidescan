@@ -49,6 +49,7 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
+    ../thirdParty/opencv/apps/createsamples/utility.cpp \
     opencvhelper.cpp \
     imagetab.cpp \
     aboutdialog.cpp \
@@ -69,7 +70,11 @@ SOURCES += main.cpp\
     workeropenproject.cpp \
     workerdetection.cpp \
     projecttreeitem.cpp \
-    projecttreemodel.cpp
+    projecttreemodel.cpp \
+    parameterscvCreateTrainingSamples.cpp \
+    trainingsampleswindow.cpp \
+    workertrainingsamples.cpp \
+    progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  += mainwindow.h \
     sidescanimager.h \
@@ -93,7 +98,12 @@ HEADERS  += mainwindow.h \
     workeropenproject.h \
     workerdetection.h \
     projecttreeitem.h \
-    projecttreemodel.h
+    projecttreemodel.h \
+    parameterscvCreateTrainingSamples.h \
+    trainingsampleswindow.h \
+    workertrainingsamples.h \
+    progressdialognotclosingrightawayoncancel.h \
+    boolwithmutex.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

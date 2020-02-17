@@ -26,6 +26,17 @@
 #include "workerimportsidescanfiles.h"
 #include "workeropenproject.h"
 
+#include "workertrainingsamples.h"
+
+
+//#include "parameterscvCreateTrainingSamples.h"
+
+#include "trainingsampleswindow.h"
+
+#include "progressdialognotclosingrightawayoncancel.h"
+
+#include "boolwithmutex.h"
+
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,7 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
     currentProject(NULL),
-    fileInfo(NULL)
+    fileInfo(NULL),
+    folderCreateTrainingSamples( "" )
 {
     ui->setupUi(this);
     buildUI();
@@ -90,7 +102,7 @@ void MainWindow::actionCreate(){
 bool MainWindow::promptProject(){
     if(this->currentProject){
         //Prompt user if he wants to override current project
-        QMessageBox msgBox;
+        QMessageBox msgBox( this );
         msgBox.setText("There's already an active project. Are you sure you want to continue?");
         msgBox.setInformativeText("All unsaved changes will be lost.");
         msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
@@ -371,7 +383,7 @@ void MainWindow::actionSaveObjectImages(){
     if ( ! dir.mkdir( fileInfo.completeBaseName() ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\"" + fileInfo.completeBaseName().toStdString()
-                + "\"\n\nin the path \"\n\n" + fileInfo.absolutePath().toStdString() + "\"\n";
+                + "\"\n\nin the path\n\n\"" + fileInfo.absolutePath().toStdString() + "\"\n";
 
         qDebug() << tr( toDisplay.c_str() );
 
@@ -385,6 +397,157 @@ void MainWindow::actionSaveObjectImages(){
     currentProject->saveObjectImages( fileInfo.absolutePath(), fileInfo.completeBaseName() );
 }
 
+
+void MainWindow::actionExportTrainingObjectSamples()
+{
+    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+
+    if( ! currentProject ) {
+
+        std::string toDisplay = "There is no active project.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
+
+    if ( currentProject->areThereFiles() == false ) {
+
+        std::string toDisplay = "There are no sidescan files.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
+    if ( currentProject->areThereObjects() == false ) {
+
+        std::string toDisplay = "There are no objects.\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
+
+
+    TrainingSamplesWindow dialog( this, folderCreateTrainingSamples,
+                          parameterscvCreateTrainingSamples);
+
+    // TODO ? non native
+
+    dialog.setWindowModality( Qt::WindowModal );
+
+    dialog.exec();
+
+    if ( dialog.getUserDidCancel() == false )
+    {
+        qDebug() << "User did not cancel\n";
+
+        dialog.getFolder( folderCreateTrainingSamples );
+        dialog.getParameters( parameterscvCreateTrainingSamples );
+
+        createAndSaveTrainingObjectSamples( folderCreateTrainingSamples,
+                                 parameterscvCreateTrainingSamples );
+    }
+
+
+//    std::cout << "\nEnd of MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+
+//    qDebug() <<  "End of MainWindow::actionExportTrainingObjectSamples()\n";
+
+}
+
+
+void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
+                    const ParameterscvCreateTrainingSamples & parameters )
+{
+    int numberOfObjects = currentProject->computeNumberOfObjects();
+
+    if ( numberOfObjects == 0 )
+        return;
+
+    std::string originalObjectImages = "OriginalObjectImages";
+    std::string outputPositiveSamples = "OutputPositiveSamples";
+    std::string background = "Background";
+
+    QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
+    QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
+    QString folderBackground = folder + "/" + QObject::tr( background.c_str() );
+
+
+    // Open bg.txt file
+
+    QString fileNameBgDotTxt = folderBackground + "/" + "bg.txt";
+
+    std::ofstream outFile;
+    outFile.open( fileNameBgDotTxt.toStdString(), std::ofstream::out );
+
+    if ( outFile.is_open() == false ) {
+
+        std::string toDisplay = "Cannot create file\n\n\""
+                                    + fileNameBgDotTxt.toStdString() + "\"\n";
+
+        qDebug() << tr( toDisplay.c_str() );
+
+        QMessageBox::warning( this, tr("Warning"), tr( toDisplay.c_str() ), QMessageBox::Ok );
+        return;
+    }
+
+
+    BoolWithMutex continueToCreateAndSaveTrainingObjectSamples( true );
+
+
+    ProgressDialogNotClosingRightAwayOnCancel progress(
+                            "Creating and saving training object samples...",
+                            "Stop", "Stopping...",
+                             0, numberOfObjects + 2,
+                            &continueToCreateAndSaveTrainingObjectSamples,
+                            true, this );
+    // TODO ? non native
+
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint
+                            | Qt::WindowTitleHint);
+
+    QThread * workerThread = new QThread( this );
+
+    WorkerTrainingSamples * worker = new WorkerTrainingSamples( currentProject,
+                                           numberOfObjects,
+                                            parameters,
+
+                                            folderOriginalObjectImages,
+                                            folderOutputPositiveSamples,
+                                            folderBackground,
+
+                                            outFile,
+                                            &continueToCreateAndSaveTrainingObjectSamples );
+
+    worker->moveToThread(workerThread);
+
+    connect( workerThread, &QThread::finished, worker, &WorkerTrainingSamples::deleteLater );
+    connect( workerThread, &QThread::started, worker, &WorkerTrainingSamples::doWork );
+
+    connect( worker, &WorkerTrainingSamples::progress,
+             &progress, &ProgressDialogNotClosingRightAwayOnCancel::setValue);
+
+    connect( worker, &WorkerTrainingSamples::done,
+             &progress, &ProgressDialogNotClosingRightAwayOnCancel::closeDialog );
+
+    workerThread->start();
+
+    progress.exec();
+
+    workerThread->quit();
+    workerThread->wait();
+}
 
 
 

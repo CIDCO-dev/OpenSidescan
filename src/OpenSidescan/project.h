@@ -7,6 +7,9 @@
 
 #include "sidescanfile.h"
 
+#include "parameterscvCreateTrainingSamples.h"
+
+
 class Project
 {
 public:
@@ -28,7 +31,24 @@ public:
     void saveObjectImages( const QString & absolutePath,
                            const QString & fileNameWithoutExtension );
 
+    void createAndSaveTrainingObjectSamples( const QString & folder,
+                                             const ParameterscvCreateTrainingSamples & parameterscvCreateTrainingSamples );
+
+    void saveBackgroundImage( SidescanImage * image, const QString & folder, std::ofstream & outFile,
+                                   int backgroundTop, int backgroundBottom );
+
+    bool areThereFiles() const;
+    bool areThereObjects() const;
+
+    int computeNumberOfObjects() const;
+
 private:
+
+//    std::vector< std::pair <int,int> > computeObjectsVerticalOccupancy( SidescanImage * image );
+    void computeObjectsVerticalOccupancy( SidescanImage * image,
+                                          std::vector< std::pair <int,int> > & verticalPositions);
+
+
     std::vector<SidescanFile *>   files; 
 
     std::string filename;

@@ -7,7 +7,7 @@ test_exec_dir=build/test/bin
 default: prepare opensidescan-gui
 	
 opensidescan-gui:
-	cd build/bin && qmake ../../src/OpenSidescan/.
+	cd build/bin && qmake -DENABLE_PRECOMPILED_HEADERS=OFF ../../src/OpenSidescan/.
 	cd build/bin && make
 
 testGUI:

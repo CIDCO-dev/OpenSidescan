@@ -104,6 +104,34 @@ void WorkerTrainingSamples::doWork() {
               << "maxObjectHeight: " << maxObjectHeight << "\n" << std::endl;
 
 
+    // Compute min background width and height based on object size
+    // and ParameterscvCreateTrainingSamples parameters
+
+    int minBackgroundWidth = 0;
+    int minBackgroundHeight = 0;
+
+    if ( parameters.useOriginalObjectImageWidthAsBasis ) {
+        minBackgroundWidth = maxObjectWidth + parameters.nbPixelsChangeFromObjectImageWidth;
+
+        if ( minBackgroundWidth <= 0 )
+            minBackgroundWidth = maxObjectWidth; // Display warning?
+
+    } else {
+        minBackgroundWidth = parameters.width;
+    }
+
+    if ( parameters.useOriginalObjectImageHeightAsBasis ) {
+        minBackgroundHeight = maxObjectHeight + parameters.nbPixelsChangeFromObjectImageHeight;
+
+        if ( minBackgroundHeight <= 0 )
+            minBackgroundHeight = maxObjectHeight; // Display warning?
+
+    } else {
+        minBackgroundHeight = parameters.height;
+    }
+
+
+
     if ( continueWhatYourDoing->getValue() == false ) {
         emit done();
         return;
@@ -135,20 +163,20 @@ void WorkerTrainingSamples::doWork() {
             int imageOverallHeight = (*j)->getImage().rows;
 
             std::cout << "imageOverallWidth:  " << imageOverallWidth << "\n"
-                      << "maxObjectWidth:           " << maxObjectWidth << std::endl;
+                      << "minBackgroundWidth: " << minBackgroundWidth << std::endl;
             std::cout << "imageOverallHeight: " << imageOverallHeight << "\n"
                       << "maxObjectHeight:          " << maxObjectHeight << std::endl;
 
 
-            if ( imageOverallWidth < maxObjectWidth ) {
-                std::cout << "\nimageOverallWidth: " << imageOverallWidth << "\n"
-                            << "maxObjectWidth:    " << maxObjectWidth << std::endl;
+            if ( imageOverallWidth < minBackgroundWidth ) {
+                std::cout << "\nimageOverallWidth:  " << imageOverallWidth << "\n"
+                            << "minBackgroundWidth: " << minBackgroundWidth << std::endl;
                 continue;
             }
 
-            if ( imageOverallHeight < maxObjectHeight) {
-                std::cout << "\nimageOverallHeight: " << imageOverallHeight << "\n"
-                            << "maxObjectHeight:    " << maxObjectHeight << std::endl;
+            if ( imageOverallHeight < minBackgroundHeight) {
+                std::cout << "\nimageOverallHeight:  " << imageOverallHeight << "\n"
+                            << "minBackgroundHeight: " << minBackgroundHeight << std::endl;
                 continue;
             }
 
@@ -177,7 +205,7 @@ void WorkerTrainingSamples::doWork() {
                 {
                     int backgroundBottom = objectsVerticalPositions[ count ].first - 1;
 
-                    if ( backgroundBottom - backgroundTop + 1 >= maxObjectHeight) {
+                    if ( backgroundBottom - backgroundTop + 1 >= minBackgroundHeight) {
 
                         std::cout << "    Image background would start at height " << backgroundTop
                                    << " and end at " << backgroundBottom << std::endl;
@@ -193,7 +221,7 @@ void WorkerTrainingSamples::doWork() {
                 // Background from the last object to the bottom of the overall image
 
                 if ( backgroundTop < imageOverallHeight - 1
-                        && ( imageOverallHeight - 1 ) - backgroundTop + 1 >= maxObjectHeight ) {
+                        && ( imageOverallHeight - 1 ) - backgroundTop + 1 >= minBackgroundHeight ) {
 
                     std::cout << "    Image background would start at height " << backgroundTop
                               << " and end at " << imageOverallHeight << std::endl;

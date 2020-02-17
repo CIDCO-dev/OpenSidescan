@@ -196,7 +196,7 @@ private:
 
     bool interactWithModalWindowActionSaveObjectImagesReachedTheEnd;
 
-    bool interactWithModalWindowToExportTrainingObjectSamples;
+    bool interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd;
 
 
 
@@ -267,7 +267,7 @@ void testGUI::initTestCase()
 
     interactWithModalWindowToFindObjectsReachedTheEnd = false;
 
-    interactWithModalWindowToExportTrainingObjectSamples = false;
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = false;
 
 
     timerTimeOut = new QTimer( this );
@@ -2377,13 +2377,6 @@ void testGUI::useMenuExportTrainingObjectSamples()
     std::cout << "\n\nBeginning of 'testGUI::useMenuExportTrainingObjectSamples()'"<< "\n" << std::endl;
 
 
-    std::cout << "QDir::currentPath(): \n\"" << QDir::currentPath().toStdString()
-              << "\"\n" << std::endl;
-
-    int returnedValue = system( "pwd" );
-
-    std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
-
 
 //    mainWindow->show();
 //    QTest::qWait(10000); // This time must be less than the timeout's time
@@ -2392,7 +2385,7 @@ void testGUI::useMenuExportTrainingObjectSamples()
 //    std::cout << "\n\nAfter wait"<< "\n" << std::endl;
 
     // Setup
-    interactWithModalWindowToExportTrainingObjectSamples = false;
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = false;
 
 
 
@@ -2426,7 +2419,7 @@ void testGUI::useMenuExportTrainingObjectSamples()
 
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 30 * 1000 );
+    timerTimeOut->start( 20 * 1000 );
 
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowATrainingSamplesWindow() ) );
 
@@ -2435,10 +2428,89 @@ void testGUI::useMenuExportTrainingObjectSamples()
 
 
     mainWindow->show();
-    QTest::qWait(20000);
+    QTest::qWait(10000);
+
+    std::cout << "\n\nAfter wait, will now verify path and files"<< "\n" << std::endl;
+
+    timerTimeOut->stop();
 
 
+    QVERIFY2( interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd,
+              "testGUI::useMenuExportTrainingObjectSamples: interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd is false" );
 
+
+    QFileInfo fileInfo;
+
+    // Verify that the three folders exist
+
+    const int nbPaths = 3;
+    std::string imagesPath[ nbPaths ] = { "../../../test/testProject/OriginalObjectImages/",
+                                        "../../../test/testProject/Background/",
+                                        "../../../test/testProject/OutputPositiveSamples/" };
+
+    for ( int count = 0; count < nbPaths; count++ ) {
+        fileInfo.setFile( tr( imagesPath[ count ].c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                    qPrintable( "useMenuExportTrainingObjectSamples: " + tr( imagesPath[ count ].c_str() ) + " does not exist" ) );
+
+        QVERIFY2( fileInfo.isDir(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( imagesPath[ count ].c_str() ) + " is not a directory" ) );
+    }
+
+
+    // Verify that 4 original object image files exist
+
+    const int nbObjectFiles = 4;
+    std::string originalObjectImagesFiles[ nbObjectFiles ] =
+                    { "Unknown.png", "Unknown_0.png", "Unknown_1.png", "Unknown_2.png" };
+
+    for ( int count = 0; count < nbObjectFiles; count++ ) {
+        std::string filename = imagesPath[ 0 ] + originalObjectImagesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
+
+    // Verify that 8 background images + bg.txt exit
+
+    std::string bgFilename = imagesPath[ 1 ] + "bg.txt";
+    fileInfo.setFile( tr( bgFilename.c_str() ) );
+
+    QVERIFY2( fileInfo.exists(),
+              qPrintable( "useMenuExportTrainingObjectSamples: " + tr( bgFilename.c_str() ) + " does not exist" ) );
+
+
+    const int nbBackgroundFiles = 8;
+    std::string backgroundImagesFiles[ nbBackgroundFiles ] =
+                    { "Background.png", "Background_0.png", "Background_1.png", "Background_2.png",
+                     "Background_3.png", "Background_4.png", "Background_5.png", "Background_6.png" };
+
+    for ( int count = 0; count < nbBackgroundFiles; count++ ) {
+        std::string filename = imagesPath[ 1 ] + backgroundImagesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
+
+
+    // Verify that 4 output positive samples files exist
+
+    std::string outputPositiveSamplesFiles[ nbObjectFiles ] =
+                    { "Unknown.png40x30.vec", "Unknown_0.png50x40.vec", "Unknown_1.png40x30.vec", "Unknown_2.png50x40.vec" };
+
+    for ( int count = 0; count < nbObjectFiles; count++ ) {
+        std::string filename = imagesPath[ 2 ] + outputPositiveSamplesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
 
 }
 
@@ -2447,14 +2519,6 @@ void testGUI::interactWithModalWindowATrainingSamplesWindow()
 {
     qDebug() << tr( "Beginning of interactWithModalWindowATrainingSamplesWindow()" );
 
-
-        std::cout << "\ntestGUI::interactWithModalWindowATrainingSamplesWindow()\n"
-                  << "QDir::currentPath(): \n\"" << QDir::currentPath().toStdString()
-                  << "\"\n" << std::endl;
-
-    int returnedValue = system( "pwd" );
-
-    std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
 
     mainWindow->show();
     QTest::qWait(500);
@@ -2534,7 +2598,7 @@ void testGUI::interactWithModalWindowATrainingSamplesWindow()
     mainWindow->show();
     QTest::qWait(500);
 
-    interactWithModalWindowToExportTrainingObjectSamples = true;
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = true;
 }
 
 

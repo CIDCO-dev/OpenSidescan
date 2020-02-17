@@ -441,7 +441,7 @@ void WorkerTrainingSamples::saveBackgroundImage( SidescanImage * image,
     QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
     // Find filename that does not already exist
-    QString objectName = QString::fromStdString( "background" );
+    QString objectName = QString::fromStdString( "Background" );
 
     QString fileExtension = "png";
 

@@ -772,33 +772,6 @@ bool TrainingSamplesWindow::createFolders()
     QDir dir( fileInfo.absoluteFilePath() );
 
 
-
-    std::cout << "TrainingSamplesWindow::createFolders(), pathLineEdit->text(): \""
-              <<pathLineEdit->text().toStdString()
-              << "\"\n" << std::endl;
-
-
-
-    qDebug() << "TrainingSamplesWindow::createFolders(), fileInfo.absolutePath(): \""
-             << fileInfo.absolutePath() << "\"\n";
-
-    std::cout << "TrainingSamplesWindow::createFolders(), fileInfo.absolutePath(): \""
-              <<fileInfo.absolutePath().toStdString()
-              << "\"\n" << std::endl;
-
-    std::cout << "TrainingSamplesWindow::createFolders(), dir.absolutePath(): \""
-              <<dir.absolutePath().toStdString()
-              << "\"\n" << std::endl;
-
-    QString tempQString = pathLineEdit->text() + "/" + tr( originalObjectImages.c_str() );
-
-    std::string tempString = tempQString.toStdString();
-
-    std::cout << "TrainingSamplesWindow::createFolders(), tempString: \""
-              <<tempString
-              << "\"\n" << std::endl;
-
-
     if ( ! dir.mkdir( tr( originalObjectImages.c_str() ) ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\""

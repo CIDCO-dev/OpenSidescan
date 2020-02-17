@@ -87,6 +87,8 @@ public slots:
 
     void interactWithModalWindowActionSaveObjectImages();
 
+    void interactWithModalWindowATrainingSamplesWindow();
+
 
 
 
@@ -150,11 +152,10 @@ private slots:
     // Verify using mouse to create an object, then saving the object image
     void useToolBarActionImportToLoadSidescanFileForFindingObjects();
     void operateMouseToCreateObjects();
+
+    void useMenuExportTrainingObjectSamples();
+
     void cleanAfterFindingObjects();
-
-
-
-
 
 
 
@@ -194,6 +195,9 @@ private:
     bool interactWithModalWindowObjectInformationReachedTheEnd;
 
     bool interactWithModalWindowActionSaveObjectImagesReachedTheEnd;
+
+    bool interactWithModalWindowToExportTrainingObjectSamples;
+
 
 
     QTimer *timerTimeOut;
@@ -262,6 +266,9 @@ void testGUI::initTestCase()
     doInteractWithModalWindowToSelectProjectToOpen = false;
 
     interactWithModalWindowToFindObjectsReachedTheEnd = false;
+
+    interactWithModalWindowToExportTrainingObjectSamples = false;
+
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -2077,10 +2084,18 @@ void testGUI::operateMouseToCreateObjects()
                                 + QString::number( fileInfo.size() ) ) );
     }
 
+
+    std::cout << "\nFinished verifying HTML file\n" << std::endl;
+
+//    mainWindow->show();
+//    QTest::qWait(10000); // This time must be less than the timeout's time
+
+
     std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
 
-
 }
+
+
 
 void testGUI::useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
                                     int topLeftCornerX, int topLeftCornerY,
@@ -2352,6 +2367,175 @@ void testGUI::interactWithModalWindowActionSaveObjectImages()
 }
 
 
+
+
+// Test create training samples
+
+void testGUI::useMenuExportTrainingObjectSamples()
+{
+
+    std::cout << "\n\nBeginning of 'testGUI::useMenuExportTrainingObjectSamples()'"<< "\n" << std::endl;
+
+
+    std::cout << "QDir::currentPath(): \n\"" << QDir::currentPath().toStdString()
+              << "\"\n" << std::endl;
+
+    int returnedValue = system( "pwd" );
+
+    std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
+
+
+//    mainWindow->show();
+//    QTest::qWait(10000); // This time must be less than the timeout's time
+
+
+//    std::cout << "\n\nAfter wait"<< "\n" << std::endl;
+
+    // Setup
+    interactWithModalWindowToExportTrainingObjectSamples = false;
+
+
+
+    QVERIFY2( mainWindow, "useMenuExportTrainingObjectSamples: mainWindow tests false");
+
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+    // Shortcuts won't work unless the window is active
+    QVERIFY2( QTest::qWaitForWindowActive( mainWindow ), "mainWindow is not active" );
+
+    // ---- Using shortkeys
+
+    // Keyboard to Object Inventory menu
+    QTest::keyClick( mainWindow, 'j', Qt::AltModifier );
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+
+    QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
+    QVERIFY2( menuBar, "useMenuExportTrainingObjectSamples: menuBar tests false");
+
+    QMenu *menuObject_Inventory = menuBar->findChild< QMenu * >( "menuObject_Inventory" );
+    QVERIFY2( menuObject_Inventory, "useMenuExportTrainingObjectSamples: menuObject_Inventory tests false");
+
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 30 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowATrainingSamplesWindow() ) );
+
+    // Keyboard for import sidescan file
+    QTest::keyClick( menuObject_Inventory, 't', Qt::AltModifier );
+
+
+    mainWindow->show();
+    QTest::qWait(20000);
+
+
+
+
+}
+
+
+void testGUI::interactWithModalWindowATrainingSamplesWindow()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowATrainingSamplesWindow()" );
+
+
+        std::cout << "\ntestGUI::interactWithModalWindowATrainingSamplesWindow()\n"
+                  << "QDir::currentPath(): \n\"" << QDir::currentPath().toStdString()
+                  << "\"\n" << std::endl;
+
+    int returnedValue = system( "pwd" );
+
+    std::cout << "\n  The value returned was: " << returnedValue << "\n" << std::endl;
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowATrainingSamplesWindow: modalWidget tests false");
+
+
+
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Export Training Object Samples" ),
+              "interactWithModalWindowATrainingSamplesWindow: modalWidget->windowTitle() is not 'Export Training Object Samples'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("pathLineEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowATrainingSamplesWindow: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+
+    QString pathname =  tr( "../../../test/testProject" );
+
+
+    QTest::keyClicks(lineEdit, pathname );
+
+    QVERIFY2( lineEdit->text() == pathname, "interactWithModalWindowATrainingSamplesWindow: pathname is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowATrainingSamplesWindow: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString OKButtonTextWithAmpersand = tr( "&OK" );
+    QString OKButtonText = tr( "OK" );
+    QPushButton * buttonOK = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == OKButtonText || button->text() == OKButtonTextWithAmpersand )
+            buttonOK = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( buttonOK, "interactWithModalWindowATrainingSamplesWindow: buttonOK tests false");
+
+//    QVERIFY2( false, "interactWithModalWindowATrainingSamplesWindow: false on purpose");
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(buttonOK, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    interactWithModalWindowToExportTrainingObjectSamples = true;
+}
 
 
 void testGUI::cleanAfterFindingObjects()

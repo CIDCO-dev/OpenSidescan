@@ -155,6 +155,7 @@ void TrainingSamplesWindow::initUI(){
 
     pathLineEdit = new QLineEdit();
     pathLineEdit->setText( folder );
+    pathLineEdit->setObjectName( "pathLineEdit" );
 
     pathLabel->setBuddy( pathLineEdit );
 
@@ -768,10 +769,37 @@ bool TrainingSamplesWindow::createFolders()
     fileInfo.setFile( pathLineEdit->text() );
 
     // Try and create the folder in which to put the images
-    QDir dir( fileInfo.absolutePath() );
+    QDir dir( fileInfo.absoluteFilePath() );
 
 
-    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( originalObjectImages.c_str() ) ) )
+
+    std::cout << "TrainingSamplesWindow::createFolders(), pathLineEdit->text(): \""
+              <<pathLineEdit->text().toStdString()
+              << "\"\n" << std::endl;
+
+
+
+    qDebug() << "TrainingSamplesWindow::createFolders(), fileInfo.absolutePath(): \""
+             << fileInfo.absolutePath() << "\"\n";
+
+    std::cout << "TrainingSamplesWindow::createFolders(), fileInfo.absolutePath(): \""
+              <<fileInfo.absolutePath().toStdString()
+              << "\"\n" << std::endl;
+
+    std::cout << "TrainingSamplesWindow::createFolders(), dir.absolutePath(): \""
+              <<dir.absolutePath().toStdString()
+              << "\"\n" << std::endl;
+
+    QString tempQString = pathLineEdit->text() + "/" + tr( originalObjectImages.c_str() );
+
+    std::string tempString = tempQString.toStdString();
+
+    std::cout << "TrainingSamplesWindow::createFolders(), tempString: \""
+              <<tempString
+              << "\"\n" << std::endl;
+
+
+    if ( ! dir.mkdir( tr( originalObjectImages.c_str() ) ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\""
                 + originalObjectImages
@@ -784,7 +812,7 @@ bool TrainingSamplesWindow::createFolders()
         return false;
     }
 
-    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( outputPositiveSamples.c_str() ) ) )
+    if ( ! dir.mkdir( tr( outputPositiveSamples.c_str() ) ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\""
                 + outputPositiveSamples
@@ -797,7 +825,7 @@ bool TrainingSamplesWindow::createFolders()
         return false;
     }
 
-    if ( ! dir.mkdir( pathLineEdit->text() + "/" + tr( background.c_str() ) ) )
+    if ( ! dir.mkdir( tr( background.c_str() ) ) )
     {
         std::string toDisplay = "Could not create the folder \n\n\""
                 + background

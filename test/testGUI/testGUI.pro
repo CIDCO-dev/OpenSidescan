@@ -19,9 +19,9 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-#CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT # So as not to display qDebug() outputs
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT # So as not to display qDebug() outputs
 
-#CONFIG(debug, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT # So as not to display qDebug() outputs
+CONFIG(debug, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT # So as not to display qDebug() outputs
 
 
 

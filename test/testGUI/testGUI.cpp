@@ -213,7 +213,7 @@ void testGUI::timeOutOccured()
 
     qDebug() << tr( "'testGUI::timeOutOccured()'" );
 
-    std::cout << "\n\n" << std::endl;
+    std::cout << "\n\n'testGUI::timeOutOccured()'\n\n" << std::endl;
 
 
     // If there is a modal widget, it must be closed to be able to continue through the test functions
@@ -1645,6 +1645,7 @@ void testGUI::cleanAfterUseToolBarActionFindObjects()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseToolBarActionFindObjects()'" << std::endl;
 
+    timerTimeOut->stop();
 
     QVERIFY2( interactWithModalWindowToFindObjectsReachedTheEnd, "cleanAfterUseToolBarActionFindObjects: interactWithModalWindowToFindObjectsReachedTheEnd is false" );
 
@@ -1695,10 +1696,10 @@ void testGUI::useMenuExportKMLfile()
 
 
     QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
-    QVERIFY2( menuBar, "useMenuImportToLoadSidescanFile: menuBar tests false");
+    QVERIFY2( menuBar, "useMenuExportKMLfile: menuBar tests false");
 
     QMenu *menuObject_Inventory = menuBar->findChild< QMenu * >( "menuObject_Inventory" );
-    QVERIFY2( menuObject_Inventory, "useMenuImportToLoadSidescanFile: menuObject_Inventory tests false");
+    QVERIFY2( menuObject_Inventory, "useMenuExportKMLfile: menuObject_Inventory tests false");
 
 
     // Keyboard for Export Inventory
@@ -1710,9 +1711,10 @@ void testGUI::useMenuExportKMLfile()
 
 
     QMenu *menuExport_Inventory = menuObject_Inventory->findChild< QMenu * >( "menuExport_Inventory" );
-    QVERIFY2( menuExport_Inventory, "useMenuImportToLoadSidescanFile: menuExport_Inventory tests false");
+    QVERIFY2( menuExport_Inventory, "useMenuExportKMLfile: menuExport_Inventory tests false");
 
 
+    qDebug() << tr( "useMenuExportKMLfile(): before setting timer" );
 
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 5 * 1000 );
@@ -1721,6 +1723,8 @@ void testGUI::useMenuExportKMLfile()
 
     // Keyboard for Export KML File
     QTest::keyClick( menuExport_Inventory, 'k', Qt::AltModifier );
+
+    qDebug() << tr( "useMenuExportKMLfile(): after click" );
 
 
 }
@@ -1790,6 +1794,10 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 
     interactWithModalWindowToExportKMLfileReachedTheEnd = true;
 
+
+    qDebug() << tr( "End of interactWithModalWindowToExportKMLfile()" );
+
+
 }
 
 
@@ -1797,6 +1805,8 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 void testGUI::cleanAfterUseMenuExportKMLfile()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseMenuExportKMLfile()'" << std::endl;
+
+    timerTimeOut->stop();
 
     QVERIFY2( interactWithModalWindowToExportKMLfileReachedTheEnd, "cleanAfterUseMenuExportKMLfile: interactWithModalWindowToExportKMLfileReachedTheEnd is false" );
 
@@ -1994,7 +2004,7 @@ void testGUI::operateMouseToCreateObjects()
 //    std::cout << "\n\ntimeBeforeModalWindowCall.toString().toStdString(): " << timeBeforeModalWindowCall.toString( "yyyy-MM-dd_hh:mm:ss.zzz" ).toStdString() << "\n" << std::endl;
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
+    timerTimeOut->start( 15 * 1000 );
 
     // Single shot timer for function that will interact with the modal window
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionSaveObjectImages() ) );
@@ -2003,13 +2013,13 @@ void testGUI::operateMouseToCreateObjects()
     QTest::mouseClick(widgetForActionSaveObjectImages, Qt::LeftButton);
 
     mainWindow->show();
-    QTest::qWait(8000); // This time must be less than the timeout's time
+    QTest::qWait(10000); // This time must be less than the timeout's time
 
     timerTimeOut->stop();
 
-//    std::cout << "\nAfter timerTimeOut->stop()\n"
-//              << "interactWithModalWindowActionSaveObjectImagesReachedTheEnd: " << std::boolalpha
-//              <<  interactWithModalWindowActionSaveObjectImagesReachedTheEnd << std::noboolalpha << std::endl;
+    std::cout << "\nAfter timerTimeOut->stop()\n"
+              << "interactWithModalWindowActionSaveObjectImagesReachedTheEnd: " << std::boolalpha
+              <<  interactWithModalWindowActionSaveObjectImagesReachedTheEnd << std::noboolalpha << std::endl;
 
     QVERIFY2( interactWithModalWindowActionSaveObjectImagesReachedTheEnd,
               "testGUI::operateMouseToCreateObjects: interactWithModalWindowActionSaveObjectImagesReachedTheEnd is false" );
@@ -2364,6 +2374,9 @@ void testGUI::interactWithModalWindowActionSaveObjectImages()
     QTest::qWait(500);
 
     interactWithModalWindowActionSaveObjectImagesReachedTheEnd = true;
+
+    qDebug() << tr( "End of interactWithModalWindowActionSaveObjectImages()" );
+
 }
 
 

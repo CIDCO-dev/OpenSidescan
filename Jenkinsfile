@@ -36,7 +36,7 @@ pipeline {
         bat "Scripts\\build_opensidescan_gui.bat"
 
         script {
-            if ( fileExists('release\\OpenSidescan.exe') == false) {
+            if ( fileExists('build\\release\\OpenSidescan.exe') == false) {
                 echo 'Jenkinsfile: release\\OpenSidescan.exe does not exist, calling error()'
                 error("Build failed because 'release\\OpenSidescan.exe' does not exist")
             } else {

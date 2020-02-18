@@ -37,10 +37,10 @@ pipeline {
 
         script {
             if ( fileExists('build\\release\\OpenSidescan.exe') == false) {
-                echo 'Jenkinsfile: release\\OpenSidescan.exe does not exist, calling error()'
-                error("Build failed because 'release\\OpenSidescan.exe' does not exist")
+                echo 'Jenkinsfile: build\\release\\OpenSidescan.exe does not exist, calling error()'
+                error("Build failed because 'build\\release\\OpenSidescan.exe' does not exist")
             } else {
-                echo 'Jenkinsfile: release\\OpenSidescan.exe does exist'
+                echo 'Jenkinsfile: build\\release\\OpenSidescan.exe does exist'
             }
         }
 

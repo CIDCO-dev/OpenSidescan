@@ -39,6 +39,8 @@ pipeline {
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
         archiveArtifacts('OpenSidescan_installer*.exe')
+        archiveArtifacts('ThisFileDoesNotExist.txt')
+
       }
     }
 

@@ -35,11 +35,13 @@ pipeline {
         //compile
         bat "Scripts\\build_opensidescan_gui.bat"
 
-        if ( fileExists('release\\OpenSidescan.exe') == false) {
-            echo 'In if ...'
-            currentBuild.result = "FAILURE"
-        } else {
-            echo 'In else ...'
+        script {
+            if ( fileExists('release\\OpenSidescan.exe') == false) {
+                echo 'In if ...'
+                currentBuild.result = "FAILURE"
+            } else {
+                echo 'In else ...'
+            }
         }
 
 

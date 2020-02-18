@@ -39,7 +39,7 @@ pipeline {
             echo 'In if ...'
             currentBuild.result = "FAILURE"
         } else {
-            echo 'In else ...
+            echo 'In else ...'
         }
 
 

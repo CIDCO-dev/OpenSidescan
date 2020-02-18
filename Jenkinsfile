@@ -34,11 +34,23 @@ pipeline {
       steps {
         //compile
         bat "Scripts\\build_opensidescan_gui.bat"
+
+        script {
+            if ( fileExists('build\\release\\OpenSidescan.exe') == false) {
+                echo 'Jenkinsfile: build\\release\\OpenSidescan.exe does not exist, calling error()'
+                error("Build failed because 'build\\release\\OpenSidescan.exe' does not exist")
+            }
+        }
+
+
         bat "Scripts\\sign_exe.au3"
         bat "Scripts\\package_opensidescan_gui.bat"
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
+
         archiveArtifacts('OpenSidescan_installer*.exe')
+
+
       }
     }
 

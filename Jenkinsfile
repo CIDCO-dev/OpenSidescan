@@ -34,12 +34,22 @@ pipeline {
       steps {
         //compile
         bat "Scripts\\build_opensidescan_gui.bat"
+
+        if ( fileExists('release\\OpenSidescan.exe') == false) {
+            echo 'In if ...'
+            currentBuild.result = "FAILURE"
+        } else {
+            echo 'In else ...
+        }
+
+
         bat "Scripts\\sign_exe.au3"
         bat "Scripts\\package_opensidescan_gui.bat"
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
+
         archiveArtifacts('OpenSidescan_installer*.exe')
-        archiveArtifacts('ThisFileDoesNotExist.txt')
+
 
       }
     }

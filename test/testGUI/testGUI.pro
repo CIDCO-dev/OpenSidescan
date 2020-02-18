@@ -55,6 +55,7 @@ SOURCES += testGUI.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
+    ../../src/thirdParty/opencv/apps/createsamples/utility.cpp \
     ../../src/OpenSidescan/opencvhelper.cpp \
     ../../src/OpenSidescan/imagetab.cpp \
     ../../src/OpenSidescan/aboutdialog.cpp \
@@ -75,7 +76,11 @@ SOURCES += testGUI.cpp \
     ../../src/OpenSidescan/workeropenproject.cpp \
     ../../src/OpenSidescan/workerdetection.cpp \
     ../../src/OpenSidescan/projecttreeitem.cpp \
-    ../../src/OpenSidescan/projecttreemodel.cpp
+    ../../src/OpenSidescan/projecttreemodel.cpp \
+    ../../src/OpenSidescan/parameterscvCreateTrainingSamples.cpp \
+    ../../src/OpenSidescan/trainingsampleswindow.cpp \
+    ../../src/OpenSidescan/workertrainingsamples.cpp \
+    ../../src/OpenSidescan/progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  += ../../src/OpenSidescan/mainwindow.h \
     ../../src/OpenSidescan/sidescanimager.h \
@@ -99,7 +104,12 @@ HEADERS  += ../../src/OpenSidescan/mainwindow.h \
     ../../src/OpenSidescan/workeropenproject.h \
     ../../src/OpenSidescan/workerdetection.h \
     ../../src/OpenSidescan/projecttreeitem.h \
-    ../../src/OpenSidescan/projecttreemodel.h
+    ../../src/OpenSidescan/projecttreemodel.h \
+    ../../src/OpenSidescan/parameterscvCreateTrainingSamples.h \
+    ../../src/OpenSidescan/trainingsampleswindow.h \
+    ../../src/OpenSidescan/workertrainingsamples.h \
+    ../../src/OpenSidescan/progressdialognotclosingrightawayoncancel.h \
+    ../../src/OpenSidescan/boolwithmutex.h
 
 FORMS    += 	../../src/OpenSidescan/mainwindow.ui \
     		../../src/OpenSidescan/aboutdialog.ui

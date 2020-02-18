@@ -87,6 +87,8 @@ public slots:
 
     void interactWithModalWindowActionSaveObjectImages();
 
+    void interactWithModalWindowATrainingSamplesWindow();
+
 
 
 
@@ -150,11 +152,10 @@ private slots:
     // Verify using mouse to create an object, then saving the object image
     void useToolBarActionImportToLoadSidescanFileForFindingObjects();
     void operateMouseToCreateObjects();
+
+    void useMenuExportTrainingObjectSamples();
+
     void cleanAfterFindingObjects();
-
-
-
-
 
 
 
@@ -195,6 +196,9 @@ private:
 
     bool interactWithModalWindowActionSaveObjectImagesReachedTheEnd;
 
+    bool interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd;
+
+
 
     QTimer *timerTimeOut;
 
@@ -209,7 +213,7 @@ void testGUI::timeOutOccured()
 
     qDebug() << tr( "'testGUI::timeOutOccured()'" );
 
-    std::cout << "\n\n" << std::endl;
+    std::cout << "\n\n'testGUI::timeOutOccured()'\n\n" << std::endl;
 
 
     // If there is a modal widget, it must be closed to be able to continue through the test functions
@@ -262,6 +266,9 @@ void testGUI::initTestCase()
     doInteractWithModalWindowToSelectProjectToOpen = false;
 
     interactWithModalWindowToFindObjectsReachedTheEnd = false;
+
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = false;
+
 
     timerTimeOut = new QTimer( this );
     timerTimeOut->setSingleShot( true );
@@ -1638,6 +1645,7 @@ void testGUI::cleanAfterUseToolBarActionFindObjects()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseToolBarActionFindObjects()'" << std::endl;
 
+    timerTimeOut->stop();
 
     QVERIFY2( interactWithModalWindowToFindObjectsReachedTheEnd, "cleanAfterUseToolBarActionFindObjects: interactWithModalWindowToFindObjectsReachedTheEnd is false" );
 
@@ -1688,10 +1696,10 @@ void testGUI::useMenuExportKMLfile()
 
 
     QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
-    QVERIFY2( menuBar, "useMenuImportToLoadSidescanFile: menuBar tests false");
+    QVERIFY2( menuBar, "useMenuExportKMLfile: menuBar tests false");
 
     QMenu *menuObject_Inventory = menuBar->findChild< QMenu * >( "menuObject_Inventory" );
-    QVERIFY2( menuObject_Inventory, "useMenuImportToLoadSidescanFile: menuObject_Inventory tests false");
+    QVERIFY2( menuObject_Inventory, "useMenuExportKMLfile: menuObject_Inventory tests false");
 
 
     // Keyboard for Export Inventory
@@ -1703,9 +1711,10 @@ void testGUI::useMenuExportKMLfile()
 
 
     QMenu *menuExport_Inventory = menuObject_Inventory->findChild< QMenu * >( "menuExport_Inventory" );
-    QVERIFY2( menuExport_Inventory, "useMenuImportToLoadSidescanFile: menuExport_Inventory tests false");
+    QVERIFY2( menuExport_Inventory, "useMenuExportKMLfile: menuExport_Inventory tests false");
 
 
+    qDebug() << tr( "useMenuExportKMLfile(): before setting timer" );
 
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 5 * 1000 );
@@ -1714,6 +1723,8 @@ void testGUI::useMenuExportKMLfile()
 
     // Keyboard for Export KML File
     QTest::keyClick( menuExport_Inventory, 'k', Qt::AltModifier );
+
+    qDebug() << tr( "useMenuExportKMLfile(): after click" );
 
 
 }
@@ -1783,6 +1794,10 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 
     interactWithModalWindowToExportKMLfileReachedTheEnd = true;
 
+
+    qDebug() << tr( "End of interactWithModalWindowToExportKMLfile()" );
+
+
 }
 
 
@@ -1790,6 +1805,8 @@ void testGUI::interactWithModalWindowToExportKMLfile()
 void testGUI::cleanAfterUseMenuExportKMLfile()
 {
     std::cout << "\n\n\nBeginning of 'testGUI::cleanAfterUseMenuExportKMLfile()'" << std::endl;
+
+    timerTimeOut->stop();
 
     QVERIFY2( interactWithModalWindowToExportKMLfileReachedTheEnd, "cleanAfterUseMenuExportKMLfile: interactWithModalWindowToExportKMLfileReachedTheEnd is false" );
 
@@ -1987,7 +2004,7 @@ void testGUI::operateMouseToCreateObjects()
 //    std::cout << "\n\ntimeBeforeModalWindowCall.toString().toStdString(): " << timeBeforeModalWindowCall.toString( "yyyy-MM-dd_hh:mm:ss.zzz" ).toStdString() << "\n" << std::endl;
 
     // Time out timer in case there is a failure while interacting with the modal window
-    timerTimeOut->start( 10 * 1000 );
+    timerTimeOut->start( 15 * 1000 );
 
     // Single shot timer for function that will interact with the modal window
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowActionSaveObjectImages() ) );
@@ -1996,13 +2013,13 @@ void testGUI::operateMouseToCreateObjects()
     QTest::mouseClick(widgetForActionSaveObjectImages, Qt::LeftButton);
 
     mainWindow->show();
-    QTest::qWait(8000); // This time must be less than the timeout's time
+    QTest::qWait(10000); // This time must be less than the timeout's time
 
     timerTimeOut->stop();
 
-//    std::cout << "\nAfter timerTimeOut->stop()\n"
-//              << "interactWithModalWindowActionSaveObjectImagesReachedTheEnd: " << std::boolalpha
-//              <<  interactWithModalWindowActionSaveObjectImagesReachedTheEnd << std::noboolalpha << std::endl;
+    std::cout << "\nAfter timerTimeOut->stop()\n"
+              << "interactWithModalWindowActionSaveObjectImagesReachedTheEnd: " << std::boolalpha
+              <<  interactWithModalWindowActionSaveObjectImagesReachedTheEnd << std::noboolalpha << std::endl;
 
     QVERIFY2( interactWithModalWindowActionSaveObjectImagesReachedTheEnd,
               "testGUI::operateMouseToCreateObjects: interactWithModalWindowActionSaveObjectImagesReachedTheEnd is false" );
@@ -2077,10 +2094,18 @@ void testGUI::operateMouseToCreateObjects()
                                 + QString::number( fileInfo.size() ) ) );
     }
 
+
+    std::cout << "\nFinished verifying HTML file\n" << std::endl;
+
+//    mainWindow->show();
+//    QTest::qWait(10000); // This time must be less than the timeout's time
+
+
     std::cout << "\nEnd of testGUI::operateMouseToCreateObjects()\n" << std::endl;
 
-
 }
+
+
 
 void testGUI::useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
                                     int topLeftCornerX, int topLeftCornerY,
@@ -2349,9 +2374,245 @@ void testGUI::interactWithModalWindowActionSaveObjectImages()
     QTest::qWait(500);
 
     interactWithModalWindowActionSaveObjectImagesReachedTheEnd = true;
+
+    qDebug() << tr( "End of interactWithModalWindowActionSaveObjectImages()" );
+
 }
 
 
+
+
+// Test create training samples
+
+void testGUI::useMenuExportTrainingObjectSamples()
+{
+
+    std::cout << "\n\nBeginning of 'testGUI::useMenuExportTrainingObjectSamples()'"<< "\n" << std::endl;
+
+
+
+//    mainWindow->show();
+//    QTest::qWait(10000); // This time must be less than the timeout's time
+
+
+//    std::cout << "\n\nAfter wait"<< "\n" << std::endl;
+
+    // Setup
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = false;
+
+
+
+    QVERIFY2( mainWindow, "useMenuExportTrainingObjectSamples: mainWindow tests false");
+
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+    // Enables focus and widget events
+    QApplication::setActiveWindow( mainWindow );
+    // Shortcuts won't work unless the window is active
+    QVERIFY2( QTest::qWaitForWindowActive( mainWindow ), "mainWindow is not active" );
+
+    // ---- Using shortkeys
+
+    // Keyboard to Object Inventory menu
+    QTest::keyClick( mainWindow, 'j', Qt::AltModifier );
+
+    mainWindow->show();
+    QTest::qWait(1000);
+
+
+
+    QMenuBar *menuBar = mainWindow->findChild< QMenuBar * >( "menuBar" );
+    QVERIFY2( menuBar, "useMenuExportTrainingObjectSamples: menuBar tests false");
+
+    QMenu *menuObject_Inventory = menuBar->findChild< QMenu * >( "menuObject_Inventory" );
+    QVERIFY2( menuObject_Inventory, "useMenuExportTrainingObjectSamples: menuObject_Inventory tests false");
+
+
+
+    // Time out timer in case there is a failure while interacting with the modal window
+    timerTimeOut->start( 20 * 1000 );
+
+    QTimer::singleShot(500, this, SLOT(interactWithModalWindowATrainingSamplesWindow() ) );
+
+    // Keyboard for import sidescan file
+    QTest::keyClick( menuObject_Inventory, 't', Qt::AltModifier );
+
+
+    mainWindow->show();
+    QTest::qWait(10000);
+
+    std::cout << "\n\nAfter wait, will now verify path and files"<< "\n" << std::endl;
+
+    timerTimeOut->stop();
+
+
+    QVERIFY2( interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd,
+              "testGUI::useMenuExportTrainingObjectSamples: interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd is false" );
+
+
+    QFileInfo fileInfo;
+
+    // Verify that the three folders exist
+
+    const int nbPaths = 3;
+    std::string imagesPath[ nbPaths ] = { "../../../test/testProject/OriginalObjectImages/",
+                                        "../../../test/testProject/Background/",
+                                        "../../../test/testProject/OutputPositiveSamples/" };
+
+    for ( int count = 0; count < nbPaths; count++ ) {
+        fileInfo.setFile( tr( imagesPath[ count ].c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                    qPrintable( "useMenuExportTrainingObjectSamples: " + tr( imagesPath[ count ].c_str() ) + " does not exist" ) );
+
+        QVERIFY2( fileInfo.isDir(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( imagesPath[ count ].c_str() ) + " is not a directory" ) );
+    }
+
+
+    // Verify that 4 original object image files exist
+
+    const int nbObjectFiles = 4;
+    std::string originalObjectImagesFiles[ nbObjectFiles ] =
+                    { "Unknown.png", "Unknown_0.png", "Unknown_1.png", "Unknown_2.png" };
+
+    for ( int count = 0; count < nbObjectFiles; count++ ) {
+        std::string filename = imagesPath[ 0 ] + originalObjectImagesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
+
+    // Verify that 8 background images + bg.txt exit
+
+    std::string bgFilename = imagesPath[ 1 ] + "bg.txt";
+    fileInfo.setFile( tr( bgFilename.c_str() ) );
+
+    QVERIFY2( fileInfo.exists(),
+              qPrintable( "useMenuExportTrainingObjectSamples: " + tr( bgFilename.c_str() ) + " does not exist" ) );
+
+
+    const int nbBackgroundFiles = 8;
+    std::string backgroundImagesFiles[ nbBackgroundFiles ] =
+                    { "Background.png", "Background_0.png", "Background_1.png", "Background_2.png",
+                     "Background_3.png", "Background_4.png", "Background_5.png", "Background_6.png" };
+
+    for ( int count = 0; count < nbBackgroundFiles; count++ ) {
+        std::string filename = imagesPath[ 1 ] + backgroundImagesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
+
+
+    // Verify that 4 output positive samples files exist
+
+    std::string outputPositiveSamplesFiles[ nbObjectFiles ] =
+                    { "Unknown.png40x30.vec", "Unknown_0.png50x40.vec", "Unknown_1.png40x30.vec", "Unknown_2.png50x40.vec" };
+
+    for ( int count = 0; count < nbObjectFiles; count++ ) {
+        std::string filename = imagesPath[ 2 ] + outputPositiveSamplesFiles[ count ];
+
+        fileInfo.setFile( tr( filename.c_str() ) );
+
+        QVERIFY2( fileInfo.exists(),
+                  qPrintable( "useMenuExportTrainingObjectSamples: " + tr( filename.c_str() ) + " does not exist" ) );
+    }
+
+}
+
+
+void testGUI::interactWithModalWindowATrainingSamplesWindow()
+{
+    qDebug() << tr( "Beginning of interactWithModalWindowATrainingSamplesWindow()" );
+
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    QWidget * modalWidget = QApplication::activeModalWidget();
+    QVERIFY2( modalWidget, "interactWithModalWindowATrainingSamplesWindow: modalWidget tests false");
+
+
+
+
+    QVERIFY2( modalWidget->windowTitle() == tr( "Export Training Object Samples" ),
+              "interactWithModalWindowATrainingSamplesWindow: modalWidget->windowTitle() is not 'Export Training Object Samples'" );
+
+
+    QLineEdit * lineEdit = modalWidget->findChild<QLineEdit*>("pathLineEdit");
+    QVERIFY2( lineEdit, "interactWithModalWindowATrainingSamplesWindow: lineEdit tests false");
+
+
+    // Number of characters currently present in the QLineEdit
+    int nbBackspaces = lineEdit->text().length();
+
+    // Use backspaces to clear the current content
+    for ( int count = 0; count < nbBackspaces; count++ )
+        QTest::keyClick(lineEdit, Qt::Key_Backspace, Qt::NoModifier, 10 );
+
+
+    mainWindow->show();
+    QTest::qWait(100);
+
+
+    // Path with respect to the application executable
+    // There may be issues, see https://doc.qt.io/qt-5/qcoreapplication.html#applicationDirPath
+
+
+    QString pathname =  tr( "../../../test/testProject" );
+
+
+    QTest::keyClicks(lineEdit, pathname );
+
+    QVERIFY2( lineEdit->text() == pathname, "interactWithModalWindowATrainingSamplesWindow: pathname is not the same in the QLineEdit");
+
+
+    // Find the button to accept and close the modal window
+
+    // The buttons are within a QDialogButtonBox
+
+    QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
+    QVERIFY2( buttonBox, "interactWithModalWindowATrainingSamplesWindow: buttonBox tests false");
+
+
+    // The buttons don't have object names,
+    // I have to go through the list of buttons and find the button with
+    // the desired text
+
+    QList<QAbstractButton *> listButtonBox = buttonBox->buttons();
+
+    QString OKButtonTextWithAmpersand = tr( "&OK" );
+    QString OKButtonText = tr( "OK" );
+    QPushButton * buttonOK = nullptr;
+
+    for (QAbstractButton *button : listButtonBox) {
+
+        if ( button->text() == OKButtonText || button->text() == OKButtonTextWithAmpersand )
+            buttonOK = static_cast<QPushButton * >( button );
+    }
+
+    QVERIFY2( buttonOK, "interactWithModalWindowATrainingSamplesWindow: buttonOK tests false");
+
+//    QVERIFY2( false, "interactWithModalWindowATrainingSamplesWindow: false on purpose");
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    // Click button to close the modal dialog
+    QTest::mouseClick(buttonOK, Qt::LeftButton);
+
+    mainWindow->show();
+    QTest::qWait(500);
+
+    interactWithModalWindowToExportTrainingObjectSamplesReachedTheEnd = true;
+}
 
 
 void testGUI::cleanAfterFindingObjects()

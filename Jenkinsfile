@@ -17,6 +17,7 @@ pipeline {
 
   agent none
   stages {
+/*
 
     stage('BUILD MASTER'){
       agent { label 'master'}
@@ -26,7 +27,7 @@ pipeline {
         archiveArtifacts('OpenSidescan_installer*.run')
       }
     }
-
+*/
 
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}
@@ -44,10 +45,10 @@ pipeline {
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       steps {
-        sh 'mkdir -p $binMasterPublishDir'
+        //sh 'mkdir -p $binMasterPublishDir'
         sh 'mkdir -p $binWinx64PublishDir'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
+        //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }

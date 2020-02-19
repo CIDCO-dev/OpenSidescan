@@ -51,9 +51,15 @@ class testGUI : public QObject
 
 public slots:
 
+//    void selectFileAndVerify( int fileToSelect, std::string & filename,
+//                                       std::vector<std::string> & tabNames,
+//                                       std::vector< std::pair< std::string,std::string > > & fileProperties );
+
     void selectFileAndVerify( int fileToSelect, std::string & filename,
                                        std::vector<std::string> & tabNames,
-                                       std::vector< std::pair< std::string,std::string > > & properties );
+                                       std::vector< std::pair< std::string,std::string > > & fileProperties,
+                                       std::vector< std::vector< std::pair< std::string,std::string > > * > & tabPropertiesToVerify );
+
 
     void useMouseToFormObjectBound( int fileToSelect, std::string & filename, int tabIndex,
                                         int topLeftCornerX, int topLeftCornerY,
@@ -618,7 +624,9 @@ void testGUI::verifyResultOfImportToLoadSidescanFile()
     int indexFileToSelect;
     std::string filename;
     std::vector<std::string> tabNames;
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
+    std::vector< std::pair< std::string,std::string > > filePropertiesToVerify;
+    std::vector< std::vector< std::pair< std::string,std::string > > * > tabPropertiesToVerify;
+
 
     indexFileToSelect = 0;
 
@@ -629,11 +637,30 @@ void testGUI::verifyResultOfImportToLoadSidescanFile()
     tabNames.push_back( "Channel 1" );
     tabNames.push_back( "Channel 2" );
 
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
-    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+    filePropertiesToVerify.clear();
+    filePropertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    filePropertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
 
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+    tabPropertiesToVerify.clear();
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab1Properties;
+    plane1Tab1Properties.push_back( std::make_pair( "Channel Number", "0" ) );
+    plane1Tab1Properties.push_back( std::make_pair( "Channel Type", "1" ) );
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab2Properties;
+    plane1Tab2Properties.push_back( std::make_pair( "Channel Number", "1" ) );
+    plane1Tab2Properties.push_back( std::make_pair( "Channel Type", "2" ) );
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab3Properties;
+    plane1Tab3Properties.push_back( std::make_pair( "Channel Number", "2" ) );
+    plane1Tab3Properties.push_back( std::make_pair( "Channel Type", "0" ) );
+
+    tabPropertiesToVerify.push_back( &plane1Tab1Properties );
+    tabPropertiesToVerify.push_back( &plane1Tab2Properties );
+    tabPropertiesToVerify.push_back( &plane1Tab3Properties );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames,
+                            filePropertiesToVerify, tabPropertiesToVerify );
 
     mainWindow->show();
     QTest::qWait(1000);
@@ -647,11 +674,26 @@ void testGUI::verifyResultOfImportToLoadSidescanFile()
     tabNames.push_back( "port" );
     tabNames.push_back( "starboard" );
 
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
-    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
+    filePropertiesToVerify.clear();
+    filePropertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
+    filePropertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
 
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+    tabPropertiesToVerify.clear();
+
+    std::vector< std::pair< std::string,std::string > > scotsman3Tab1Properties;
+    scotsman3Tab1Properties.push_back( std::make_pair( "Channel Name", "port" ) );
+    scotsman3Tab1Properties.push_back( std::make_pair( "Channel Type", "1" ) );
+
+    std::vector< std::pair< std::string,std::string > > scotsman3Tab2Properties;
+    scotsman3Tab2Properties.push_back( std::make_pair( "Channel Name", "starboard" ) );
+    scotsman3Tab2Properties.push_back( std::make_pair( "Channel Type", "2" ) );
+
+    tabPropertiesToVerify.push_back( &scotsman3Tab1Properties );
+    tabPropertiesToVerify.push_back( &scotsman3Tab2Properties );
+
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames,
+                            filePropertiesToVerify, tabPropertiesToVerify );
 
 
     mainWindow->show();
@@ -1314,7 +1356,8 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     int indexFileToSelect;
     std::string filename;
     std::vector<std::string> tabNames;
-    std::vector< std::pair< std::string,std::string > > propertiesToVerify;
+    std::vector< std::pair< std::string,std::string > > filePropertiesToVerify;
+    std::vector< std::vector< std::pair< std::string,std::string > > * > tabPropertiesToVerify;
 
     indexFileToSelect = 1;
 
@@ -1324,11 +1367,26 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     tabNames.push_back( "port" );
     tabNames.push_back( "starboard" );
 
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
-    propertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
+    filePropertiesToVerify.clear();
+    filePropertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "2" ) );
+    filePropertiesToVerify.push_back( std::make_pair( "System Type", "1" ) );
 
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+    tabPropertiesToVerify.clear();
+
+    std::vector< std::pair< std::string,std::string > > scotsman3Tab1Properties;
+    scotsman3Tab1Properties.push_back( std::make_pair( "Channel Name", "port" ) );
+    scotsman3Tab1Properties.push_back( std::make_pair( "Channel Type", "1" ) );
+
+    std::vector< std::pair< std::string,std::string > > scotsman3Tab2Properties;
+    scotsman3Tab2Properties.push_back( std::make_pair( "Channel Name", "starboard" ) );
+    scotsman3Tab2Properties.push_back( std::make_pair( "Channel Type", "2" ) );
+
+    tabPropertiesToVerify.push_back( &scotsman3Tab1Properties );
+    tabPropertiesToVerify.push_back( &scotsman3Tab2Properties );
+
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames,
+                            filePropertiesToVerify, tabPropertiesToVerify );
 
     mainWindow->show();
     QTest::qWait(1000);
@@ -1343,11 +1401,31 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
     tabNames.push_back( "Channel 1" );
     tabNames.push_back( "Channel 2" );
 
-    propertiesToVerify.clear();
-    propertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
-    propertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
+    filePropertiesToVerify.clear();
+    filePropertiesToVerify.push_back( std::make_pair( "Channels (Sonar)", "3" ) );
+    filePropertiesToVerify.push_back( std::make_pair( "Recording Program Name", "DAT2XTF" ) );
 
-    selectFileAndVerify( indexFileToSelect, filename, tabNames, propertiesToVerify );
+
+    tabPropertiesToVerify.clear();
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab1Properties;
+    plane1Tab1Properties.push_back( std::make_pair( "Channel Number", "0" ) );
+    plane1Tab1Properties.push_back( std::make_pair( "Channel Type", "1" ) );
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab2Properties;
+    plane1Tab2Properties.push_back( std::make_pair( "Channel Number", "1" ) );
+    plane1Tab2Properties.push_back( std::make_pair( "Channel Type", "2" ) );
+
+    std::vector< std::pair< std::string,std::string > > plane1Tab3Properties;
+    plane1Tab3Properties.push_back( std::make_pair( "Channel Number", "2" ) );
+    plane1Tab3Properties.push_back( std::make_pair( "Channel Type", "0" ) );
+
+    tabPropertiesToVerify.push_back( &plane1Tab1Properties );
+    tabPropertiesToVerify.push_back( &plane1Tab2Properties );
+    tabPropertiesToVerify.push_back( &plane1Tab3Properties );
+
+    selectFileAndVerify( indexFileToSelect, filename, tabNames,
+                            filePropertiesToVerify, tabPropertiesToVerify );
 
     mainWindow->show();
     QTest::qWait(1000);
@@ -1368,7 +1446,8 @@ void testGUI::verifyResultOfUseToolBarActionOpenProject()
 
 void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
                                    std::vector<std::string> & tabNames,
-                                   std::vector< std::pair< std::string,std::string > > & properties )
+                                   std::vector< std::pair< std::string,std::string > > & fileProperties,
+                                   std::vector< std::vector< std::pair< std::string,std::string > > * > & tabPropertiesToVerify )
 {
 
     selectFileAndVerifyReachTheEnd = false;
@@ -1462,53 +1541,90 @@ void testGUI::selectFileAndVerify( int fileToSelect, std::string & filename,
 
 
     // Click on all the tabs in reverse order
-    for ( int count = tabNames.size() - 1; count >= 0 ; count-- ) {
+    for ( int countTab = tabNames.size() - 1; countTab >= 0 ; countTab-- ) {
 
-        const QPoint tabPos = tabBar->tabRect( count ).center();
+        const QPoint tabPos = tabBar->tabRect( countTab ).center();
         QTest::mouseClick( tabBar, Qt::LeftButton, {}, tabPos);
 
         mainWindow->show();
         QTest::qWait(500);
 
-        QVERIFY2( mainWindow->tabs->currentIndex() == count,
+        QVERIFY2( mainWindow->tabs->currentIndex() == countTab,
                   qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
                 + QString::number( fileToSelect ) + ", the current tab index of "
                 + QString::number( mainWindow->tabs->currentIndex() ) + " is different from the target of "
-                + QString::number( count ) ) );
+                + QString::number( countTab ) ) );
+
+        // Verifying Channel properties
+        for ( int count = 0; count < tabPropertiesToVerify[ countTab ]->size(); count++ ) {
+
+            std::string ExpectedFirst =tabPropertiesToVerify[ countTab ]->at( count ).first;
+            std::string ExpectedSecond =tabPropertiesToVerify[ countTab ]->at( count ).second;
+
+            QList<QTableWidgetItem *> items = mainWindow->channelInfo->propertiesTable->findItems(
+                                                        QString( ExpectedFirst.c_str() ), Qt::MatchExactly);
+
+            // It should find the item only once
+            QVERIFY2( items.size() == 1,
+                      qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+                    + QString::number( fileToSelect ) + ", channel properties findItems of '"
+                    + QString( ExpectedFirst.c_str() ) + "' found " + QString::number( items.size() )
+                    + " match(es), it should be 1" ) );
+
+
+            QVERIFY2( items[ 0 ]->column() == 0,
+                    qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+                  + QString::number( fileToSelect ) + ", channel properties item of '"
+                  + QString( ExpectedFirst.c_str() ) + "' was found in column "
+                  + QString::number( items[ 0 ]->column() )
+                  + ". It should be in column 0" ) );
+
+
+            std::string propertyText = mainWindow->channelInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
+            QVERIFY2( propertyText == ExpectedSecond,
+                      qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
+                    + QString::number( fileToSelect ) + ", channel property '"
+                    + QString( ExpectedFirst.c_str() )
+                    + "', corresponding property value text is '"
+                    + QString( propertyText.c_str() ) + "' while it should be '"
+                    + QString( ExpectedSecond.c_str() ) + "'" ) );
+
+        }
+
     }
 
 
     // Verifying file properties (which uses QTableWidget class)
 
-    for ( int count = 0; count < properties.size(); count++ ) {
+    for ( int count = 0; count < fileProperties.size(); count++ ) {
 
         QList<QTableWidgetItem *> items = mainWindow->fileInfo->propertiesTable->findItems(
-                                                    QString( properties[count].first.c_str() ), Qt::MatchExactly);
+                                                    QString( fileProperties[count].first.c_str() ), Qt::MatchExactly);
 
         // It should find the item only once
         QVERIFY2( items.size() == 1,
                   qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
                 + QString::number( fileToSelect ) + ", findItems of '"
-                + QString( properties[count].first.c_str() ) + "' found " + QString::number( items.size() )
+                + QString( fileProperties[count].first.c_str() ) + "' found " + QString::number( items.size() )
                 + " match(es), it should be 1" ) );
 
 
         QVERIFY2( items[ 0 ]->column() == 0,
                 qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
               + QString::number( fileToSelect ) + ", item of '"
-              + QString( properties[count].first.c_str() ) + "' was found in column "
+              + QString( fileProperties[count].first.c_str() ) + "' was found in column "
               + QString::number( items[ 0 ]->column() )
               + ". It should be in column 0" ) );
 
 
         std::string propertyText = mainWindow->fileInfo->propertiesTable->item( items[ 0 ]->row(), 1 )->data( Qt::DisplayRole ).toString().toStdString();
-        QVERIFY2( propertyText == properties[count].second,
+        QVERIFY2( propertyText == fileProperties[count].second,
                   qPrintable( "testGUI::selectFileAndVerify: fileToSelect "
                 + QString::number( fileToSelect ) + ", property '"
-                + QString( properties[count].first.c_str() )
+                + QString( fileProperties[count].first.c_str() )
                 + "', corresponding property value text is '"
                 + QString( propertyText.c_str() ) + "' while it should be '"
-                + QString( properties[count].second.c_str() ) + "'" ) );
+                + QString( fileProperties[count].second.c_str() ) + "'" ) );
 
     }
 

@@ -73,6 +73,7 @@ SOURCES += testGUI.cpp \
     ../../src/OpenSidescan/filepropertieswindow.cpp \
     ../../src/OpenSidescan/detectionwindow.cpp \
     ../../src/OpenSidescan/inventorywindow.cpp \
+    ../../src/OpenSidescan/channelpropertieswindow.cpp \
     ../../src/OpenSidescan/qthelper.cpp \
     ../../src/OpenSidescan/imagetablabel.cpp \
     ../../src/OpenSidescan/georeferencedobjectwindow.cpp \
@@ -101,6 +102,7 @@ HEADERS  += ../../src/OpenSidescan/mainwindow.h \
     ../../src/OpenSidescan/filepropertieswindow.h \
     ../../src/OpenSidescan/detectionwindow.h \
     ../../src/OpenSidescan/inventorywindow.h \
+    ../../src/OpenSidescan/channelpropertieswindow.h \
     ../../src/OpenSidescan/qthelper.h \
     ../../src/OpenSidescan/imagetablabel.h \
     ../../src/OpenSidescan/georeferencedobjectwindow.h \

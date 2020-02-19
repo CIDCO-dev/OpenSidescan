@@ -66,6 +66,7 @@
     </property>
     <addaction name="actionShowProjectWindow"/>
     <addaction name="actionShowFilePropertiesWindow"/>
+    <addaction name="actionShowChannelPropertiesWindow"/>
     <addaction name="actionShowObjectInventoryWindow"/>
    </widget>
    <addaction name="menuFile"/>
@@ -222,6 +223,11 @@
   <action name="actionExportTrainingObjectSamples">
    <property name="text">
     <string>Export &amp;Training Object Samples</string>
+   </property>
+  </action>
+  <action name="actionShowChannelPropertiesWindow">
+   <property name="text">
+    <string>&amp;Channel Properties</string>
    </property>
   </action>
  </widget>

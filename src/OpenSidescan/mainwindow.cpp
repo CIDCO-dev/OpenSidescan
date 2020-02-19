@@ -35,7 +35,7 @@
 
 #include "progressdialognotclosingrightawayoncancel.h"
 
-#include "boolwithmutex.h"
+//#include "boolwithmutex.h"
 
 #include "../../src/thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
@@ -45,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs(new QTabWidget),
     currentProject(NULL),
     fileInfo(NULL),
-    folderCreateTrainingSamples( "" )
+    folderCreateTrainingSamples( "" ),
+    clearing_tabs( false )
 {
     ui->setupUi(this);
     buildUI();
@@ -70,8 +71,10 @@ void MainWindow::buildUI(){
     connect(ui->actionShowObjectInventoryWindow,&QAction::triggered,inventoryWindow,&InventoryWindow::show);
     connect(inventoryWindow,&InventoryWindow::objectSelected,this,&MainWindow::objectSelected);
 
-
-
+    channelInfo = new ChannelPropertiesWindow(this);
+    this->addDockWidget(Qt::RightDockWidgetArea,channelInfo);
+    connect(ui->actionShowChannelPropertiesWindow,&QAction::triggered,channelInfo,&ChannelPropertiesWindow::show);
+    connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
 
     actionCreate();
 
@@ -219,7 +222,11 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
 
+    clearing_tabs.setValue( true );
+
     tabs->clear(); //TODO: does this leak?
+
+    clearing_tabs.setValue( false );
 
     if(selectedFile){
         /* Update tabs -----------------------------*/
@@ -745,4 +752,17 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 void MainWindow::addFileToProjectWindow( SidescanFile * file )
 {
     projectWindow->addFile(file);
+}
+
+void MainWindow::tabChanged( int index )
+{
+    if ( clearing_tabs.getValue() ) {
+        channelInfo->updateModel( nullptr );
+    } else {
+        if( tabs && tabs->count() > 0
+                && index >= 0 && index < tabs->count() )
+            channelInfo->updateModel( ( (ImageTab*)tabs->widget(index) )->getImage() );
+        else
+            channelInfo->updateModel( nullptr );
+    }
 }

@@ -12,11 +12,15 @@
 #include "projectwindow.h"
 #include "filepropertieswindow.h"
 #include "inventorywindow.h"
+#include "channelpropertieswindow.h"
 
 #include "sidescanfile.h"
 #include "project.h"
 
 #include "parameterscvCreateTrainingSamples.h"
+
+#include "boolwithmutex.h"
+
 
 //#include "progressdialogtrainingsamples.h"
 
@@ -68,6 +72,8 @@ public slots:
 
     void addFileToProjectWindow( SidescanFile * file);
 
+    void tabChanged( int index );
+
 
 private:
 
@@ -85,6 +91,7 @@ private:
     ProjectWindow        * projectWindow;
     FilePropertiesWindow * fileInfo;
     InventoryWindow      * inventoryWindow;
+    ChannelPropertiesWindow * channelInfo;
 
     SidescanFile         * selectedFile;
     Project              * currentProject = NULL;
@@ -104,6 +111,8 @@ private:
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
     QString folderCreateTrainingSamples;
+
+    BoolWithMutex clearing_tabs;
 };
 
 #endif // MAINWINDOW_H

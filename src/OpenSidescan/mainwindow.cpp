@@ -73,15 +73,12 @@ void MainWindow::buildUI(){
 
     channelInfo = new ChannelPropertiesWindow(this);
     this->addDockWidget(Qt::RightDockWidgetArea,channelInfo);
-    // TODO: connect
+    connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
 
     actionCreate();
 
     //center
     this->setCentralWidget(tabs);
-
-    connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
-
 }
 
 MainWindow::~MainWindow()
@@ -136,9 +133,7 @@ void MainWindow::refreshProjectUI(){
 
     selectedFile = NULL;
 
-    std::cout << "\nBefore updateSelectedFile(selectedFile);\n" << std::endl;
     updateSelectedFile(selectedFile);
-    std::cout << "\nAfter updateSelectedFile(selectedFile);\n" << std::endl;
 
     //Set window title
     std::string title = (currentProject)?  (currentProject->getFilename().size() > 0 ? currentProject->getFilename() : "New Project")  : "No active project";
@@ -226,15 +221,11 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
 
-    std::cout << "\nBefore tabs->clear();\n" << std::endl;
-
     clearing_tabs.setValue( true );
 
     tabs->clear(); //TODO: does this leak?
 
     clearing_tabs.setValue( false );
-
-    std::cout << "\nAfter tabs->clear();\n" << std::endl;
 
     if(selectedFile){
         /* Update tabs -----------------------------*/
@@ -245,7 +236,6 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
             ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
             newTab->setObjectName( "imageTab with n=" + QString::number( n ) );
             connect(newTab,&ImageTab::inventoryChanged,this,&MainWindow::refreshObjectInventory);
-//            connect(newTab,&ImageTab::imageRefreshed,channelInfo,&ChannelPropertiesWindow::updateModel);
 
             tabs->addTab(
                         newTab,
@@ -765,20 +755,13 @@ void MainWindow::addFileToProjectWindow( SidescanFile * file )
 
 void MainWindow::tabChanged( int index )
 {
-    std::cout << "\nBeginning of void MainWindow::tabChanged( int index )\n"
-                  << "index:         " << index
-                << "\ntabs:          " << tabs
-                << "\ntabs->count(): " << tabs->count() << "\n" << std::endl;
-
     if ( clearing_tabs.getValue() ) {
         channelInfo->updateModel( nullptr );
     } else {
-
         if( tabs && tabs->count() > 0
                 && index >= 0 && index < tabs->count() )
-            channelInfo->updateModel( ( (ImageTab*)tabs->widget(index))->getImage() );
+            channelInfo->updateModel( ( (ImageTab*)tabs->widget(index) )->getImage() );
         else
             channelInfo->updateModel( nullptr );
-
     }
 }

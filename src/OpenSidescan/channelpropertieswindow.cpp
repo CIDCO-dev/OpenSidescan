@@ -18,14 +18,8 @@ ChannelPropertiesWindow::ChannelPropertiesWindow(QWidget *parent) : QDockWidget(
     this->show();
 }
 
-void ChannelPropertiesWindow::setImage(SidescanImage * image){
-    updateModel(image);
-}
-
 void ChannelPropertiesWindow::updateModel(SidescanImage * image){
     propertiesTable->clear();
-
-    std::cout << "\n\nInside ChannelPropertiesWindow::updateModel(SidescanImage * image)\n" << std::endl;
 
     if(image) {
 

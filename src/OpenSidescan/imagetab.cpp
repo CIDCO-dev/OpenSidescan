@@ -73,9 +73,6 @@ void ImageTab::refreshImage(){
     imageLabel->setPixmap(pixmap);
     imageLabel->adjustSize();
     scrollArea->setVisible(true);
-
-//     std::cout << "\n\nBefore emit\n" << std::endl;
-//    emit( imageRefreshed( &image ) );
 }
 
 void ImageTab::saveImage(){

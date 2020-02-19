@@ -14,8 +14,6 @@ class ChannelPropertiesWindow : public QDockWidget
 public:
     ChannelPropertiesWindow(QWidget *parent);
 
-    void setImage(SidescanImage * image);
-
     void updateModel(SidescanImage * image);
 
 private:

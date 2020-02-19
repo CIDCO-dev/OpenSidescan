@@ -17,7 +17,7 @@ class SidescanImage
 {
 public:
     //SidescanImage();
-    SidescanImage(cv::Mat * m,std::vector<SidescanPing * > * rawData,unsigned int channelNumber,std::string & channelName, std::map<std::string,std::string>  * properties);
+    SidescanImage(cv::Mat * m,std::vector<SidescanPing * > * rawData,unsigned int channelNumber,std::string & channelName, unsigned int channelType, std::map<std::string,std::string>  * properties);
 
     ~SidescanImage();
 
@@ -25,6 +25,8 @@ public:
     cv::Mat & getDisplayedImage() { return displayedImage;}
 
     unsigned int getChannelNumber(){ return channelNumber;}
+
+    unsigned int getChannelType(){ return channelType;}
 
     std::string & getChannelName(){ return channelName;}
 
@@ -49,7 +51,9 @@ private:
 
     //channel info
     std::map<std::string,std::string>  * properties;
+
     unsigned int channelNumber;
+    unsigned int channelType;
     std::string channelName;
 
     //object detection shit

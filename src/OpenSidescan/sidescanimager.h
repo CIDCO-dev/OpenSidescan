@@ -30,7 +30,7 @@ public:
         fileInfo = properties;
     }
 
-    void processChannelProperties(unsigned int channelNumber,std::string channelName,std::map<std::string,std::string> * properties){
+    void processChannelProperties(unsigned int channelNumber,std::string channelName,unsigned int channelType,std::map<std::string,std::string> * properties){
         if(channelName.empty()){
             std::stringstream ss;
             ss << "Channel " << channelNumber;
@@ -39,6 +39,7 @@ public:
 
         channelNames.push_back(channelName);
         channelInfo.push_back(properties);
+        channelTypes.push_back(channelType);
     }
 
     void processPosition(uint64_t microEpoch,double longitude,double latitude,double height){
@@ -135,7 +136,7 @@ public:
                 properties=channelInfo[i];
             }
 
-            matrixes->push_back(new SidescanImage(I,channels[i],i,channelName,properties));
+            matrixes->push_back(new SidescanImage(I,channels[i],i,channelName,channelTypes[i],properties));
             //imwrite(ss.str(), I);
         }
 
@@ -153,6 +154,7 @@ private:
     std::map<std::string,std::string> * fileInfo = NULL;
     std::vector<  std::map<std::string,std::string>  *  >  channelInfo;
     std::vector< std::string > channelNames;
+    std::vector< unsigned int > channelTypes;
 };
 
 #endif // SIDESCANIMAGER_H

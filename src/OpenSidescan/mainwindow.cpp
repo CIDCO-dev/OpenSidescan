@@ -73,6 +73,7 @@ void MainWindow::buildUI(){
 
     channelInfo = new ChannelPropertiesWindow(this);
     this->addDockWidget(Qt::RightDockWidgetArea,channelInfo);
+    connect(ui->actionShowChannelPropertiesWindow,&QAction::triggered,channelInfo,&ChannelPropertiesWindow::show);
     connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
 
     actionCreate();

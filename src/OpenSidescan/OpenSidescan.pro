@@ -65,6 +65,7 @@ SOURCES += main.cpp\
     filepropertieswindow.cpp \
     detectionwindow.cpp \
     inventorywindow.cpp \
+    channelpropertieswindow.cpp \
     qthelper.cpp \
     imagetablabel.cpp \
     georeferencedobjectwindow.cpp \
@@ -93,6 +94,7 @@ HEADERS  += mainwindow.h \
     filepropertieswindow.h \
     detectionwindow.h \
     inventorywindow.h \
+    channelpropertieswindow.h \
     qthelper.h \
     imagetablabel.h \
     georeferencedobjectwindow.h \

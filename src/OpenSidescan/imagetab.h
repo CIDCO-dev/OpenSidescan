@@ -42,6 +42,8 @@ public:
 signals:
     void inventoryChanged();
 
+//    void imageRefreshed( SidescanImage * image );
+
 public slots:
     void saveImage();
     void refreshImage();

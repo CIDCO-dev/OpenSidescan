@@ -25,6 +25,8 @@ public:
     void appendFile( QString &filename, SidescanFile *sidescanFile );
 
     SidescanFile * getSidescanFile(const QModelIndex &index) const;
+    QModelIndex getModelIndexSidescanFile( SidescanFile * file ) const;
+
 
 
 //    ProjectTreeModel * getFileNode();

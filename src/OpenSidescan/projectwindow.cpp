@@ -28,6 +28,8 @@ ProjectWindow::ProjectWindow(QWidget *parent)
 //    qDebug() << tr("ProjectWindow::ProjectWindow() right before connect");
 
     connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
+//    connect(tree->selectionModel(),&QItemSelectionModel::currentChanged,this,&ProjectWindow::redirectCurrentChangedToSelectionChanged );
+
 
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tree, &QWidget::customContextMenuRequested,
@@ -69,6 +71,34 @@ SidescanFile * ProjectWindow::getSelectedFile() {
 }
 
 
+void ProjectWindow::selectLastFile() {
+    std::cout << "\nIn ProjectWindow::selectLastFile" << std::endl;
+    if ( model->getNbFiles() > 0 ) {
+
+        tree->selectionModel()->clearSelection();
+
+        std::cout << "\nIn if ( model->getNbFiles() > 0 ) " << std::endl;
+
+        tree->setCurrentIndex( model->getModelIndexFileIndex( model->getNbFiles() - 1 ) );
+
+    }
+
+}
+
+void ProjectWindow::selectFile( SidescanFile * file ) {
+    std::cout << "\nIn ProjectWindow::selectFile" << std::endl;
+    if ( model->getNbFiles() > 0 ) {
+
+        tree->selectionModel()->clearSelection();
+
+        std::cout << "\nIn if ( model->getNbFiles() > 0 ) " << std::endl;
+
+        tree->setCurrentIndex( model->getModelIndexSidescanFile( file ) );
+    }
+
+}
+
+
 void ProjectWindow::setProject(Project * project){
     this->project = project;
 
@@ -76,6 +106,9 @@ void ProjectWindow::setProject(Project * project){
 }
 
 void ProjectWindow::refresh(){
+
+    std::cout << "Beginning of ProjectWindow::refresh()\n" << std::endl;
+
     if(project){
 //        QStringList filenames;
 
@@ -105,8 +138,24 @@ void ProjectWindow::refresh(){
         tree->setHeaderHidden(true);
 
         connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
+//        connect(tree->selectionModel(),&QItemSelectionModel::currentChanged,this,&ProjectWindow::redirectCurrentChangedToSelectionChanged );
 
         tree->expandAll();
+
+        // Select the last file
+
+        QModelIndex currentIndex = tree->currentIndex();
+
+        std::cout << "\nProjectWindow::refresh(): currentIndex.row(): " << currentIndex.row() << "\n"
+                  << "model->getNbFiles(): " << model->getNbFiles() << std::endl;
+
+        if ( model->getNbFiles() > 0 )
+            tree->setCurrentIndex( model->getModelIndexFileIndex( model->getNbFiles() - 1 ) );
+
+
+        currentIndex = tree->currentIndex();
+
+        std::cout << "After tree->setCurrentIndex: currentIndex.row(): " << currentIndex.row() << "\n" << std::endl;
 
 
 //        model->setStringList(filenames);
@@ -205,13 +254,24 @@ void ProjectWindow::removeFileFromProject()
         if (hasCurrent) {
             tree->closePersistentEditor(tree->selectionModel()->currentIndex());
         }
-
     }
 
     emit removeFileFromProjectRequest( sidescanFile );
 
 
 }
+
+
+void ProjectWindow::redirectCurrentChangedToSelectionChanged( const QModelIndex &current, const QModelIndex &previous )
+{
+
+    std::cout << "Beginning of ProjectWindow::redirectCurrentChangedToSelectionChanged()\n" << std::endl;
+
+
+    tree->selectionModel()->select( current,
+                   QItemSelectionModel::Clear | QItemSelectionModel::Select | QItemSelectionModel::Current );
+}
+
 
 
 //void ProjectWindow::displayInfoOnTreeView()

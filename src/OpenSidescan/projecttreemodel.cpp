@@ -282,3 +282,25 @@ QModelIndex ProjectTreeModel::getModelIndexFileIndex( const int fileIndex ) cons
         return QModelIndex();
 
 }
+
+QModelIndex ProjectTreeModel::getModelIndexSidescanFile( SidescanFile * file ) const
+{
+    if ( fileNode->childCount() == 0 )
+        return QModelIndex();
+
+    bool fileFound = false;
+
+    int countFile = 0;
+
+    while ( fileFound== false && countFile < fileNode->childCount() ) {
+        ProjectTreeItem *childItem = fileNode->child(countFile);
+
+        if ( childItem->getSidescanFile() == file )
+            return createIndex(countFile, 0, childItem);
+
+        countFile++;
+    }
+
+
+    return QModelIndex();
+}

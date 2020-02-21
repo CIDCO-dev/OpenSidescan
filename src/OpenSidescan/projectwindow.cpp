@@ -29,6 +29,7 @@ ProjectWindow::ProjectWindow(QWidget *parent)
 
     connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
 
+
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tree, &QWidget::customContextMenuRequested,
                 this, &ProjectWindow::customContextMenu);
@@ -69,6 +70,34 @@ SidescanFile * ProjectWindow::getSelectedFile() {
 }
 
 
+void ProjectWindow::selectLastFile() {
+//    std::cout << "\nIn ProjectWindow::selectLastFile" << std::endl;
+    if ( model->getNbFiles() > 0 ) {
+
+        tree->selectionModel()->clearSelection();
+
+//        std::cout << "\nIn if ( model->getNbFiles() > 0 ) " << std::endl;
+
+        tree->setCurrentIndex( model->getModelIndexFileIndex( model->getNbFiles() - 1 ) );
+
+    }
+
+}
+
+void ProjectWindow::selectFile( SidescanFile * file ) {
+//    std::cout << "\nIn ProjectWindow::selectFile" << std::endl;
+    if ( model->getNbFiles() > 0 ) {
+
+        tree->selectionModel()->clearSelection();
+
+//        std::cout << "\nIn if ( model->getNbFiles() > 0 ) " << std::endl;
+
+        tree->setCurrentIndex( model->getModelIndexSidescanFile( file ) );
+    }
+
+}
+
+
 void ProjectWindow::setProject(Project * project){
     this->project = project;
 
@@ -76,6 +105,9 @@ void ProjectWindow::setProject(Project * project){
 }
 
 void ProjectWindow::refresh(){
+
+//    std::cout << "Beginning of ProjectWindow::refresh()\n" << std::endl;
+
     if(project){
 //        QStringList filenames;
 
@@ -107,6 +139,21 @@ void ProjectWindow::refresh(){
         connect(tree->selectionModel(),&QItemSelectionModel::selectionChanged,(MainWindow*)parent,&MainWindow::fileSelected );
 
         tree->expandAll();
+
+        // Select the last file
+
+//        QModelIndex currentIndex = tree->currentIndex();
+
+//        std::cout << "\nProjectWindow::refresh(): currentIndex.row(): " << currentIndex.row() << "\n"
+//                  << "model->getNbFiles(): " << model->getNbFiles() << std::endl;
+
+        if ( model->getNbFiles() > 0 )
+            tree->setCurrentIndex( model->getModelIndexFileIndex( model->getNbFiles() - 1 ) );
+
+
+//        currentIndex = tree->currentIndex();
+
+//        std::cout << "After tree->setCurrentIndex: currentIndex.row(): " << currentIndex.row() << "\n" << std::endl;
 
 
 //        model->setStringList(filenames);
@@ -205,13 +252,16 @@ void ProjectWindow::removeFileFromProject()
         if (hasCurrent) {
             tree->closePersistentEditor(tree->selectionModel()->currentIndex());
         }
-
     }
 
     emit removeFileFromProjectRequest( sidescanFile );
 
 
 }
+
+
+
+
 
 
 //void ProjectWindow::displayInfoOnTreeView()

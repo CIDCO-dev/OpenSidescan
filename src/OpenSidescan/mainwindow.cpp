@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     currentProject(NULL),
     fileInfo(NULL),
     folderCreateTrainingSamples( "" ),
-    clearing_tabs( false )
+    clearingTabs( false )
 {
     ui->setupUi(this);
     buildUI();
@@ -222,11 +222,11 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
 
-    clearing_tabs.setValue( true );
+    clearingTabs.setValue( true );
 
     tabs->clear(); //TODO: does this leak?
 
-    clearing_tabs.setValue( false );
+    clearingTabs.setValue( false );
 
     if(selectedFile){
         /* Update tabs -----------------------------*/
@@ -267,6 +267,8 @@ void MainWindow::actionAbout(){
     about.exec();
 }
 
+
+
 void MainWindow::fileSelected(const QItemSelection & selection){
 
 //    qDebug() << tr("MainWindow::fileSelected()");
@@ -290,6 +292,7 @@ void MainWindow::fileSelected(const QItemSelection & selection){
         }
     }
 }
+
 
 void MainWindow::actionFindObjects(){
     if(Project * p = projectWindow->getProject()){
@@ -407,7 +410,7 @@ void MainWindow::actionSaveObjectImages(){
 
 void MainWindow::actionExportTrainingObjectSamples()
 {
-    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+//    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
     if( ! currentProject ) {
 
@@ -567,7 +570,13 @@ void MainWindow::refreshTabs(){
 }
 
 void MainWindow::objectSelected(GeoreferencedObject * object){
-    updateSelectedFile(&object->getFile());
+
+
+    projectWindow->selectFile( &object->getFile() );
+
+
+//    updateSelectedFile(&object->getFile());
+
     selectImageTab(object);
 
     //TODO: scroll to object
@@ -638,6 +647,12 @@ void MainWindow::actionOpen()
             currentProject->setFilename(sFilename);
 
             refreshProjectUI();
+
+            projectWindow->selectLastFile();
+
+//            if ( model->getNbFiles() > 0 )
+//                tree->setCurrentIndex( model->getModelIndexFileIndex( model->getNbFiles() - 1 ) );
+
 
 //            projectWindow->displayInfoOnTreeView();
 
@@ -733,17 +748,26 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
     }
 
 
-    // TODO: remove found objects
+//    // TODO: remove found objects
     refreshProjectUI();
+
+
+//    inventoryWindow->setProject(currentProject);
+
 
 //    qDebug() << tr("After refreshProjectUI");
 
     // If no files left in the project, make sure nothing is displayed
-    if( !currentProject || currentProject->getFiles().size() == 0 ) {
+    if( !currentProject ) {
         updateSelectedFile(NULL);
     }
-
-
+    else {
+        if ( currentProject->getFiles().size() == 0 ) {
+            updateSelectedFile(NULL);
+        } else {
+            projectWindow->selectLastFile();
+        }
+    }
 
 
 }
@@ -756,7 +780,7 @@ void MainWindow::addFileToProjectWindow( SidescanFile * file )
 
 void MainWindow::tabChanged( int index )
 {
-    if ( clearing_tabs.getValue() ) {
+    if ( clearingTabs.getValue() ) {
         channelInfo->updateModel( nullptr );
     } else {
         if( tabs && tabs->count() > 0

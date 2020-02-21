@@ -31,9 +31,12 @@ public:
     void        setProject(Project * project);
 
     void        addFile(SidescanFile * file);
-    void        refresh();
+
 
     bool        containsFile(std::string & filename);
+
+    void        selectLastFile();
+    void        selectFile( SidescanFile * file );
 
 
     SidescanFile * getSelectedFile();
@@ -65,7 +68,14 @@ public slots:
     void customContextMenu(QPoint pos);
     void removeFileFromProject();
 
+
 protected:
+
+private:
+
+    void refresh();
+
+
     Project *   project            = NULL;
 
 //    QListView * files              = NULL;

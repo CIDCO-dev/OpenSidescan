@@ -112,7 +112,7 @@ private:
 
     QString folderCreateTrainingSamples;
 
-    BoolWithMutex clearing_tabs;
+    BoolWithMutex clearingTabs;
 };
 
 #endif // MAINWINDOW_H

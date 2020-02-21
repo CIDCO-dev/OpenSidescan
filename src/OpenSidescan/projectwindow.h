@@ -68,8 +68,6 @@ public slots:
     void customContextMenu(QPoint pos);
     void removeFileFromProject();
 
-    void redirectCurrentChangedToSelectionChanged( const QModelIndex &current, const QModelIndex &previous );
-
 
 protected:
 

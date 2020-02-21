@@ -271,21 +271,21 @@ void MainWindow::actionAbout(){
 
 void MainWindow::fileSelected(const QItemSelection & selection){
 
-    qDebug() << tr("MainWindow::fileSelected()");
+//    qDebug() << tr("MainWindow::fileSelected()");
 
     if(!selection.indexes().empty()){
 
-        qDebug() << tr("if(!selection.indexes().empty())");
+//        qDebug() << tr("if(!selection.indexes().empty())");
 
         if(projectWindow){
 
-            qDebug() << tr("if(projectWindow)");
+//            qDebug() << tr("if(projectWindow)");
 
             SidescanFile * file = projectWindow->getSelectedFile();
 
             if(file){
 
-                qDebug() << tr("if(file)");
+//                qDebug() << tr("if(file)");
 
                 updateSelectedFile(file);
             }
@@ -410,7 +410,7 @@ void MainWindow::actionSaveObjectImages(){
 
 void MainWindow::actionExportTrainingObjectSamples()
 {
-    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
+//    std::cout << "\nBeginning MainWindow::actionExportTrainingObjectSamples()\n" << std::endl;
 
     if( ! currentProject ) {
 
@@ -727,7 +727,7 @@ void MainWindow::actionClose(){
 
 void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 {
-    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
+//    qDebug() << tr("Inside 'MainWindow::removeSidescanFileFromProject()'");
 
 
 //    // TODO: remove found objects

@@ -45,8 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs(new QTabWidget),
     currentProject(NULL),
     fileInfo(NULL),
-    folderCreateTrainingSamples( "" ),
-    clearingTabs( false )
+    folderCreateTrainingSamples( "" )
 {
     ui->setupUi(this);
     buildUI();
@@ -221,18 +220,19 @@ void MainWindow::actionImport(){
 void MainWindow::updateSelectedFile(SidescanFile * newFile){
 
     selectedFile = newFile;
-
-    clearingTabs.setValue( true );
+    selectedImage = NULL;
 
     tabs->clear(); //TODO: does this leak?
-
-    clearingTabs.setValue( false );
 
     if(selectedFile){
         /* Update tabs -----------------------------*/
         int n = 0;
 
         for(auto i= selectedFile->getImages().begin();i!=selectedFile->getImages().end();i++){
+
+            if(!selectedImage){
+                selectedImage = &(**i);
+            }
 
             ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
             newTab->setObjectName( "imageTab with n=" + QString::number( n ) );
@@ -247,13 +247,10 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
             );
             n++;
         }
+    }
 
-        /* Update file info window ------------------- */
-        fileInfo->setFile(selectedFile);
-    }
-    else {
-        fileInfo->setFile(NULL);
-    }
+    fileInfo->updateModel(selectedFile);
+    channelInfo->updateModel(selectedImage );
 }
 
 
@@ -459,7 +456,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
     if ( dialog.getUserDidCancel() == false )
     {
-        qDebug() << "User did not cancel\n";
+        //qDebug() << "User did not cancel\n";
 
         dialog.getFolder( folderCreateTrainingSamples );
         dialog.getParameters( parameterscvCreateTrainingSamples );
@@ -588,6 +585,9 @@ void MainWindow::selectImageTab(GeoreferencedObject * object){
         if( tab->getImage() == &object->getImage()){
             //select tab
             tabs->setCurrentIndex(i);
+
+            selectedImage = tab->getImage();
+            channelInfo->updateModel(selectedImage);
 
             //scroll tab's image view
             tab->getScrollArea().ensureVisible(object->getX(),object->getY(),50,50);
@@ -747,10 +747,8 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 
     }
 
-
 //    // TODO: remove found objects
     refreshProjectUI();
-
 
 //    inventoryWindow->setProject(currentProject);
 
@@ -768,8 +766,6 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
             projectWindow->selectLastFile();
         }
     }
-
-
 }
 
 
@@ -780,13 +776,12 @@ void MainWindow::addFileToProjectWindow( SidescanFile * file )
 
 void MainWindow::tabChanged( int index )
 {
-    if ( clearingTabs.getValue() ) {
-        channelInfo->updateModel( nullptr );
-    } else {
-        if( tabs && tabs->count() > 0
-                && index >= 0 && index < tabs->count() )
-            channelInfo->updateModel( ( (ImageTab*)tabs->widget(index) )->getImage() );
-        else
-            channelInfo->updateModel( nullptr );
-    }
+        if( tabs && tabs->count() > 0 && index >= 0 && index < tabs->count() ){
+            selectedImage = ( (ImageTab*)tabs->widget(index) )->getImage();
+            channelInfo->updateModel( selectedImage );
+        }
+        else{
+            selectedImage = NULL;
+            channelInfo->updateModel( selectedImage );
+        }
 }

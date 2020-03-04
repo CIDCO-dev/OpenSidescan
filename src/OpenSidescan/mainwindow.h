@@ -82,18 +82,18 @@ private:
     void refreshProjectUI();
     void selectImageTab(GeoreferencedObject * object);
 
-    void createAndSaveTrainingObjectSamples( const QString & folder,
-                        const ParameterscvCreateTrainingSamples & parameters );
+    void createAndSaveTrainingObjectSamples( const QString & folder, const ParameterscvCreateTrainingSamples & parameters );
 
-    Ui::MainWindow       * ui;
-    QTabWidget           * tabs;
+    Ui::MainWindow          * ui;
+    QTabWidget              * tabs;
 
-    ProjectWindow        * projectWindow;
-    FilePropertiesWindow * fileInfo;
-    InventoryWindow      * inventoryWindow;
+    ProjectWindow           * projectWindow;
+    FilePropertiesWindow    * fileInfo;
+    InventoryWindow         * inventoryWindow;
     ChannelPropertiesWindow * channelInfo;
 
-    SidescanFile         * selectedFile;
+    SidescanImage        * selectedImage  = NULL;
+    SidescanFile         * selectedFile   = NULL;
     Project              * currentProject = NULL;
 
     //Detection parameters
@@ -111,8 +111,6 @@ private:
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;
 
     QString folderCreateTrainingSamples;
-
-    BoolWithMutex clearingTabs;
 };
 
 #endif // MAINWINDOW_H

@@ -16,6 +16,8 @@ public:
 
     void updateModel(SidescanImage * image);
 
+    void initTableHeaders();
+
 private:
     QTableWidget * propertiesTable;
 };

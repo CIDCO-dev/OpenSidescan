@@ -11,24 +11,26 @@ ChannelPropertiesWindow::ChannelPropertiesWindow(QWidget *parent) : QDockWidget(
     propertiesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     propertiesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-
     this->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
     this->setWidget(propertiesTable);
     this->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable);
     this->show();
 }
 
+void ChannelPropertiesWindow::initTableHeaders(){
+    propertiesTable->setColumnCount(2);
+    QStringList headers;
+    headers << "Property" << "Value";
+    propertiesTable->setHorizontalHeaderLabels(headers);
+}
+
 void ChannelPropertiesWindow::updateModel(SidescanImage * image){
     propertiesTable->clear();
 
+    initTableHeaders();
+
     if(image) {
-
-        propertiesTable->setColumnCount(2);
         propertiesTable->setRowCount(image->getProperties().size()+1);
-
-        QStringList headers;
-        headers << "Property" << "Value";
-        propertiesTable->setHorizontalHeaderLabels(headers);
 
         int row = 0;
 
@@ -44,10 +46,7 @@ void ChannelPropertiesWindow::updateModel(SidescanImage * image){
         }
     }
     else {
-        propertiesTable->setColumnCount(2);
-        QStringList headers;
-        headers << "Property" << "Value";
-        propertiesTable->setHorizontalHeaderLabels(headers);
+        propertiesTable->setRowCount(0);
     }
 
 }

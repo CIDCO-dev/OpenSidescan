@@ -18,6 +18,8 @@ public:
 
     void updateModel(SidescanFile * file);
 
+    void initTableHeaders();
+
 private:
     QTableWidget * propertiesTable;
 };

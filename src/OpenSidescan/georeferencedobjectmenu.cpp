@@ -27,7 +27,11 @@ void GeoreferencedObjectMenu::initUI(){
 void GeoreferencedObjectMenu::viewObjectDetails(){
     GeoreferencedObjectWindow win(object);
 
-    win.exec();
+    int res = win.exec();
+
+    if(res == QDialog::Accepted){
+        emit inventoryChanged();
+    }
 }
 
 void GeoreferencedObjectMenu::deleteObject(){

@@ -1,10 +1,9 @@
 #include "inventorywindow.h"
 
 #include <sstream>
-
+#include <mainwindow.h>
 #include <QFileInfo>
-
-#include "georeferencedobjectwindow.h"
+#include "georeferencedobjectmenu.h"
 
 class InventoryTableItem : public QTableWidgetItem{
 public:
@@ -27,6 +26,8 @@ InventoryWindow::InventoryWindow(QWidget * parent): QDockWidget(tr("Object Inven
     inventoryTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     inventoryTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     inventoryTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    inventoryTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(inventoryTable, SIGNAL(customContextMenuRequested(QPoint)), SLOT(georefObjectMenuRequested(QPoint)));
 
     connect(inventoryTable,&QTableWidget::doubleClicked,this,&InventoryWindow::doubleClicked);
 
@@ -48,6 +49,19 @@ void InventoryWindow::doubleClicked(const QModelIndex & index){
 
     if(item && item->object){
         emit objectSelected(item->object);
+    }
+}
+
+void InventoryWindow::georefObjectMenuRequested(QPoint pos) {
+    QModelIndex index = inventoryTable->indexAt(pos);
+    InventoryTableItem * item = (InventoryTableItem*) inventoryTable->item(index.row(),0);
+
+    if(item && item->object) {
+        GeoreferencedObjectMenu mnu(item->object);
+        connect(&mnu,&GeoreferencedObjectMenu::inventoryChanged,this,&InventoryWindow::refreshInventoryTable);
+        connect(&mnu,&GeoreferencedObjectMenu::inventoryChanged,(MainWindow*)this->parent(),&MainWindow::refreshTabs);
+        mnu.exec(inventoryTable->viewport()->mapToGlobal(pos));
+
     }
 }
 

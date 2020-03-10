@@ -19,6 +19,7 @@ private:
 
     Project * project;
 
+protected:
 
 public:
     InventoryWindow(QWidget * parent);
@@ -31,6 +32,7 @@ signals:
 public slots:
     void refreshInventoryTable();
     void doubleClicked(const QModelIndex & index);
+    void georefObjectMenuRequested(QPoint pos);
 };
 
 #endif // INVENTORYWINDOW_H

@@ -1,7 +1,7 @@
 #include "inventorywindow.h"
 
 #include <sstream>
-#include <mainwindow.h>
+#include "mainwindow.h"
 #include <QFileInfo>
 #include "georeferencedobjectmenu.h"
 

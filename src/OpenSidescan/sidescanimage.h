@@ -30,6 +30,12 @@ public:
 
     std::string & getChannelName(){ return channelName;}
 
+    //XTF documentation: port channel type is 1
+    bool isPort() {return channelType==1;}
+
+    //XTF documentation: starboard channel type is 2
+    bool isStarboard() {return channelType==2;};
+
     std::vector<SidescanPing*>  & getPings(){ return *rawData;}
 
     std::map<std::string,std::string> & getProperties(){ return *properties;}

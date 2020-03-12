@@ -5,6 +5,8 @@
 #include <QFileInfo>
 #include "georeferencedobjectmenu.h"
 
+class MainWindow;
+
 class InventoryTableItem : public QTableWidgetItem{
 public:
     InventoryTableItem(QString text) : QTableWidgetItem(text), object(NULL){

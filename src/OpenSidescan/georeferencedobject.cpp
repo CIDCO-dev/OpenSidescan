@@ -79,7 +79,7 @@ void GeoreferencedObject::computePosition(){
             SidescanPing * pingBefore = image.getPings()[yCenter-1];
 
             if(pingBefore->getTimestamp() > pingCenter->getTimestamp()) {
-                throw new Exception("pingBefore [yCenter-1] has greater Timestamp than pingCenter");
+                throw new Exception("GeoreferencedObject::computePosition(): pingBefore [yCenter-1] has greater Timestamp than pingCenter");
             }
 
             Eigen::Vector3d positionBeforeECEF;
@@ -90,7 +90,7 @@ void GeoreferencedObject::computePosition(){
             SidescanPing * pingAfter = image.getPings()[yCenter+1];
 
             if(pingAfter->getTimestamp() < pingCenter->getTimestamp()) {
-                throw new Exception("pingAfter [yCenter+1] has lower Timestamp than pingCenter");
+                throw new Exception("GeoreferencedObject::computePosition(): pingAfter [yCenter+1] has lower Timestamp than pingCenter");
             }
 
             Eigen::Vector3d positionAfterECEF;

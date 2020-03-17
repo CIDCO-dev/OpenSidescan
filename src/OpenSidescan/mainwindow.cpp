@@ -718,6 +718,32 @@ void MainWindow::actionExportKmlFile(){
     }
 }
 
+void MainWindow::actionExportCsvFile(){
+
+    if(currentProject){
+        QString fileName = QFileDialog::getSaveFileName( this,
+                                                        tr("Export as CSV File"),
+                                                        "",
+                                                        tr("CSV File (*.csv)"),
+                                                            nullptr,
+                                                            QFileDialog::DontUseNativeDialog );
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".csv")){
+                sFilename = sFilename + std::string(".csv");
+            }
+
+            currentProject->exportInventoryAsCsv(sFilename);
+        }
+    }
+
+}
+
+
+
+
 void MainWindow::actionClose(){
     if(currentProject){
         delete currentProject;

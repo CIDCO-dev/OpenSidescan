@@ -63,6 +63,9 @@ public slots:
 
     void actionExportKmlFile();
 
+    void actionExportCsvFile();
+
+
     void fileSelected(const QItemSelection & selection);
     void objectSelected(GeoreferencedObject * object);
 
@@ -74,6 +77,8 @@ public slots:
 
     void tabChanged( int index );
 
+
+private slots:
 
 private:
 

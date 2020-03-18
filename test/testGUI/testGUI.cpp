@@ -425,7 +425,7 @@ void testGUI::useToolBarActionNewProject()
 
     std::cout << "\n\nmainWindow: " << mainWindow << "\n" << std::endl;
 
-
+    // Display children
 
     const QObjectList list = mainWindow->children();
 

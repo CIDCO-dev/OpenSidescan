@@ -32,7 +32,8 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
     }
 
     if(showFeatureMarkers){
-        cv::drawKeypoints(image.getDisplayedImage(),combinedKeypoints,image.getDisplayedImage(),cv::Scalar(0,0,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        //cv::drawKeypoints(image.getDisplayedImage(),combinedKeypoints,image.getDisplayedImage(),cv::Scalar(0,0,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        image.setMicroFeatures(combinedKeypoints);
     }
 
     /* Cluster ------------------------------------------ */
@@ -144,8 +145,12 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
     }
 }
 
-void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter){
+void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
     img.resetDisplayedImage();
+
+    if(showMicroFeatures) {
+        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    }
 
     for(auto i = img.getObjects().begin();i!=img.getObjects().end();i++){
 

@@ -53,7 +53,7 @@ SOURCES += main.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/NmeaUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
-    ../../src/thirdParty/opencv/apps/createsamples/utility.cpp \
+#    ../../src/thirdParty/opencv/apps/createsamples/utility.cpp \
 #    opencvhelper.cpp \
 #    imagetab.cpp \
 #    aboutdialog.cpp \

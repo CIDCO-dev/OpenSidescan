@@ -28,6 +28,7 @@ private:
     QAction * showObjectBoundingBox;
     QAction * showObjectSizesAction;
     QAction * showObjectCenter;
+    QAction * showMicroFeatures;
 
 
     ImageTabLabel * imageLabel;

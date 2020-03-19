@@ -37,6 +37,12 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
     connect(showObjectSizesAction,&QAction::triggered,this,&ImageTab::refreshImage);
     toolbar->addAction(showObjectSizesAction);
 
+    showMicroFeatures = new QAction(QIcon(":/Images/resources/microfeatures.png"),tr("&Show microfeatures"));
+    showMicroFeatures->setCheckable(true);
+    showMicroFeatures->setChecked(true);
+    connect(showMicroFeatures,&QAction::triggered,this,&ImageTab::refreshImage);
+    toolbar->addAction(showMicroFeatures);
+
     showObjectCenter = new QAction(QIcon(":/Images/resources/aim.png"),tr("&Show Objects' Center"));
     showObjectCenter->setCheckable(true);
     showObjectCenter->setChecked(false);
@@ -67,7 +73,7 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
 }
 
 void ImageTab::refreshImage(){
-    OpencvHelper::draw(image,showObjectBoundingBox->isChecked(),showObjectSizesAction->isChecked(),showObjectCenter->isChecked());
+    OpencvHelper::draw(image,showObjectBoundingBox->isChecked(),showObjectSizesAction->isChecked(),showObjectCenter->isChecked(), showMicroFeatures->isChecked());
 
     QPixmap pixmap = QtHelper::cvMatToQPixmap(image.getDisplayedImage());
     imageLabel->setPixmap(pixmap);

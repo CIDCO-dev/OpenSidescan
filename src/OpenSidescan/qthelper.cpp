@@ -67,12 +67,16 @@ bool QtHelper::buildColorTable()
 
     std::vector<int> rgb;
 
-    for( int i = 0; i < 255; ++i )
+    for( int i = 0; i < 254; ++i )
     {
         HSVtoRGB( hue360, saturation, i / 256.0, rgb );
 
         colorTable[i] = qRgb( rgb[ 0 ], rgb[ 1 ] , rgb[ 2 ] );
     }
+
+    // The microfeature circle is displayed in blue
+    // The color blue must be in the color table
+    colorTable[254] = qRgb( 255, 0, 0 );
 
     // The found objects' bonding box is displayed with a white rectangle
     // The color white must be in the color table

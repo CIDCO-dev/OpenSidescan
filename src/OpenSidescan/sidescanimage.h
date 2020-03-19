@@ -42,6 +42,10 @@ public:
 
     std::vector<GeoreferencedObject*> & getObjects(){ return objects;}
 
+    std::vector<cv::KeyPoint> & getMicroFeatures(){ return microFeatures;}
+
+    void setMicroFeatures(std::vector<cv::KeyPoint> microFeatures) {this->microFeatures = microFeatures;}
+
     void resetDisplayedImage(){
         if(!displayedImage.empty()){
             displayedImage.release();
@@ -64,6 +68,9 @@ private:
 
     //object detection shit
     std::vector<GeoreferencedObject *> objects;
+
+    //Microfeatures
+    std::vector<cv::KeyPoint> microFeatures;
 };
 
 #endif // SIDESCANIMAGE_H

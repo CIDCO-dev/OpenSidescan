@@ -18,6 +18,7 @@
         <file>resources/view.png</file>
         <file>resources/delete.png</file>
         <file>resources/kml.png</file>
-	<file>resources/document-save-as-4.png</file>
+        <file>resources/document-save-as-4.png</file>
+        <file>resources/microfeatures.png</file>
     </qresource>
 </RCC>

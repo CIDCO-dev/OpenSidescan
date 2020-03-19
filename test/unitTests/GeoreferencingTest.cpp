@@ -9,6 +9,8 @@
 #include "../../src/OpenSidescan/georeferencedobject.h"
 
 
+#include "../../src/thirdParty/MBES-lib/src/math/Distance.hpp"
+
 TEST_CASE( "Test Caris vs. OpenSidescan" ) {
 
 
@@ -129,8 +131,30 @@ TEST_CASE( "Test Caris vs. OpenSidescan" ) {
     Position * position = objectW.getPosition();
 
     std::cout << std::fixed << std::setprecision( 15 )
+              << "\nOpenSidescan:"
               << "\nW longitude: " << position->getLongitude()
               << "\nW latitude:  " << position->getLatitude() << "\n" << std::endl;
+
+
+
+
+
+    // Caris W, -68.828268, 48.445548
+
+    double carisWlongitude = -68.828268;
+    double carisWlatitude = 48.445548;
+
+    std::cout << std::fixed << std::setprecision( 15 )
+              << "\nCaris:"
+              << "\nW longitude: " << carisWlongitude
+              << "\nW latitude:  " << carisWlatitude << "\n" << std::endl;
+
+
+
+    std::cout << "\nDistance: "
+              << Distance::haversine( carisWlongitude, carisWlatitude,
+                                      position->getLongitude(), position->getLatitude() )
+              << "\n" << std::endl;
 
 
 

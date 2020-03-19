@@ -5,6 +5,9 @@
 #include <map>
 #include <utility> // std::pair, std::make_pair
 
+#include <fstream>
+#include <sstream>
+
 #include "catch.hpp"
 
 #include "../../src/OpenSidescan/sidescanimager.h"
@@ -25,25 +28,43 @@ TEST_CASE( "Test Caris vs. OpenSidescan" ) {
     const double maxAcceptableDistance = 5.0;
 
     // The Scotsman wreck is on channel 0: "Port"
-    std::string sFileName = "../data/wrecks/scotsman5.xtf";
+    std::string sidescanFileName = "../data/wrecks/scotsman5.xtf";
     int channelIndex = 0;
 
 
-    // TODO: Read data position of Caris from csv file
+    // Read data position of Caris from csv file
 
-    //    V, -68.828257, 48.445629,
-    //    W, -68.828268, 48.445548,
-    //    X, -68.828327, 48.445632,
-    //    Y, -68.828370, 48.445703,
-    //    Z, -68.828345, 48.445666,
+    std::string positionCarisfileName = "../data/wrecks/scotsman5info/ScotsmanLongitudeLatitudeCaris.csv";
 
     MapObjectNameLongLat carisData;
 
-    carisData.insert( std::make_pair( "V", std::make_pair( -68.828257, 48.445629 ) ) );
-    carisData.insert( std::make_pair( "W", std::make_pair( -68.828268, 48.445548 ) ) );
-    carisData.insert( std::make_pair( "X", std::make_pair( -68.828327, 48.445632 ) ) );
-    carisData.insert( std::make_pair( "Y", std::make_pair( -68.828370, 48.445703 ) ) );
-    carisData.insert( std::make_pair( "Z", std::make_pair( -68.828345, 48.445666 ) ) );
+    std::ifstream inFile;
+    inFile.open( positionCarisfileName );
+
+    REQUIRE( inFile.is_open() );
+
+    std::string entireLine;
+
+    std::getline( inFile, entireLine ); // Discard first line with field names
+
+    while ( std::getline( inFile, entireLine ) ) {
+
+        std::istringstream stream( entireLine );
+
+        std::string objectName;
+
+        std::getline( stream, objectName, ',' );
+
+        char comma;
+        double longitude;
+        double latitude;
+
+        stream >> longitude >> comma >> latitude;
+
+//        std::cout << "\"" << objectName << "\", " << longitude << ", " << latitude << std::endl;
+
+        carisData.insert( std::make_pair( objectName, std::make_pair( longitude, latitude ) ) );
+    }
 
 
     DatagramParser * parser = nullptr;
@@ -57,12 +78,12 @@ TEST_CASE( "Test Caris vs. OpenSidescan" ) {
         std::cout << "\nBefore parsing\n" << std::endl;
 
 
-        parser = DatagramParserFactory::build(sFileName,imager);
-        parser->parse(sFileName);
+        parser = DatagramParserFactory::build(sidescanFileName,imager);
+        parser->parse(sidescanFileName);
 
         std::cout << "\nBefore imager.generate(sFileName)\n" << std::endl;
 
-        file = imager.generate(sFileName);
+        file = imager.generate(sidescanFileName);
 
         delete parser;
         parser = nullptr;
@@ -85,7 +106,7 @@ TEST_CASE( "Test Caris vs. OpenSidescan" ) {
     SidescanImage * image = file->getImages()[ channelIndex ];
 
 
-    std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
+//    std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
 
 
     // TODO: Read OpenSidescan pixels information from a file

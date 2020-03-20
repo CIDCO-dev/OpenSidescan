@@ -32,6 +32,11 @@ TEST_CASE( "Test Detect Objects" ) {
     std::string sidescanFileName = "../data/wrecks/scotsman5.xtf";
     int channelIndex = 0;
 
+    // Position of Scotsman, from file "reference points on SSS scotsman5.pptx"
+    // X, -68.828327, 48.445632
+    double longitudeCarisScotsman = -68.828327;
+    double latitudeCarisScotsman = 48.445632;
+
 
     DatagramParser * parser = nullptr;
 
@@ -110,6 +115,11 @@ TEST_CASE( "Test Detect Objects" ) {
             );
 
 
+    REQUIRE( objectsDetected.size() > 0 );
+
+    double minDistance = 1e40; // TODO: replace with maximum positive value a double can hold
+    int indexObjectClosest = 0;
+
     for (int count = 0; count < objectsDetected.size(); count++ ) {
 
         Position * position = objectsDetected[ count ]->getPosition();
@@ -123,9 +133,27 @@ TEST_CASE( "Test Detect Objects" ) {
                   << "\n  width (m): " << objectsDetected[ count ]->getWidth()
                   << "\n  height(m): " << objectsDetected[ count ]->getHeight()
                   << "\n" << std::endl;
+
+
+
+
+        double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
+                                               position->getLongitude(), position->getLatitude() );
+
+        std::cout << "\nDistance: " << distance << "\n" << std::endl;
+
+        if ( distance < minDistance ) {
+            minDistance = distance;
+            indexObjectClosest = count;
+        }
+
+
     }
 
+    std::cout << "\nindexObjectClosest: " << indexObjectClosest << "\n"
+              << "minDistance: " << minDistance << "\n" << std::endl;
 
+    REQUIRE( minDistance < maxAcceptableDistance );
 
     if ( file != nullptr )
         delete file;

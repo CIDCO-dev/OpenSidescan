@@ -55,6 +55,7 @@
       <string>E&amp;xport Inventory</string>
      </property>
      <addaction name="actionExportKmlFile"/>
+     <addaction name="actionExportCsvFile"/>
     </widget>
     <addaction name="actionFindObjects"/>
     <addaction name="menuExport_Inventory"/>
@@ -228,6 +229,11 @@
   <action name="actionShowChannelPropertiesWindow">
    <property name="text">
     <string>&amp;Channel Properties</string>
+   </property>
+  </action>
+  <action name="actionExportCsvFile">
+   <property name="text">
+    <string>Export &amp;CSV File</string>
    </property>
   </action>
  </widget>
@@ -412,6 +418,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExportCsvFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionExportCsvFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionOpen()</slot>
@@ -425,5 +447,6 @@
   <slot>actionExportKmlFile()</slot>
   <slot>actionSaveObjectImages()</slot>
   <slot>actionExportTrainingObjectSamples()</slot>
+  <slot>actionExportCsvFile()</slot>
  </slots>
 </ui>

@@ -203,6 +203,49 @@ void Project::exportInventoryAsKml(std::string & filename){
     file.close();
 }
 
+void Project::exportInventoryAsCsv(std::string & filename){
+
+    // std::cout << "\nBeginning of Project::exportInventoryAsCsv(std::string & filename)\n" << std::endl;
+
+    std::ofstream outFile;
+    outFile.open( filename, std::ofstream::out );
+
+    if( outFile.is_open() == false )
+    {
+        return;
+    }
+
+    outFile << "name" << "," << "description" << ","
+        << "longitude" << "," << "latitude" << "\n";
+
+    outFile << std::fixed << std::setprecision(15);
+
+    // i is an iterator to a ( SidescanFile * )
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        // j is an iterator to a (SidescanImage* )
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+
+            // k is an iterator to (GeoreferencedObject *)
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+
+                Position * pos = (*k)->getPosition();
+
+                // Using quotation marks to support strings with line changes
+                // or comma
+                outFile << "\"" << (*k)->getName() << "\","
+                    << "\"" << (*k)->getDescription() << "\","
+                    << pos->getLongitude() << ","
+                    << pos->getLatitude() << "\n";
+            }
+        }
+    }
+
+    outFile.close();
+}
+
+
+
 //void Project::saveObjectImages( const QString & folder )
 void Project::saveObjectImages( const QString & absolutePath,
                        const QString & fileNameWithoutExtension )

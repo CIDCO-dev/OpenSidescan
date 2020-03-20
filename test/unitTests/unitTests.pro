@@ -42,8 +42,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #  }
 
 SOURCES += main.cpp \
-#    GeoreferencingTest.cpp \
-    DetectObjectsTest.cpp \
+    GeoreferencingTest.cpp \
 #        mainwindow.cpp \
     ../../src/OpenSidescan/sidescanimager.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \

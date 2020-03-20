@@ -1,12 +1,6 @@
 
 #include <iostream>
 
-//#include <vector>
-//#include <map>
-//#include <utility> // std::pair, std::make_pair
-
-//#include <fstream>
-//#include <sstream>
 
 #include "catch.hpp"
 
@@ -17,8 +11,6 @@
 #include "../../src/OpenSidescan/opencvhelper.h"
 
 #include "../../src/thirdParty/MBES-lib/src/math/Distance.hpp"
-
-//typedef std::map< std::string, std::pair< double, double >, std::less< std::string > > MapObjectNameLongLat;
 
 
 TEST_CASE( "Test Detect Objects" ) {
@@ -32,6 +24,7 @@ TEST_CASE( "Test Detect Objects" ) {
     std::string sidescanFileName = "../data/wrecks/scotsman5.xtf";
     int channelIndex = 0;
 
+    // TODO: Changed to the coordinates at the center of the box for the found object
     // Position of Scotsman, from file "reference points on SSS scotsman5.pptx"
     // X, -68.828327, 48.445632
     double longitudeCarisScotsman = -68.828327;
@@ -80,18 +73,16 @@ TEST_CASE( "Test Detect Objects" ) {
     std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
 
 
-
     std::vector<GeoreferencedObject*> objectsDetected;
 
-
     //Detection parameters
-    int    fastThresholdValue                   = 100;
+    int    fastThresholdValue                   = 358;
     int    fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
     bool   fastNonMaxSuppressionValue           = false;
-    int    dbscanEpsilonValue                   = 50;
-    int    dbscanMinPointsValue                 = 10;
+    int    dbscanEpsilonValue                   = 51;
+    int    dbscanMinPointsValue                 = 19;
     int    mserDeltaValue                       = 5;
-    int    mserMinimumAreaValue                 = 60;
+    int    mserMinimumAreaValue                 = 320;
     int    mserMaximumAreaValue                 = 14400;
     bool   showFeatureMarkersValue              = false;
     bool   mergeOverlappingBoundingBoxesValue   = true;
@@ -133,8 +124,6 @@ TEST_CASE( "Test Detect Objects" ) {
                   << "\n  width (m): " << objectsDetected[ count ]->getWidth()
                   << "\n  height(m): " << objectsDetected[ count ]->getHeight()
                   << "\n" << std::endl;
-
-
 
 
         double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,

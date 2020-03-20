@@ -1,7 +1,6 @@
 
 #include <iostream>
 
-
 #include "catch.hpp"
 
 #include "../../src/OpenSidescan/sidescanimager.h"
@@ -13,7 +12,7 @@
 #include "../../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
 
-TEST_CASE( "Test Detect Objects" ) {
+TEST_CASE( "Test Detect Objects georeferencing" ) {
 
     std::cout << std::fixed << std::setprecision( 15 );
 
@@ -106,43 +105,28 @@ TEST_CASE( "Test Detect Objects" ) {
             );
 
 
-    REQUIRE( objectsDetected.size() > 0 );
+    REQUIRE( objectsDetected.size() == 1 );
 
-    double minDistance = 1e40; // TODO: replace with maximum positive value a double can hold
-    int indexObjectClosest = 0;
+    Position * position = objectsDetected[ 0 ]->getPosition();
 
-    for (int count = 0; count < objectsDetected.size(); count++ ) {
+    std::cout << "\nObject name: "
+              << objectsDetected[ 0 ]->getName() << std::endl;
 
-        Position * position = objectsDetected[ count ]->getPosition();
-
-        std::cout << "\n" << count << ") Object name: "
-                  << objectsDetected[ count ]->getName() << std::endl;
-
-        std::cout << std::fixed << std::setprecision( 15 )
-                  << "\n  longitude: " << position->getLongitude()
-                  << "\n  latitude:  " << position->getLatitude()
-                  << "\n  width (m): " << objectsDetected[ count ]->getWidth()
-                  << "\n  height(m): " << objectsDetected[ count ]->getHeight()
-                  << "\n" << std::endl;
+    std::cout << std::fixed << std::setprecision( 15 )
+              << "\n  longitude: " << position->getLongitude()
+              << "\n  latitude:  " << position->getLatitude()
+              << "\n  width (m): " << objectsDetected[ 0 ]->getWidth()
+              << "\n  height(m): " << objectsDetected[ 0 ]->getHeight()
+              << "\n" << std::endl;
 
 
-        double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
-                                               position->getLongitude(), position->getLatitude() );
+    double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
+                                           position->getLongitude(), position->getLatitude() );
 
-        std::cout << "\nDistance: " << distance << "\n" << std::endl;
-
-        if ( distance < minDistance ) {
-            minDistance = distance;
-            indexObjectClosest = count;
-        }
+    std::cout << "\nDistance: " << distance << "\n" << std::endl;
 
 
-    }
-
-    std::cout << "\nindexObjectClosest: " << indexObjectClosest << "\n"
-              << "minDistance: " << minDistance << "\n" << std::endl;
-
-    REQUIRE( minDistance < maxAcceptableDistance );
+    REQUIRE( distance < maxAcceptableDistance );
 
     if ( file != nullptr )
         delete file;

@@ -42,6 +42,18 @@ public:
         channelTypes.push_back(channelType);
     }
 
+    /**
+    * Convention for attitude angles (in degrees)
+    *
+    * @param pitch Positive value is nose up (0 to 360)
+    * @param roll Positive value is roll to starboard (right) (0 to 360)
+    * @param heading Positive clockwise (magnetic north) (NORMALIZED TO 0 to 360)
+    */
+    void processAttitude(uint64_t microEpoch,double heading,double pitch,double roll) {
+        attitudes.push_back(Attitude(microEpoch,roll,pitch,heading));
+
+    }
+
     void processPosition(uint64_t microEpoch,double longitude,double latitude,double height){
         positions.push_back(Position(microEpoch,latitude,longitude,height));
     }
@@ -71,12 +83,42 @@ public:
 
 //            std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
 
+            unsigned int attitudeIndex =0 ;
             unsigned int positionIndex =0 ;
 
             for(unsigned int j=0;j<channels[i]->size();j++){ //j indexes rows
 
+                // If ping does not have an attitude and the attitudes vector is not empty: interpolate the attitude
+                if(channels[i]->at(j)->getAttitude() == NULL && ! attitudes.empty()){
+
+                    //find attitude for ping
+                    while(attitudeIndex + 1 < attitudes.size() && attitudes[attitudeIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
+                        attitudeIndex++;
+                    }
+
+                    if(attitudeIndex >= attitudes.size() - 1){
+                        std::cerr << "No attitude data for ping" << std::endl;
+                        break;
+                    }
+
+                    if(attitudes[attitudeIndex].getTimestamp() > channels[i]->at(j)->getTimestamp()){
+                        std::cerr << "rejecting ping for attitude timestamp problem: " << channels[i]->at(j)->getTimestamp() << " " << attitudes[positionIndex].getTimestamp() << std::endl;
+                        continue;
+                    }
+
+                    Attitude* pingAttitude = Interpolator::interpolateAttitude(attitudes[attitudeIndex], attitudes[attitudeIndex+1], channels[i]->at(j)->getTimestamp());
+
+                    channels[i]->at(j)->setAttitude(pingAttitude);
+                }
+
                 // If ping does not have a position and the position vector is not empty: interpolate the position
                 if(channels[i]->at(j)->getPosition() == NULL && ! positions.empty()){
+
+                    //find attitude for ping
+                    while(attitudeIndex + 1 < attitudes.size() && attitudes[attitudeIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
+                        attitudeIndex++;
+                    }
+
                     //find position for ping
                     while(positionIndex + 1 < positions.size() && positions[positionIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
                         positionIndex++;
@@ -88,7 +130,7 @@ public:
                     }
 
                     if(positions[positionIndex].getTimestamp() > channels[i]->at(j)->getTimestamp()){
-                        std::cerr << "rejecting ping " << channels[i]->at(j)->getTimestamp() << " " << positions[positionIndex].getTimestamp() << std::endl;
+                        std::cerr << "rejecting ping for position timestamp problem: " << channels[i]->at(j)->getTimestamp() << " " << positions[positionIndex].getTimestamp() << std::endl;
                         continue;
                     }
 
@@ -148,7 +190,8 @@ public:
         return file;
     }
 
-private:
+protected:
+    std::vector<Attitude> attitudes;
     std::vector<Position> positions;
     std::vector<  std::vector<SidescanPing * > * > channels;
     std::map<std::string,std::string> * fileInfo = NULL;

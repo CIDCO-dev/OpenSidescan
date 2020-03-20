@@ -1,5 +1,5 @@
 
-#include <iostream>
+//#include <iostream>
 
 #include "catch.hpp"
 
@@ -12,9 +12,9 @@
 #include "../../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
 
-TEST_CASE( "Test Detect Objects georeferencing" ) {
+TEST_CASE( "Test Georeferencing" ) {
 
-    std::cout << std::fixed << std::setprecision( 15 );
+//    std::cout << std::fixed << std::setprecision( 15 );
 
 
     const double maxAcceptableDistance = 5.0;
@@ -23,7 +23,7 @@ TEST_CASE( "Test Detect Objects georeferencing" ) {
     std::string sidescanFileName = "../data/wrecks/scotsman5.xtf";
     int channelIndex = 0;
 
-    // TODO: Changed to the coordinates at the center of the box for the found object
+    // TODO: Change to the coordinates at the center of the box for the found object
     // Position of Scotsman, from file "reference points on SSS scotsman5.pptx"
     // X, -68.828327, 48.445632
     double longitudeCarisScotsman = -68.828327;
@@ -38,13 +38,13 @@ TEST_CASE( "Test Detect Objects georeferencing" ) {
 
         SidescanImager imager;
 
-        std::cout << "\nBefore parsing\n" << std::endl;
+//        std::cout << "\nBefore parsing\n" << std::endl;
 
 
         parser = DatagramParserFactory::build(sidescanFileName,imager);
         parser->parse(sidescanFileName);
 
-        std::cout << "\nBefore imager.generate(sFileName)\n" << std::endl;
+//        std::cout << "\nBefore imager.generate(sFileName)\n" << std::endl;
 
         file = imager.generate(sidescanFileName);
 
@@ -69,7 +69,7 @@ TEST_CASE( "Test Detect Objects georeferencing" ) {
     SidescanImage * image = file->getImages()[ channelIndex ];
 
 
-    std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
+//    std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
 
 
     std::vector<GeoreferencedObject*> objectsDetected;
@@ -109,21 +109,21 @@ TEST_CASE( "Test Detect Objects georeferencing" ) {
 
     Position * position = objectsDetected[ 0 ]->getPosition();
 
-    std::cout << "\nObject name: "
-              << objectsDetected[ 0 ]->getName() << std::endl;
+//    std::cout << "\nObject name: "
+//              << objectsDetected[ 0 ]->getName() << std::endl;
 
-    std::cout << std::fixed << std::setprecision( 15 )
-              << "\n  longitude: " << position->getLongitude()
-              << "\n  latitude:  " << position->getLatitude()
-              << "\n  width (m): " << objectsDetected[ 0 ]->getWidth()
-              << "\n  height(m): " << objectsDetected[ 0 ]->getHeight()
-              << "\n" << std::endl;
+//    std::cout << std::fixed << std::setprecision( 15 )
+//              << "\n  longitude: " << position->getLongitude()
+//              << "\n  latitude:  " << position->getLatitude()
+//              << "\n  width (m): " << objectsDetected[ 0 ]->getWidth()
+//              << "\n  height(m): " << objectsDetected[ 0 ]->getHeight()
+//              << "\n" << std::endl;
 
 
     double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
                                            position->getLongitude(), position->getLatitude() );
 
-    std::cout << "\nDistance: " << distance << "\n" << std::endl;
+//    std::cout << "\nDistance: " << distance << "\n" << std::endl;
 
 
     REQUIRE( distance < maxAcceptableDistance );

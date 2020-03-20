@@ -42,7 +42,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #  }
 
 SOURCES += main.cpp \
-    GeoreferencingTest.cpp \
+#    GeoreferencingTest.cpp \
+    DetectObjectsTest.cpp \
 #        mainwindow.cpp \
     ../../src/OpenSidescan/sidescanimager.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
@@ -54,7 +55,7 @@ SOURCES += main.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
 #    ../../src/thirdParty/opencv/apps/createsamples/utility.cpp \
-#    opencvhelper.cpp \
+    ../../src/OpenSidescan/opencvhelper.cpp \
 #    imagetab.cpp \
 #    aboutdialog.cpp \
 #    dbscan.cpp \
@@ -85,7 +86,7 @@ HEADERS  +=  \
     catch.hpp \
 #mainwindow.h \
     ../../src/OpenSidescan/sidescanimager.h \
-#    opencvhelper.h \
+    ../../src/OpenSidescan/opencvhelper.h \
 #    imagetab.h \
 #    aboutdialog.h \
 #    dbscan.h \

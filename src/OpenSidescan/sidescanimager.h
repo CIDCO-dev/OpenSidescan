@@ -74,7 +74,7 @@ public:
 
         //std::cerr << "Generating images for " << channels.size() << " channels" << std::endl;
 
-        double averageXDistancePerPixel=0;
+        double averageXDistancePerPixel=0.0;
 
         for(unsigned int i=0;i<channels.size();i++){
             //std::cerr << "Channel " << i << std::endl;

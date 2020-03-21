@@ -9,6 +9,7 @@
 TEST_CASE("Test SideScanImager") {
 
     int a = 2;
+    a = 3;
 
 
 
@@ -27,7 +28,7 @@ TEST_CASE("Test SideScanImager") {
             samples.push_back(sample1);
             samples.push_back(sample2);
 
-            SidescanPing * ping;
+            SidescanPing * ping = new SidescanPing();
             ping->setTimestamp(pingTimestamp);
             ping->setChannelNumber(0);
             ping->setSamples(samples);
@@ -60,6 +61,9 @@ TEST_CASE("Test SideScanImager") {
             double longitudeAfter = -68.6;
             double heightAfter = 11.0;
             processor.processPosition(positionAfterTimestamp, longitudeAfter, latitudeAfter, heightAfter);
+
+            std::map<std::string,std::string> * properties = new std::map<std::string,std::string>();
+            processor.processChannelProperties(0,"",0,properties);
         }
 
         std::string getName(int tag) {

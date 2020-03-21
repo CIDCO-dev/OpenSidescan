@@ -121,11 +121,11 @@ void GeoreferencedObject::computePosition(){
             return; // this image is neither port nor starboard. For now, use ship position
         }
 
-        Eigen::Matrix3d C_bI_n;
-        CoordinateTransform::getDCM(C_bI_n, *pingCenter->getAttitude());
+        //Eigen::Matrix3d C_bI_n;
+        //CoordinateTransform::getDCM(C_bI_n, *pingCenter->getAttitude());
 
-        Eigen::Matrix3d C_n_Ecef;
-        CoordinateTransform::ned2ecef(C_n_Ecef,*pingCenter->getPosition());
+        //Eigen::Matrix3d C_n_Ecef;
+        //CoordinateTransform::ned2ecef(C_n_Ecef,*pingCenter->getPosition());
 
         // TODO: get this lever arm from platform metadata
         // Eigen::Vector3d antenna2TowPointEcef = C_n_Ecef*C_bI_n*platformMetadata.getAntenna2TowPointLeverArm();

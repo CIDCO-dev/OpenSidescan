@@ -422,36 +422,69 @@ void testGUI::useToolBarActionNewProject()
     QVERIFY2( mainWindow, "useToolBarActionNewProject: mainWindow tests false");
 
 
+
+    std::cout << "\n\nmainWindow: " << mainWindow << "\n" << std::endl;
+
+    // Display children
+
+    const QObjectList list = mainWindow->children();
+
+    std::cout << "\nmainWindow list.size(): " << list.size() << std::endl;
+
+    for ( QObject *children : list ) {
+        std::cout << children << ", " << children->objectName().toStdString()
+            << ", children: " << children->metaObject()->className() << std::endl;
+    }
+
+
+
     // Get action for New Project
 
     QAction * actionNewProject = mainWindow->findChild< QAction * >( "actionNewProject" );
     QVERIFY2( actionNewProject, "useToolBarActionNewProject: actionNewProject tests false");
 
+    std::cout << "\n\nactionNewProject: " << actionNewProject << "\n" << std::endl;
+
+
 
     QToolBar * mainToolBar = mainWindow->findChild< QToolBar * >( "mainToolBar" );
     QVERIFY2( mainToolBar, "useToolBarActionNewProject: mainToolBar tests false");
+
+    std::cout << "\n\nmainToolBar: " << mainToolBar << "\n" << std::endl;
+
 
 
 
     QWidget *widgetForActionNewProject = mainToolBar->widgetForAction( actionNewProject );
     QVERIFY2( widgetForActionNewProject, "useToolBarActionNewProject: widgetForActionNewProject tests false");
 
+    std::cout << "\n\nwidgetForActionNewProject: " << widgetForActionNewProject << "\n" << std::endl;
+
+
     // Show the mainWindow before opening the modal window
     mainWindow->show();
     QTest::qWait(200);
 
 
+    std::cout << "\n\nBefore starting timerTimeOut timer\n" << std::endl;
+
     // Time out timer in case there is a failure while interacting with the modal window
     timerTimeOut->start( 5 * 1000 );
 
+
+    std::cout << "\n\nBefore starting single shot timer\n" << std::endl;
 
     doInteractWithModalWindowToSelectProjectToOpen = false;
 
     QTimer::singleShot(500, this, SLOT(interactWithModalWindowAlreadyAnActiveProject() ) );
 
+    std::cout << "\n\nBefore mouse click\n" << std::endl;
+
+
     // Click the button to open the modal dialog
     QTest::mouseClick(widgetForActionNewProject, Qt::LeftButton);
 
+    std::cout << "\n\nEnd of 'testGUI::useToolBarActionNewProject()'" << "\n" << std::endl;
 
 }
 
@@ -2042,6 +2075,7 @@ void testGUI::operateMouseToCreateObjects()
         {   0,              1,          20,                 120,                60,                     150 },
         {   0,              0,          20,                 120,                60,                     150 },
         {   1,              1,          40,                 60,                 90,                     100 },
+//        {   1,              1,          401,                 811,                 796,                     900 }, // Test selecting the actual Scotsman wreck
         };
 
 

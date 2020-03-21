@@ -82,6 +82,7 @@ SOURCES += main.cpp \
 #    progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  +=  \
+    SideScanImagerTest.h \
     catch.hpp \
 #mainwindow.h \
     ../../src/OpenSidescan/sidescanimager.h \

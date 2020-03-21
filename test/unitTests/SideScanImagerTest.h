@@ -90,9 +90,22 @@ TEST_CASE("Test SideScanImager") {
     SidescanPing* ping = image->getPings()[0];
 
     double testRoll = 1.5;
+    double testPitch = 2.5;
+    double testHeading = 45.0;
 
     double eps = 1e-9;
     REQUIRE(std::abs(ping->getAttitude()->getRoll() - testRoll) < eps);
+    REQUIRE(std::abs(ping->getAttitude()->getPitch() - testPitch) < eps);
+    REQUIRE(std::abs(ping->getAttitude()->getHeading() - testHeading) < eps);
+
+
+    double testLatitude = 48.5;
+    double testLongitude = -68.5;
+    double testHeight = 10.0;
+
+    REQUIRE(std::abs(ping->getPosition()->getLatitude() - testLatitude) < eps);
+    REQUIRE(std::abs(ping->getPosition()->getLongitude() - testLongitude) < eps);
+    REQUIRE(std::abs(ping->getPosition()->getEllipsoidalHeight() - testHeight) < eps);
 }
 
 #endif // SIDESCANIMAGERTEST_H

@@ -121,10 +121,19 @@ void GeoreferencedObject::computePosition(){
             return; // this image is neither port nor starboard. For now, use ship position
         }
 
+        //Eigen::Matrix3d C_bI_n;
+        //CoordinateTransform::getDCM(C_bI_n, *pingCenter->getAttitude());
+
+        //Eigen::Matrix3d C_n_Ecef;
+        //CoordinateTransform::ned2ecef(C_n_Ecef,*pingCenter->getPosition());
+
         // TODO: get this lever arm from platform metadata
+        // Eigen::Vector3d antenna2TowPointEcef = C_n_Ecef*C_bI_n*platformMetadata.getAntenna2TowPointLeverArm();
         Eigen::Vector3d antenna2TowPointEcef(0,0,0); // Zero vector for now
 
+
         // TODO: get this layback from xtf file
+        // Eigen::Vector3d laybackEcef = C_n_Ecef*C_bI_n*pingCenter.getLayback();
         Eigen::Vector3d laybackEcef(0,0,0); // Zero vector for now
 
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);

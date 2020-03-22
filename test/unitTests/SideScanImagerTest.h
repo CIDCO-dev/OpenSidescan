@@ -7,13 +7,6 @@
 
 
 TEST_CASE("Test SideScanImager") {
-
-    int a = 2;
-    a = 3;
-
-
-
-
     class TestParser : DatagramParser {
     public:
         TestParser(DatagramEventHandler & processor) : DatagramParser(processor) {};

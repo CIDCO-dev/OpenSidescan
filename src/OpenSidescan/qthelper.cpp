@@ -76,7 +76,8 @@ bool QtHelper::buildColorTable()
 
     // The microfeature circle is displayed in blue
     // The color blue must be in the color table
-    colorTable[254] = qRgb( 255, 0, 0 );
+//    colorTable[254] = qRgb( 255, 0, 0 );
+    colorTable[254] = qRgb( 0, 0, 255 ); // CB 2020-03-23 did not fix the problem by itself
 
     // The found objects' bonding box is displayed with a white rectangle
     // The color white must be in the color table
@@ -93,7 +94,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 4 channel
       case CV_8UC4:
       {
-//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -106,7 +107,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 3 channel
       case CV_8UC3:
       {
-//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3\n" << std::endl;
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3, CV_8UC3 has value of " << CV_8UC3 << "\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -121,7 +122,8 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
 
-//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n" << std::endl;
+         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n"
+                   << "CV_8UC1 has value of " << CV_8UC1 << "\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -132,7 +134,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
 
 #else
 
-//       std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, NOT( if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0) )\n" << std::endl;
+       std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, NOT( if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0) )\n" << std::endl;
 
          static QVector<QRgb>  sColorTable;
 

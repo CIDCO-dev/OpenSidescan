@@ -94,7 +94,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 4 channel
       case CV_8UC4:
       {
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC4\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -107,7 +107,7 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       // 8-bit, 3 channel
       case CV_8UC3:
       {
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3, CV_8UC3 has value of " << CV_8UC3 << "\n" << std::endl;
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC3, CV_8UC3 has value of " << CV_8UC3 << "\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,
@@ -122,8 +122,8 @@ QImage  QtHelper::cvMatToQImage( const cv::Mat &inMat )
       {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
 
-         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n"
-                   << "CV_8UC1 has value of " << CV_8UC1 << "\n" << std::endl;
+//         std::cout << "\nQtHelper::cvMatToQImage(), CV_8UC1, if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)\n"
+//                   << "CV_8UC1 has value of " << CV_8UC1 << "\n" << std::endl;
 
          QImage image( inMat.data,
                        inMat.cols, inMat.rows,

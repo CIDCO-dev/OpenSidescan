@@ -5,6 +5,12 @@
 #include <sstream>
 
 
+
+// Inspired from https://stackoverflow.com/questions/7531981/how-to-instantiate-a-static-vector-of-object
+cv::Mat OpencvHelper::colorTable(256, 1, CV_8UC3);
+bool OpencvHelper::helperVariable = buildColorTable();
+
+
 void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool showFeatureMarkers,bool mergeOverlappingObjects){
 
     image.resetDisplayedImage();
@@ -151,8 +157,7 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
 double OpencvHelper::fn( const double n,
            const double h360,
            const double saturation01,
-           const double value01 )
-{
+           const double value01 ) {
     // f(n) = V - V * S * max( min( k, 4-k, 1 ), 0 )
 
     double k = fmod( n + h360 / 60, 6.0 );
@@ -175,99 +180,53 @@ double OpencvHelper::fn( const double n,
     return value01 - value01 * saturation01 * maximum;
 }
 
+
 void OpencvHelper::HSVtoRGB( const double h360,
                const double saturation01,
                const double value01,
-               std::vector<int> & rgb )
-{
+               std::vector<unsigned char> & rgb ) {
     // Each of R, G, B, as computed by fn, is within [0, 1]
 
     if ( rgb.size() != 3 )
         rgb.resize( 3 );
 
-    rgb[ 0 ] = static_cast<int>( fn( 5, h360, saturation01, value01 ) * 256 );
-    rgb[ 1 ] = static_cast<int>( fn( 3, h360, saturation01, value01 ) * 256 );
-    rgb[ 2 ] = static_cast<int>( fn( 1, h360, saturation01, value01 ) * 256 );
+    rgb[ 0 ] = static_cast<unsigned char>( fn( 5, h360, saturation01, value01 ) * 256 );
+    rgb[ 1 ] = static_cast<unsigned char>( fn( 3, h360, saturation01, value01 ) * 256 );
+    rgb[ 2 ] = static_cast<unsigned char>( fn( 1, h360, saturation01, value01 ) * 256 );
 }
 
 
-
-
-void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
-    img.resetDisplayedImage();
-
-    std::cout << "\nOpencvHelper::draw(), before colormap, img.getDisplayedImage().type(): " << img.getDisplayedImage().type() << "\n" << std::endl;
-
-
-
-    // Build color table
-    cv::Mat colorTable(256, 1, CV_8UC3);
+bool OpencvHelper::buildColorTable() {
 
     double hue360 = 39.069767441860456;
     double saturation = 0.9005235602094241;
 
-    // TODO: use unsigned int to avoid implicit conversion
-    std::vector<int> rgb;
+    std::vector<unsigned char> rgb;
 
     for( int i = 0; i < 256; ++i )
     {
         HSVtoRGB( hue360, saturation, i / 256.0, rgb );
 
-        // OpenCV: BGR
+        // OpenCV uses BGR, not RGB
         colorTable.at<cv::Vec3b>(i,0).val[0] = rgb[ 2 ];
         colorTable.at<cv::Vec3b>(i,0).val[1] = rgb[ 1 ];
         colorTable.at<cv::Vec3b>(i,0).val[2] = rgb[ 0 ];
     }
 
+    return true;
+}
 
-//    // The found objects' bonding box is displayed with a white rectangle
-//    // The color white must be in the color table
-//    colorTable[255] = qRgb( 255, 255, 255 );
+void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
 
-
+    img.resetDisplayedImage();
 
     // Apply color map to displayed image, will change image from CV_8UC1 to CV_8UC3
     cv::applyColorMap(img.getDisplayedImage(), img.getDisplayedImage(), colorTable);
 
 
-
-
-    std::cout << "\nOpencvHelper::draw(), showMicroFeatures: " << showMicroFeatures << "\n" << std::endl;
     if(showMicroFeatures) {
-
-        std::cout << "\nOpencvHelper::draw(), before cv::drawKeypoints(), img.getDisplayedImage().type(): " << img.getDisplayedImage().type() << "\n" << std::endl;
-
-
-
-//        cv::Mat lutRND(256, 1, CV_8UC3);
-//        cv::randu(lutRND, cv::Scalar(0, 0, 0), cv::Scalar(255, 255, 255));
-
-//        cv::applyColorMap(img.getDisplayedImage(), img.getDisplayedImage(), lutRND);
-
-
-
-        std::cout << "\nOpencvHelper::draw(), after cv::applyColorMap, img.getDisplayedImage().type(): " << img.getDisplayedImage().type() << "\n" << std::endl;
-
-
-
         cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),
                             cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-
-
-
-
-
-//        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),
-//                            cv::Scalar(254,254,254),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-//        std::cout << "\nOpencvHelper::draw(), after cv::drawKeypoints(), img.getDisplayedImage().type(): " << img.getDisplayedImage().type() << "\n" << std::endl;
-
-//        img.getDisplayedImage().convertTo(img.getDisplayedImage(), CV_8UC1);
-
-//        std::cout << "\nOpencvHelper::draw(), after img.getDisplayedImage().convertTo, img.getDisplayedImage().type(): " << img.getDisplayedImage().type() << "\n" << std::endl;
-
-
     }
 
     for(auto i = img.getObjects().begin();i!=img.getObjects().end();i++){

@@ -31,9 +31,12 @@ private:
     static void HSVtoRGB( const double h360,
                    const double saturation01,
                    const double value01,
-                   std::vector<int> & rgb );
+                   std::vector<unsigned char> & rgb );
 
-//    bool buildColorTable();
+    static bool buildColorTable();
+
+    static bool helperVariable;
+    static cv::Mat colorTable;
 
 };
 

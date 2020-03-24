@@ -65,40 +65,6 @@ void GeoreferencedObject::computeDimensions(){
 }
 
 void GeoreferencedObject::computePosition(){
-    std::cout << std::fixed;
-        std::cout << std::setprecision(15);
-
-
-        /*
-    int offset = 0;
-
-    while(yCenter + offsetAfter < image.getPings().size() || yCenter - offsetBefore >= 0) {
-
-        if(yCenter + offset < image.getPings().size()) {
-            if(Distance::haversine(
-                        image.getPings()[yCenter + offset]->getPosition()->getLongitude(),
-                        image.getPings()[yCenter + offset]->getPosition()->getLatitude(),
-                        pingCenter->getPosition()->getLongitude(),
-                        pingCenter->getPosition()->getLatitude()) < 1.0) {
-
-            }
-
-
-        }
-
-        if(Distance::haversine(
-                    pingBefore->getPosition()->getLongitude(),
-                    pingBefore->getPosition()->getLatitude(),
-                    pingCenter->getPosition()->getLongitude(),
-                    pingCenter->getPosition()->getLatitude()) < 1.0) {
-
-        }
-
-    }*/
-
-
-
-
 
     if(yCenter < image.getPings().size()){
         SidescanPing * pingCenter = image.getPings()[yCenter];
@@ -195,23 +161,10 @@ void GeoreferencedObject::computePosition(){
         // -tangent vector since tow fish is assumed to be directly behind ship
         // -normal vector since sensorDepth is positive down (according to XTF doc)
         Eigen::Vector3d backEcef = pingCenter->getLayback()*(-tangentUnitVector);
-        std::cout << "backEcef: " << std::endl << backEcef << std::endl;
-        std::cout << "backEcef length: " << backEcef.norm() << std::endl;
-
         Eigen::Vector3d downEcef = pingCenter->getSensorDepth()*(-normalUnitVector);
-        std::cout << "downEcef: " << std::endl << downEcef << std::endl;
-        std::cout << "downEcef length: " << downEcef.norm() << std::endl;
-
         Eigen::Vector3d laybackEcef = backEcef + downEcef;
-        std::cout << "layback: " << pingCenter->getLayback() << std::endl;
-        std::cout << "sensor depth: " << pingCenter->getSensorDepth() << std::endl;
-        std::cout << "laybackEcef: " << std::endl << laybackEcef << std::endl;
-        std::cout << "laybackEcef length: " << laybackEcef.norm() << std::endl;
-        std::cout << "angle between tangent and norm: " << std::acos(tangentUnitVector.dot(normalUnitVector))*180/M_PI << std::endl;
-        //Eigen::Vector3d laybackEcef(0,0,0);
 
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-
         //set position of this georeferenced object
         SideScanGeoreferencing::georeferenceSideScanEcef(shipPositionEcef, antenna2TowPointEcef, laybackEcef, sideScanDistanceECEF, *position);
     }

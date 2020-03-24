@@ -5,6 +5,7 @@
 #include "../thirdParty/MBES-lib/src/utils/Exception.hpp"
 #include "../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
 #include "../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
+#include "../thirdParty/MBES-lib/src/math/Distance.hpp"
 
 #include <algorithm>
 
@@ -64,8 +65,45 @@ void GeoreferencedObject::computeDimensions(){
 }
 
 void GeoreferencedObject::computePosition(){
+    std::cout << std::fixed;
+        std::cout << std::setprecision(15);
+
+
+        /*
+    int offset = 0;
+
+    while(yCenter + offsetAfter < image.getPings().size() || yCenter - offsetBefore >= 0) {
+
+        if(yCenter + offset < image.getPings().size()) {
+            if(Distance::haversine(
+                        image.getPings()[yCenter + offset]->getPosition()->getLongitude(),
+                        image.getPings()[yCenter + offset]->getPosition()->getLatitude(),
+                        pingCenter->getPosition()->getLongitude(),
+                        pingCenter->getPosition()->getLatitude()) < 1.0) {
+
+            }
+
+
+        }
+
+        if(Distance::haversine(
+                    pingBefore->getPosition()->getLongitude(),
+                    pingBefore->getPosition()->getLatitude(),
+                    pingCenter->getPosition()->getLongitude(),
+                    pingCenter->getPosition()->getLatitude()) < 1.0) {
+
+        }
+
+    }*/
+
+
+
+
+
     if(yCenter < image.getPings().size()){
         SidescanPing * pingCenter = image.getPings()[yCenter];
+
+
 
 
 
@@ -73,29 +111,50 @@ void GeoreferencedObject::computePosition(){
         CoordinateTransform::getPositionECEF(shipPositionEcef, *pingCenter->getPosition());
 
         Eigen::Vector3d tangentUnitVector;
-        if(yCenter == image.getPings().size()-1) {
+        bool tangentFound = false;
+        int offset = 0;
 
-            //this is the last ping in the list compute tangent vector using previous ping
-            SidescanPing * pingBefore = image.getPings()[yCenter-1];
+        while(!tangentFound) {
+            ++offset;
+            if(yCenter + offset < image.getPings().size()) {
+                SidescanPing * pingAfter = image.getPings()[yCenter+offset];
 
-            if(pingBefore->getTimestamp() > pingCenter->getTimestamp()) {
-                throw new Exception("GeoreferencedObject::computePosition(): pingBefore [yCenter-1] has greater Timestamp than pingCenter");
+                if(pingAfter->getTimestamp() < pingCenter->getTimestamp()) {
+                    throw new Exception("GeoreferencedObject::computePosition(): pingAfter [yCenter+1] has lower Timestamp than pingCenter");
+                }
+
+                if(Distance::haversine(
+                            pingAfter->getPosition()->getLongitude(),
+                            pingAfter->getPosition()->getLatitude(),
+                            pingCenter->getPosition()->getLongitude(),
+                            pingCenter->getPosition()->getLatitude()) > 1.0)
+                {
+                    Eigen::Vector3d positionAfterECEF;
+                    CoordinateTransform::getPositionECEF(positionAfterECEF, *pingAfter->getPosition());
+                    tangentUnitVector = (positionAfterECEF - shipPositionEcef).normalized();
+                    tangentFound = true;
+                }
+            } else if(yCenter - offset > 0) {
+                SidescanPing * pingBefore = image.getPings()[yCenter - offset];
+
+                if(pingBefore->getTimestamp() > pingCenter->getTimestamp()) {
+                    throw new Exception("GeoreferencedObject::computePosition(): pingBefore [yCenter-1] has greater Timestamp than pingCenter");
+                }
+
+                if(Distance::haversine(
+                            pingBefore->getPosition()->getLongitude(),
+                            pingBefore->getPosition()->getLatitude(),
+                            pingCenter->getPosition()->getLongitude(),
+                            pingCenter->getPosition()->getLatitude()) > 1.0)
+                {
+                    Eigen::Vector3d positionBeforeECEF;
+                    CoordinateTransform::getPositionECEF(positionBeforeECEF, *pingBefore->getPosition());
+                    tangentUnitVector = (shipPositionEcef - positionBeforeECEF).normalized();
+                    tangentFound = true;
+                }
+            } else {
+                throw new Exception("GeoreferencedObject::computePosition(): Could not find another position to compute tangent vector to ship trajectory.");
             }
-
-            Eigen::Vector3d positionBeforeECEF;
-            CoordinateTransform::getPositionECEF(positionBeforeECEF, *pingBefore->getPosition());
-            tangentUnitVector = (shipPositionEcef-positionBeforeECEF).normalized();
-        } else {
-            //compute tangent vector using next ping
-            SidescanPing * pingAfter = image.getPings()[yCenter+1];
-
-            if(pingAfter->getTimestamp() < pingCenter->getTimestamp()) {
-                throw new Exception("GeoreferencedObject::computePosition(): pingAfter [yCenter+1] has lower Timestamp than pingCenter");
-            }
-
-            Eigen::Vector3d positionAfterECEF;
-            CoordinateTransform::getPositionECEF(positionAfterECEF, *pingAfter->getPosition());
-            tangentUnitVector = (positionAfterECEF-shipPositionEcef).normalized();
         }
 
         Eigen::Vector3d normalUnitVector = shipPositionEcef.normalized();
@@ -133,8 +192,23 @@ void GeoreferencedObject::computePosition(){
 
 
         // TODO: get this layback from xtf file
-        // Eigen::Vector3d laybackEcef = C_n_Ecef*C_bI_n*pingCenter.getLayback();
-        Eigen::Vector3d laybackEcef(0,0,0); // Zero vector for now
+        // -tangent vector since tow fish is assumed to be directly behind ship
+        // -normal vector since sensorDepth is positive down (according to XTF doc)
+        Eigen::Vector3d backEcef = pingCenter->getLayback()*(-tangentUnitVector);
+        std::cout << "backEcef: " << std::endl << backEcef << std::endl;
+        std::cout << "backEcef length: " << backEcef.norm() << std::endl;
+
+        Eigen::Vector3d downEcef = pingCenter->getSensorDepth()*(-normalUnitVector);
+        std::cout << "downEcef: " << std::endl << downEcef << std::endl;
+        std::cout << "downEcef length: " << downEcef.norm() << std::endl;
+
+        Eigen::Vector3d laybackEcef = backEcef + downEcef;
+        std::cout << "layback: " << pingCenter->getLayback() << std::endl;
+        std::cout << "sensor depth: " << pingCenter->getSensorDepth() << std::endl;
+        std::cout << "laybackEcef: " << std::endl << laybackEcef << std::endl;
+        std::cout << "laybackEcef length: " << laybackEcef.norm() << std::endl;
+        std::cout << "angle between tangent and norm: " << std::acos(tangentUnitVector.dot(normalUnitVector))*180/M_PI << std::endl;
+        //Eigen::Vector3d laybackEcef(0,0,0);
 
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
 

@@ -5,6 +5,12 @@
 #include <sstream>
 
 
+
+// Inspired from https://stackoverflow.com/questions/7531981/how-to-instantiate-a-static-vector-of-object
+cv::Mat OpencvHelper::colorTable(256, 1, CV_8UC3);
+bool OpencvHelper::helperVariable = buildColorTable();
+
+
 void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool showFeatureMarkers,bool mergeOverlappingObjects){
 
     image.resetDisplayedImage();
@@ -145,11 +151,82 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
     }
 }
 
+
+// Conversion based on
+// https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
+double OpencvHelper::fn( const double n,
+           const double h360,
+           const double saturation01,
+           const double value01 ) {
+    // f(n) = V - V * S * max( min( k, 4-k, 1 ), 0 )
+
+    double k = fmod( n + h360 / 60, 6.0 );
+
+    double minimum = k;
+
+    if ( 4 - k < minimum )
+        minimum = 4 - k;
+
+    if ( 1 < minimum )
+        minimum = 1.0;
+
+    double maximum;
+
+    if ( minimum > 0 )
+        maximum = minimum;
+    else
+        maximum = 0.0;
+
+    return value01 - value01 * saturation01 * maximum;
+}
+
+
+void OpencvHelper::HSVtoRGB( const double h360,
+               const double saturation01,
+               const double value01,
+               std::vector<unsigned char> & rgb ) {
+    // Each of R, G, B, as computed by fn, is within [0, 1]
+
+    if ( rgb.size() != 3 )
+        rgb.resize( 3 );
+
+    rgb[ 0 ] = static_cast<unsigned char>( fn( 5, h360, saturation01, value01 ) * 256 );
+    rgb[ 1 ] = static_cast<unsigned char>( fn( 3, h360, saturation01, value01 ) * 256 );
+    rgb[ 2 ] = static_cast<unsigned char>( fn( 1, h360, saturation01, value01 ) * 256 );
+}
+
+
+bool OpencvHelper::buildColorTable() {
+
+    double hue360 = 39.069767441860456;
+    double saturation = 0.9005235602094241;
+
+    std::vector<unsigned char> rgb;
+
+    for( int i = 0; i < 256; ++i )
+    {
+        HSVtoRGB( hue360, saturation, i / 256.0, rgb );
+
+        // OpenCV uses BGR, not RGB
+        colorTable.at<cv::Vec3b>(i,0).val[0] = rgb[ 2 ];
+        colorTable.at<cv::Vec3b>(i,0).val[1] = rgb[ 1 ];
+        colorTable.at<cv::Vec3b>(i,0).val[2] = rgb[ 0 ];
+    }
+
+    return true;
+}
+
 void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
+
     img.resetDisplayedImage();
 
+    // Apply color map to displayed image, will change image from CV_8UC1 to CV_8UC3
+    cv::applyColorMap(img.getDisplayedImage(), img.getDisplayedImage(), colorTable);
+
+
     if(showMicroFeatures) {
-        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),
+                            cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     }
 
     for(auto i = img.getObjects().begin();i!=img.getObjects().end();i++){

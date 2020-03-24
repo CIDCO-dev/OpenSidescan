@@ -19,6 +19,25 @@ public:
     static bool isOverlapping(cv::Rect & r1,cv::Rect & r2);
 
     static void mergeOverlapping(std::vector<cv::Rect> & rects);
+
+
+
+private:
+    static double fn( const double n,
+               const double h360,
+               const double saturation01,
+               const double value01 );
+
+    static void HSVtoRGB( const double h360,
+                   const double saturation01,
+                   const double value01,
+                   std::vector<unsigned char> & rgb );
+
+    static bool buildColorTable();
+
+    static bool helperVariable;
+    static cv::Mat colorTable;
+
 };
 
 #endif // OPENCVHELPER_H

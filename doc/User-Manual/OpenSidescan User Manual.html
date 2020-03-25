@@ -48,7 +48,7 @@
                 <li><a href="#ManagingUnderwaterObjectInventory">Managing underwater object inventory</a></li>
                 <li><ul>
                     <li><a href="#CreateAnObject">Create an Object with the Computer Mouse</a></li>
-                    <li><a href="#DisplayObjectInformation">Display an Object's Information</a></li>
+                    <li><a href="#DisplayObjectInformation">Display an Object's Details</a></li>
                     <li><a href="#RemoveObjectFromInventory">Remove an Object from the Inventory</a></li>
                     <li><a href="#ExportInventoryKMLFile">Export the Inventory as a KML File</a></li>
                     <li><a href="#ExportInventoryCSVFile">Export the Inventory as a CSV File</a></li>
@@ -66,7 +66,7 @@
         </p>
         <ul style="list-style: square">
             <li>Creating, Opening, Saving a Project, and Importing Sidescan Files.</li>
-            <li>Managing underwater object inventory.</li>
+            <li>Managing the underwater object inventory.</li>
         </ul>
         <p>
             The screenshots were taken on Linux. There may be some small differences on Windows.
@@ -180,7 +180,7 @@
         <hr style="height:3px;border:none;color:#333;background-color:#333;" />
         <section id="ManagingUnderwaterObjectInventory">
             <header>
-                <h2>Managing underwater object inventory</h2>
+                <h2>Managing the underwater object inventory</h2>
             </header>
             <p>
                 TODO.
@@ -191,20 +191,33 @@
                     <h3>Create an Object with the Computer Mouse</h3>
                 </header>
                 <p>
-                TODO.
-                With a sidescan file image being displayed,
-
-                An object can be created
-
+                An object can manually be created by "drawing" a rectangle around it on the sidescan image. First,
+                position the mouse at one corner of the desired object.<br>
+                <a href="images/createObjectPositionMouse.png" target="_blank"><img src="images/createObjectPositionMouse.png" alt="Create Object Position Mouse"></a>
+                <br><br>
+                Press and hold the mouse left button. Drag the mouse to form the rectangle around
+                the desired object.
+                <a href="images/createObjectDragMouse.png" target="_blank"><img src="images/createObjectDragMouse.png" alt="Create Object Drag Mouse"></a>
+                <br><br>
+                Release the mouse left button. A window will open with the object's latitude, longitude, width, and height.
+                You can enter a name and a description for the object. Click OK to create the object.<br>
+                <a href="images/createObjectWindow.png" target="_blank"><img src="images/createObjectWindow.png" alt="Create Object Window"></a>
+                <br><br>
                 </p>
             </section>
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
             <section id="DisplayObjectInformation">
                 <header>
-                    <h3>Display an Object's Information</h3>
+                    <h3>Display an Object's Details</h3>
                 </header>
                 <p>
-                TODO.
+                    To display an object's details, with the pointer over the object on the sidescan image, right-click and select "View object details".<br>
+                    <a href="images/viewObjectDetailsFromImage.png" target="_blank"><img src="images/viewObjectDetailsFromImage.png" alt="View Object Details From Image.png"></a>
+                    <br><br>Or, with the pointer over the row for the object in the Object Inventory, right-click  and select "View object details".<br>
+                    <a href="images/viewObjectDetailsFromObjectInventory.png" target="_blank"><img src="images/viewObjectDetailsFromObjectInventory.png" alt="View Object Details From Object Inventory"></a>
+                    <br><br>
+                    Either way, a window with the object's details will open. You can modify the name or the description.<br>
+                    <a href="images/createObjectWindow.png" target="_blank"><img src="images/createObjectWindow.png" alt="Create Object Window"></a>
                 </p>
             </section>
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />
@@ -213,7 +226,13 @@
                     <h3>Remove an Object from the Inventory</h3>
                 </header>
                 <p>
-                TODO.
+                To remove an object from the inventory, with the pointer over the object on the sidescan image, right-click and select "Remove from inventory".<br>
+                <a href="images/removeObjectFromInventoryUsingImage.png" target="_blank"><img src="images/removeObjectFromInventoryUsingImage.png" alt="Remove Object From Inventory Using Image"></a>
+                <br><br>Or, with the pointer over the row for the object in the Object Inventory, right-click  and select "Remove from inventory".<br>
+                <a href="images/removeObjectFromInventoryUsingObjectInventory.png" target="_blank"><img src="images/removeObjectFromInventoryUsingObjectInventory.png" alt="Remove Object From Inventory Using Object Inventory.png"></a>
+                <br><br>
+                Either way, a window will open, asking you to confirm. Click Yes to permanently remove the object from the inventory.<br>
+                <a href="images/removeObjectFromInventoryWindow.png" target="_blank"><img src="images/removeObjectFromInventoryWindow.png" alt="Remove Object From Inventory Window"></a>
                 </p>
             </section>
             <hr style="height:1px;border:none;color:#333;background-color:#333;" />

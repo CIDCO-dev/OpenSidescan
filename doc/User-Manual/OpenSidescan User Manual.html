@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+        <!-- Remove the footer from printing -->
+        <style>
+            @media print {
+                .noprint { display: none !important; }
+                #print {
+                    visibility: visible !important;
+                    padding-top: 50px !important;
+                }
+            }
+            a:link { color:#0563C1; }
+            a:visited { color:#954F72; }
+            ul { list-style: none; }
+            h1 { 
+                margin:15px 0px 8px 0px; 
+                font-size: 44px;
+            }
+        </style>
+        <title>OpenSidescan User Manual</title>
+    </head>
+<body>
+    <header>
+        <p>
+            <img src="images/logoOpenSidescan_splashFromResources.jpg" alt="Logo OpenSidescan" width=316>
+            <br>User Manual
+            <br><span style='font-size:29px;'>Version 0.0.1</span>
+        </p> 
+    </header>
+    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+    <section id="TableOfContent">
+        <header>
+            <h1>Table of Contents</h1>
+        </header>
+        <ul style="font-size: 16px; margin-top: 10px">
+            <li style="margin-top: 10px"><a href="#HowTo">How to use OpenSidescan</a></li>
+            <li><ul>
+                <li><a href="#CreatingOpeningSavingProjectImportingSidescanFiles">Creating, Opening, Saving a Project, and Importing Sidescan Files</a></li>
+                <li><ul>
+                    <li><a href="#CreateProject">Create Project</a></li>
+                    <li><a href="#OpenProject">Open Project</a></li>
+                    <li><a href="#SaveProject">Save Project</a></li>
+                    <li><a href="#ImportSidescanFile">Import Sidescan Files</a></li>
+                </ul></li>
+                <li><a href="#ManagingUnderwaterObjectInventory">Managing underwater object inventory</a></li>
+                <li><ul>
+                    <li><a href="#CreateAnObject">Create an Object with the Computer Mouse</a></li>
+                    <li><a href="#DisplayObjectInformation">Display an Object's Details</a></li>
+                    <li><a href="#RemoveObjectFromInventory">Remove an Object from the Inventory</a></li>
+                    <li><a href="#ExportInventoryKMLFile">Export the Inventory as a KML File</a></li>
+                    <li><a href="#ExportInventoryCSVFile">Export the Inventory as a CSV File</a></li>
+                </ul></li>
+            </ul></li>
+        </ul>
+    </section>
+    <hr style="height:5px;border:none;color:#333;background-color:#333;" />
+    <section id="HowTo">
+        <header>
+            <h1>How to use OpenSidescan</h1>
+        </header>
+        <p>
+            This section will guide you through some functionalities of OpenSidescan:
+        </p>
+        <ul style="list-style: square">
+            <li>Creating, Opening, Saving a Project, and Importing Sidescan Files.</li>
+            <li>Managing the underwater object inventory.</li>
+        </ul>
+        <p>
+            The screenshots were taken on Linux. There may be some small differences on Windows.
+        </p>
+        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
+        <section id="CreatingOpeningSavingProjectImportingSidescanFiles">
+            <header>
+                <h2>Creating, Opening, Saving a Project, and Importing Sidescan Files</h2>
+            </header>
+            <p>
+                A project in the context of this software contains the sidescan files and the object inventory. Only one project can be open at a time.
+            </p>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="CreateProject">
+                <header>
+                    <h3>Create Project</h3>
+                </header>
+                <p>
+                    To create a new project, click on the Project menu and select New Project.<br>
+                    <a href="images/newProjectFromTopMenu.png" target="_blank"><img src="images/newProjectFromTopMenu.png" alt="New Project From Top Menu"></a>
+                    <br><br>Or, in the toolbar, click on the first icon from the left.<br>
+                    <a href="images/newProjectFromToolbar.png" target="_blank"><img src="images/newProjectFromToolbar.png" alt="New Project From Toolbar"></a>
+                    <br><br>
+                    Either way, a window will open indicating that there is an active project and that all unsaved
+                    changes will be lost. Click OK to continue (all unsaved changes will be lost) or click Cancel
+                    to close this window and go back to the active project.<br>
+                    <a href="images/windowAlreadyActiveProjectCancelOrOk.png" target="_blank"><img src="images/windowAlreadyActiveProjectCancelOrOk.png" alt="window Already Active Project Cancel Or Ok"></a>
+                </p>
+            </section>           
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="OpenProject">
+                <header>
+                    <h3>Open Project</h3>
+                </header>
+                <p>
+                    To open an existing project, click on the Project menu and select Open Project.<br>
+                    <a href="images/openProjectFromTopMenu.png" target="_blank"><img src="images/openProjectFromTopMenu.png" alt="Open Project From Top Menu"></a>
+                    <br><br>Alternatively, in the toolbar, click on the second icon from the left (representing a sheet partly out of a folder).<br>
+                    <a href="images/openProjectFromToolbar.png" target="_blank"><img src="images/openProjectFromToolbar.png" alt="Open Project From Toolvar"></a>
+                    <br><br>
+                    Either way, a window will open indicating that there is an active project and that all unsaved
+                    changes will be lost. Click OK to continue (all unsaved changes will be lost) or click Cancel
+                    to close this window and go back to the active project.<br>
+                    <a href="images/windowAlreadyActiveProjectCancelOrOk.png" target="_blank"><img src="images/windowAlreadyActiveProjectCancelOrOk.png" alt="window Already Active Project Cancel Or Ok"></a>
+                    <br><br>After clicking OK, a window will open in which you can select a project file.<br>
+                    <a href="images/openProjectWindow.png" target="_blank"><img src="images/openProjectWindow.png" alt="Open Project Window"></a>
+                    <br><br>Navigate to the folder which contain the project and select it. After clicking
+                    the Open button, the project will be opened in OpenSidescan and the interface will be updated with
+                    the corresponding data.
+                    <br><strong>NOTE:</strong> Projects have an <strong>.ssp</strong> extension.
+                 </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="SaveProject">
+                <header>
+                    <h3>Save Project</h3>
+                </header>
+                <p>
+                    To save a project, select the Project menu and click on Save Project or Save Project As ...<br>
+                    <a href="images/saveProjectFromTopMenu.png" target="_blank"><img src="images/saveProjectFromTopMenu.png" alt="Save Project From Top Menu"></a>
+                    <a href="images/saveAsProjectFromTopMenu.png" target="_blank"><img src="images/saveAsProjectFromTopMenu.png" alt="Save As Project From Top Menu"></a>
+                    <br><br>
+                    Alternatively, in the toolbar, click on the third icon from the left (floppy disk) to perform Save Project
+                    or the fourth icon from the left (floppy disk with a pen) to perform Save Project As.<br>
+                    <a href="images/saveProjectFromToolbar.png" target="_blank"><img src="images/saveProjectFromToolbar.png" alt="Save Project From Toolbar"></a>
+                    <a href="images/saveAsProjectFromToolbar.png" target="_blank"><img src="images/saveAsProjectFromToolbar.png" alt="Save As Project From Toolbar"></a>
+                    <br><br>
+                </p>
+                <ul style="list-style: square">
+                    <li>Save Project will automatically store the project if the project file already exists.
+                        The first time a project is saved, a window will open to enter the location and the file name.</li>
+                    <li>Save Project As will prompt a window to specify where to create or override a project file.</li>
+                </ul>
+                <a href="images/saveProjectWindow.png" target="_blank"><img src="images/saveProjectWindow.png" alt="Save Project Window"></a>
+                <p>
+                    <strong>NOTE:</strong> To avoid losing data, it is recommended to save your Project often. This software doesn't include an autosave feature
+                    or any recovering feature. If a Project isn't saved when the application is closed or when a different Project is opened, the data will be lost.
+                </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="ImportSidescanFile">
+                <header>
+                    <h3>Import Sidescan Files</h3>
+                </header>
+                <p>
+                    To import one or several sidescan files into the active project,
+                    select the Project menu and click on Import Sidescan File.<br>
+                    <a href="images/importSidescanFileFromTopMenu.png" target="_blank"><img src="images/importSidescanFileFromTopMenu.png" alt="Import Sidescan File From Top Menu"></a>
+                    <br><br>
+                    Or, in the toolbar, click on the fifth icon from the left (curved arrow pointing to the top of a box).<br>
+                    <a href="images/importSidescanFileFromToolbar.png" target="_blank"><img src="images/importSidescanFileFromToolbar.png" alt="Import Sidescan File From Toolbar"></a>
+                    <br><br>
+                    Either way, a window will open for you to select the sidescan file(s)<br>
+                    <a href="images/importSidescanFilesWindow.png" target="_blank"><img src="images/importSidescanFilesWindow.png" alt="Import Sidescan Files Window"></a>
+                </p>
+            </section>
+
+        </section>
+        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
+        <section id="ManagingUnderwaterObjectInventory">
+            <header>
+                <h2>Managing the underwater object inventory</h2>
+            </header>
+            <p>
+                OpenSidescan allows to create and manage an underwater object inventory as part of a project. You can export the inventory as KML or CSV files.
+            </p>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="CreateAnObject">
+                <header>
+                    <h3>Create an Object with the Computer Mouse</h3>
+                </header>
+                <p>
+                An object can manually be created by "drawing" a rectangle around it on the sidescan image. First,
+                position the mouse at one corner of the desired object.<br>
+                <a href="images/createObjectPositionMouse.png" target="_blank"><img src="images/createObjectPositionMouse.png" alt="Create Object Position Mouse"></a>
+                <br><br>
+                Press and hold the mouse left button. Drag the mouse to form the rectangle around
+                the desired object.
+                <a href="images/createObjectDragMouse.png" target="_blank"><img src="images/createObjectDragMouse.png" alt="Create Object Drag Mouse"></a>
+                <br><br>
+                Release the mouse left button. A window will open with the object's latitude, longitude, width, and height.
+                You may edit the default object name or enter a description. Click OK to create the object.<br>
+                <a href="images/createObjectWindow.png" target="_blank"><img src="images/createObjectWindow.png" alt="Create Object Window"></a>
+                <br><br>
+                </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="DisplayObjectInformation">
+                <header>
+                    <h3>Display an Object's Details</h3>
+                </header>
+                <p>
+                    To display an object's details, with the pointer over the object on the sidescan image, right-click and select "View object details".<br>
+                    <a href="images/viewObjectDetailsFromImage.png" target="_blank"><img src="images/viewObjectDetailsFromImage.png" alt="View Object Details From Image.png"></a>
+                    <br><br>Or, with the pointer over the row for the object in the Object Inventory, right-click  and select "View object details".<br>
+                    <a href="images/viewObjectDetailsFromObjectInventory.png" target="_blank"><img src="images/viewObjectDetailsFromObjectInventory.png" alt="View Object Details From Object Inventory"></a>
+                    <br><br>
+                    Either way, a window with the object's details will open. You can modify the name or the description.<br>
+                    <a href="images/createObjectWindow.png" target="_blank"><img src="images/createObjectWindow.png" alt="Create Object Window"></a>
+                </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="RemoveObjectFromInventory">
+                <header>
+                    <h3>Remove an Object from the Inventory</h3>
+                </header>
+                <p>
+                To remove an object from the inventory, with the pointer over the object on the sidescan image, right-click and select "Remove from inventory".<br>
+                <a href="images/removeObjectFromInventoryUsingImage.png" target="_blank"><img src="images/removeObjectFromInventoryUsingImage.png" alt="Remove Object From Inventory Using Image"></a>
+                <br><br>Or, with the pointer over the row for the object in the Object Inventory, right-click  and select "Remove from inventory".<br>
+                <a href="images/removeObjectFromInventoryUsingObjectInventory.png" target="_blank"><img src="images/removeObjectFromInventoryUsingObjectInventory.png" alt="Remove Object From Inventory Using Object Inventory.png"></a>
+                <br><br>
+                Either way, a window will open, asking you to confirm. Click Yes to permanently remove the object from the inventory.<br>
+                <a href="images/removeObjectFromInventoryWindow.png" target="_blank"><img src="images/removeObjectFromInventoryWindow.png" alt="Remove Object From Inventory Window"></a>
+                </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="ExportInventoryKMLFile">
+                <header>
+                    <h3>Export the Inventory as a KML File</h3>
+                </header>
+                <p>
+                To export the inventory as a KML File, click on the Object Inventory menu, then on Export Inventory,
+                and select Export KML File.<br>
+                <a href="images/exportInventoryKMLfromTopMenu.png" target="_blank"><img src="images/exportInventoryKMLfromTopMenu.png" alt="Export Inventory KML From Top Menu"></a>
+                <br><br>
+                A window will open to specify the location and the file name<br>
+                <a href="images/exportInventoryKMLwindow.png" target="_blank"><img src="images/exportInventoryKMLwindow.png" alt="Export Inventory KML Window.png"></a>
+                </p>
+            </section>
+            <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+            <section id="ExportInventoryCSVFile">
+                <header>
+                    <h3>Export the Inventory as a CSV File</h3>
+                </header>
+                <p>
+                To export the inventory as a CSV File, click on the Object Inventory menu, then on Export Inventory,
+                and select Export CSV File.<br>
+                <a href="images/exportInventoryCSVfromTopMenu.png" target="_blank"><img src="images/exportInventoryCSVfromTopMenu.png" alt="Export Inventory CSV From Top Menu"></a>
+                <br><br>
+                A window will open to specify the location and the file name<br>
+                <a href="images/exportInventoryCSVwindow.png" target="_blank"><img src="images/exportInventoryCSVwindow.png" alt="Export Inventory CSV Window.png"></a>
+                </p>
+            </section>
+        </section>
+
+        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
+    </section> <!-- End of section How to -->
+
+    <!-- Back to Top -->
+    <div class="noprint" style="position: fixed; right:5px; bottom: 80%; text-align: center;">
+        <a href="#TableOfContent" style="text-decoration: none; color: #0563C1;">Back<br/>to<br/>Top</a>
+    </div>
+
+    <!-- Persistent Footer -->
+    <footer style="font-size: 12px;">
+        <div class="noprint" style="position: fixed; left: 0; bottom: 0; width: 100%; background-color: white;">
+            <p style="text-align: center;">Copyright 2020 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved</p>
+        </div>
+        <div id="print" style="visibility: hidden; width: 100%; background-color: white;">
+            <p style="text-align: center;">Copyright 2020 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -23,11 +23,10 @@ TEST_CASE( "Test Georeferencing" ) {
     std::string sidescanFileName = "../data/wrecks/scotsman5.xtf";
     int channelIndex = 0;
 
-    // TODO: Change to the coordinates at the center of the box for the found object
     // Position of Scotsman, from file "reference points on SSS scotsman5.pptx"
-    // X, -68.828327, 48.445632
-    double longitudeCarisScotsman = -68.828327;
-    double latitudeCarisScotsman = 48.445632;
+    // A, -68.828392, 48.445606
+    double longitudeCarisScotsman = -68.828392;
+    double latitudeCarisScotsman = 48.445606;
 
 
     DatagramParser * parser = nullptr;

@@ -113,12 +113,6 @@ public:
 
                 // If ping does not have a position and the position vector is not empty: interpolate the position
                 if(channels[i]->at(j)->getPosition() == NULL && ! positions.empty()){
-
-                    //find attitude for ping
-                    while(attitudeIndex + 1 < attitudes.size() && attitudes[attitudeIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
-                        attitudeIndex++;
-                    }
-
                     //find position for ping
                     while(positionIndex + 1 < positions.size() && positions[positionIndex+1].getTimestamp() < channels[i]->at(j)->getTimestamp() ){
                         positionIndex++;

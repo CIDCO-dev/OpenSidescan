@@ -22,6 +22,7 @@
 #include "projectwindow.h"
 #include "detectionwindow.h"
 #include "inventorywindow.h"
+#include "projectpropertieswindow.h"
 
 #include "workerimportsidescanfiles.h"
 #include "workeropenproject.h"
@@ -262,6 +263,12 @@ void MainWindow::actionAbout(){
     AboutDialog about(this);
 
     about.exec();
+}
+
+void MainWindow::actionProjectProperties() {
+    ProjectPropertiesWindow properties(this);
+
+    properties.exec();
 }
 
 

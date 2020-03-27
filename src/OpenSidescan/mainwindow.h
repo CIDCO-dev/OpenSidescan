@@ -59,6 +59,8 @@ public slots:
     void actionFindObjects();
     void actionSaveObjectImages();
 
+    void actionProjectProperties();
+
     void actionExportTrainingObjectSamples();
 
     void actionExportKmlFile();

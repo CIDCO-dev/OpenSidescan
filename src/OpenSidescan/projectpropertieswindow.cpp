@@ -6,19 +6,12 @@ ProjectPropertiesWindow::ProjectPropertiesWindow(QWidget * parent) : QDialog(par
 }
 
 void ProjectPropertiesWindow::ok() {
+    Eigen::Vector3d leverArm(xLeverArm->text().toDouble(), yLeverArm->text().toDouble(), zLeverArm->text().toDouble());
+    project->setAntenna2TowPointLeverArm(leverArm);
+}
 
-    if(xLeverArm->text().isEmpty()) {
-        //TODO: whine
-    }
-
-    if(yLeverArm->text().isEmpty()) {
-        //TODO: whine
-    }
-
-    if(zLeverArm->text().isEmpty()) {
-        //TODO: whine
-    }
-
+void ProjectPropertiesWindow::cancel() {
+    //do nothing
 }
 
 void ProjectPropertiesWindow::initUI() {
@@ -35,12 +28,15 @@ void ProjectPropertiesWindow::initUI() {
 
     createLeverArmBox(leverArmLayout);
 
-
-
     mainLayout->addWidget(leverArmBox);
 
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttonBox->setObjectName( "buttonBox" );
 
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &ProjectPropertiesWindow::ok);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &ProjectPropertiesWindow::cancel);
 
+    mainLayout->addWidget(buttonBox);
 }
 
 void ProjectPropertiesWindow::createLeverArmBox(QFormLayout * leverArmLayout) {

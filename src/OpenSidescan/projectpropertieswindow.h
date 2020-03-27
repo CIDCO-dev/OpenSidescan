@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QDoubleValidator>
 #include <QLabel>
+#include <QDialogButtonBox>
 
 #include "project.h"
 
@@ -26,6 +27,9 @@ private:
     void initUI();
 
     void createLeverArmBox(QFormLayout * leverArmLayout);
+
+    QDialogButtonBox * buttonBox;
+
     QGroupBox * leverArmBox;
 
     QLineEdit * xLeverArm;

@@ -5,7 +5,6 @@
 #include <string>
 #include "../../src/OpenSidescan/sidescanimager.h"
 
-
 TEST_CASE("Test SideScanImager") {
     class TestParser : DatagramParser {
     public:
@@ -72,8 +71,10 @@ TEST_CASE("Test SideScanImager") {
     std::string f1 = "I am, You are, We remain ... Unidentified!";
     parser->parse(f1);
 
+    Eigen::Vector3d leverArm(0,0,0);
+
     std::string f2 = "Don't put no labels on me!";
-    SidescanFile * ssFile = imager.generate(f2);
+    SidescanFile * ssFile = imager.generate(f2, leverArm);
 
     std::vector<SidescanImage*> images = ssFile->getImages();
 

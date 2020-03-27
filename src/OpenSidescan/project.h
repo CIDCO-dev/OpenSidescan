@@ -9,6 +9,8 @@
 
 #include "parameterscvCreateTrainingSamples.h"
 
+class SidescanFile;
+class SidescanImage;
 
 class Project
 {
@@ -29,6 +31,9 @@ public:
 
     std::string & getFilename(){ return filename;}
     void          setFilename(std::string & fileName){ filename=fileName;}
+
+    Eigen::Vector3d & getAntenna2TowPointLeverArm(){ return antenna2TowPointLeverArm;}
+    void          setAntenna2TowPointLeverArm(Eigen::Vector3d & leverArm){ antenna2TowPointLeverArm=leverArm;}
 
 //    void saveObjectImages( const QString & folder );
     void saveObjectImages( const QString & absolutePath,
@@ -55,6 +60,8 @@ private:
     std::vector<SidescanFile *>   files; 
 
     std::string filename;
+
+    Eigen::Vector3d antenna2TowPointLeverArm;
 };
 
 #endif // PROJECT_H

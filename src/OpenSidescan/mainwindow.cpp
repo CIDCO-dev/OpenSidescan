@@ -266,6 +266,8 @@ void MainWindow::actionAbout(){
 
 
 
+
+
 void MainWindow::fileSelected(const QItemSelection & selection){
 
 //    qDebug() << tr("MainWindow::fileSelected()");

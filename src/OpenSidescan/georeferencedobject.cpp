@@ -86,7 +86,7 @@ void GeoreferencedObject::computePosition(){
                 SidescanPing * pingAfter = image.getPings()[yCenter+offset];
 
                 if(pingAfter->getTimestamp() < pingCenter->getTimestamp()) {
-                    throw new Exception("GeoreferencedObject::computePosition(): pingAfter [yCenter+1] has lower Timestamp than pingCenter");
+                    throw new Exception("GeoreferencedObject::computePosition(): pingAfter [yCenter+offset] has lower Timestamp than pingCenter");
                 }
 
                 if(Distance::haversine(
@@ -104,7 +104,7 @@ void GeoreferencedObject::computePosition(){
                 SidescanPing * pingBefore = image.getPings()[yCenter - offset];
 
                 if(pingBefore->getTimestamp() > pingCenter->getTimestamp()) {
-                    throw new Exception("GeoreferencedObject::computePosition(): pingBefore [yCenter-1] has greater Timestamp than pingCenter");
+                    throw new Exception("GeoreferencedObject::computePosition(): pingBefore [yCenter-offset] has greater Timestamp than pingCenter");
                 }
 
                 if(Distance::haversine(
@@ -146,15 +146,15 @@ void GeoreferencedObject::computePosition(){
             return; // this image is neither port nor starboard. For now, use ship position
         }
 
-        //Eigen::Matrix3d C_bI_n;
-        //CoordinateTransform::getDCM(C_bI_n, *pingCenter->getAttitude());
-
-        //Eigen::Matrix3d C_n_Ecef;
-        //CoordinateTransform::ned2ecef(C_n_Ecef,*pingCenter->getPosition());
-
         // TODO: get this lever arm from platform metadata
-        // Eigen::Vector3d antenna2TowPointEcef = C_n_Ecef*C_bI_n*platformMetadata.getAntenna2TowPointLeverArm();
-        Eigen::Vector3d antenna2TowPointEcef(0,0,0); // Zero vector for now
+        Eigen::Vector3d antenna2TowPoint = file.getAntenna2TowPointLeverArm();
+        Eigen::Matrix3d ship2Ecef;
+        ship2Ecef.row(0) = tangentUnitVector;
+        ship2Ecef.row(1) = starboardUnitVector;
+        ship2Ecef.row(2) = normalUnitVector;
+        Eigen::Vector3d antenna2TowPointEcef = ship2Ecef*antenna2TowPoint;
+
+        //std::cout << "angle between tangent and normal: " << std::acos(tangentUnitVector.dot(normalUnitVector))*180/M_PI << std::endl;
 
 
         // TODO: get this layback from xtf file

@@ -59,7 +59,7 @@ void Project::read(std::string & filename){
                     SidescanImager imager;
                     DatagramParser * parser = DatagramParserFactory::build(filename,imager);
                     parser->parse(filename);
-                    currentFile = imager.generate(filename);
+                    currentFile = imager.generate(filename, antenna2TowPointLeverArm);
 
                     this->getFiles().push_back(currentFile);
 

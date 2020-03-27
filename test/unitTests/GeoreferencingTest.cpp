@@ -11,7 +11,6 @@
 
 #include "../../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
-
 TEST_CASE( "Test Georeferencing" ) {
 
 //    std::cout << std::fixed << std::setprecision( 15 );
@@ -28,6 +27,7 @@ TEST_CASE( "Test Georeferencing" ) {
     double longitudeCarisScotsman = -68.828392;
     double latitudeCarisScotsman = 48.445606;
 
+    Eigen::Vector3d leverArm(0,0,0);
 
     DatagramParser * parser = nullptr;
 
@@ -45,7 +45,7 @@ TEST_CASE( "Test Georeferencing" ) {
 
 //        std::cout << "\nBefore imager.generate(sFileName)\n" << std::endl;
 
-        file = imager.generate(sidescanFileName);
+        file = imager.generate(sidescanFileName, leverArm);
 
         delete parser;
         parser = nullptr;

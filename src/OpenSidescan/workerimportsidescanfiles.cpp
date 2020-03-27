@@ -52,7 +52,7 @@ void WorkerImportSidescanFiles::doWork() {
                 progressInt(++operationCount);
                 progressFilename(QString::fromStdString(sFileName));
 
-                SidescanFile * file = imager.generate(sFileName);
+                SidescanFile * file = imager.generate(sFileName, projectWindow->getProject()->getAntenna2TowPointLeverArm());
 
                 emit fileToBeAddedToProjectWindow( file );
 //                projectWindow->addFile(file);

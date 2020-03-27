@@ -1,6 +1,6 @@
 #include "sidescanfile.h"
 
-SidescanFile::SidescanFile(std::string & filename): filename(filename),fileProperties(NULL)
+SidescanFile::SidescanFile(std::string & filename, Eigen::Vector3d antenna2TowPointLeverArm): filename(filename), fileProperties(NULL), antenna2TowPointLeverArm(antenna2TowPointLeverArm)
 {
 
 }

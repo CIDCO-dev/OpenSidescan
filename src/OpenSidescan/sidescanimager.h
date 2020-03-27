@@ -68,8 +68,8 @@ public:
         channels[ping->getChannelNumber()]->push_back(ping);
     }
 
-    SidescanFile * generate(std::string filename){
-        SidescanFile * file = new SidescanFile(filename);
+    SidescanFile * generate(std::string filename, Eigen::Vector3d antenna2TowPointLeverArm){
+        SidescanFile * file = new SidescanFile(filename, antenna2TowPointLeverArm);
         std::vector<SidescanImage *> * matrixes = new std::vector<SidescanImage *>();
 
         //std::cerr << "Generating images for " << channels.size() << " channels" << std::endl;

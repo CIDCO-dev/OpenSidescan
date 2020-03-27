@@ -43,6 +43,7 @@ win32 {
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    projectpropertieswindow.cpp \
     sidescanimager.cpp \
     ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
@@ -81,6 +82,7 @@ SOURCES += main.cpp\
     progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  += mainwindow.h \
+    projectpropertieswindow.h \
     sidescanimager.h \
     opencvhelper.h \
     imagetab.h \

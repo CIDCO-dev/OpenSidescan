@@ -3,13 +3,15 @@
 
 #include <vector>
 #include "sidescanimage.h"
+#include "project.h"
+#include <Eigen/Dense>
 
 class SidescanImage;
 
 class SidescanFile
 {
 public:
-    SidescanFile(std::string & filename);
+    SidescanFile(std::string & filename, Eigen::Vector3d antenna2TowPointLeverArm);
     ~SidescanFile();
 
     std::vector<SidescanImage*>  & getImages(){ return *images;}
@@ -23,6 +25,8 @@ public:
     double getAverageXDistancePerPixel() { return averageXDistancePerPixel;}
     void   setAverageXDistancePerPixel(double avgDistance) { averageXDistancePerPixel = avgDistance;}
 
+    Eigen::Vector3d & getAntenna2TowPointLeverArm() {return antenna2TowPointLeverArm;}
+
 private:
     std::string                 filename;
 
@@ -31,6 +35,8 @@ private:
     std::map<std::string,std::string> * fileProperties;
 
     double averageXDistancePerPixel = 0;
+
+    Eigen::Vector3d antenna2TowPointLeverArm;
 };
 
 #endif // SIDESCANFILE_H

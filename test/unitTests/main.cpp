@@ -8,5 +8,6 @@
 #include "catch.hpp"
 
 #include "SideScanImagerTest.h"
+#include "ProjectTest.h"
 //#include "GeoreferencingTest.hpp"
 

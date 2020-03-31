@@ -26,7 +26,10 @@
 
 Project::Project()
 {
-
+    Eigen::Vector3d leverArm;
+    leverArm << 0.0,0.0,0.0;
+    this->setAntenna2TowPointLeverArm(leverArm);
+    int a = 1;
 }
 
 Project::~Project(){

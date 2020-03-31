@@ -45,6 +45,7 @@ SOURCES += main.cpp \
     GeoreferencingTest.cpp \
 #        mainwindow.cpp \
     ../../src/OpenSidescan/sidescanimager.cpp \
+    ../../src/OpenSidescan/project.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
@@ -62,12 +63,12 @@ SOURCES += main.cpp \
 #    projectwindow.cpp \
     ../../src/OpenSidescan/sidescanfile.cpp \
 #    project.cpp \
-    ../../src/OpenSidescan/georeferencedobject.cpp #\
+    ../../src/OpenSidescan/georeferencedobject.cpp \
 #    filepropertieswindow.cpp \
 #    detectionwindow.cpp \
 #    inventorywindow.cpp \
 #    channelpropertieswindow.cpp \
-#    qthelper.cpp \
+    ../../src/OpenSidescan/qthelper.cpp
 #    imagetablabel.cpp \
 #    georeferencedobjectwindow.cpp \
 #    georeferencedobjectmenu.cpp \
@@ -82,6 +83,7 @@ SOURCES += main.cpp \
 #    progressdialognotclosingrightawayoncancel.cpp
 
 HEADERS  +=  \
+    ProjectTest.h \
     SideScanImagerTest.h \
     catch.hpp \
 #mainwindow.h \

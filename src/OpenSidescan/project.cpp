@@ -26,10 +26,7 @@
 
 Project::Project()
 {
-    //Empty project with (0,0,0) lever arm
-    Eigen::Vector3d leverArm;
-    leverArm << 0.0,0.0,0.0;
-    this->setAntenna2TowPointLeverArm(leverArm);
+
 }
 
 Project::~Project(){

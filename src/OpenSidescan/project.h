@@ -33,7 +33,7 @@ public:
     void          setFilename(std::string & fileName){ filename=fileName;}
 
     Eigen::Vector3d & getAntenna2TowPointLeverArm(){ return antenna2TowPointLeverArm;}
-    void          setAntenna2TowPointLeverArm(Eigen::Vector3d leverArm){ antenna2TowPointLeverArm=leverArm;}
+    void          setAntenna2TowPointLeverArm(Eigen::Vector3d & leverArm){ antenna2TowPointLeverArm=leverArm;}
 
 //    void saveObjectImages( const QString & folder );
     void saveObjectImages( const QString & absolutePath,

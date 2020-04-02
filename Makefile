@@ -3,8 +3,7 @@ FLAGS=-Wall -O3
 INCLUDES=-I/usr/include/eigen3
 QT_INCLUDES=-I/home/jordan/Qt5.14.1/5.14.1/gcc_64/include/QtCore -I../../Qt5.14.1/5.14.1/gcc_64/include -I../../Qt5.14.1/5.14.1/gcc_64/include/QtWidgets -I../../Qt5.14.1/5.14.1/gcc_64/include/QtGui -I../../Qt5.14.1/5.14.1/gcc_64/include/QtXml  -I. -isystem /usr/include/libdrm -I../../Qt5.14.1/5.14.1/gcc_64/mkspecs/linux-g++
 
-
-FILES=test/unitTests/GeoreferencingTest.cpp src/OpenSidescan/project.cpp src/OpenSidescan/sidescanfile.cpp src/OpenSidescan/sidescanimager.cpp src/OpenSidescan/sidescanimage.cpp src/OpenSidescan/sidescanimage.cpp  src/OpenSidescan/georeferencedobject.cpp src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp src/thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp src/thirdParty/MBES-lib/src/utils/NmeaUtils.cpp src/thirdParty/MBES-lib/src/utils/StringUtils.cpp src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp src/thirdParty/opencv/apps/createsamples/utility.cpp
+FILES=src/OpenSidescan/sidescanfile.cpp src/OpenSidescan/sidescanimager.cpp src/OpenSidescan/sidescanimage.cpp src/OpenSidescan/georeferencedobject.cpp src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp src/thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp src/thirdParty/MBES-lib/src/utils/NmeaUtils.cpp src/thirdParty/MBES-lib/src/utils/StringUtils.cpp src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp src/thirdParty/opencv/apps/createsamples/utility.cpp src/OpenSidescan/opencvhelper.cpp
 
 
 
@@ -24,6 +23,13 @@ test:
 	mkdir -p $(test_result_dir)
 	$(CC) $(FLAGS) -DQT_CORE_LIB -fPIC $(INCLUDES) $(QT_INCLUDES) -o $(test_exec_dir)/tests test/unitTests/main.cpp $(FILES) `pkg-config --cflags --libs opencv`
 	$(test_exec_dir)/tests -r junit -o $(test_result_dir)/unit-tests-report.xml
+
+testNoQt:
+	mkdir -p $(test_exec_dir)
+	mkdir -p $(test_result_dir)
+	$(CC) $(FLAGS) $(INCLUDES) -o $(test_exec_dir)/unitTests test/main.cpp $(FILES) `pkg-config --cflags --libs opencv`
+	$(test_exec_dir)/unitTests -r junit -o $(test_result_dir)/unit-tests-report.xml || true
+
 
 testGUI:
 	mkdir -p $(test_exec_dir)

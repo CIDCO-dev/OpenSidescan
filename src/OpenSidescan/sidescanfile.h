@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "sidescanimage.h"
-#include "project.h"
 #include <Eigen/Dense>
 
 class SidescanImage;

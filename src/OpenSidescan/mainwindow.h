@@ -41,6 +41,7 @@ public:
 
     void updateSelectedFile(SidescanFile * file);
 
+    Project * getProject() {return currentProject;};
 
     void refreshObjectInventory(){
         inventoryWindow->refreshInventoryTable();
@@ -81,6 +82,8 @@ public slots:
 
 
 private slots:
+
+    void on_actionProperties_triggered();
 
 private:
 

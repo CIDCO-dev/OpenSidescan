@@ -271,6 +271,13 @@ void MainWindow::actionProjectProperties() {
     properties.exec();
 }
 
+void MainWindow::on_actionProperties_triggered()
+{
+    ProjectPropertiesWindow properties(this);
+
+    properties.exec();
+}
+
 
 
 
@@ -820,3 +827,5 @@ void MainWindow::tabChanged( int index )
             channelInfo->updateModel( selectedImage );
         }
 }
+
+

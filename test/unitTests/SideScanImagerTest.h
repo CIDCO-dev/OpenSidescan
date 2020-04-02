@@ -4,6 +4,59 @@
 #include "catch.hpp"
 #include <string>
 #include "../../src/OpenSidescan/sidescanimager.h"
+#include "../../src/OpenSidescan/sidescanfile.h"
+#include "../../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
+
+
+TEST_CASE("Test normal image") {
+
+    std::string sidescanFileName = "../data/wrecks/scotsman1.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName,imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0,0,0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    unsigned int numChannels = 2;
+
+    REQUIRE(file->getImages().size() == numChannels);
+
+    REQUIRE(file->getImages()[0]->getPings().size() > 0);
+    REQUIRE(file->getImages()[1]->getPings().size() > 0);
+
+    delete parser;
+    delete file;
+}
+
+TEST_CASE("Test image with no position data") {
+
+    std::string sidescanFileName = "../data/wrecks/plane1.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName,imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0,0,0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    unsigned int numChannels = 3;
+    REQUIRE(file->getImages().size() == numChannels);
+
+    REQUIRE(file->getImages()[0]->getPings().size() > 0);
+    REQUIRE(file->getImages()[1]->getPings().size() > 0);
+    REQUIRE(file->getImages()[2]->getPings().size() > 0);
+
+    delete parser;
+    delete file;
+}
 
 TEST_CASE("Test SideScanImager") {
     class TestParser : DatagramParser {
@@ -100,6 +153,9 @@ TEST_CASE("Test SideScanImager") {
     REQUIRE(std::abs(ping->getPosition()->getLatitude() - testLatitude) < eps);
     REQUIRE(std::abs(ping->getPosition()->getLongitude() - testLongitude) < eps);
     REQUIRE(std::abs(ping->getPosition()->getEllipsoidalHeight() - testHeight) < eps);
+
+    delete parser;
+    delete ssFile;
 }
 
 #endif // SIDESCANIMAGERTEST_H

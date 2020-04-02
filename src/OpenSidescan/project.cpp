@@ -52,7 +52,18 @@ void Project::read(std::string & filename){
                 std::string name = xml.name().toString().toStdString();
 
                 //Handle different element types
-                if(strncmp(name.c_str(),"File",4)==0){
+                if(strncmp(name.c_str(),"Project",7)==0) {
+                    //read lever arm
+                    QStringRef leverArmX = xml.attributes().value(QString::fromStdString("leverArmX"));
+                    QStringRef leverArmY = xml.attributes().value(QString::fromStdString("leverArmY"));
+                    QStringRef leverArmZ = xml.attributes().value(QString::fromStdString("leverArmZ"));
+
+                    if(leverArmX.isEmpty() || leverArmY.isEmpty() || leverArmZ.isEmpty() ) {
+                        //no lever arm, old project file
+                    } else {
+                        antenna2TowPointLeverArm << leverArmX.toDouble(), leverArmY.toDouble(), leverArmZ.toDouble();
+                    }
+                } else if(strncmp(name.c_str(),"File",4)==0){
                     //Sidescan file
                     std::string filename = xml.attributes().value(QString::fromStdString("filename")).toString().toStdString();
 
@@ -110,6 +121,9 @@ void Project::write(std::string & filename){
     xmlWriter.writeStartDocument();
 
     xmlWriter.writeStartElement("Project");
+    xmlWriter.writeAttribute(QString::fromStdString("leverArmX"),QString::number(antenna2TowPointLeverArm[0]));
+    xmlWriter.writeAttribute(QString::fromStdString("leverArmY"),QString::number(antenna2TowPointLeverArm[1]));
+    xmlWriter.writeAttribute(QString::fromStdString("leverArmZ"),QString::number(antenna2TowPointLeverArm[2]));
 
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");

@@ -158,4 +158,5 @@ TEST_CASE("Test SideScanImager") {
     delete ssFile;
 }
 
+
 #endif // SIDESCANIMAGERTEST_H

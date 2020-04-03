@@ -8,6 +8,7 @@
 #include "../../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
 
 
+
 TEST_CASE("Test normal image") {
 
     std::string sidescanFileName = "../data/wrecks/scotsman1.xtf";

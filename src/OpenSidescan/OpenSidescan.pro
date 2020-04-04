@@ -42,9 +42,6 @@ win32 {
   }
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    projectpropertieswindow.cpp \
-    sidescanimager.cpp \
     ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
     ../thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
@@ -54,66 +51,72 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
     ../thirdParty/opencv/apps/createsamples/utility.cpp \
-    opencvhelper.cpp \
-    imagetab.cpp \
-    aboutdialog.cpp \
-    dbscan.cpp \
-    sidescanimage.cpp \
-    projectwindow.cpp \
-    sidescanfile.cpp \
-    project.cpp \
-    georeferencedobject.cpp \
-    filepropertieswindow.cpp \
-    detectionwindow.cpp \
-    inventorywindow.cpp \
-    channelpropertieswindow.cpp \
-    qthelper.cpp \
-    imagetablabel.cpp \
-    georeferencedobjectwindow.cpp \
-    georeferencedobjectmenu.cpp \
-    workerimportsidescanfiles.cpp \
-    workeropenproject.cpp \
-    workerdetection.cpp \
-    projecttreeitem.cpp \
-    projecttreemodel.cpp \
-    parameterscvCreateTrainingSamples.cpp \
-    trainingsampleswindow.cpp \
-    workertrainingsamples.cpp \
-    progressdialognotclosingrightawayoncancel.cpp
+    machinelearning/dbscan.cpp \
+    project/project.cpp \
+    inventoryobject/inventoryobject.cpp \
+    sidescan/sidescanfile.cpp \
+    sidescan/sidescanimage.cpp \
+    sidescan/sidescanimager.cpp \
+    ui/docks/projectwindow/projecttreeitem.cpp \
+    ui/docks/projectwindow/projecttreemodel.cpp \
+    ui/docks/projectwindow/projectwindow.cpp \
+    ui/docks/channelpropertieswindow.cpp \
+    ui/docks/filepropertieswindow.cpp \
+    ui/docks/inventorywindow.cpp \
+    ui/about/aboutdialog.cpp \
+    detector/detector.cpp \
+    refactorme/progressdialognotclosingrightawayoncancel.cpp \
+    ui/detection/detectionwindow.cpp \
+    ui/detection/workerdetection.cpp \
+    ui/inventory/inventoryobjectmenu.cpp \
+    ui/inventory/inventoryobjectwindow.cpp \
+    ui/mainimage/imagetab.cpp \
+    ui/mainimage/imagetablabel.cpp \
+    ui/mainwindow/mainwindow.cpp \
+    ui/mainwindow/workerimportsidescanfiles.cpp \
+    ui/mainwindow/workeropenproject.cpp \
+    ui/training/trainingsampleswindow.cpp \
+    ui/training/workertrainingsamples.cpp \
+    utilities/opencvhelper.cpp \
+    utilities/qthelper.cpp \
+    ui/training/parameterscvCreateTrainingSamples.cpp \
+    ui/docks/vesselgeometrywindow.cpp
 
-HEADERS  += mainwindow.h \
-    projectpropertieswindow.h \
-    sidescanimager.h \
-    opencvhelper.h \
-    imagetab.h \
-    aboutdialog.h \
-    dbscan.h \
-    sidescanimage.h \
-    projectwindow.h \
-    sidescanfile.h \
-    project.h \
-    georeferencedobject.h \
-    filepropertieswindow.h \
-    detectionwindow.h \
-    inventorywindow.h \
-    channelpropertieswindow.h \
-    qthelper.h \
-    imagetablabel.h \
-    georeferencedobjectwindow.h \
-    georeferencedobjectmenu.h \
-    workerimportsidescanfiles.h \
-    workeropenproject.h \
-    workerdetection.h \
-    projecttreeitem.h \
-    projecttreemodel.h \
-    parameterscvCreateTrainingSamples.h \
-    trainingsampleswindow.h \
-    workertrainingsamples.h \
-    progressdialognotclosingrightawayoncancel.h \
-    boolwithmutex.h
 
-FORMS    += mainwindow.ui \
-    aboutdialog.ui
+HEADERS  +=     machinelearning/dbscan.h \
+    project/project.h \
+    inventoryobject/inventoryobject.h \
+    ui/training/parameterscvCreateTrainingSamples.h \
+    detector/detector.h \
+    ui/about/aboutdialog.h \
+    refactorme/boolwithmutex.h \
+    refactorme/progressdialognotclosingrightawayoncancel.h \
+    sidescan/sidescanfile.h \
+    sidescan/sidescanimage.h \
+    sidescan/sidescanimager.h \
+    ui/detection/detectionwindow.h \
+    ui/detection/workerdetection.h \
+    ui/docks/projectwindow/projecttreeitem.h \
+    ui/docks/projectwindow/projecttreemodel.h \
+    ui/docks/projectwindow/projectwindow.h \
+    ui/docks/channelpropertieswindow.h \
+    ui/docks/filepropertieswindow.h \
+    ui/docks/inventorywindow.h \
+    ui/inventory/inventoryobjectmenu.h \
+    ui/inventory/inventoryobjectwindow.h \
+    ui/mainimage/imagetab.h \
+    ui/mainimage/imagetablabel.h \
+    ui/mainwindow/mainwindow.h \
+    ui/mainwindow/workerimportsidescanfiles.h \
+    ui/mainwindow/workeropenproject.h \
+    ui/training/trainingsampleswindow.h \
+    ui/training/workertrainingsamples.h \
+    utilities/opencvhelper.h \
+    utilities/qthelper.h \
+    ui/docks/vesselgeometrywindow.h
+
+FORMS    += ui/mainwindow/mainwindow.ui \
+    ui/about/aboutdialog.ui
 
 RESOURCES +=  resources.qrc
 

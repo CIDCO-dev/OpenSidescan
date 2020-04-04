@@ -29,7 +29,6 @@ public:
                     int & mserDeltaValue,
                     int & mserMinimumAreaValue,
                     int & mserMaximumAreaValue,
-                    bool & showFeatureMarkersValue,
                     bool & mergeOverlappingBoundingBoxesValue,
                     QWidget * parent=0
     );
@@ -45,7 +44,7 @@ public:
     int getMserDeltaValue() const { return mserDeltaValue; }
     int getMserMinimumAreaValue() const { return mserMinimumAreaValue; }
     int getMserMaximumAreaValue() const { return mserMaximumAreaValue; }
-    bool getShowFeatureMarkersValue() const { return showFeatureMarkersValue; }
+
     bool getMergeOverlappingBoundingBoxesValue() const { return mergeOverlappingBoundingBoxesValue; }
 
 
@@ -60,7 +59,7 @@ private slots:
 private:
     std::vector<SidescanFile *>  & files;
 
-    std::vector<GeoreferencedObject*> & objects;
+    std::vector<InventoryObject*> & objects;
 
     void createFastParameterBox(QFormLayout * advancedParametersLayout);
     void createMserParameterBox(QFormLayout * advancedParametersLayout);
@@ -72,7 +71,6 @@ private:
     //display parameters
     QGroupBox * displayParameters;
 
-    QCheckBox * showFeatureMarkers;
     QCheckBox * mergeBoundingBoxes;
 
     //FAST parameters
@@ -83,20 +81,14 @@ private:
     QCheckBox * fastNonMaxSuppression;
 
     //MSER parameters
-
-
     QLineEdit * mserDelta;
     QLineEdit * mserMinimumArea;
     QLineEdit * mserMaximumArea;
 
 
     //DBSCAN parameters;
-
-
     QLineEdit * dbscanEpsilon;
     QLineEdit * dbscanMinimumPointCount;
-
-
 
     //Values
     int & fastThresholdValue;
@@ -107,7 +99,6 @@ private:
     int & mserDeltaValue;
     int & mserMinimumAreaValue;
     int & mserMaximumAreaValue;
-    bool & showFeatureMarkersValue;
     bool & mergeOverlappingBoundingBoxesValue;
 
     void initUI();

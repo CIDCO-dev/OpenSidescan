@@ -17,7 +17,7 @@ public:
 
     }
 
-    GeoreferencedObject * object;
+    InventoryObject * object;
 };
 
 InventoryWindow::InventoryWindow(QWidget * parent): QDockWidget(tr("Object Inventory"),parent),project(NULL)
@@ -59,9 +59,9 @@ void InventoryWindow::georefObjectMenuRequested(QPoint pos) {
     InventoryTableItem * item = (InventoryTableItem*) inventoryTable->item(index.row(),0);
 
     if(item && item->object) {
-        GeoreferencedObjectMenu mnu(item->object);
-        connect(&mnu,&GeoreferencedObjectMenu::inventoryChanged,this,&InventoryWindow::refreshInventoryTable);
-        connect(&mnu,&GeoreferencedObjectMenu::inventoryChanged,(MainWindow*)this->parent(),&MainWindow::refreshTabs);
+        InventoryObjectMenu mnu(item->object);
+        connect(&mnu,&InventoryObjectMenu::inventoryChanged,this,&InventoryWindow::refreshInventoryTable);
+        connect(&mnu,&InventoryObjectMenu::inventoryChanged,(MainWindow*)this->parent(),&MainWindow::refreshTabs);
         mnu.exec(inventoryTable->viewport()->mapToGlobal(pos));
 
     }

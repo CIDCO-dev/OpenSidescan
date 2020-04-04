@@ -7,12 +7,12 @@
 
 #include "../thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 
-GeoreferencedObjectWindow::GeoreferencedObjectWindow(GeoreferencedObject * obj):object(obj)
+InventoryObjectWindow::InventoryObjectWindow(InventoryObject * obj):object(obj)
 {
     initUI();
 }
 
-void GeoreferencedObjectWindow::initUI(){
+void InventoryObjectWindow::initUI(){
     QVBoxLayout * container = new QVBoxLayout();
 
     QFormLayout * layout = new QFormLayout();
@@ -58,8 +58,8 @@ void GeoreferencedObjectWindow::initUI(){
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     buttonBox->setObjectName( "buttonBox" );
 
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &GeoreferencedObjectWindow::accept);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &GeoreferencedObjectWindow::close);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &InventoryObjectWindow::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &InventoryObjectWindow::close);
 
     container->addWidget(buttonBox);
 
@@ -71,7 +71,7 @@ void GeoreferencedObjectWindow::initUI(){
 
 }
 
-void GeoreferencedObjectWindow::accept(){
+void InventoryObjectWindow::accept(){
     //TODO: save values
     std::string name = txtName->text().toStdString();
     std::string description = txtDescription->toPlainText().toStdString();

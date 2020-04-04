@@ -18,9 +18,9 @@ class ImageTabLabel : public QLabel
     Q_OBJECT
 
 public:
-    ImageTabLabel(ImageTab & parent,SidescanFile & file,SidescanImage & img);
+    ImageTabLabel(ImageTab & parent,SidescanImage & img);
 
-    GeoreferencedObject * insideObject(QPoint & p);
+    InventoryObject * insideObject(QPoint & p);
 
 protected:
 
@@ -37,7 +37,6 @@ public slots:
 private:
     ImageTab & parent;
 
-    SidescanFile & file;
     SidescanImage & img;
 
     QPoint selectionOrigin;

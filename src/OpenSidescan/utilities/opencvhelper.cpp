@@ -11,7 +11,7 @@ cv::Mat OpencvHelper::colorTable(256, 1, CV_8UC3);
 bool OpencvHelper::helperVariable = buildColorTable();
 
 
-void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,SidescanFile & file,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool showFeatureMarkers,bool mergeOverlappingObjects){
+void OpencvHelper::detectObjects(std::vector<InventoryObject*> & objects,SidescanImage & image,int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool mergeOverlappingObjects){
 
     image.resetDisplayedImage();
 
@@ -20,7 +20,7 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
 
     double boundingBoxPadding = 20;
 
-    /* FAST feature detection, [Rosten06] */
+    /* FAST & MSER feature detection */
 
     cv::FAST(image.getImage(),combinedKeypoints,fastThreshold,fastNonMaxSuppression,fastType);
 
@@ -37,10 +37,8 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
         }
     }
 
-    if(showFeatureMarkers){
-        //cv::drawKeypoints(image.getDisplayedImage(),combinedKeypoints,image.getDisplayedImage(),cv::Scalar(0,0,255),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-        image.setMicroFeatures(combinedKeypoints);
-    }
+    image.setMicroFeatures(combinedKeypoints);
+
 
     /* Cluster ------------------------------------------ */
     DBSCAN clustering(dbscanEpsilon, dbscanMinimumPoints, combinedKeypoints);
@@ -125,28 +123,23 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
         if( x + width > image.getDisplayedImage().size().width - 1){
             width = std::max((int)(image.getDisplayedImage().size().width-x-1),0);
         }
-
-        //TODO: adjust width
-        //std::cerr << x << "," << y << " (" << width << " x " << height << ")" << std::endl;
-
         
         cv::Rect object(x,y,width,height);
         rois.push_back(object);
     }
 
-    //TODO: fuse overlapping bounding boxes
+    // fuse overlapping bounding boxes if demanded
     if(mergeOverlappingObjects){
         mergeOverlapping(rois);
     }
 
     for(auto i=rois.begin();i!=rois.end();i++){
         try {
-            GeoreferencedObject * object = new GeoreferencedObject(file,image,(*i).x,(*i).y,(*i).width,(*i).height);
+            InventoryObject * object = new InventoryObject(image,(*i).x,(*i).y,(*i).width,(*i).height);
             objects.push_back(object);
         }
         catch (Exception * error) {
-            std::cerr << "OpencvHelper::detectObjects(): " << error->what()
-                      << "\nFilename: \"" << file.getFilename() << "\n" << std::endl;
+            std::cerr << "OpencvHelper::detectObjects(): " << error->what() << "\nFilename: \"" << image.getFile().getFilename() << "\n" << std::endl;
         }
     }
 }
@@ -154,10 +147,7 @@ void OpencvHelper::detectObjects(std::vector<GeoreferencedObject*> & objects,Sid
 
 // Conversion based on
 // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
-double OpencvHelper::fn( const double n,
-           const double h360,
-           const double saturation01,
-           const double value01 ) {
+double OpencvHelper::fn( const double n, const double h360, const double saturation01, const double value01 ) {
     // f(n) = V - V * S * max( min( k, 4-k, 1 ), 0 )
 
     double k = fmod( n + h360 / 60, 6.0 );
@@ -225,8 +215,7 @@ void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool sho
 
 
     if(showMicroFeatures) {
-        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(),
-                            cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(), cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     }
 
     for(auto i = img.getObjects().begin();i!=img.getObjects().end();i++){

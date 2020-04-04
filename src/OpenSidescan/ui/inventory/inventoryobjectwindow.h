@@ -1,5 +1,5 @@
-#ifndef GEOREFERENCEDOBJECTWINDOW_H
-#define GEOREFERENCEDOBJECTWINDOW_H
+#ifndef INVENTORYOBJECTWINDOW_H
+#define INVENTORYOBJECTWINDOW_H
 
 #include <QDialog>
 #include <QFormLayout>
@@ -8,12 +8,12 @@
 
 #include "inventoryobject/inventoryobject.h"
 
-class GeoreferencedObjectWindow : public QDialog
+class InventoryObjectWindow : public QDialog
 {
 public:
-    GeoreferencedObjectWindow(GeoreferencedObject * obj);
+    InventoryObjectWindow(InventoryObject * obj);
 
-    GeoreferencedObject & getObject();
+    InventoryObject & getObject();
 
 public slots:
     void accept();
@@ -21,11 +21,11 @@ public slots:
 private:
     void initUI();
 
-    GeoreferencedObject * object;
+    InventoryObject * object;
     QLineEdit * txtName;
     QTextEdit * txtDescription;
 
     Q_OBJECT;
 };
 
-#endif // GEOREFERENCEDOBJECTWINDOW_H
+#endif // INVENTORYOBJECTWINDOW_H

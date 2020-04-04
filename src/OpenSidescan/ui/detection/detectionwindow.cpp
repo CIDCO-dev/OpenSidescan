@@ -21,7 +21,6 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  int & mserDeltaValue,
                                  int & mserMinimumAreaValue,
                                  int & mserMaximumAreaValue,
-                                 bool & showFeatureMarkersValue,
                                  bool & mergeOverlappingBoundingBoxesValue,
                                  QWidget * parent):
                                 files(files),
@@ -35,7 +34,6 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                 mserDeltaValue(mserDeltaValue),
                                 mserMinimumAreaValue(mserMinimumAreaValue),
                                 mserMaximumAreaValue(mserMaximumAreaValue),
-                                showFeatureMarkersValue(showFeatureMarkersValue),
                                 mergeOverlappingBoundingBoxesValue(mergeOverlappingBoundingBoxesValue)
 
 {
@@ -149,11 +147,6 @@ QGroupBox * DetectionWindow::createDisplayParameterBox(){
     QVBoxLayout * displayParameterLayout = new QVBoxLayout();
     displayParameters->setLayout(displayParameterLayout);
 
-    showFeatureMarkers = new QCheckBox(tr("Show microfeature markers"),this);
-    showFeatureMarkers->setChecked(showFeatureMarkersValue);
-    displayParameterLayout->addWidget(showFeatureMarkers);
-
-
     mergeBoundingBoxes = new QCheckBox(tr("Merge overlapping bounding boxes"),this);
     mergeBoundingBoxes->setChecked(mergeOverlappingBoundingBoxesValue);
     displayParameterLayout->addWidget(mergeBoundingBoxes);
@@ -211,7 +204,6 @@ void DetectionWindow::ok(){
 
 
                                                     fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked();
-                                                    showFeatureMarkersValue = showFeatureMarkers->isChecked();
                                                     mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked();
 
 

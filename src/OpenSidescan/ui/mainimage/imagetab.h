@@ -23,7 +23,6 @@ class ImageTab : public QWidget
 
 private:
     SidescanImage & image;
-    SidescanFile & file;
 
     QAction * showObjectBoundingBox;
     QAction * showObjectSizesAction;
@@ -35,7 +34,7 @@ private:
     QScrollArea * scrollArea;
 
 public:
-    explicit ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent);
+    ImageTab(SidescanImage & image,QWidget *parent);
 
     SidescanImage * getImage(){ return &image;}
     QScrollArea & getScrollArea() { return *scrollArea;}

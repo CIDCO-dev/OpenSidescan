@@ -85,7 +85,7 @@ void Project::read(std::string & filename){
                                 std::string name        = xml.attributes().value(QString::fromStdString("name")).toString().toStdString();
                                 std::string description = xml.attributes().value(QString::fromStdString("description")).toString().toStdString();
 
-                                GeoreferencedObject * object = new GeoreferencedObject(*currentFile,*(*i),x,y,pixelWidth,pixelHeight,name,description);
+                                InventoryObject * object = new InventoryObject(*(*i),x,y,pixelWidth,pixelHeight,name,description);
                                 (*i)->getObjects().push_back(object);
                             }
                         }

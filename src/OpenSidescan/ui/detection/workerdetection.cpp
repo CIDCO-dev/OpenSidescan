@@ -29,7 +29,6 @@ void WorkerDetection::doWork() {
         for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
             OpencvHelper::detectObjects(
                         (*j)->getObjects(),
-                        **i,
                         **j,
 
                         detectionWindow->getFastThresholdValue(),
@@ -40,7 +39,6 @@ void WorkerDetection::doWork() {
                         detectionWindow->getMserDeltaValue(),
                         detectionWindow->getMserMinimumAreaValue(),
                         detectionWindow->getMserMaximumAreaValue(),
-                        detectionWindow->getShowFeatureMarkersValue(),
                         detectionWindow->getMergeOverlappingBoundingBoxesValue()
                     );
         }

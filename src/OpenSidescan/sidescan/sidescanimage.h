@@ -8,8 +8,8 @@
 #include "inventoryobject/inventoryobject.h"
 
 //forwards
-class GeoreferencedObject;
-
+class InventoryObject;
+class SidescanFile;
 
 
 
@@ -17,9 +17,11 @@ class SidescanImage
 {
 public:
     //SidescanImage();
-    SidescanImage(cv::Mat * m,std::vector<SidescanPing * > * rawData,unsigned int channelNumber,std::string & channelName, unsigned int channelType, std::map<std::string,std::string>  * properties);
+    SidescanImage(SidescanFile & file,cv::Mat * m,std::vector<SidescanPing * > * rawData,unsigned int channelNumber,std::string & channelName, unsigned int channelType, std::map<std::string,std::string>  * properties);
 
     ~SidescanImage();
+
+    SidescanFile & getFile() {return file;}
 
     cv::Mat & getImage(){ return *image; }
     cv::Mat & getDisplayedImage() { return displayedImage;}
@@ -40,7 +42,7 @@ public:
 
     std::map<std::string,std::string> & getProperties(){ return *properties;}
 
-    std::vector<GeoreferencedObject*> & getObjects(){ return objects;}
+    std::vector<InventoryObject*> & getObjects(){ return objects;}
 
     std::vector<cv::KeyPoint> & getMicroFeatures(){ return microFeatures;}
 
@@ -54,6 +56,8 @@ public:
     }
 
 private:
+    SidescanFile & file;
+
     cv::Mat * image = NULL;
 
     cv::Mat displayedImage;
@@ -66,8 +70,8 @@ private:
     unsigned int channelType;
     std::string channelName;
 
-    //object detection shit
-    std::vector<GeoreferencedObject *> objects;
+    //object detection
+    std::vector<InventoryObject *> objects;
 
     //Microfeatures
     std::vector<cv::KeyPoint> microFeatures;

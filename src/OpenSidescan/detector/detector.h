@@ -6,6 +6,8 @@ class Detector
 {
 public:
     Detector();
+
+
 };
 
 #endif // DETECTOR_H

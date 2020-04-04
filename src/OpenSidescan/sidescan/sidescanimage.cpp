@@ -6,11 +6,23 @@ SidescanImage::SidescanImage():image(NULL),rawData(NULL)
 }
 */
 
-SidescanImage::SidescanImage(cv::Mat * img, std::vector<SidescanPing * > * rawData,
-                             unsigned int channelNumber,std::string & channelName, unsigned int channelType,
-                             std::map<std::string,std::string>  * properties)
-    : image(img), rawData(rawData), displayedImage(img->clone()),
-      channelNumber(channelNumber), channelName(channelName), channelType(channelType),properties(properties)
+SidescanImage::SidescanImage(
+                            SidescanFile & file,
+                            cv::Mat * img,
+                            std::vector<SidescanPing * > * rawData,
+                            unsigned int channelNumber,
+                            std::string & channelName,
+                            unsigned int channelType,
+                            std::map<std::string,std::string>  * properties
+                            )
+                            : file(file),
+                              image(img),
+                              rawData(rawData),
+                              displayedImage(img->clone()),
+                              channelNumber(channelNumber),
+                              channelName(channelName),
+                              channelType(channelType),
+                              properties(properties)
 {
 
 }

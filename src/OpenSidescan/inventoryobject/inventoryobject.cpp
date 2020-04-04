@@ -9,8 +9,7 @@
 
 #include <algorithm>
 
-GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
-    file(file) ,
+InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
     startPing(*image.getPings().at( y)       ),
     endPing(*image.getPings().at( std::min((int) y+pixelHeight,(int) image.getPings().size())) ),
@@ -28,13 +27,13 @@ GeoreferencedObject::GeoreferencedObject(SidescanFile & file,SidescanImage & ima
     computePosition();
 }
 
-GeoreferencedObject::~GeoreferencedObject(){
+InventoryObject::~InventoryObject(){
     if ( position != nullptr )
         delete position;
 
 }
 
-void GeoreferencedObject::computeDimensions(){
+void InventoryObject::computeDimensions(){
     //FIXME: not as accurate as we could go, ok for ballpark
 
     if(yCenter < image.getPings().size()){
@@ -64,14 +63,10 @@ void GeoreferencedObject::computeDimensions(){
 
 }
 
-void GeoreferencedObject::computePosition(){
+void InventoryObject::computePosition(){
 
     if(yCenter < image.getPings().size()){
         SidescanPing * pingCenter = image.getPings()[yCenter];
-
-
-
-
 
         Eigen::Vector3d shipPositionEcef;
         CoordinateTransform::getPositionECEF(shipPositionEcef, *pingCenter->getPosition());
@@ -147,7 +142,7 @@ void GeoreferencedObject::computePosition(){
         }
 
         // TODO: get this lever arm from platform metadata
-        Eigen::Vector3d antenna2TowPoint = file.getAntenna2TowPointLeverArm();
+        Eigen::Vector3d antenna2TowPoint = image.getFile().getAntenna2TowPointLeverArm();
         Eigen::Matrix3d ship2Ecef;
         ship2Ecef.row(0) = tangentUnitVector;
         ship2Ecef.row(1) = starboardUnitVector;

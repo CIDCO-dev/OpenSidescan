@@ -11,7 +11,7 @@
 
 
 
-ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : file(file),image(image),QWidget(parent)
+ImageTab::ImageTab(SidescanImage & image,QWidget *parent) : image(image),QWidget(parent)
 {
 
     QLayout * layout = new QVBoxLayout();
@@ -51,7 +51,7 @@ ImageTab::ImageTab(SidescanFile & file,SidescanImage & image,QWidget *parent) : 
 
     //Init image scroll area
     scrollArea = new QScrollArea();
-    imageLabel = new ImageTabLabel(*this,file,image);
+    imageLabel = new ImageTabLabel(*this,image);
     connect(imageLabel,&ImageTabLabel::inventoryChanged,this,&ImageTab::refreshInventory);
 
     imageLabel->setBackgroundRole(QPalette::Base);

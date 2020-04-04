@@ -235,7 +235,7 @@ void MainWindow::updateSelectedFile(SidescanFile * newFile){
                 selectedImage = &(**i);
             }
 
-            ImageTab* newTab = new ImageTab(*selectedFile,**i,(QWidget*)this);
+            ImageTab* newTab = new ImageTab(**i,(QWidget*)this);
             newTab->setObjectName( "imageTab with n=" + QString::number( n ) );
             connect(newTab,&ImageTab::inventoryChanged,this,&MainWindow::refreshObjectInventory);
 
@@ -292,7 +292,7 @@ void MainWindow::fileSelected(const QItemSelection & selection){
 
 void MainWindow::actionFindObjects(){
     if(Project * p = projectWindow->getProject()){
-        std::vector<GeoreferencedObject*> newObjects;
+        std::vector<InventoryObject*> newObjects;
 
         DetectionWindow detectionWindow(p->getFiles(),
                                         fastThresholdValue,
@@ -303,7 +303,6 @@ void MainWindow::actionFindObjects(){
                                         mserDeltaValue,
                                         mserMinimumAreaValue,
                                         mserMaximumAreaValue,
-                                        showFeatureMarkersValue,
                                         mergeOverlappingBoundingBoxesValue,
                                         this
         );
@@ -565,10 +564,10 @@ void MainWindow::refreshTabs(){
     }
 }
 
-void MainWindow::objectSelected(GeoreferencedObject * object){
+void MainWindow::objectSelected(InventoryObject * object){
 
 
-    projectWindow->selectFile( &object->getFile() );
+    projectWindow->selectFile( & object->getImage().getFile() );
 
 
 //    updateSelectedFile(&object->getFile());
@@ -578,7 +577,7 @@ void MainWindow::objectSelected(GeoreferencedObject * object){
     //TODO: scroll to object
 }
 
-void MainWindow::selectImageTab(GeoreferencedObject * object){
+void MainWindow::selectImageTab(InventoryObject * object){
     for(unsigned int i=0; i<tabs->count();i++){
         ImageTab * tab = (ImageTab*)tabs->widget(i);
         if( tab->getImage() == &object->getImage()){

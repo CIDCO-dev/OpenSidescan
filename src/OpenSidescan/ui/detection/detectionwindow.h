@@ -14,6 +14,7 @@
 #include "sidescan/sidescanfile.h"
 #include "sidescan/sidescanimage.h"
 #include "utilities/opencvhelper.h"
+#include "detector/roidetector.h"
 
 class DetectionWindow : public QDialog
 {
@@ -29,7 +30,6 @@ public:
                     int & mserDeltaValue,
                     int & mserMinimumAreaValue,
                     int & mserMaximumAreaValue,
-                    bool & showFeatureMarkersValue,
                     bool & mergeOverlappingBoundingBoxesValue,
                     QWidget * parent=0
     );
@@ -45,34 +45,39 @@ public:
     int getMserDeltaValue() const { return mserDeltaValue; }
     int getMserMinimumAreaValue() const { return mserMinimumAreaValue; }
     int getMserMaximumAreaValue() const { return mserMaximumAreaValue; }
-    bool getShowFeatureMarkersValue() const { return showFeatureMarkersValue; }
+
     bool getMergeOverlappingBoundingBoxesValue() const { return mergeOverlappingBoundingBoxesValue; }
-
-
-
-
 
 
 private slots:
     void ok();
     void cancel();
 
+    void detectorChanged(int i);
+
 private:
     std::vector<SidescanFile *>  & files;
 
-    std::vector<GeoreferencedObject*> & objects;
+    void buildShipwreckDetector();
+    void buildAdvancedDetector();
+
+    void launchDetectionWorker(Detector * detector);
 
     void createFastParameterBox(QFormLayout * advancedParametersLayout);
     void createMserParameterBox(QFormLayout * advancedParametersLayout);
     void createDbscanParameterBox(QFormLayout * advancedParametersLayout);
+
+
     QGroupBox * createDisplayParameterBox();
 
     QDialogButtonBox * buttonBox;
 
+    QComboBox * cmbDetector;
+    int         currentDetectorIndex;
+
     //display parameters
     QGroupBox * displayParameters;
 
-    QCheckBox * showFeatureMarkers;
     QCheckBox * mergeBoundingBoxes;
 
     //FAST parameters
@@ -83,20 +88,14 @@ private:
     QCheckBox * fastNonMaxSuppression;
 
     //MSER parameters
-
-
     QLineEdit * mserDelta;
     QLineEdit * mserMinimumArea;
     QLineEdit * mserMaximumArea;
 
 
     //DBSCAN parameters;
-
-
     QLineEdit * dbscanEpsilon;
     QLineEdit * dbscanMinimumPointCount;
-
-
 
     //Values
     int & fastThresholdValue;
@@ -107,7 +106,6 @@ private:
     int & mserDeltaValue;
     int & mserMinimumAreaValue;
     int & mserMaximumAreaValue;
-    bool & showFeatureMarkersValue;
     bool & mergeOverlappingBoundingBoxesValue;
 
     void initUI();

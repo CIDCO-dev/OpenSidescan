@@ -27,7 +27,7 @@ public:
     void setProject(Project * p);
 
 signals:
-    void objectSelected(GeoreferencedObject * object);
+    void objectSelected(InventoryObject * object);
 
 public slots:
     void refreshInventoryTable();

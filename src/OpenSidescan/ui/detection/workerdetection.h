@@ -9,7 +9,7 @@
 #ifndef WORKERDETECTION_H
 #define WORKERDETECTION_H
 
-
+#include "detector/detector.h"
 #include "detectionwindow.h"
 
 class WorkerDetection : public QObject
@@ -17,7 +17,7 @@ class WorkerDetection : public QObject
     Q_OBJECT
 
 public:
-    WorkerDetection( DetectionWindow * detectionWindow );
+    WorkerDetection( DetectionWindow & detectionWindow,Detector & detector );
 
 //    virtual ~WorkerDetection(){}
 
@@ -31,7 +31,8 @@ signals:
 
 private:
 
-    DetectionWindow * detectionWindow;
+    DetectionWindow & detectionWindow;
+    Detector & detector;
 };
 
 

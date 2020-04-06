@@ -3,29 +3,29 @@
 
 #include <QMessageBox>
 
-GeoreferencedObjectMenu::GeoreferencedObjectMenu(GeoreferencedObject * obj) : object(obj)
+InventoryObjectMenu::InventoryObjectMenu(InventoryObject * obj) : object(obj)
 {
     initUI();
 }
 
-GeoreferencedObjectMenu::~GeoreferencedObjectMenu(){
+InventoryObjectMenu::~InventoryObjectMenu(){
 
 }
 
-void GeoreferencedObjectMenu::initUI(){
+void InventoryObjectMenu::initUI(){
     this->setTitle(tr("Object Menu"));
 
     QAction * actionView = new QAction(QIcon(":/Images/resources/view.png"),tr("View object details"));
-    connect(actionView,&QAction::triggered,this,&GeoreferencedObjectMenu::viewObjectDetails);
+    connect(actionView,&QAction::triggered,this,&InventoryObjectMenu::viewObjectDetails);
     this->addAction(actionView);
 
     QAction * actionDelete = new QAction(QIcon(":/Images/resources/delete.png"),tr("Remove from inventory"));
-    connect(actionDelete,&QAction::triggered,this,&GeoreferencedObjectMenu::deleteObject);
+    connect(actionDelete,&QAction::triggered,this,&InventoryObjectMenu::deleteObject);
     this->addAction(actionDelete);
 }
 
-void GeoreferencedObjectMenu::viewObjectDetails(){
-    GeoreferencedObjectWindow win(object);
+void InventoryObjectMenu::viewObjectDetails(){
+    InventoryObjectWindow win(object);
 
     int res = win.exec();
 
@@ -34,7 +34,7 @@ void GeoreferencedObjectMenu::viewObjectDetails(){
     }
 }
 
-void GeoreferencedObjectMenu::deleteObject(){
+void InventoryObjectMenu::deleteObject(){
 
     QMessageBox msgBox;
     msgBox.setText("This will permanently remove the object from your inventory. Are you sure you want to proceed?");
@@ -46,7 +46,7 @@ void GeoreferencedObjectMenu::deleteObject(){
         SidescanImage & img = object->getImage();
 
         //TODO: use a list instead
-        std::vector<GeoreferencedObject*> & objects = img.getObjects();
+        std::vector<InventoryObject*> & objects = img.getObjects();
         for(auto i = objects.begin();i!=objects.end();i++){
             if(*i==object){
                 objects.erase(i);

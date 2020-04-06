@@ -12,26 +12,23 @@
 #include "workerdetection.h"
 
 
-WorkerDetection::WorkerDetection( DetectionWindow * detectionWindow )
-    : detectionWindow( detectionWindow )
+WorkerDetection::WorkerDetection( DetectionWindow & detectionWindow, Detector & detector )
+    : detectionWindow( detectionWindow ),detector(detector)
 {
 }
 
 
 void WorkerDetection::doWork() {
 
-    std::vector<SidescanFile *>  & files = detectionWindow->getFiles();
+    std::vector<SidescanFile *>  & files = detectionWindow.getFiles();
 
     int fileIdx = 0;
     for(auto i=files.begin();i!=files.end();i++){
         //for every file, every image
 
         for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
-            OpencvHelper::detectObjects(
-                        (*j)->getObjects(),
-                        **i,
-                        **j,
-
+            detector.detect(**j,(*j)->getObjects());
+/*
                         detectionWindow->getFastThresholdValue(),
                         detectionWindow->getFastTypeValue(),
                         detectionWindow->getFastNonMaxSuppressionValue(),
@@ -40,9 +37,8 @@ void WorkerDetection::doWork() {
                         detectionWindow->getMserDeltaValue(),
                         detectionWindow->getMserMinimumAreaValue(),
                         detectionWindow->getMserMaximumAreaValue(),
-                        detectionWindow->getShowFeatureMarkersValue(),
                         detectionWindow->getMergeOverlappingBoundingBoxesValue()
-                    );
+*/
         }
 
         progress(fileIdx);

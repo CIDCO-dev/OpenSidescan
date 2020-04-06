@@ -1,5 +1,5 @@
-#ifndef GEOREFERENCEDOBJECT_H
-#define GEOREFERENCEDOBJECT_H
+#ifndef INVENTORYOBJECT_H
+#define INVENTORYOBJECT_H
 
 #include "sidescan/sidescanfile.h"
 #include "sidescan/sidescanimage.h"
@@ -10,14 +10,13 @@ class SidescanFile;
 class SidescanImage;
 
 
-class GeoreferencedObject
+class InventoryObject
 {
 public:
-    GeoreferencedObject(SidescanFile & file,SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name="Unknown",std::string description = "");
+    InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name="Unknown",std::string description = "");
 
-    ~GeoreferencedObject();
+    ~InventoryObject();
 
-    SidescanFile  & getFile()       { return file       ;};
     SidescanImage & getImage()      { return image      ;};
     SidescanPing  & getStartPing()  { return startPing  ;};
     SidescanPing  & getEndPing()    { return endPing    ;};
@@ -63,11 +62,9 @@ private:
     std::string   name;
     std::string   description;
 
-
-    SidescanFile  & file;
     SidescanImage & image;
     SidescanPing  & startPing;
     SidescanPing  & endPing;
 };
 
-#endif // GEOREFERENCEDOBJECT_H
+#endif // INVENTORYOBJECT_H

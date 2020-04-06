@@ -1,17 +1,17 @@
-#ifndef GEOREFERENCEDOBJECTMENU_H
-#define GEOREFERENCEDOBJECTMENU_H
+#ifndef INVENTORYOBJECTMENU_H
+#define INVENTORYOBJECTMENU_H
 
 #include <QMenu>
 #include "inventoryobject/inventoryobject.h"
 
-class GeoreferencedObjectMenu : public QMenu
+class InventoryObjectMenu : public QMenu
 {
 
     Q_OBJECT
 
 public:
-    GeoreferencedObjectMenu(GeoreferencedObject * obj);
-    ~GeoreferencedObjectMenu();
+    InventoryObjectMenu(InventoryObject * obj);
+    ~InventoryObjectMenu();
 
     void initUI();
 
@@ -23,8 +23,8 @@ public slots:
     void deleteObject();
 
 private:
-    GeoreferencedObject * object=NULL;
+    InventoryObject * object=NULL;
 
 };
 
-#endif // GEOREFERENCEDOBJECTMENU_H
+#endif // INVENTORYOBJECTMENU_H

@@ -80,7 +80,8 @@ SOURCES += main.cpp\
     utilities/opencvhelper.cpp \
     utilities/qthelper.cpp \
     ui/training/parameterscvCreateTrainingSamples.cpp \
-    ui/docks/vesselgeometrywindow.cpp
+    ui/docks/vesselgeometrywindow.cpp \
+    detector/roidetector.cpp
 
 
 HEADERS  +=     machinelearning/dbscan.h \
@@ -113,7 +114,8 @@ HEADERS  +=     machinelearning/dbscan.h \
     ui/training/workertrainingsamples.h \
     utilities/opencvhelper.h \
     utilities/qthelper.h \
-    ui/docks/vesselgeometrywindow.h
+    ui/docks/vesselgeometrywindow.h \
+    detector/roidetector.h
 
 FORMS    += ui/mainwindow/mainwindow.ui \
     ui/about/aboutdialog.ui

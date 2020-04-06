@@ -64,7 +64,7 @@ public slots:
 
 
     void fileSelected(const QItemSelection & selection);
-    void objectSelected(GeoreferencedObject * object);
+    void objectSelected(InventoryObject * object);
 
     void refreshTabs();
 
@@ -83,7 +83,7 @@ protected:
     void buildUI();
     bool promptProject();
     void refreshProjectUI();
-    void selectImageTab(GeoreferencedObject * object);
+    void selectImageTab(InventoryObject * object);
 
     void createAndSaveTrainingObjectSamples( const QString & folder, const ParameterscvCreateTrainingSamples & parameters );
 
@@ -110,7 +110,6 @@ protected:
     int    mserDeltaValue                       = 5;
     int    mserMinimumAreaValue                 = 60;
     int    mserMaximumAreaValue                 = 14400;
-    bool   showFeatureMarkersValue              = false;
     bool   mergeOverlappingBoundingBoxesValue   = true;
 
     ParameterscvCreateTrainingSamples parameterscvCreateTrainingSamples;

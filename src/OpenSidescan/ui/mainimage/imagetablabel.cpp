@@ -8,7 +8,7 @@
 #include "ui/inventory/inventoryobjectwindow.h"
 #include "ui/inventory/inventoryobjectmenu.h"
 
-ImageTabLabel::ImageTabLabel(ImageTab & parent, SidescanFile & file,SidescanImage & img) : parent(parent),file(file),img(img)
+ImageTabLabel::ImageTabLabel(ImageTab & parent, SidescanImage & img) : parent(parent),img(img)
 {
     rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
 }
@@ -16,7 +16,7 @@ ImageTabLabel::ImageTabLabel(ImageTab & parent, SidescanFile & file,SidescanImag
 
 /* FIXME: Complete ROI selection */
 
-GeoreferencedObject * ImageTabLabel::insideObject(QPoint & p){
+InventoryObject * ImageTabLabel::insideObject(QPoint & p){
     for(auto i=img.getObjects().begin();i!=img.getObjects().end();i++){
         if(
                 (p.x() >= (*i)->getX() && p.x() < (*i)->getX() + (*i)->getPixelWidth()) &&
@@ -37,8 +37,8 @@ void ImageTabLabel::mousePressEvent(QMouseEvent *event)
 
        //TODO: determine if we clicked inside an object's bounding box and popup the object details dialog if so
 
-        if(GeoreferencedObject * obj = insideObject(selectionOrigin)){
-            GeoreferencedObjectWindow objectWindow(obj);
+        if(InventoryObject * obj = insideObject(selectionOrigin)){
+            InventoryObjectWindow objectWindow(obj);
 
             int res = objectWindow.exec();
 
@@ -58,9 +58,9 @@ void ImageTabLabel::mousePressEvent(QMouseEvent *event)
             //right button while dragging cancels current selection
             rubberBand->hide();
         }
-        else if(GeoreferencedObject * obj = insideObject(clickPosition)){
-            GeoreferencedObjectMenu mnu(obj);
-            connect(&mnu,&GeoreferencedObjectMenu::inventoryChanged,this,&ImageTabLabel::emitInventoryChanged);
+        else if(InventoryObject * obj = insideObject(clickPosition)){
+            InventoryObjectMenu mnu(obj);
+            connect(&mnu,&InventoryObjectMenu::inventoryChanged,this,&ImageTabLabel::emitInventoryChanged);
 
             mnu.exec(QCursor::pos());
         }
@@ -99,12 +99,12 @@ void ImageTabLabel::mouseReleaseEvent(QMouseEvent *event)
             int height = y2-y1;
 
             if(width > 0 && height > 0){
-                GeoreferencedObject*  obj = new GeoreferencedObject(file,img,x1,y1,width, height);
+                InventoryObject*  obj = new InventoryObject(img,x1,y1,width, height);
                 img.getObjects().push_back(obj);
 
                 parent.refreshImage();
 
-                GeoreferencedObjectWindow newObjectWindow(obj);
+                InventoryObjectWindow newObjectWindow(obj);
 
                 if ( newObjectWindow.exec() ) {
                     emit inventoryChanged();

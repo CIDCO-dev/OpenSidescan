@@ -172,7 +172,7 @@ public:
                 properties=channelInfo[i];
             }
 
-            matrixes->push_back(new SidescanImage(I,channels[i],i,channelName,channelTypes[i],properties));
+            matrixes->push_back(new SidescanImage(*file,I,channels[i],i,channelName,channelTypes[i],properties));
             //imwrite(ss.str(), I);
         }
 

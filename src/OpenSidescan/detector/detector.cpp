@@ -4,3 +4,7 @@ Detector::Detector()
 {
 
 }
+
+Detector::~Detector(){
+
+}

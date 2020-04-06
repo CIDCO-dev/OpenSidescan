@@ -1,4 +1,4 @@
-#include "detectionwindow.h"
+﻿#include "detectionwindow.h"
 
 #include <QProgressDialog>
 #include <QCoreApplication>
@@ -24,7 +24,6 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  bool & mergeOverlappingBoundingBoxesValue,
                                  QWidget * parent):
                                 files(files),
-                                objects(objects),
                                 QDialog(parent),
                                 fastThresholdValue(fastThresholdValue),
                                 fastTypeValue(fastTypeValue),
@@ -44,6 +43,16 @@ void DetectionWindow::initUI(){
     this->setWindowTitle("Find Objects");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
+
+    cmbDetector = new QComboBox(this);
+    connect(cmbDetector,SIGNAL(currentIndexChanged(int)),this,SLOT(detectorChanged(int)));
+
+    //QStyledItemDelegate * delegate = new QStyledItemDelegate();
+    //cmbDetector->setItemDelegate( delegate );
+
+
+
+    mainLayout->addWidget(cmbDetector);
 
     mainLayout->addWidget(createDisplayParameterBox());
 
@@ -68,6 +77,26 @@ void DetectionWindow::initUI(){
     mainLayout->addWidget(buttonBox);
 
     this->setLayout(mainLayout);
+
+    //Add detector types
+    //If we added them before, the app would trigger a selected() event upon insertion and trigger the redraw login on uninitialized elements
+    cmbDetector->addItem(tr("Large Objects (Ex: Shipwrecks)"),"shipwrecks");
+    cmbDetector->addItem(tr("Machine Vision Mode (Expert Users Only)"),"machinevision");
+}
+
+void DetectionWindow::detectorChanged(int i){
+    currentDetectorIndex = i;
+
+    const char * id = cmbDetector->itemData(i).toString().toStdString().c_str();
+
+    if(strcmp(id,"shipwrecks")==0){
+        advancedParameters->setVisible(false);
+    }
+    if(strcmp(id,"machinevision")==0){
+       advancedParameters->setVisible(true);
+    }
+
+    this->adjustSize();
 }
 
 void DetectionWindow::createFastParameterBox(QFormLayout * advancedParametersLayout){
@@ -155,7 +184,37 @@ QGroupBox * DetectionWindow::createDisplayParameterBox(){
     return displayParameters;
 }
 
+
 void DetectionWindow::ok(){
+    const char * id = cmbDetector->itemData(currentDetectorIndex).toString().toStdString().c_str();
+
+    if(strcmp(id,"shipwrecks")==0){
+        buildShipwreckDetector();
+    }
+    if(strcmp(id,"machinevision")==0){
+        buildAdvancedDetector();
+    }
+
+    this->accept();
+}
+
+void DetectionWindow::buildShipwreckDetector(){
+    Detector * detector = new RoiDetector(
+                    300,
+                    cv::FastFeatureDetector::TYPE_9_16,
+                    false,
+                    50,
+                    20,
+                    6,
+                    320,
+                    15000,
+                    true
+                );
+
+    launchDetectionWorker(detector);
+}
+
+void DetectionWindow::buildAdvancedDetector(){
     std::string sFastThreshold = fastThreshold->text().toStdString();
 
     if(!sFastThreshold.empty()){
@@ -194,38 +253,22 @@ void DetectionWindow::ok(){
                                                 if(!sMserMaximumArea.empty()){
                                                     mserMaximumAreaValue = std::atoi(sMserMaximumArea.c_str());
 
-                                                    QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
-
-                                                    progress.setWindowModality(Qt::WindowModal);
-                                                    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
-
-                                                    progress.setValue(0);
-                                                    progress.setMinimumDuration( 0 );
-
-
                                                     fastNonMaxSuppressionValue = fastNonMaxSuppression->isChecked();
                                                     mergeOverlappingBoundingBoxesValue = mergeBoundingBoxes->isChecked();
 
+                                                    Detector * detector = new RoiDetector(
+                                                                    fastThresholdValue,
+                                                                    fastTypeValue,
+                                                                    fastNonMaxSuppressionValue,
+                                                                    dbscanEpsilonValue,
+                                                                    dbscanMinPointsValue,
+                                                                    mserDeltaValue,
+                                                                    mserMinimumAreaValue,
+                                                                    mserMaximumAreaValue,
+                                                                    mergeOverlappingBoundingBoxesValue
+                                                                );
 
-                                                    QThread * workerThread = new QThread( this );
-
-                                                    WorkerDetection * worker = new WorkerDetection( this );
-
-                                                    worker->moveToThread(workerThread);
-
-                                                    connect( workerThread, &QThread::finished, worker, &WorkerDetection::deleteLater );
-                                                    connect( workerThread, &QThread::started, worker, &WorkerDetection::doWork );
-
-                                                    connect( worker, &WorkerDetection::progress, &progress, &QProgressDialog::setValue);
-
-                                                    workerThread->start();
-
-                                                    progress.exec();
-
-                                                    workerThread->quit();
-                                                    workerThread->wait();
-
-
+                                                    launchDetectionWorker(detector);
                                                 }
                                             }
                                         }
@@ -249,9 +292,37 @@ void DetectionWindow::ok(){
     else{
         //TODO: whine about missing threshold
     }
+}
+
+void DetectionWindow::launchDetectionWorker(Detector * detector){
+    QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
+
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
+
+    progress.setValue(0);
+    progress.setMinimumDuration( 0 );
 
 
-    this->accept();
+    QThread * workerThread = new QThread( this );
+
+    WorkerDetection * worker = new WorkerDetection( *this , *detector);
+
+    worker->moveToThread(workerThread);
+
+    connect( workerThread, &QThread::finished, worker, &WorkerDetection::deleteLater );
+    connect( workerThread, &QThread::started, worker, &WorkerDetection::doWork );
+
+    connect( worker, &WorkerDetection::progress, &progress, &QProgressDialog::setValue);
+
+    workerThread->start();
+
+    progress.exec();
+
+    workerThread->quit();
+    workerThread->wait();
+
+    delete detector;
 }
 
 void DetectionWindow::cancel(){

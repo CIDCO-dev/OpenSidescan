@@ -292,23 +292,28 @@ void MainWindow::fileSelected(const QItemSelection & selection){
 
 void MainWindow::actionFindObjects(){
     if(Project * p = projectWindow->getProject()){
-        std::vector<InventoryObject*> newObjects;
 
-        DetectionWindow detectionWindow(p->getFiles(),
-                                        fastThresholdValue,
-                                        fastTypeValue,
-                                        fastNonMaxSuppressionValue,
-                                        dbscanEpsilonValue,
-                                        dbscanMinPointsValue,
-                                        mserDeltaValue,
-                                        mserMinimumAreaValue,
-                                        mserMaximumAreaValue,
-                                        mergeOverlappingBoundingBoxesValue,
-                                        this
-        );
+        if(p->getFiles().size() > 0){
 
-        if(detectionWindow.exec() == QDialog::Accepted){
-            refreshObjectInventory();
+            DetectionWindow detectionWindow(p->getFiles(),
+                                            fastThresholdValue,
+                                            fastTypeValue,
+                                            fastNonMaxSuppressionValue,
+                                            dbscanEpsilonValue,
+                                            dbscanMinPointsValue,
+                                            mserDeltaValue,
+                                            mserMinimumAreaValue,
+                                            mserMaximumAreaValue,
+                                            mergeOverlappingBoundingBoxesValue,
+                                            this
+            );
+
+            if(detectionWindow.exec() == QDialog::Accepted){
+                refreshObjectInventory();
+            }
+        }
+        else{
+            QMessageBox::critical(this, tr("Error"),tr("No files found in project. Please import some files first."),QMessageBox::Ok);
         }
     }
 }

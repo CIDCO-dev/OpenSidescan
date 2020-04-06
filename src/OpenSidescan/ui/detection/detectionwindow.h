@@ -14,6 +14,7 @@
 #include "sidescan/sidescanfile.h"
 #include "sidescan/sidescanimage.h"
 #include "utilities/opencvhelper.h"
+#include "detector/roidetector.h"
 
 class DetectionWindow : public QDialog
 {
@@ -48,25 +49,31 @@ public:
     bool getMergeOverlappingBoundingBoxesValue() const { return mergeOverlappingBoundingBoxesValue; }
 
 
-
-
-
-
 private slots:
     void ok();
     void cancel();
 
+    void detectorChanged(int i);
+
 private:
     std::vector<SidescanFile *>  & files;
 
-    std::vector<InventoryObject*> & objects;
+    void buildShipwreckDetector();
+    void buildAdvancedDetector();
+
+    void launchDetectionWorker(Detector * detector);
 
     void createFastParameterBox(QFormLayout * advancedParametersLayout);
     void createMserParameterBox(QFormLayout * advancedParametersLayout);
     void createDbscanParameterBox(QFormLayout * advancedParametersLayout);
+
+
     QGroupBox * createDisplayParameterBox();
 
     QDialogButtonBox * buttonBox;
+
+    QComboBox * cmbDetector;
+    int         currentDetectorIndex;
 
     //display parameters
     QGroupBox * displayParameters;

@@ -39,7 +39,7 @@ ImageTab::ImageTab(SidescanImage & image,QWidget *parent) : image(image),QWidget
 
     showMicroFeatures = new QAction(QIcon(":/Images/resources/microfeatures.png"),tr("&Show microfeatures"));
     showMicroFeatures->setCheckable(true);
-    showMicroFeatures->setChecked(true);
+    showMicroFeatures->setChecked(false);
     connect(showMicroFeatures,&QAction::triggered,this,&ImageTab::refreshImage);
     toolbar->addAction(showMicroFeatures);
 

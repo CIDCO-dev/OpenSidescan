@@ -751,6 +751,8 @@ void MainWindow::actionClose(){
     if(currentProject){
         delete currentProject;
         currentProject = NULL;
+        selectedFile = NULL;
+        selectedImage = NULL;
     }
 }
 
@@ -805,7 +807,7 @@ void MainWindow::addFileToProjectWindow( SidescanFile * file )
 
 void MainWindow::tabChanged( int index )
 {
-        if( tabs && tabs->count() > 0 && index >= 0 && index < tabs->count() ){
+        if( selectedFile && tabs && tabs->count() > 0 && index >= 0 && index < tabs->count() ){
             selectedImage = ( (ImageTab*)tabs->widget(index) )->getImage();
             channelInfo->updateModel( selectedImage );
         }

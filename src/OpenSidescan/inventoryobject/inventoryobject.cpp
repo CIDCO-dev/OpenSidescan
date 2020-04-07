@@ -1,11 +1,11 @@
 #include "inventoryobject.h"
 
-#include "../thirdParty/MBES-lib/src/math/Distance.hpp"
+#include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
 
-#include "../thirdParty/MBES-lib/src/utils/Exception.hpp"
-#include "../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
-#include "../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
-#include "../thirdParty/MBES-lib/src/math/Distance.hpp"
+#include "../../thirdParty/MBES-lib/src/utils/Exception.hpp"
+#include "../../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
+#include "../../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
+#include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
 
 #include <algorithm>
 

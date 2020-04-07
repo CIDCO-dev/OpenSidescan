@@ -1,9 +1,10 @@
 #include "catch.hpp"
 
-#include "../src/OpenSidescan/sidescanimager.h"
-#include "../src/OpenSidescan/sidescanimage.h"
-#include "../src/OpenSidescan/georeferencedobject.h"
-#include "../src/OpenSidescan/opencvhelper.h"
+#include "../src/OpenSidescan/sidescan/sidescanimager.h"
+#include "../src/OpenSidescan/sidescan/sidescanimage.h"
+#include "../src/OpenSidescan/inventoryobject/inventoryobject.h"
+#include "../src/OpenSidescan/utilities/opencvhelper.h"
+#include "../src/OpenSidescan/detector/roidetector.h"
 #include "../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
 TEST_CASE( "Test Georeferencing" ) {
@@ -66,21 +67,47 @@ TEST_CASE( "Test Georeferencing" ) {
 //    std::cout << "\nChannel name: " << image->getChannelName() << "\n" << std::endl;
 
 
-    std::vector<GeoreferencedObject*> objectsDetected;
+    std::vector<InventoryObject*> objectsDetected;
 
     //Detection parameters
     int    fastThresholdValue                   = 358;
     int    fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
     bool   fastNonMaxSuppressionValue           = false;
-    int    dbscanEpsilonValue                   = 51;
+    double    dbscanEpsilonValue                   = 51;
     int    dbscanMinPointsValue                 = 19;
     int    mserDeltaValue                       = 5;
     int    mserMinimumAreaValue                 = 320;
     int    mserMaximumAreaValue                 = 14400;
-    bool   showFeatureMarkersValue              = false;
+    //bool   showFeatureMarkersValue              = false;
     bool   mergeOverlappingBoundingBoxesValue   = true;
+    /*
+    RoiDetector(
+            int fastThreshold,
+            int fastType,
+            bool fastNonMaxSuppression,
+            double dbscanEpsilon,
+            int dbscanMinimumPoints,
+            int mserDelta,
+            int mserMinimumArea,
+            int mserMaximumArea,
+            bool mergeOverlappingObjects
+            );
+     * */
+    
+    RoiDetector detector(
+                fastThresholdValue,
+                fastTypeValue,
+                fastNonMaxSuppressionValue,
+                dbscanEpsilonValue,
+                dbscanMinPointsValue,
+                mserDeltaValue,
+                mserMinimumAreaValue,
+                mserMaximumAreaValue,
+                mergeOverlappingBoundingBoxesValue);
+    
+    detector.detect(*image, objectsDetected);
 
-
+/*
     OpencvHelper::detectObjects(
                 objectsDetected,
                 *file,
@@ -97,6 +124,7 @@ TEST_CASE( "Test Georeferencing" ) {
                 showFeatureMarkersValue,
                 mergeOverlappingBoundingBoxesValue
             );
+    */
 
 
     REQUIRE( objectsDetected.size() == 1 );

@@ -3,8 +3,8 @@
 
 #include "catch.hpp"
 #include <string>
-#include "../src/OpenSidescan/sidescanimager.h"
-#include "../src/OpenSidescan/sidescanfile.h"
+#include "../src/OpenSidescan/sidescan/sidescanimager.h"
+#include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
 
 

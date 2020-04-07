@@ -13,11 +13,11 @@
 #include <unistd.h>
 #include <time.h>
 #include "../thirdParty/MBES-lib/src/utils/StringUtils.hpp"
-#include "../OpenSidescan/sidescanimager.h"
-#include "../OpenSidescan/sidescanfile.h"
-#include "../OpenSidescan/sidescanimage.h"
-#include "../OpenSidescan/opencvhelper.h"
-#include <Eigen>
+#include "../OpenSidescan/sidescan/sidescanimager.h"
+#include "../OpenSidescan/sidescan/sidescanfile.h"
+#include "../OpenSidescan/sidescan/sidescanimage.h"
+#include "../OpenSidescan/utilities/opencvhelper.h"
+#include <Eigen/Dense>
 
 #define POPULATION_SIZE 100
 #define DECIMATION_SIZE 80

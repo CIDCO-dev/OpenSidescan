@@ -1,6 +1,6 @@
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
-#include "mainwindow.h"
+#include "ui/mainwindow/mainwindow.h"
 #include <QApplication>
 #include <QSplashScreen>
 

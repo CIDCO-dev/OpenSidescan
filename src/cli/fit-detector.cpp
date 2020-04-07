@@ -13,10 +13,11 @@
 #include <unistd.h>
 #include <time.h>
 #include "../thirdParty/MBES-lib/src/utils/StringUtils.hpp"
-#include "../OpenSidescan/sidescanimager.h"
-#include "../OpenSidescan/sidescanfile.h"
-#include "../OpenSidescan/sidescanimage.h"
-#include "../OpenSidescan/opencvhelper.h"
+#include "../OpenSidescan/sidescan/sidescanimager.h"
+#include "../OpenSidescan/sidescan/sidescanfile.h"
+#include "../OpenSidescan/sidescan/sidescanimage.h"
+#include "../OpenSidescan/utilities/opencvhelper.h"
+#include <Eigen/Dense>
 
 #define POPULATION_SIZE 100
 #define DECIMATION_SIZE 80
@@ -46,6 +47,9 @@ void printUsage(){
 void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits, std::string & directoryPath){
     DIR *dir = NULL;
     
+    //TODO: read this lever arm from metadata or user input
+    Eigen::Vector3d antenna2TowPoint(0.0,0.0,0.0);
+    
     if(dir = opendir(directoryPath.c_str())){
         
         std::cerr << "Processing " << directoryPath << std::endl;
@@ -70,7 +74,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                 DatagramParser * parser = DatagramParserFactory::build(fileName,imager);
                 parser->parse(fileName);
 
-                SidescanFile * sidescanFile = imager.generate(fileName);
+                SidescanFile * sidescanFile = imager.generate(fileName, antenna2TowPoint);
 
                 files.push_back(sidescanFile);
                 

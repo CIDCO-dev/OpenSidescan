@@ -3,7 +3,7 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "sidescan/sidescanimage.h"
+#include "../sidescan/sidescanimage.h"
 
 class OpencvHelper
 {

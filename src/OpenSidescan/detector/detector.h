@@ -2,7 +2,7 @@
 #define DETECTOR_H
 
 #include <vector>
-#include <inventoryobject/inventoryobject.h>
+#include "../inventoryobject/inventoryobject.h"
 
 
 class Detector

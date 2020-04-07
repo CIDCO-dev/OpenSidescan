@@ -3,10 +3,9 @@
 
 #include "catch.hpp"
 #include <string>
-#include "../../src/OpenSidescan/sidescanimager.h"
-#include "../../src/OpenSidescan/sidescanfile.h"
-#include "../../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
-
+#include "../src/OpenSidescan/sidescan/sidescanimager.h"
+#include "../src/OpenSidescan/sidescan/sidescanfile.h"
+#include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
 
 
 TEST_CASE("Test normal image") {
@@ -158,5 +157,6 @@ TEST_CASE("Test SideScanImager") {
     delete parser;
     delete ssFile;
 }
+
 
 #endif // SIDESCANIMAGERTEST_H

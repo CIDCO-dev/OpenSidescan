@@ -2,10 +2,10 @@
 #define SIDESCANIMAGE_H
 
 #include <opencv2/opencv.hpp>
-#include "../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp"
+#include "../../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp"
 
 #include <vector>
-#include "inventoryobject/inventoryobject.h"
+#include "../inventoryobject/inventoryobject.h"
 
 //forwards
 class InventoryObject;

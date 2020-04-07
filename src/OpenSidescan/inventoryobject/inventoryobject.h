@@ -1,10 +1,10 @@
 #ifndef INVENTORYOBJECT_H
 #define INVENTORYOBJECT_H
 
-#include "sidescan/sidescanfile.h"
-#include "sidescan/sidescanimage.h"
+#include "../sidescan/sidescanfile.h"
+#include "../sidescan/sidescanimage.h"
 
-#include "../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp"
+#include "../../thirdParty/MBES-lib/src/sidescan/SidescanPing.hpp"
 
 class SidescanFile;
 class SidescanImage;

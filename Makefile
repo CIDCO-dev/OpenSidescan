@@ -27,19 +27,11 @@ THIRDPARTYFILES=$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParser.cpp  \
 		$(THIRDPARTY)/opencv/apps/createsamples/utility.cpp
 	
 LIBOPENCV=`pkg-config --cflags --libs opencv`
-	
-	
-
-
-
-
 
 test_exec_dir=build/test/bin
 test_result_dir=build/reports
 
 default: prepare opensidescan-gui
-	
-
 	
 opensidescan-gui:
 	cd build/bin && qmake ../../src/OpenSidescan/.
@@ -53,30 +45,24 @@ sidescan-detect: prepare
 	
 sidescan-dump: prepare
 	$(CC) $(FLAGS) $(INCLUDES) -o build/bin/sidescan-dump src/cli/sidescan-dump.cpp $(FILES) $(LIBOPENCV)
-
-test:
+	
+unit-tests:
 	mkdir -p $(test_exec_dir)
 	mkdir -p $(test_result_dir)
-	$(CC) $(FLAGS) -DQT_CORE_LIB -fPIC $(INCLUDES) $(QT_INCLUDES) -o $(test_exec_dir)/tests test/unitTests/main.cpp $(FILES) `pkg-config --cflags --libs opencv`
-	$(test_exec_dir)/tests -r junit -o $(test_result_dir)/unit-tests-report.xml
-
-testNoQt:
-	mkdir -p $(test_exec_dir)
-	mkdir -p $(test_result_dir)
-	$(CC) $(FLAGS) $(INCLUDES) -o $(test_exec_dir)/unitTests test/main.cpp $(FILES) `pkg-config --cflags --libs opencv`
+	$(CC) $(FLAGS) $(INCLUDES) -o $(test_exec_dir)/unitTests test/main.cpp `pkg-config --cflags --libs opencv`
 	$(test_exec_dir)/unitTests -r junit -o $(test_result_dir)/unit-tests-report.xml || true
 	
-debugTestNoQt:
+console-unit-tests:
 	mkdir -p $(test_exec_dir)
 	mkdir -p $(test_result_dir)
-	$(CC) $(FLAGS) -g $(INCLUDES) -o $(test_exec_dir)/unitTests test/main.cpp $(SSFILES) $(THIRDPARTYFILES) $(LIBOPENCV)
+	$(CC) $(FLAGS) $(INCLUDES) -o $(test_exec_dir)/unitTests test/main.cpp $(SSFILES) $(THIRDPARTYFILES) `pkg-config --cflags --libs opencv`
+	$(test_exec_dir)/unitTests -r console
 
 testGUI:
 	mkdir -p $(test_exec_dir)
 	cd $(test_exec_dir) && qmake CONFIG+=debug ../../../test/testGUI/.
 	cd $(test_exec_dir) && make
 	cd $(test_exec_dir) && ./testGUI -o test-report-OpenSidescanXUNIT.xml,xunitxml -o test-report-OpenSidescan.xml,xml -o test-report-OpenSidescanTAP.txt,tap
-
 
 prepare:
 	mkdir -p build

@@ -30,12 +30,12 @@
 #include <QScreen>          // To get screen size
 
 
+//Nasty trick
+#define protected public
 
+#include "../../src/OpenSidescan/ui/mainwindow/mainwindow.h"
 
-
-#include "../../src/OpenSidescan/mainwindow.h"
-
-#include "../../src/OpenSidescan/imagetab.h"
+#include "../../src/OpenSidescan/ui/mainimage/imagetab.h"
 
 
 //#define DOSKIPTESTS

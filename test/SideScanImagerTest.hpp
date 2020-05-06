@@ -56,7 +56,7 @@ TEST_CASE("Test normal image") {
 }
 
 TEST_CASE("Test image with no position data") {
-    std::cout << "current working directory: " << current_working_direction() << std::endl;
+    //std::cout << "current working directory: " << current_working_direction() << std::endl;
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 

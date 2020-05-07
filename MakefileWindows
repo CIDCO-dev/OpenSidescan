@@ -41,7 +41,7 @@ doc:
 	mkdir $(doc_dir)
 	
 clean:
-	rmdir /q /s build
+	if exists build rmdir /q /s build
 	
 
 .PHONY: all test clean doc

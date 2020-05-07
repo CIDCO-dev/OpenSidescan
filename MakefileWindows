@@ -1,0 +1,47 @@
+INCLUDES=-IC:\\Users\\cidco\\Library\\eigen -I"C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
+
+SS=../../../src/OpenSidescan
+SSFILES=$(SS)/sidescan/sidescanfile.cpp \
+	$(SS)/sidescan/sidescanimager.cpp \
+	$(SS)/sidescan/sidescanimage.cpp \
+	$(SS)/inventoryobject/inventoryobject.cpp \
+	$(SS)/detector/roidetector.cpp \
+	$(SS)/detector/detector.cpp \
+	$(SS)/utilities/opencvhelper.cpp
+
+THIRDPARTY=../../../src/thirdParty
+THIRDPARTYFILES=$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParser.cpp  \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParserFactory.cpp  \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/xtf/XtfParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/utils/NmeaUtils.cpp \
+		$(THIRDPARTY)/MBES-lib/src/utils/StringUtils.cpp \
+		$(THIRDPARTY)/MBES-lib/src/sidescan/SidescanPing.cpp \
+		$(THIRDPARTY)/opencv/apps/createsamples/utility.cpp
+
+exec_dir=build\\bin
+doc_dir=build\\doc
+
+test_exec_dir=build\\test\\bin
+test_work_dir=build\\test\\work
+test_result_dir=build\\reports
+
+test: default
+	mkdir $(test_exec_dir)
+	mkdir $(test_result_dir)
+	mkdir $(test_work_dir)
+	call cd
+	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) /Fetests.exe
+	call cd
+	$(test_exec_dir)\\tests -r junit -o $(test_result_dir)\\opensidescan-test-report.xml
+	call cd
+
+doc:
+	mkdir $(doc_dir)
+	
+clean:
+	rmdir /q /s build
+	
+
+.PHONY: all test clean doc

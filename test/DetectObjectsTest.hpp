@@ -35,6 +35,7 @@ TEST_CASE("Test Detect Objects") {
 
     for (unsigned int i = 0; i < file->getImages().size(); i++) {
         if (file->getImages()[i]->getChannelNumber() == 1) {
+            //plane is on channel 1
             image = file->getImages()[i];
         }
     }

@@ -54,7 +54,8 @@ public slots:
     void actionQuit();
     void actionAbout();
     void actionFindObjects();
-    void actionSaveObjectImages();
+
+    void actionExportHTML();
 
     void actionExportTrainingObjectSamples();
 

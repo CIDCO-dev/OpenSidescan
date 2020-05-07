@@ -251,16 +251,9 @@ void Project::exportInventoryAsCsv(std::string & filename){
 
 
 //void Project::saveObjectImages( const QString & folder )
-void Project::saveObjectImages( const QString & absolutePath,
-                       const QString & fileNameWithoutExtension )
+void Project::saveObjectImages( const QString & absolutePath, const QString & fileNameWithoutExtension )
 {
-//    std::cout << "\nBeginning of Project::saveObjectImages()\n"
-//        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
 
-
-    // Open file, write beginning of the file
-
-//    QString fileNameHTML = folder + "/" + "description.html";
 
     QString fileNameHTML = absolutePath + "/" + fileNameWithoutExtension + ".html";
 
@@ -350,14 +343,10 @@ void Project::saveObjectImages( const QString & absolutePath,
         xmlWriter.writeEndElement(); // tr
     }
 
-
-    // i is an iterator to a ( SidescanFile * )
     for(auto i = files.begin(); i != files.end(); ++i){
 
-        // j is an iterator to a (SidescanImage* )
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
 
-            // k is an iterator to (GeoreferencedObject *)
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
                 // Copy the part of the cv::Mat with the object into a new cv::Mat
@@ -396,10 +385,22 @@ void Project::saveObjectImages( const QString & absolutePath,
                 {
                     xmlWriter.writeStartElement("tr");
 
+                    //Image
+                    xmlWriter.writeStartElement("td");
+
+                    QString imageString = "img src=\"" + fileNameWithoutExtension + "/" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
+                    xmlWriter.writeStartElement( imageString );
+                    xmlWriter.writeEndElement(); // imageString
+
+                    xmlWriter.writeEndElement(); // td
+
+                    //Target name
+
                     xmlWriter.writeStartElement("td");
                     xmlWriter.writeCharacters( objectName );
                     xmlWriter.writeEndElement();
 
+                    //File name
                     QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
                     QString filenameWithoutPath = fileInfo.fileName();
 
@@ -407,10 +408,12 @@ void Project::saveObjectImages( const QString & absolutePath,
                     xmlWriter.writeCharacters( filenameWithoutPath );
                     xmlWriter.writeEndElement();
 
+                    //Channel
                     xmlWriter.writeStartElement("td");
                     xmlWriter.writeCharacters(  QString::fromStdString((*j)->getChannelName()) );
                     xmlWriter.writeEndElement();
 
+                    //Longitude / Latitude
 
                     Position * pos = (*k)->getPosition();
 
@@ -433,7 +436,7 @@ void Project::saveObjectImages( const QString & absolutePath,
                         xmlWriter.writeEndElement();
                     }
 
-
+                    //Width
                     if((*k)->getWidth() > 0){
                         xmlWriter.writeStartElement("td");
                         xmlWriter.writeCharacters( QString::number( (*k)->getWidth(), 'f', 3) );
@@ -445,7 +448,7 @@ void Project::saveObjectImages( const QString & absolutePath,
                         xmlWriter.writeEndElement();
                     }
 
-
+                    //height
                     if((*k)->getHeight() > 0){
                         xmlWriter.writeStartElement("td");
                         xmlWriter.writeCharacters( QString::number( (*k)->getHeight(), 'f', 3) );
@@ -456,14 +459,6 @@ void Project::saveObjectImages( const QString & absolutePath,
                         xmlWriter.writeCharacters( "N/A" );
                         xmlWriter.writeEndElement();
                     }
-
-                    xmlWriter.writeStartElement("td");
-
-                    QString imageString = "img src=\"" + fileNameWithoutExtension + "/" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
-                    xmlWriter.writeStartElement( imageString );
-                    xmlWriter.writeEndElement(); // imageString
-
-                    xmlWriter.writeEndElement(); // td
 
                     xmlWriter.writeEndElement(); // tr
 

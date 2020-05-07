@@ -319,10 +319,7 @@ void MainWindow::actionFindObjects(){
 }
 
 
-void MainWindow::actionSaveObjectImages(){
-
-
-
+void MainWindow::actionExportHTML(){
     if( ! currentProject )
         return;
 
@@ -369,7 +366,6 @@ void MainWindow::actionSaveObjectImages(){
         return;
     }
 
-
     // Verify if a folder with the corresponding name (without .html) already exists
     QString folder = fileInfo.absolutePath() + "/" + fileInfo.completeBaseName();
 
@@ -386,7 +382,6 @@ void MainWindow::actionSaveObjectImages(){
         return;
     }
 
-
     // Try and create the folder in which to put the images
     QDir dir( fileInfo.absolutePath() );
 
@@ -401,8 +396,6 @@ void MainWindow::actionSaveObjectImages(){
 
         return;
     }
-
-//    std::cout << "\nAfter verifying folder\n" << std::endl;
 
     currentProject->saveObjectImages( fileInfo.absolutePath(), fileInfo.completeBaseName() );
 }

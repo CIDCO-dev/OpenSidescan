@@ -30,11 +30,6 @@ pipeline {
 */
     stage('TEST WINDOWS 10') {
         agent { label 'windows10-x64-2'}
-/*
-        environment {
-            PATH="C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\bin\\Release";%PATH%
-        }
-*/
         steps {
             SET Path=%PATH%;C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\bin\\Release;
             bat "echo %cd%"

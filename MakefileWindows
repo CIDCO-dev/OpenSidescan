@@ -1,4 +1,15 @@
-INCLUDES=-IC:\\Users\\cidco\\Library\\eigen -I"C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
+INCLUDES=-IC:\\Users\\cidco\\Library\\eigen \
+	 -I"C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
+	
+LIBS  = "C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_core347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_features2d347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_imgcodecs347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_imgproc347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_ml347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_photo347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_flann347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_highgui347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_calib3d347.lib"
 
 SS=../../../src/OpenSidescan
 SSFILES=$(SS)/sidescan/sidescanfile.cpp \
@@ -32,7 +43,7 @@ test:
 	mkdir $(test_result_dir)
 	mkdir $(test_work_dir)
 	call cd
-	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) /Fetests.exe
+	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) $(LIBS) /Fetests.exe
 	call cd
 	$(test_exec_dir)\\tests -r junit -o $(test_result_dir)\\opensidescan-test-report.xml
 	call cd

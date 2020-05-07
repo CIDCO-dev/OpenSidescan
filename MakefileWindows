@@ -27,7 +27,7 @@ test_exec_dir=build\\test\\bin
 test_work_dir=build\\test\\work
 test_result_dir=build\\reports
 
-test: default
+test: 
 	mkdir $(test_exec_dir)
 	mkdir $(test_result_dir)
 	mkdir $(test_work_dir)
@@ -41,7 +41,7 @@ doc:
 	mkdir $(doc_dir)
 	
 clean:
-	if exists build rmdir /q /s build
+	if exists build\ rmdir /q /s build
 	
 
 .PHONY: all test clean doc

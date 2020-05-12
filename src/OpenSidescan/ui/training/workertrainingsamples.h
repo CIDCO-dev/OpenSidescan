@@ -39,6 +39,10 @@ public:
 
 //    virtual ~WorkerTrainingSamples(){}
 
+    void computeMaxDimensions(SidescanFile & file);
+    void saveBackgrounds(SidescanFile & file);
+    void saveSamples(SidescanFile & file);
+
 public slots:
     void doWork();
 
@@ -59,7 +63,15 @@ private:
 
     Project * project;
 
-    int numberOfObjects;
+    int maxObjectWidth = 0;
+    int maxObjectHeight = 0;
+
+    int minBackgroundWidth = 0;
+    int minBackgroundHeight = 0;
+
+    int numberOfObjects =0;
+
+    int countObjects =0;
 
     const ParameterscvCreateTrainingSamples & parameters;
 

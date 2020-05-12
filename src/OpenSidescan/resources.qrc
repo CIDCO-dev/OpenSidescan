@@ -20,5 +20,10 @@
         <file>resources/kml.png</file>
         <file>resources/document-save-as-4.png</file>
         <file>resources/microfeatures.png</file>
+        <file>resources/play.png</file>
+        <file>resources/stop.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>resources/aim.png</file>
     </qresource>
 </RCC>

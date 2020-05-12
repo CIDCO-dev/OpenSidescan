@@ -32,34 +32,13 @@ public:
 
     void        addFile(SidescanFile * file);
 
-
-    bool        containsFile(std::string & filename);
-
     void        selectLastFile();
     void        selectFile( SidescanFile * file );
 
 
     SidescanFile * getSelectedFile();
 
-//    void setSelected( SidescanFile * file );
-
-//    //FIXME: this will be obsolete with the use of a proper listview model
-//    SidescanFile * getSelectedFile(){
-//        if(files && project){
-//            QModelIndex index = files->currentIndex();
-//            QString itemText = index.data(Qt::DisplayRole).toString();
-
-//            for(auto i = project->getFiles().begin();i != project->getFiles().end();i++){
-//                if((*i)->getFilename()==itemText.toStdString()){
-//                    return (*i);
-//                }
-//            }
-//        }
-
-//        return NULL;
-//    }
-
-//    void displayInfoOnTreeView();
+    void appendFileToProjectTree(SidescanFile & file);
 
 signals:
     void removeFileFromProjectRequest( SidescanFile * file );

@@ -20,9 +20,34 @@ Project::Project()
 }
 
 Project::~Project(){
-    for(auto i=this->getFiles().begin();i!=this->getFiles().end();i++){
+    mutex.lock();
+
+    for(auto i=files.begin();i!=files.end();i++){
         delete (*i);
     }
+
+    mutex.unlock();
+}
+
+void Project::addFile(SidescanFile * newFile){
+    mutex.lock();
+
+    files.push_back(newFile);
+
+    mutex.unlock();
+}
+
+void Project::removeFile(SidescanFile * file){
+    mutex.lock();
+
+    auto iter = std::find( files.begin(), files.end(), file );
+
+    if ( iter != files.end() )
+    {
+        files.erase( iter );
+    }
+
+    mutex.unlock();
 }
 
 void Project::read(std::string & filename){
@@ -31,8 +56,10 @@ void Project::read(std::string & filename){
 
     QXmlStreamReader xml(&file);
 
+    mutex.lock();
+
     std::string currentImage;
-    SidescanFile * currentFile=NULL;
+    SidescanFile * currentFile= nullptr;
 
     while(!xml.atEnd()){
 
@@ -50,6 +77,7 @@ void Project::read(std::string & filename){
 
                     if(leverArmX.isEmpty() || leverArmY.isEmpty() || leverArmZ.isEmpty() ) {
                         //no lever arm, old project file
+                        antenna2TowPointLeverArm << 0 ,0 ,0;
                     } else {
                         antenna2TowPointLeverArm << leverArmX.toDouble(), leverArmY.toDouble(), leverArmZ.toDouble();
                     }
@@ -62,7 +90,7 @@ void Project::read(std::string & filename){
                     parser->parse(filename);
                     currentFile = imager.generate(filename, antenna2TowPointLeverArm);
 
-                    this->getFiles().push_back(currentFile);
+                    files.push_back(currentFile);
 
                     currentImage = "";
 
@@ -100,9 +128,12 @@ void Project::read(std::string & filename){
         }
     }
 
+    mutex.unlock();
 }
 
 void Project::write(std::string & filename){
+    mutex.lock();
+
     QFile file(QString::fromStdString(filename));
     file.open(QIODevice::WriteOnly);
 
@@ -149,6 +180,8 @@ void Project::write(std::string & filename){
     xmlWriter.writeEndElement();
 
     file.close();
+
+    mutex.unlock();
 }
 
 
@@ -163,6 +196,8 @@ void Project::exportInventoryAsKml(std::string & filename){
     xmlWriter.writeStartElement("kml");
     xmlWriter.writeNamespace(QString::fromStdString("http://www.opengis.net/kml/2.2"));
     xmlWriter.writeStartElement("Document");
+
+    mutex.lock();
 
     for(auto i=files.begin();i!=files.end();i++){
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
@@ -201,6 +236,8 @@ void Project::exportInventoryAsKml(std::string & filename){
         }
     }
 
+    mutex.unlock();
+
     xmlWriter.writeEndElement();
     xmlWriter.writeEndElement();
 
@@ -208,69 +245,44 @@ void Project::exportInventoryAsKml(std::string & filename){
 }
 
 void Project::exportInventoryAsCsv(std::string & filename){
-
-    // std::cout << "\nBeginning of Project::exportInventoryAsCsv(std::string & filename)\n" << std::endl;
-
     std::ofstream outFile;
     outFile.open( filename, std::ofstream::out );
 
-    if( outFile.is_open() == false )
-    {
-        return;
-    }
+    if( outFile.is_open() ){
+        outFile << "name" << "," << "description" << "," << "longitude" << "," << "latitude" << "\n";
 
-    outFile << "name" << "," << "description" << ","
-        << "longitude" << "," << "latitude" << "\n";
+        outFile << std::fixed << std::setprecision(15);
 
-    outFile << std::fixed << std::setprecision(15);
+        mutex.lock();
 
-    // i is an iterator to a ( SidescanFile * )
-    for(auto i = files.begin(); i != files.end(); ++i){
-
-        // j is an iterator to a (SidescanImage* )
-        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
-
-            // k is an iterator to (GeoreferencedObject *)
-            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-
-                Position * pos = (*k)->getPosition();
-
-                // Using quotation marks to support strings with line changes
-                // or comma
-                outFile << "\"" << (*k)->getName() << "\","
-                    << "\"" << (*k)->getDescription() << "\","
-                    << pos->getLongitude() << ","
-                    << pos->getLatitude() << "\n";
+        for(auto i = files.begin(); i != files.end(); ++i){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    Position * pos = (*k)->getPosition();
+                    outFile << "\"" << (*k)->getName() << "\"," << "\"" << (*k)->getDescription() << "\","  << pos->getLongitude() << "," << pos->getLatitude() << "\n";
+                }
             }
         }
-    }
 
-    outFile.close();
+        mutex.unlock();
+
+        outFile.close();
+    }
 }
 
 
 
 //void Project::saveObjectImages( const QString & folder )
-void Project::saveObjectImages( const QString & absolutePath,
-                       const QString & fileNameWithoutExtension )
+void Project::saveObjectImages( const QString & absolutePath, const QString & fileNameWithoutExtension )
 {
-//    std::cout << "\nBeginning of Project::saveObjectImages()\n"
-//        << "Folder: \"" << folder.toStdString() << "\"\n" << std::endl;
-
-
-    // Open file, write beginning of the file
-
-//    QString fileNameHTML = folder + "/" + "description.html";
-
     QString fileNameHTML = absolutePath + "/" + fileNameWithoutExtension + ".html";
 
     QFile file( fileNameHTML );
-    bool isfileForHTMLopened = file.open(QIODevice::WriteOnly);
 
-    QXmlStreamWriter xmlWriter(&file);
-
-    if( isfileForHTMLopened )
+    if( file.open(QIODevice::WriteOnly) )
     {
+        QXmlStreamWriter xmlWriter(&file);
+
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();
 
@@ -348,115 +360,50 @@ void Project::saveObjectImages( const QString & absolutePath,
 
 
         xmlWriter.writeEndElement(); // tr
-    }
 
 
-    // i is an iterator to a ( SidescanFile * )
-    for(auto i = files.begin(); i != files.end(); ++i){
+        mutex.lock();
 
-        // j is an iterator to a (SidescanImage* )
-        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+        for(auto i = files.begin(); i != files.end(); ++i){
 
-            // k is an iterator to (GeoreferencedObject *)
-            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
 
-                // Copy the part of the cv::Mat with the object into a new cv::Mat
-                cv::Mat objectMat;
-                (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-                // Create a QPixmap
-                QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
+                    // Copy the part of the cv::Mat with the object into a new cv::Mat
+                    cv::Mat objectMat;
+                    (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
 
-                // Find filename that does not already exist
-                QString objectName = QString::fromStdString( (*k)->getName() );
+                    // Create a QPixmap
+                    QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
-                QString fileExtension = "png";
+                    // Find filename that does not already exist
+                    QString objectName = QString::fromStdString( (*k)->getName() );
 
-                QString objectImageFileName = objectName + "." + fileExtension;
+                    QString fileExtension = "png";
 
-                QString objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+                    QString objectImageFileName = objectName + "." + fileExtension;
 
-                QFileInfo fileInfo( objectImageFileNameWithPath );
+                    QString objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
 
-                int count = 0;
+                    QFileInfo fileInfo( objectImageFileNameWithPath );
 
-                while ( fileInfo.exists() ) {
+                    int count = 0;
 
-                    objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
-                    objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
-                    fileInfo.setFile( objectImageFileNameWithPath );
-                    count++;
-                }
+                    while ( fileInfo.exists() ) {
 
-                // Save pixmap
-                pixmap.save( objectImageFileNameWithPath );
+                        objectImageFileName = objectName + "_" + QString::number( count ) + "." + fileExtension;
+                        objectImageFileNameWithPath = absolutePath + "/" + fileNameWithoutExtension + "/" + objectImageFileName;
+                        fileInfo.setFile( objectImageFileNameWithPath );
+                        count++;
+                    }
 
+                    // Save pixmap
+                    pixmap.save( objectImageFileNameWithPath );
 
-                if( isfileForHTMLopened )
-                {
                     xmlWriter.writeStartElement("tr");
 
-                    xmlWriter.writeStartElement("td");
-                    xmlWriter.writeCharacters( objectName );
-                    xmlWriter.writeEndElement();
-
-                    QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
-                    QString filenameWithoutPath = fileInfo.fileName();
-
-                    xmlWriter.writeStartElement("td");
-                    xmlWriter.writeCharacters( filenameWithoutPath );
-                    xmlWriter.writeEndElement();
-
-                    xmlWriter.writeStartElement("td");
-                    xmlWriter.writeCharacters(  QString::fromStdString((*j)->getChannelName()) );
-                    xmlWriter.writeEndElement();
-
-
-                    Position * pos = (*k)->getPosition();
-
-                    if(pos){
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters(  QString::number(pos->getLongitude(), 'f', 15) );
-                        xmlWriter.writeEndElement();
-
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters(  QString::number(pos->getLatitude(), 'f', 15) );
-                        xmlWriter.writeEndElement();
-                    }
-                    else{
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( "N/A" );
-                        xmlWriter.writeEndElement();
-
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( "N/A" );
-                        xmlWriter.writeEndElement();
-                    }
-
-
-                    if((*k)->getWidth() > 0){
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( QString::number( (*k)->getWidth(), 'f', 3) );
-                        xmlWriter.writeEndElement();
-                    }
-                    else{
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( "N/A" );
-                        xmlWriter.writeEndElement();
-                    }
-
-
-                    if((*k)->getHeight() > 0){
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( QString::number( (*k)->getHeight(), 'f', 3) );
-                        xmlWriter.writeEndElement();
-                    }
-                    else{
-                        xmlWriter.writeStartElement("td");
-                        xmlWriter.writeCharacters( "N/A" );
-                        xmlWriter.writeEndElement();
-                    }
-
+                    //Image
                     xmlWriter.writeStartElement("td");
 
                     QString imageString = "img src=\"" + fileNameWithoutExtension + "/" + objectImageFileName + "\" alt=\"" + objectImageFileName + "\"";
@@ -465,80 +412,107 @@ void Project::saveObjectImages( const QString & absolutePath,
 
                     xmlWriter.writeEndElement(); // td
 
+                    //Target name
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( objectName );
+                    xmlWriter.writeEndElement();
+
+                    //File name
+                    QFileInfo sidescanFileInfo( QString::fromStdString((*i)->getFilename()) );
+                    QString filenameWithoutPath = sidescanFileInfo.fileName();
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( filenameWithoutPath );
+                    xmlWriter.writeEndElement();
+
+                    //Channel
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters(  QString::fromStdString((*j)->getChannelName()) );
+                    xmlWriter.writeEndElement();
+
+                    //Longitude / Latitude
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( ((*k)->getPosition()) ? QString::number((*k)->getPosition()->getLongitude(), 'f', 15) : "N/A" );
+                    xmlWriter.writeEndElement();
+
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( ((*k)->getPosition()) ? QString::number((*k)->getPosition()->getLatitude(), 'f', 15) : "N/A" );
+                    xmlWriter.writeEndElement();
+
+                    //Width
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( ((*k)->getWidth() > 0) ?  QString::number( (*k)->getWidth(), 'f', 3) : "N/A" );
+                    xmlWriter.writeEndElement();
+
+                    //Height
+                    xmlWriter.writeStartElement("td");
+                    xmlWriter.writeCharacters( ((*k)->getHeight() > 0) ? QString::number( (*k)->getHeight(), 'f', 3) : "N/A" );
+                    xmlWriter.writeEndElement();
+
                     xmlWriter.writeEndElement(); // tr
-
                 }
-
             }
         }
-    }
 
-    if( isfileForHTMLopened )
-    {
-//        xmlWriter.writeEndElement(); // table
-//        xmlWriter.writeEndElement(); // body
-//        xmlWriter.writeEndElement(); // html
+        mutex.unlock();
 
         xmlWriter.writeEndDocument(); // Closes all remaining open start elements and writes a newline.
 
         file.close();
     }
 
+    mutex.unlock();
 }
 
-bool Project::areThereFiles() const
+unsigned long Project::getFileCount()
 {
-    if ( files.size() != 0 )
-        return true;
-    else
-        return false;
-}
-bool Project::areThereObjects() const
-{
-    if ( areThereFiles() == false )
-        return false;
+    unsigned long count = 0;
 
-    bool thereAreObjects = false;
+    mutex.lock();
 
-    auto i = files.begin(); // i is an iterator to a ( SidescanFile * )
+    count = files.size();
 
-    while ( thereAreObjects == false && i != files.end() ) {
+    mutex.unlock();
 
-        auto j=(*i)->getImages().begin(); // j is an iterator to a (SidescanImage* )
-
-        while ( thereAreObjects == false && j!=(*i)->getImages().end() ) {
-
-            if ( (*j)->getObjects().size() != 0 )
-                thereAreObjects = true;
-
-            ++j;
-        }
-
-        ++i;
-    }
-
-    return thereAreObjects;
+    return count;
 }
 
-int Project::computeNumberOfObjects() const
+unsigned long Project::getObjectCount()
 {
+    unsigned long count=0;
 
-    if ( areThereFiles() == false )
-        return 0;
+    mutex.lock();
 
-    int numberOfObjects = 0;
-
-    // i is an iterator to a ( SidescanFile * )
-    for(auto i = files.begin(); i != files.end(); ++i){
-
-        // j is an iterator to a (SidescanImage* )
-        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
-
-            numberOfObjects += (*j)->getObjects().size();
-
+    for(auto i = files.begin();i != files.end();i++){
+        for(auto j = (*i)->getImages().begin(); j != (*i)->getImages().end();j++){
+            count += (*j)->getObjects().size();
         }
     }
 
-    return numberOfObjects;
+    mutex.unlock();
+
+    return count;
+}
+
+
+
+
+bool Project::containsFile(std::string & filename){
+    bool res = false;
+
+    mutex.lock();
+
+    for(auto i=files.begin();i!=files.end();i++){
+        if(strcmp((*i)->getFilename().c_str(),filename.c_str()) == 0){
+            res=true;
+            break;
+        }
+    }
+
+    mutex.unlock();
+
+    return res;
 }
 

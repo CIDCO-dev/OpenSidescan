@@ -12,7 +12,7 @@
 
 
 
-DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
+DetectionWindow::DetectionWindow(Project & project,
                                  int & fastThresholdValue,
                                  int & fastTypeValue,
                                  bool & fastNonMaxSuppressionValue,
@@ -23,7 +23,7 @@ DetectionWindow::DetectionWindow(std::vector<SidescanFile *> & files,
                                  int & mserMaximumAreaValue,
                                  bool & mergeOverlappingBoundingBoxesValue,
                                  QWidget * parent):
-                                files(files),
+                                project(project),
                                 QDialog(parent),
                                 fastThresholdValue(fastThresholdValue),
                                 fastTypeValue(fastTypeValue),
@@ -295,7 +295,7 @@ void DetectionWindow::buildAdvancedDetector(){
 }
 
 void DetectionWindow::launchDetectionWorker(Detector * detector){
-    QProgressDialog progress("Finding objects...", QString(), 0, files.size(), this);
+    QProgressDialog progress("Finding objects...", QString(), 0, project.getFileCount(), this);
 
     progress.setWindowModality(Qt::WindowModal);
     progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
@@ -306,7 +306,7 @@ void DetectionWindow::launchDetectionWorker(Detector * detector){
 
     QThread * workerThread = new QThread( this );
 
-    WorkerDetection * worker = new WorkerDetection( *this , *detector);
+    WorkerDetection * worker = new WorkerDetection(project, *this , *detector);
 
     worker->moveToThread(workerThread);
 

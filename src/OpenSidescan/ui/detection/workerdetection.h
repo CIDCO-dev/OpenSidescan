@@ -3,7 +3,7 @@
 */
 
  /*
- * \author Christian Bouchard
+ * \author Christian Bouchard,glm
  */
 
 #ifndef WORKERDETECTION_H
@@ -11,17 +11,20 @@
 
 #include "detector/detector.h"
 #include "detectionwindow.h"
+#include "project/project.h"
 
 class WorkerDetection : public QObject
 {
     Q_OBJECT
 
 public:
-    WorkerDetection( DetectionWindow & detectionWindow,Detector & detector );
+    WorkerDetection( Project & project,DetectionWindow & detectionWindow,Detector & detector );
 
 //    virtual ~WorkerDetection(){}
 
     std::string getExceptionString() const;
+
+    void detectInFiles(SidescanFile & file);
 
 public slots:
     void doWork();
@@ -30,9 +33,11 @@ signals:
     void progress(int);
 
 private:
-
+    Project & project;
     DetectionWindow & detectionWindow;
     Detector & detector;
+
+    int fileIdx;
 };
 
 

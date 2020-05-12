@@ -2,6 +2,7 @@
 #define PROJECT_H
 
 #include <vector>
+#include <mutex>
 
 #include <QString>
 
@@ -18,8 +19,6 @@ public:
     Project();
     ~Project();
 
-    std::vector<SidescanFile *> & getFiles() {return files;}
-
     void read(std::string & filename);
 
     void write(std::string & filename);
@@ -33,7 +32,11 @@ public:
     void          setFilename(std::string & fileName){ filename=fileName;}
 
     Eigen::Vector3d & getAntenna2TowPointLeverArm(){ return antenna2TowPointLeverArm;}
-    void              setAntenna2TowPointLeverArm(double x,double y, double z){ antenna2TowPointLeverArm << x,y,z;}
+    void              setAntenna2TowPointLeverArm(double x,double y, double z){
+        mutex.lock();
+        antenna2TowPointLeverArm << x,y,z;
+        mutex.unlock();
+    }
 
     void saveObjectImages( const QString & absolutePath, const QString & fileNameWithoutExtension );
 
@@ -41,10 +44,29 @@ public:
 
     void saveBackgroundImage( SidescanImage * image, const QString & folder, std::ofstream & outFile, int backgroundTop, int backgroundBottom );
 
-    bool areThereFiles() const;
-    bool areThereObjects() const;
+    void addFile(SidescanFile * newFile);
+    void removeFile(SidescanFile * file);
 
-    int computeNumberOfObjects() const;
+    unsigned long getFileCount();
+    unsigned long getObjectCount();
+
+    /**
+     * A generic visitor method that wraps up the proper use of the project's mutex to avoid race conditions between GUI operations and Monitor-mode
+     */
+    template <typename T>
+    void walkFiles(T * obj,void (T::*fn)(SidescanFile &)){
+        mutex.lock();
+
+        for(auto i = files.begin();i != files.end();i++){
+            (obj->*fn)(*(*i));
+        }
+
+        mutex.unlock();
+    }
+
+    bool containsFile(std::string & filename);
+
+
 
 private:
 
@@ -56,6 +78,8 @@ private:
     std::string filename;
 
     Eigen::Vector3d antenna2TowPointLeverArm;
+
+    std::mutex mutex; //used to control access between GUI-mode and monitor-mode
 };
 
 #endif // PROJECT_H

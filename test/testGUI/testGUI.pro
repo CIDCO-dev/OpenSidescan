@@ -50,8 +50,6 @@ win32 {
   }
 
 SOURCES += testGUI.cpp \
-        ../../src/OpenSidescan/mainwindow.cpp \
-    ../../src/OpenSidescan/sidescanimager.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
@@ -61,69 +59,79 @@ SOURCES += testGUI.cpp \
     ../../src/thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../../src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
     ../../src/thirdParty/opencv/apps/createsamples/utility.cpp \
-    ../../src/OpenSidescan/opencvhelper.cpp \
-    ../../src/OpenSidescan/imagetab.cpp \
-    ../../src/OpenSidescan/aboutdialog.cpp \
-    ../../src/OpenSidescan/dbscan.cpp \
-    ../../src/OpenSidescan/sidescanimage.cpp \
-    ../../src/OpenSidescan/projectwindow.cpp \
-    ../../src/OpenSidescan/sidescanfile.cpp \
-    ../../src/OpenSidescan/project.cpp \
-    ../../src/OpenSidescan/georeferencedobject.cpp \
-    ../../src/OpenSidescan/filepropertieswindow.cpp \
-    ../../src/OpenSidescan/detectionwindow.cpp \
-    ../../src/OpenSidescan/inventorywindow.cpp \
-    ../../src/OpenSidescan/channelpropertieswindow.cpp \
-    ../../src/OpenSidescan/qthelper.cpp \
-    ../../src/OpenSidescan/imagetablabel.cpp \
-    ../../src/OpenSidescan/georeferencedobjectwindow.cpp \
-    ../../src/OpenSidescan/georeferencedobjectmenu.cpp \
-    ../../src/OpenSidescan/workerimportsidescanfiles.cpp \
-    ../../src/OpenSidescan/workeropenproject.cpp \
-    ../../src/OpenSidescan/workerdetection.cpp \
-    ../../src/OpenSidescan/projecttreeitem.cpp \
-    ../../src/OpenSidescan/projecttreemodel.cpp \
-    ../../src/OpenSidescan/parameterscvCreateTrainingSamples.cpp \
-    ../../src/OpenSidescan/trainingsampleswindow.cpp \
-    ../../src/OpenSidescan/workertrainingsamples.cpp \
-    ../../src/OpenSidescan/progressdialognotclosingrightawayoncancel.cpp
+    ../../src/OpenSidescan/machinelearning/dbscan.cpp \
+    ../../src/OpenSidescan/project/project.cpp \
+    ../../src/OpenSidescan/inventoryobject/inventoryobject.cpp \
+    ../../src/OpenSidescan/sidescan/sidescanfile.cpp \
+    ../../src/OpenSidescan/sidescan/sidescanimage.cpp \
+    ../../src/OpenSidescan/sidescan/sidescanimager.cpp \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projecttreeitem.cpp \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projecttreemodel.cpp \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projectwindow.cpp \
+    ../../src/OpenSidescan/ui/docks/channelpropertieswindow.cpp \
+    ../../src/OpenSidescan/ui/docks/filepropertieswindow.cpp \
+    ../../src/OpenSidescan/ui/docks/inventorywindow.cpp \
+    ../../src/OpenSidescan/ui/about/aboutdialog.cpp \
+    ../../src/OpenSidescan/detector/detector.cpp \
+    ../../src/OpenSidescan/refactorme/progressdialognotclosingrightawayoncancel.cpp \
+    ../../src/OpenSidescan/ui/detection/detectionwindow.cpp \
+    ../../src/OpenSidescan/ui/detection/workerdetection.cpp \
+    ../../src/OpenSidescan/ui/inventory/inventoryobjectmenu.cpp \
+    ../../src/OpenSidescan/ui/inventory/inventoryobjectwindow.cpp \
+    ../../src/OpenSidescan/ui/mainimage/imagetab.cpp \
+    ../../src/OpenSidescan/ui/mainimage/imagetablabel.cpp \
+    ../../src/OpenSidescan/ui/mainwindow/mainwindow.cpp \
+    ../../src/OpenSidescan/ui/mainwindow/workerimportsidescanfiles.cpp \
+    ../../src/OpenSidescan/ui/mainwindow/workeropenproject.cpp \
+    ../../src/OpenSidescan/ui/training/trainingsampleswindow.cpp \
+    ../../src/OpenSidescan/ui/training/workertrainingsamples.cpp \
+    ../../src/OpenSidescan/utilities/opencvhelper.cpp \
+    ../../src/OpenSidescan/utilities/qthelper.cpp \
+    ../../src/OpenSidescan/ui/training/parameterscvCreateTrainingSamples.cpp \
+    ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.cpp \
+    ../../src/OpenSidescan/detector/roidetector.cpp
 
-HEADERS  += ../../src/OpenSidescan/mainwindow.h \
-    ../../src/OpenSidescan/sidescanimager.h \
-    ../../src/OpenSidescan/opencvhelper.h \
-    ../../src/OpenSidescan/imagetab.h \
-    ../../src/OpenSidescan/aboutdialog.h \
-    ../../src/OpenSidescan/dbscan.h \
-    ../../src/OpenSidescan/sidescanimage.h \
-    ../../src/OpenSidescan/projectwindow.h \
-    ../../src/OpenSidescan/sidescanfile.h \
-    ../../src/OpenSidescan/project.h \
-    ../../src/OpenSidescan/georeferencedobject.h \
-    ../../src/OpenSidescan/filepropertieswindow.h \
-    ../../src/OpenSidescan/detectionwindow.h \
-    ../../src/OpenSidescan/inventorywindow.h \
-    ../../src/OpenSidescan/channelpropertieswindow.h \
-    ../../src/OpenSidescan/qthelper.h \
-    ../../src/OpenSidescan/imagetablabel.h \
-    ../../src/OpenSidescan/georeferencedobjectwindow.h \
-    ../../src/OpenSidescan/georeferencedobjectmenu.h \
-    ../../src/OpenSidescan/workerimportsidescanfiles.h \
-    ../../src/OpenSidescan/workeropenproject.h \
-    ../../src/OpenSidescan/workerdetection.h \
-    ../../src/OpenSidescan/projecttreeitem.h \
-    ../../src/OpenSidescan/projecttreemodel.h \
-    ../../src/OpenSidescan/parameterscvCreateTrainingSamples.h \
-    ../../src/OpenSidescan/trainingsampleswindow.h \
-    ../../src/OpenSidescan/workertrainingsamples.h \
-    ../../src/OpenSidescan/progressdialognotclosingrightawayoncancel.h \
-    ../../src/OpenSidescan/boolwithmutex.h
+HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
+    ../../src/OpenSidescan/project/project.h \
+    ../../src/OpenSidescan/inventoryobject/inventoryobject.h \
+    ../../src/OpenSidescan/ui/training/parameterscvCreateTrainingSamples.h \
+    ../../src/OpenSidescan/detector/detector.h \
+    ../../src/OpenSidescan/ui/about/aboutdialog.h \
+    ../../src/OpenSidescan/refactorme/boolwithmutex.h \
+    ../../src/OpenSidescan/refactorme/progressdialognotclosingrightawayoncancel.h \
+    ../../src/OpenSidescan/sidescan/sidescanfile.h \
+    ../../src/OpenSidescan/sidescan/sidescanimage.h \
+    ../../src/OpenSidescan/sidescan/sidescanimager.h \
+    ../../src/OpenSidescan/ui/detection/detectionwindow.h \
+    ../../src/OpenSidescan/ui/detection/workerdetection.h \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projecttreeitem.h \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projecttreemodel.h \
+    ../../src/OpenSidescan/ui/docks/projectwindow/projectwindow.h \
+    ../../src/OpenSidescan/ui/docks/channelpropertieswindow.h \
+    ../../src/OpenSidescan/ui/docks/filepropertieswindow.h \
+    ../../src/OpenSidescan/ui/docks/inventorywindow.h \
+    ../../src/OpenSidescan/ui/inventory/inventoryobjectmenu.h \
+    ../../src/OpenSidescan/ui/inventory/inventoryobjectwindow.h \
+    ../../src/OpenSidescan/ui/mainimage/imagetab.h \
+    ../../src/OpenSidescan/ui/mainimage/imagetablabel.h \
+    ../../src/OpenSidescan/ui/mainwindow/mainwindow.h \
+    ../../src/OpenSidescan/ui/mainwindow/workerimportsidescanfiles.h \
+    ../../src/OpenSidescan/ui/mainwindow/workeropenproject.h \
+    ../../src/OpenSidescan/ui/training/trainingsampleswindow.h \
+    ../../src/OpenSidescan/ui/training/workertrainingsamples.h \
+    ../../src/OpenSidescan/utilities/opencvhelper.h \
+    ../../src/OpenSidescan/utilities/qthelper.h \
+    ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.h \
+    ../../src/OpenSidescan/detector/roidetector.h
 
-FORMS    += 	../../src/OpenSidescan/mainwindow.ui \
-    		../../src/OpenSidescan/aboutdialog.ui
+FORMS    += 	../../src/OpenSidescan/ui/mainwindow/mainwindow.ui \
+                ../../src/OpenSidescan/ui/about/aboutdialog.ui
 
 RESOURCES +=  ../../src/OpenSidescan/resources.qrc
 
 RESOURCES +=  ../../src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
+
+INCLUDEPATH += ../../src/OpenSidescan/
 
 CONFIG+=link_pkgconfig
 

@@ -5,22 +5,44 @@
 #include <string>
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
+#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
+#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
+
+std::string current_working_direction() {
+    char* cwd = getcwd(0,0);
+    std::string working_directory(cwd);
+    free(cwd);
+    return working_directory;
+}
 
 
 TEST_CASE("Test normal image") {
+    
+    //std::cout << "current working directory: " << current_working_direction() << std::endl;
 
-    std::string sidescanFileName = "../data/wrecks/scotsman1.xtf";
+    std::string sidescanFileName = "test/data/wrecks/scotsman1.xtf";
+    
+    //std::cout << "opening file: " << sidescanFileName << std::endl;
 
     SidescanImager imager;
+    
+    //std::cout << "Building parser..." << std::endl;
     DatagramParser * parser = DatagramParserFactory::build(sidescanFileName,imager);
+    
+    //std::cout << "Print name of tag 0: " << std::endl;
+    //parser->getName(0);
+    
+    //std::cout << "Parsing file..." << std::endl;
     parser->parse(sidescanFileName);
+    
+    //std::cout << "File parsed." << std::endl;
 
     Eigen::Vector3d leverArm(0,0,0);
 
     SidescanFile * file = imager.generate(sidescanFileName, leverArm);
 
-    REQUIRE(file);
+    //REQUIRE(file);
 
     unsigned int numChannels = 2;
 
@@ -34,8 +56,9 @@ TEST_CASE("Test normal image") {
 }
 
 TEST_CASE("Test image with no position data") {
+    //std::cout << "current working directory: " << current_working_direction() << std::endl;
 
-    std::string sidescanFileName = "../data/wrecks/plane1.xtf";
+    std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 
     SidescanImager imager;
     DatagramParser * parser = DatagramParserFactory::build(sidescanFileName,imager);

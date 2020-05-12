@@ -4,4 +4,5 @@
 #include "OpenCvTest.hpp"
 #include "SideScanImagerTest.hpp"
 #include "GeoreferencingTest.hpp"
+#include "DetectObjectsTest.hpp"
 

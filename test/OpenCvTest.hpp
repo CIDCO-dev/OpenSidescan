@@ -8,8 +8,6 @@ TEST_CASE("Test opencv") {
     
     cv::Mat * I = new cv::Mat();
     
-    std::cout << "matrix created" << std::endl;
-    
     REQUIRE(I);
     
 }

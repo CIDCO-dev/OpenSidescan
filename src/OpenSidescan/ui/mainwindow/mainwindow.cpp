@@ -1,4 +1,4 @@
-#include <algorithm>    // std::find
+﻿#include <algorithm>    // std::find
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -293,9 +293,9 @@ void MainWindow::fileSelected(const QItemSelection & selection){
 void MainWindow::actionFindObjects(){
     if(Project * p = projectWindow->getProject()){
 
-        if(p->getFiles().size() > 0){
+        if(p->getFileCount() > 0){
 
-            DetectionWindow detectionWindow(p->getFiles(),
+            DetectionWindow detectionWindow(*p,
                                             fastThresholdValue,
                                             fastTypeValue,
                                             fastNonMaxSuppressionValue,
@@ -417,7 +417,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 
 
 
-    if ( currentProject->areThereFiles() == false ) {
+    if ( currentProject->getFileCount() == 0 ) {
 
         std::string toDisplay = "There are no sidescan files.\n";
 
@@ -428,7 +428,7 @@ void MainWindow::actionExportTrainingObjectSamples()
     }
 
 
-    if ( currentProject->areThereObjects() == false ) {
+    if ( currentProject->getObjectCount() == 0 ) {
 
         std::string toDisplay = "There are no objects.\n";
 
@@ -472,7 +472,7 @@ void MainWindow::actionExportTrainingObjectSamples()
 void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
                     const ParameterscvCreateTrainingSamples & parameters )
 {
-    int numberOfObjects = currentProject->computeNumberOfObjects();
+    unsigned int numberOfObjects = currentProject->getObjectCount();
 
     if ( numberOfObjects == 0 )
         return;
@@ -525,11 +525,9 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     WorkerTrainingSamples * worker = new WorkerTrainingSamples( currentProject,
                                            numberOfObjects,
                                             parameters,
-
                                             folderOriginalObjectImages,
                                             folderOutputPositiveSamples,
                                             folderBackground,
-
                                             outFile,
                                             &continueToCreateAndSaveTrainingObjectSamples );
 
@@ -760,14 +758,7 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
     // Remove file from project
     if( currentProject ) {
 
-        std::vector<SidescanFile *> & files = currentProject->getFiles();
-
-        auto iter = std::find( files.begin(), files.end(), file );
-
-        if ( iter != files.end() )
-        {
-            files.erase( iter );
-        }
+        currentProject->removeFile(file);
 
     }
 
@@ -784,7 +775,7 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
         updateSelectedFile(NULL);
     }
     else {
-        if ( currentProject->getFiles().size() == 0 ) {
+        if ( currentProject->getFileCount() == 0 ) {
             updateSelectedFile(NULL);
         } else {
             projectWindow->selectLastFile();
@@ -810,4 +801,28 @@ void MainWindow::tabChanged( int index )
         }
 }
 
+void MainWindow::on_actionMonitor_triggered(bool checked)
+{
+    if(checked){
+        ui->statusBar->showMessage(QString::fromStdString("Monitoring directory for new sidescan files..."));
 
+        if(monitorThread){
+            delete monitorThread;
+            monitorThread = nullptr;
+        }
+
+        monitorThread = new MonitorThread();
+        monitorThread->start();
+
+    }
+    else{
+        if(monitorThread){
+            monitorThread->stop();
+            delete monitorThread;
+            monitorThread = nullptr;
+        }
+
+
+        ui->statusBar->showMessage(QString::fromStdString("Monitoring stopped."));
+    }
+}

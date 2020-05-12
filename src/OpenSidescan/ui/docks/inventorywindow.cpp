@@ -63,8 +63,105 @@ void InventoryWindow::georefObjectMenuRequested(QPoint pos) {
         connect(&mnu,&InventoryObjectMenu::inventoryChanged,this,&InventoryWindow::refreshInventoryTable);
         connect(&mnu,&InventoryObjectMenu::inventoryChanged,(MainWindow*)this->parent(),&MainWindow::refreshTabs);
         mnu.exec(inventoryTable->viewport()->mapToGlobal(pos));
-
     }
+}
+
+void InventoryWindow::addObjects(SidescanFile & file){
+    std::stringstream ss;
+    int row = this->inventoryTable->rowCount();
+
+        for(auto j=file.getImages().begin();j!=file.getImages().end();j++){
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                this->inventoryTable->setRowCount(row+1);
+
+                InventoryTableItem * rowFirst = new InventoryTableItem(QString::fromStdString((*k)->getName()));
+
+                rowFirst->object = *k;
+                rowFirst->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,0,rowFirst);
+
+                QFileInfo fileInfo( QString::fromStdString(file.getFilename()) );
+
+                QString filenameWithoutPath = fileInfo.fileName();
+
+                QTableWidgetItem * item = new QTableWidgetItem( filenameWithoutPath );
+
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,1,item);
+
+                item = new QTableWidgetItem(QString::fromStdString((*j)->getChannelName()));
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,2,item);
+
+                ss << std::setprecision(15);
+
+                Position * pos = (*k)->getPosition();
+
+                if(pos){
+                    ss << pos->getLongitude();
+                }
+                else{
+                    ss << "N/A";
+                }
+
+                item = new QTableWidgetItem(QString::fromStdString(ss.str()));
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,3,item);
+
+                ss.str(std::string());
+
+                if(pos){
+                    ss << pos->getLatitude();
+                }
+                else{
+                    ss << "N/A";
+                }
+
+                item = new QTableWidgetItem(QString::fromStdString(ss.str()));
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,4,item);
+
+                ss << std::setprecision(3);
+
+                ss.str(std::string());
+
+                if((*k)->getWidth() > 0){
+                    ss << (*k)->getWidth() ;
+                }
+                else{
+                    ss << "N/A";
+                }
+
+                item = new QTableWidgetItem(QString::fromStdString(ss.str()));
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,5,item);
+
+                ss.str(std::string());
+
+                if((*k)->getHeight() > 0){
+                    ss << (*k)->getHeight() ;
+                }
+                else{
+                    ss << "N/A";
+                }
+
+                item = new QTableWidgetItem(QString::fromStdString(ss.str()));
+                item->setTextAlignment(Qt::AlignHCenter);
+
+                this->inventoryTable->setItem(row,6,item);
+
+                ss.str(std::string());
+
+                row++;
+            }
+        }
+
 }
 
 void InventoryWindow::refreshInventoryTable(){
@@ -80,108 +177,11 @@ void InventoryWindow::refreshInventoryTable(){
     int row =0;
 
     if(project){
-        std::stringstream ss;
+        project->walkFiles(this,&InventoryWindow::addObjects);
 
 
 
-        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
-            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
-                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-                    this->inventoryTable->setRowCount(row+1);
-
-                    InventoryTableItem * rowFirst = new InventoryTableItem(QString::fromStdString((*k)->getName()));
-
-                    rowFirst->object = *k;
-                    rowFirst->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,0,rowFirst);
-
-
-//                    QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString((*i)->getFilename()));
-
-                    QFileInfo fileInfo( QString::fromStdString((*i)->getFilename()) );
-
-                    QString filenameWithoutPath = fileInfo.fileName();
-
-                    QTableWidgetItem * item = new QTableWidgetItem( filenameWithoutPath );
-
-
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,1,item);
-
-                    item = new QTableWidgetItem(QString::fromStdString((*j)->getChannelName()));
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,2,item);
-
-                    ss << std::setprecision(15);
-
-                    Position * pos = (*k)->getPosition();
-
-                    if(pos){
-                        ss << pos->getLongitude();
-                    }
-                    else{
-                        ss << "N/A";
-                    }
-
-                    item = new QTableWidgetItem(QString::fromStdString(ss.str()));
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,3,item);
-
-                    ss.str(std::string());
-
-                    if(pos){
-                        ss << pos->getLatitude();
-                    }
-                    else{
-                        ss << "N/A";
-                    }
-
-                    item = new QTableWidgetItem(QString::fromStdString(ss.str()));
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,4,item);
-
-                    ss << std::setprecision(3);
-
-                    ss.str(std::string());
-
-                    if((*k)->getWidth() > 0){
-                        ss << (*k)->getWidth() ;
-                    }
-                    else{
-                        ss << "N/A";
-                    }
-
-                    item = new QTableWidgetItem(QString::fromStdString(ss.str()));
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,5,item);
-
-                    ss.str(std::string());
-
-                    if((*k)->getHeight() > 0){
-                        ss << (*k)->getHeight() ;
-                    }
-                    else{
-                        ss << "N/A";
-                    }
-
-                    item = new QTableWidgetItem(QString::fromStdString(ss.str()));
-                    item->setTextAlignment(Qt::AlignHCenter);
-
-                    this->inventoryTable->setItem(row,6,item);
-
-                    ss.str(std::string());
-
-                    row++;
-                }
-            }
-        }
     }
 }
 

@@ -14,6 +14,7 @@
 #include "ui/docks/inventorywindow.h"
 #include "ui/docks/channelpropertieswindow.h"
 #include "ui/docks/vesselgeometrywindow.h"
+#include "ui/mainwindow/monitorthread.h"
 
 #include "sidescan/sidescanfile.h"
 #include "project/project.h"
@@ -32,7 +33,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
     void updateSelectedFile(SidescanFile * file);
@@ -78,6 +79,7 @@ public slots:
 
 private slots:
 
+    void on_actionMonitor_triggered(bool checked);
 
 protected:
 
@@ -97,10 +99,11 @@ protected:
     InventoryWindow         * inventoryWindow;
     ChannelPropertiesWindow * channelInfo;
 
+    SidescanImage        * selectedImage  = nullptr;
+    SidescanFile         * selectedFile   = nullptr;
+    Project              * currentProject = nullptr;
 
-    SidescanImage        * selectedImage  = NULL;
-    SidescanFile         * selectedFile   = NULL;
-    Project              * currentProject = NULL;
+    MonitorThread        * monitorThread = nullptr;
 
     //Detection parameters
     int    fastThresholdValue                   = 100;

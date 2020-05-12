@@ -15,13 +15,15 @@
 #include "sidescan/sidescanimage.h"
 #include "utilities/opencvhelper.h"
 #include "detector/roidetector.h"
+#include "project/project.h"
+
 
 class DetectionWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    DetectionWindow(std::vector<SidescanFile *> & files,
+    DetectionWindow(Project & project,
                     int & fastThresholdValue,
                     int & fastTypeValue,
                     bool & fastNonMaxSuppressionValue,
@@ -33,9 +35,6 @@ public:
                     bool & mergeOverlappingBoundingBoxesValue,
                     QWidget * parent=0
     );
-
-
-    std::vector<SidescanFile *>  & getFiles() { return files; }
 
     int getFastThresholdValue() const { return fastThresholdValue; }
     int getFastTypeValue() const { return fastTypeValue; }
@@ -56,8 +55,6 @@ private slots:
     void detectorChanged(int i);
 
 private:
-    std::vector<SidescanFile *>  & files;
-
     void buildShipwreckDetector();
     void buildAdvancedDetector();
 
@@ -67,6 +64,7 @@ private:
     void createMserParameterBox(QFormLayout * advancedParametersLayout);
     void createDbscanParameterBox(QFormLayout * advancedParametersLayout);
 
+    Project & project;
 
     QGroupBox * createDisplayParameterBox();
 

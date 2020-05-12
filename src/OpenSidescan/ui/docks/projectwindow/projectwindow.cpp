@@ -104,6 +104,13 @@ void ProjectWindow::setProject(Project * project){
     refresh();
 }
 
+void ProjectWindow::appendFileToProjectTree(SidescanFile & file){
+    QFileInfo fileInfo( tr( file.getFilename().c_str() )  );
+    QString filename = fileInfo.fileName(); // Filename without path
+
+    model->appendFile( filename, &file );
+}
+
 void ProjectWindow::refresh(){
 
 //    std::cout << "Beginning of ProjectWindow::refresh()\n" << std::endl;
@@ -120,17 +127,7 @@ void ProjectWindow::refresh(){
 
         model = new ProjectTreeModel(this);
 
-
-        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
-
-//            filenames.push_back( QString::fromStdString( (*i)->getFilename() ) );
-
-
-            QFileInfo fileInfo( tr( (*i)->getFilename().c_str() )  );
-            QString filename = fileInfo.fileName(); // Filename without path
-
-            model->appendFile( filename, (*i) );
-        }
+        project->walkFiles<ProjectWindow>(this,&ProjectWindow::appendFileToProjectTree);
 
         tree->setModel(model);
 
@@ -164,24 +161,12 @@ void ProjectWindow::refresh(){
 void ProjectWindow::addFile(SidescanFile * file){
     if(project){
         //TODO: avoid duplicates
-        project->getFiles().push_back(file);
+        project->addFile(file);
         refresh();
     }
     else{
         //TODO: throw exception or msgbox
     }
-}
-
-bool ProjectWindow::containsFile(std::string & filename){
-    if(project){
-        for(auto i=project->getFiles().begin();i!=project->getFiles().end();i++){
-            if(strcmp((*i)->getFilename().c_str(),filename.c_str()) == 0){
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 

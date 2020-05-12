@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>382</height>
+    <width>641</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>500</width>
+     <width>641</width>
      <height>22</height>
     </rect>
    </property>
@@ -98,6 +98,8 @@
    <addaction name="actionImport"/>
    <addaction name="separator"/>
    <addaction name="actionFindObjects"/>
+   <addaction name="separator"/>
+   <addaction name="actionMonitor"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionImport">
@@ -240,6 +242,19 @@
   <action name="actionShowVesselGeometryWindow">
    <property name="text">
     <string>VesselGeometry</string>
+   </property>
+  </action>
+  <action name="actionMonitor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources.qrc">
+     <normaloff>:/Images/resources/play.png</normaloff>
+     <activeon>:/Images/resources/stop.png</activeon>:/Images/resources/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Monitor Start</string>
    </property>
   </action>
  </widget>

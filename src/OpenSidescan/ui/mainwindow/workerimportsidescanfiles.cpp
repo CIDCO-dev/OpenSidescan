@@ -41,7 +41,7 @@ void WorkerImportSidescanFiles::doWork() {
 
             std::string sFileName = (*i).toStdString();
 
-            if(!projectWindow->containsFile(sFileName)){
+            if(!projectWindow->getProject()->containsFile(sFileName)){
                 SidescanImager imager;
 
                 parser = DatagramParserFactory::build(sFileName,imager);

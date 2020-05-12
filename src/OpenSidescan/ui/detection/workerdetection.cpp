@@ -3,7 +3,7 @@
 */
 
  /*
- * \author Christian Bouchard
+ * \author Christian Bouchard,glm
  */
 
 #include <QDebug>
@@ -12,40 +12,23 @@
 #include "workerdetection.h"
 
 
-WorkerDetection::WorkerDetection( DetectionWindow & detectionWindow, Detector & detector )
-    : detectionWindow( detectionWindow ),detector(detector)
+WorkerDetection::WorkerDetection(Project & project, DetectionWindow & detectionWindow, Detector & detector )
+    : project(project),detectionWindow( detectionWindow ),detector(detector)
 {
+}
+
+void WorkerDetection::detectInFiles(SidescanFile & file){
+    for(auto j=file.getImages().begin();j != file.getImages().end();j++){
+        detector.detect(**j,(*j)->getObjects());
+        progress(fileIdx++);
+    }
 }
 
 
 void WorkerDetection::doWork() {
+    fileIdx = 0 ;
 
-    std::vector<SidescanFile *>  & files = detectionWindow.getFiles();
+    project.walkFiles<WorkerDetection>(this,&WorkerDetection::detectInFiles);
 
-    int fileIdx = 0;
-    for(auto i=files.begin();i!=files.end();i++){
-        //for every file, every image
-
-        for(auto j=(*i)->getImages().begin();j != (*i)->getImages().end();j++){
-            detector.detect(**j,(*j)->getObjects());
-/*
-                        detectionWindow->getFastThresholdValue(),
-                        detectionWindow->getFastTypeValue(),
-                        detectionWindow->getFastNonMaxSuppressionValue(),
-                        detectionWindow->getDbscanEpsilonValue(),
-                        detectionWindow->getDbscanMinPointsValue(),
-                        detectionWindow->getMserDeltaValue(),
-                        detectionWindow->getMserMinimumAreaValue(),
-                        detectionWindow->getMserMaximumAreaValue(),
-                        detectionWindow->getMergeOverlappingBoundingBoxesValue()
-*/
-        }
-
-        progress(fileIdx);
-
-        fileIdx++;
-
-    }
-
-    progress( files.size()); // To close the progress dialog
+    progress(project.getFileCount()); // To close the progress dialog
 }

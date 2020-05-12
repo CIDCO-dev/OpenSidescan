@@ -26,6 +26,8 @@ public:
 
     void setProject(Project * p);
 
+    void addObjects(SidescanFile & file);
+
 signals:
     void objectSelected(InventoryObject * object);
 

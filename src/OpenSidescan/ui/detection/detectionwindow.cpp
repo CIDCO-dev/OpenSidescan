@@ -186,12 +186,12 @@ QGroupBox * DetectionWindow::createDisplayParameterBox(){
 
 
 void DetectionWindow::ok(){
-    const char * id = cmbDetector->itemData(currentDetectorIndex).toString().toStdString().c_str();
+    //const char * id = cmbDetector->itemData(currentDetectorIndex).toString().toStdString().c_str();
 
-    if(strcmp(id,"shipwrecks")==0){
+    if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("shipwrecks")==0){
         buildShipwreckDetector();
     }
-    if(strcmp(id,"machinevision")==0){
+    if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("machinevision")==0){
         buildAdvancedDetector();
     }
 

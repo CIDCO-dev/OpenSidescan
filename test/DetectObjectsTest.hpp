@@ -41,7 +41,7 @@ TEST_CASE("Test Detect Objects") {
     }
 
     REQUIRE(image);
-    
+    /*
     Detector * detector = new RoiDetector(
                     300,
                     cv::FastFeatureDetector::TYPE_9_16,
@@ -53,6 +53,7 @@ TEST_CASE("Test Detect Objects") {
                     15000,
                     true
                 );
+    */
 
     // setup region of interest detector
     int fastThreshold = 300;
@@ -81,6 +82,21 @@ TEST_CASE("Test Detect Objects") {
     roiDetector.detect(*image, objectsFound);
     
     REQUIRE(objectsFound.size() == 1);
+    
+    InventoryObject* airplane = objectsFound[0];
+    
+    Position* position = airplane->getPosition();
+    
+    std::cout << "airplane longitude: " << position->getLongitude() << std::endl;
+    std::cout << "airplane latitude: " << position->getLatitude() << std::endl;
+    
+    //clean up pointers
+    delete image;
+    delete parser;
+    
+    for(unsigned int i=0; i<objectsFound.size(); i++) {
+        delete objectsFound[i];
+    }
 }
 
 

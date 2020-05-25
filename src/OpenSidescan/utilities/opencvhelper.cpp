@@ -86,6 +86,8 @@ void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool sho
         cv::drawKeypoints(img.getDisplayedImage(),img.getMicroFeatures(),img.getDisplayedImage(), cv::Scalar(255,0,0),cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     }
 
+    std::cout << "number of objects: " << img.getObjects().size() << std::endl;
+
     for(auto i = img.getObjects().begin();i!=img.getObjects().end();i++){
 
         if(showObjectBoundingBox){

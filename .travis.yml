@@ -1,9 +1,12 @@
 language: cpp
 os: windows
 
+install:
+    choco install visualstudio2017-workload-vctools -y
+    
 script:
     - dir
-    - cl
+    - cl.exe
 
 
 

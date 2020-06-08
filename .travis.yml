@@ -8,7 +8,7 @@ install:
     - choco install visualstudio2017-workload-vctools -y
     - choco install opencv -y
     - 7z x 'C:\tools\eigen-3.3.7.zip' 'C:\tools\eigen'
-    - cd 'C:\tools\eigen' '&&' dir
+    - cd C:\tools\eigen
     - dir
     
 script:

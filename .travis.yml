@@ -19,7 +19,7 @@ script:
     - cd $TRAVIS_BUILD_DIR
     - dir
     - mkdir build\test\bin
-    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 '&&' cd build\test\bin '&&' cl.exe
+    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 '&&' cd build\test\bin '&&' cl.exe ..\..\..\test\main.cpp
     #..\..\..\test\main.cpp $INCLUDES /EHsc /Fetests.exe
     
 

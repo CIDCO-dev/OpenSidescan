@@ -13,6 +13,7 @@ env:
     - INCLUDES="-IC:\tools\eigen-3.3.7 -IC:\tools\opencv"
     
 script:
+    - echo $(INCLUDES)
     - cd C:\tools
     - dir
     - cd $TRAVIS_BUILD_DIR

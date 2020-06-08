@@ -1,7 +1,8 @@
 language: cpp
 os: windows
 
-env:
+install:
+    - curl https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip
     
 
 install:

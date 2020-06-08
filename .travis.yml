@@ -5,8 +5,8 @@ env:
     
 
 install:
-    choco install visualstudio2017-workload-vctools -y
-    choco install opencv
+    - choco install visualstudio2017-workload-vctools -y
+    - choco install opencv -y
     
 script:
     - dir

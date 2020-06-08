@@ -6,8 +6,9 @@ install:
     
 script:
     - dir
-    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64 '&&' <etc>
-    - cl.exe
+    - mkdir build\\test\\bin
+    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x64 '&&' cd build\\test\\bin '&&' dir
+    
 
 
 

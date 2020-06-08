@@ -1,0 +1,13 @@
+language: cpp
+os: windows
+
+script:
+    - dir
+    - cl
+
+
+
+
+
+
+

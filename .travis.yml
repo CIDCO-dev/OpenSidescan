@@ -10,7 +10,7 @@ install:
     - 7z x eigen-3.3.7.zip -o"C:\tools"
     
 env:
-    - INCLUDES="-IC:\tools\eigen -IC:\tools\opencv"
+    - INCLUDES="-IC:\tools\eigen-3.3.7 -IC:\tools\opencv"
     
 script:
     - cd C:\tools
@@ -18,7 +18,8 @@ script:
     - cd $TRAVIS_BUILD_DIR
     - dir
     - mkdir build\test\bin
-    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 '&&' cd build\test\bin '&&' cl.exe
+    - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 '&&' cd build\test\bin '&&' cl.exe cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc /Fetests.exe
+    - build\test\bin\tests.exe -r console
     
 
 

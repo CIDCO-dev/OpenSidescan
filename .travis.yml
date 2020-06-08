@@ -10,7 +10,7 @@ install:
     - 7z x 'C:\tools\eigen-3.3.7.zip' -o 'C:\tools\eigen' -y
     
 env:
-    INCLUDES=-IC:\tools\eigen -IC:\tools\opencv
+    - INCLUDES=-IC:\tools\eigen -IC:\tools\opencv
     
 script:
     - dir

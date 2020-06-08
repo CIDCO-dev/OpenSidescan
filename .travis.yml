@@ -17,11 +17,11 @@ script:
     - cd C:\tools
     - dir
     - cd $TRAVIS_BUILD_DIR
-    - dir test\main.cpp
     - mkdir build\test\bin
     - cd build\test\bin
     - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 
-    - cl.exe '..\..\..\test\main.cpp' $INCLUDES /EHsc /Fetests.exe
+    - cl.exe
+    #'..\..\..\test\main.cpp' -IC:\tools\eigen-3.3.7 -IC:\tools\opencv /EHsc /Fetests.exe
     
 
 

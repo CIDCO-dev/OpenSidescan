@@ -2,12 +2,9 @@ language: cpp
 os: windows
 
 install:
-    - curl https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip
-    
-
-install:
     - choco install visualstudio2017-workload-vctools -y
     - choco install opencv -y
+    - curl https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip
     
 script:
     - dir

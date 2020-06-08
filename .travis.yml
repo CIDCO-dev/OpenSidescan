@@ -6,7 +6,7 @@ before_install:
     
 install:
     - choco install visualstudio2017-workload-vctools -y
-    - choco install opencv -y
+    - choco install opencv -y -params '/InstallationPath:C:\tools'
     - 7z x 'C:\tools\eigen-3.3.7.zip' -o 'C:\tools\eigen' -y
     
 env:

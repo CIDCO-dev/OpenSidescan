@@ -2,15 +2,15 @@ language: cpp
 os: windows
 
 before_install:
-    - curl -sL https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip > 'C:\tools\eigen-3.3.7.zip'
+    - curl -sL https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip > eigen-3.3.7.zip
     
 install:
     - choco install visualstudio2017-workload-vctools -y
     - choco install opencv -y -params '/InstallationPath:C:\tools'
-    - 7z x 'C:\tools\eigen-3.3.7.zip' -o 'C:\tools\eigen' -y
+    - 7z x eigen-3.3.7.zip
     
 env:
-    - INCLUDES=-IC:\tools\eigen -IC:\tools\opencv
+    - INCLUDES="-IC:\tools\eigen -IC:\tools\opencv"
     
 script:
     - dir

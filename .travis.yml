@@ -18,5 +18,5 @@ script:
     - cd C:\tools
     - dir
     - cd $TRAVIS_BUILD_DIR
-    - call Scripts\\tests.bat
+    - call Scripts\tests.bat
     

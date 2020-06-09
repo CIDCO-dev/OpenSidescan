@@ -1,4 +1,36 @@
+INCLUDES=-IC:\tools\eigen-3.3.7 \
+	 -IC:\tools\opencv\release\install\include"
+	
+LIBS  = "C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_core347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_features2d347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_imgcodecs347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_imgproc347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_ml347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_photo347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_flann347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_highgui347.lib" \
+	"C:\Program Files\OpenCV-3.4.7\opencv\release\install\x64\vc15\lib\opencv_calib3d347.lib"
 
+SS=../../../src/OpenSidescan
+SSFILES=$(SS)/sidescan/sidescanfile.cpp \
+	$(SS)/sidescan/sidescanimager.cpp \
+	$(SS)/sidescan/sidescanimage.cpp \
+	$(SS)/inventoryobject/inventoryobject.cpp \
+	$(SS)/detector/roidetector.cpp \
+	$(SS)/detector/detector.cpp \
+	$(SS)/utilities/opencvhelper.cpp
+
+THIRDPARTY=../../../src/thirdParty
+THIRDPARTYFILES=$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParser.cpp  \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParserFactory.cpp  \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/datagrams/xtf/XtfParser.cpp \
+		$(THIRDPARTY)/MBES-lib/src/utils/NmeaUtils.cpp \
+		$(THIRDPARTY)/MBES-lib/src/utils/StringUtils.cpp \
+		$(THIRDPARTY)/MBES-lib/src/sidescan/SidescanPing.cpp \
+		$(THIRDPARTY)/opencv/apps/createsamples/utility.cpp
+	
 test_exec_dir=build\\test\\bin
 test_work_dir=build\\test\\work
 test_result_dir=build\\reports
@@ -7,7 +39,7 @@ test:
 	mkdir $(test_exec_dir)
 	mkdir $(test_result_dir)
 	mkdir $(test_work_dir)
-	
+	call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" amd64 && cd build\\test\\bin && cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) $(LIBS) /Fetests.exe
 	
 clean:
 	if exists build\ rmdir /q /s build

@@ -31,9 +31,9 @@ THIRDPARTYFILES=$(THIRDPARTY)/MBES-lib/src/datagrams/DatagramParser.cpp  \
 		$(THIRDPARTY)/MBES-lib/src/sidescan/SidescanPing.cpp \
 		$(THIRDPARTY)/opencv/apps/createsamples/utility.cpp
 	
-test_exec_dir=build\\test\\bin
-test_work_dir=build\\test\\work
-test_result_dir=build\\reports
+test_exec_dir=build\test\bin
+test_work_dir=build\test\work
+test_result_dir=build\reports
 
 test:
 	mkdir $(test_exec_dir)

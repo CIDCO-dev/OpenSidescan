@@ -5,6 +5,7 @@ before_install:
     - curl -sL https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.zip > eigen-3.3.7.zip
     
 install:
+    - choco install make
     - choco install visualstudio2017-workload-vctools -y
     - choco install opencv -y -params '/InstallationPath:C:\tools'
     - 7z x eigen-3.3.7.zip -o"C:\tools"

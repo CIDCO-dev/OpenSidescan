@@ -21,6 +21,7 @@
 #include "ui/about/aboutdialog.h"
 #include "ui/docks/projectwindow/projectwindow.h"
 #include "ui/detection/detectionwindow.h"
+#include "ui/detection/monitorwindow.h"
 #include "ui/docks/inventorywindow.h"
 #include "ui/docks/vesselgeometrywindow.h"
 
@@ -73,6 +74,12 @@ void MainWindow::buildUI(){
     this->addDockWidget(Qt::RightDockWidgetArea,channelInfo);
     connect(ui->actionShowChannelPropertiesWindow,&QAction::triggered,channelInfo,&ChannelPropertiesWindow::show);
     connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
+
+    monitorAction = new QAction(QIcon(":/Images/resources/play.png"), QString("Monitor Dir"), this);
+    monitorAction->setCheckable(true);
+    this->ui->mainToolBar->addAction(monitorAction);
+    connect(monitorAction, SIGNAL(triggered()), this, SLOT(monitorActionTriggered()));
+
 
     actionCreate();
 
@@ -787,6 +794,7 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 void MainWindow::addFileToProjectWindow( SidescanFile * file )
 {
     projectWindow->addFile(file);
+    refreshObjectInventory();
 }
 
 void MainWindow::tabChanged( int index )
@@ -801,19 +809,101 @@ void MainWindow::tabChanged( int index )
         }
 }
 
+void MainWindow::monitorProgress(QString progress)
+{
+    ui->statusBar->showMessage(progress);
+}
+
+void MainWindow::monitorActionTriggered() {
+
+    if(monitorAction->isChecked()) {
+
+        /*
+        QString fileName = QFileDialog::getOpenFileName(this,
+                                                        tr("Select folder to monitor"),
+                                                        "",
+                                                        tr("Sidescan files (*.xtf)"),
+                                                        nullptr,
+                                                        QFileDialog::DontUseNativeDialog,
+                                                        nullptr,
+                                                        QFileDialog::DirectoryOnly);
+                                                        */
+        QString filename = "/home/jordan/workspaceOpenSideScan/OpenSidescan/test/data/wrecks";
+
+
+
+        monitorAction->setIcon(QIcon(":/Images/resources/stop.png"));
+    } else {
+        monitorAction->setIcon(QIcon(":/Images/resources/play.png"));
+    }
+
+}
+
 void MainWindow::on_actionMonitor_triggered(bool checked)
 {
-    if(checked){
-        ui->statusBar->showMessage(QString::fromStdString("Monitoring directory for new sidescan files..."));
 
-        if(monitorThread){
-            delete monitorThread;
-            monitorThread = nullptr;
+
+
+    //Obtain the monitorAction
+    //TODO: ideally this action should be easier to obtain
+    //so we can remove coupling with "Monitor Start" string
+    QAction * monitorActionPtr;
+    QList<QAction *> actionList = this->ui->mainToolBar->actions();
+    for(int i=0; i<actionList.count(); i++) {
+        if(actionList[i]->text().toStdString().compare("Monitor Start")) {
+            monitorActionPtr = actionList[i];
         }
+    }
 
-        monitorThread = new MonitorThread();
-        monitorThread->start();
+    //now we can call monitorAction->setChecked(false) if user cancels
 
+    /*
+    if(currentProject) {
+        std::cout << currentProject->getFilename() << std::endl;
+    } else {
+        std::cout << "currentProject is nullptr" << std::endl;
+    }
+    */
+
+    //open MonitorWindow
+
+
+
+
+    if(checked){
+        QString dir = QFileDialog::getExistingDirectory(this, tr("Select folder to monitor"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+        MonitorWindow monitorWindow(*currentProject,
+                                        fastThresholdValue,
+                                        fastTypeValue,
+                                        fastNonMaxSuppressionValue,
+                                        dbscanEpsilonValue,
+                                        dbscanMinPointsValue,
+                                        mserDeltaValue,
+                                        mserMinimumAreaValue,
+                                        mserMaximumAreaValue,
+                                        mergeOverlappingBoundingBoxesValue,
+                                        this
+        );
+
+        if(monitorWindow.exec() == QDialog::Accepted){
+            //refreshObjectInventory();
+            ui->statusBar->showMessage(QString::fromStdString("Monitoring directory for new sidescan files..."));
+
+            if(monitorThread){
+                delete monitorThread;
+                monitorThread = nullptr;
+            }
+
+            monitorThread = new MonitorThread(dir, currentProject, monitorWindow.getDetector());
+            connect( monitorThread, &MonitorThread::fileToBeAddedToProjectWindow,
+                     this, &MainWindow::addFileToProjectWindow);
+            connect(monitorThread, &MonitorThread::updateProgress, this, &MainWindow::monitorProgress);
+            monitorThread->start();
+        } else {
+            //reset to "play" icon since action was canceled
+            monitorActionPtr->setIcon(QIcon(":/Images/resources/play.png"));
+        }
     }
     else{
         if(monitorThread){

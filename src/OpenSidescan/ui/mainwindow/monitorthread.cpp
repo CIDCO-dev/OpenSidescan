@@ -49,11 +49,14 @@ void MonitorThread::process(){
 
     int count=0;
 
-    while(!exterminate){
+    while(!exterminate) {
         QThread::sleep(3);
         QStringList xtfFiles = directory.entryList(QStringList() << "*.xtf", QDir::Files);
 
         foreach (QString filename, xtfFiles) {
+            if(exterminate) {
+                break;
+            }
             QString absoPath(directory.absolutePath() + "/" + filename);
             std::string fileNameStr = absoPath.toStdString();
 
@@ -76,17 +79,31 @@ void MonitorThread::process(){
                         scannedFiles.insert(filename, filename);
 
 
+
+                        if(exterminate) {
+                            break;
+                        }
                         emit updateProgress(QString("Loading file: ") + filename);
                         SidescanImager imager;
                         DatagramParser * parser = NULL;
-
                         parser = DatagramParserFactory::build(fileNameStr,imager);
                         parser->parse(fileNameStr);
 
 
+
+
+                        if(exterminate) {
+                            break;
+                        }
                         emit updateProgress(QString("Generating image for: ") + filename);
                         SidescanFile * file = imager.generate(fileNameStr, project->getAntenna2TowPointLeverArm());
 
+
+
+
+                        if(exterminate) {
+                            break;
+                        }
                         emit updateProgress(QString("Detecting objects in: ") + filename);
                         for(auto j=file->getImages().begin();j != file->getImages().end();j++){
                             detector->detect(**j,(*j)->getObjects());
@@ -111,21 +128,11 @@ void MonitorThread::process(){
         }
     }
 
+    emit updateProgress(QString("Monitoring stopped"));
+
 }
 
 void MonitorThread::start(){
-
-    //show window to set up detector and folder
-
-
-
-
-
-
-
-
-
-
     this->moveToThread(&thread);
     //connect(this, SIGNAL (error(QString)), this, SLOT (errorString(QString)));
     connect(&thread, &QThread::started, this, &MonitorThread::process);

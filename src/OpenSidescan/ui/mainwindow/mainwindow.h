@@ -85,7 +85,6 @@ public slots:
 
 private slots:
 
-    void on_actionMonitor_triggered(bool checked);
     void monitorActionTriggered();
 
 protected:

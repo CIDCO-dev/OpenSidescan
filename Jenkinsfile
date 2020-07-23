@@ -84,7 +84,7 @@ pipeline {
       }
     }
 
-/*
+
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-x64-2'}
       steps {
@@ -123,7 +123,7 @@ pipeline {
 
       }
     }
-*/
+
 
   }
 

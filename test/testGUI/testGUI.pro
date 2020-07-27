@@ -49,7 +49,7 @@ win32 {
     LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_calib3d347.lib"
   }
 
-SOURCES += testGUI.cpp \
+SOURCES += \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
@@ -91,7 +91,8 @@ SOURCES += testGUI.cpp \
     ../../src/OpenSidescan/utilities/qthelper.cpp \
     ../../src/OpenSidescan/ui/training/parameterscvCreateTrainingSamples.cpp \
     ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.cpp \
-    ../../src/OpenSidescan/detector/roidetector.cpp
+    ../../src/OpenSidescan/detector/roidetector.cpp \
+    testGUI.cpp
 
 HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
     ../../src/OpenSidescan/project/project.h \

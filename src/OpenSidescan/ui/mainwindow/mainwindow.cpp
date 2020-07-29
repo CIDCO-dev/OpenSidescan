@@ -38,8 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     tabs(new QTabWidget),
-    currentProject(NULL),
-    fileInfo(NULL),
+    currentProject(nullptr),
+    fileInfo(nullptr),
     folderCreateTrainingSamples( "" )
 {
     ui->setupUi(this);

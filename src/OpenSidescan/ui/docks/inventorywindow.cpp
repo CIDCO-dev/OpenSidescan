@@ -167,6 +167,7 @@ void InventoryWindow::addObjects(SidescanFile & file){
 void InventoryWindow::refreshInventoryTable(){
 
     this->inventoryTable->clear();
+    this->inventoryTable->setRowCount(0);
 
     this->inventoryTable->setColumnCount(7);
 

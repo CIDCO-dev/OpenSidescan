@@ -19,9 +19,11 @@
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include <string>
+#include <map>
+#include <vector>
 #include <experimental/filesystem>
-#include <eigen3/Eigen/src/Core/Matrix.h>
 #include <atomic>
+#include "../src/OpenSidescan/utilities/FileLockUtils.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -29,17 +31,18 @@
 #include <unistd.h>
 #endif
 
+
+
 //need g++ 8 to remove experimental namespace
 namespace fs = std::experimental::filesystem;
 
 class SideScanFileProcessor {
-    
     //Sub class this to connect with OpenSideScan
 public:
 
     void processFile(SidescanFile * f) {
         //In OpenSidescan, add file to project
-        std::cout << f->getFilename() << std::endl;
+        std::cout << "Processing sidescan file: " << f->getFilename() << std::endl;
     }
 
     void reportProgress(std::string progress) {
@@ -65,20 +68,27 @@ public:
 
         while (!exterminate) {
             for (const auto & entry : fs::directory_iterator(path)) {
-                if (entry.path().extension() == ext) {
-                    std::string filepath = entry.path().generic_string();
+                std::string filepath = entry.path().generic_string();
 
-                    if (exterminate) {
-                        return;
+                if (FileLockUtils::fileCanBeChecked(filepath)) {
+                    if (entry.path().extension() == ext && !scannedFiles.count(filepath)) {
+
+
+                        std::string filepath = entry.path().generic_string();
+
+                        if (exterminate) {
+                            return;
+                        }
+
+                        processor->reportProgress("Loading and detecting objects in file " + filepath);
+                        SidescanFile * file = loadAndDetectObjects(filepath);
+                        processor->processFile(file);
+
+                        scannedFiles.insert(std::pair<std::string, std::string>(filepath, filepath));
                     }
-
-                    processor->reportProgress("Loading and detecting objects in file " + filepath);
-                    SidescanFile * file = loadAndDetectObjects(filepath);
-                    processor->processFile(file);
                 }
-
             }
-            
+
             sleep(3);
         }
     }
@@ -98,6 +108,12 @@ public:
         return file;
     }
 
+    void setAlreadyScanned(std::vector<std::string> alreadyScanned) {
+        for (unsigned int i = 0; i < alreadyScanned.size(); i++) {
+            scannedFiles.insert(std::pair<std::string, std::string>(alreadyScanned[i], alreadyScanned[i]));
+        }
+    }
+
     void stop() {
         exterminate = true;
     }
@@ -108,6 +124,7 @@ private:
     Eigen::Vector3d leverArm;
     SideScanFileProcessor * processor;
     std::atomic<bool> exterminate{false};
+    std::map<std::string, std::string> scannedFiles;
 
 };
 
@@ -140,20 +157,20 @@ TEST_CASE("Test Monitor") {
             mserMinimumArea,
             mserMaximumArea,
             mergeOverlappingObjects);
-    
+
     SideScanFileProcessor * processor = new SideScanFileProcessor();
 
     DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
     std::thread tw1 = monitor->getThread(path);
-    
+
     sleep(10);
-    
+
     std::cout << "Time is up" << std::endl;
-    
-    
+
+
     monitor->stop();
     tw1.join(); // wait for thread to finish before deleting
-    
+
     delete monitor;
 }
 

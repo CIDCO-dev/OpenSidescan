@@ -2,7 +2,11 @@
 #include "catch.hpp"
 
 //#include "DependencyTest.hpp"
+
+/*
 #include "SideScanImagerTest.hpp"
 #include "GeoreferencingTest.hpp"
 #include "DetectObjectsTest.hpp"
+*/
+#include "MonitorTest.hpp"
 

@@ -173,17 +173,11 @@ TEST_CASE("Test Monitor") {
 TEST_CASE("Test Monitor on locked file linux") {
 
 
-    pid_t processId = fork();
-
-
     std::string path = "../data/lockTest/";
     std::string file = "../data/lockTest/s4.xtf";
-
-
-    if (processId == 0) {
-        //child process
-
-        /*Obtain lock on file*/
+    
+    
+    /*Obtain lock on file*/
         int fd = open(file.c_str(), O_RDWR | O_NOATIME);
 
         if (fd == -1) {
@@ -200,18 +194,9 @@ TEST_CASE("Test Monitor on locked file linux") {
             REQUIRE(false);
         }
         /*Done Obtaining lock*/
-
-        sleep(10);
-
-        /*Unlock file*/
-        flockStructForTest.l_type = F_UNLCK;
-        fcntl(fd, F_SETLKW, &flockStructForTest); // Release the lock
-        close(fd);
-        /*Done Unlock file*/
-    } else if (processId > 0) {
-        //parent process
-        sleep(1);
-
+        
+        
+        /*Start monitor*/
         Eigen::Vector3d leverArm;
         leverArm << 0.0, 0.0, 0.0;
 
@@ -241,13 +226,20 @@ TEST_CASE("Test Monitor on locked file linux") {
         DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
 
         monitor->monitor(path);
+        /*Done starting monitor*/
+        
+        
 
-
-
+        /*Unlock file*/
+        flockStructForTest.l_type = F_UNLCK;
+        fcntl(fd, F_SETLKW, &flockStructForTest); // Release the lock
+        close(fd);
+        /*Done Unlock file*/
+        
+        
+        //clean up
         delete processor;
         delete monitor;
-
-    }
 }
 
 

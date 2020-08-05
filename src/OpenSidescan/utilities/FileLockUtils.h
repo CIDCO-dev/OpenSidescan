@@ -22,7 +22,6 @@ struct flock flockStruct;
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/file.h>   // For flock structure
-struct flock flockStruct;
 
 #endif
 #endif
@@ -35,7 +34,7 @@ public:
 
 #if defined(_WIN32)
 
-static bool fileCanBeChecked(std::string filename) {
+static bool fileNotLocked(std::string & filename) {
     // Code modified from
     //https://docs.microsoft.com/en-us/windows/win32/fileio/locking-and-unlocking-byte-ranges-in-files
 
@@ -112,24 +111,33 @@ static bool fileCanBeChecked(std::string filename) {
 #else
 #if defined(__linux) || defined(__linux__) || defined(linux)
 
-static bool fileCanBeChecked(std::string filename) {
+static bool fileNotLocked(std::string & filename) {
     // https://linux.die.net/man/2/fcntl
 
     int fd = open(filename.c_str(), O_RDWR | O_NOATIME);
+    
 
     if (fd == -1) {
+        std::cout << "Could not open file descriptor: " << filename << std::endl;
         return false;
     }
+    
+    std::cout << "File descriptor opened: " << filename << std::endl;
 
-    flockStruct.l_type = F_WRLCK;
+    std::cout << "Trying to obtain write lock on: " << filename << std::endl;
+    struct flock lockStruct;
+    memset(&lockStruct, 0, sizeof(lockStruct));
+    lockStruct.l_type = F_WRLCK;
+    
 
-    if (fcntl(fd, F_SETLK, &flockStruct) == -1) // If a lock already set, does not wait
+    if (fcntl(fd, F_SETLKW | LOCK_NB, &lockStruct) == -1) // If a lock already set, does not wait
     {
+        std::cout << "File already locked: " << filename << std::endl;
         return false;
     }
 
-    flockStruct.l_type = F_UNLCK;
-    fcntl(fd, F_SETLK, &flockStruct); // Release the lock
+    lockStruct.l_type = F_UNLCK;
+    fcntl(fd, F_SETLKW, &lockStruct); // Release the lock
 
     close(fd);
 
@@ -138,7 +146,7 @@ static bool fileCanBeChecked(std::string filename) {
 
 #else
 
-static bool fileCanBeChecked(std::string filename) {
+static bool fileNotLocked(std::string & filename) {
     return true;
 }
 

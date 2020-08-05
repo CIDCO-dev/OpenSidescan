@@ -59,37 +59,28 @@ public:
     DirectoryMonitor(Detector * detector, SideScanFileProcessor * processor, Eigen::Vector3d leverArm) : detector(detector), processor(processor), leverArm(leverArm) {
     };
 
-    std::thread getThread(std::string path) {
-        return std::thread(&DirectoryMonitor::monitor, this, path);
-    }
-
     void monitor(std::string path) {
-        std::string ext = ".xtf";
+        for (const auto & entry : fs::directory_iterator(path)) {
+            std::string filepath = entry.path().generic_string();
 
-        while (!exterminate) {
-            for (const auto & entry : fs::directory_iterator(path)) {
-                std::string filepath = entry.path().generic_string();
-
-                if (FileLockUtils::fileCanBeChecked(filepath)) {
-                    if (entry.path().extension() == ext && !scannedFiles.count(filepath)) {
-
-
+            if (FileLockUtils::fileNotLocked(filepath)) {
+                if (isXtf(entry)) {
+                    if (!alreadyScanned(filepath)) {
                         std::string filepath = entry.path().generic_string();
-
-                        if (exterminate) {
-                            return;
-                        }
 
                         processor->reportProgress("Loading and detecting objects in file " + filepath);
                         SidescanFile * file = loadAndDetectObjects(filepath);
                         processor->processFile(file);
+                        processor->reportProgress("Objects detected in file " + filepath);
 
                         scannedFiles.insert(std::pair<std::string, std::string>(filepath, filepath));
+                    } else {
+                        std::cout << "File is already scanned: " << filepath << std::endl;
                     }
                 }
+            } else {
+                std::cout << "File is locked: " << filepath << std::endl;
             }
-
-            sleep(3);
         }
     }
 
@@ -98,6 +89,8 @@ public:
         DatagramParser * parser = NULL;
         parser = DatagramParserFactory::build(filepath, imager);
         parser->parse(filepath);
+
+        std::cout << filepath << " parsed" << std::endl;
 
         SidescanFile * file = imager.generate(filepath, leverArm);
 
@@ -114,23 +107,31 @@ public:
         }
     }
 
-    void stop() {
-        exterminate = true;
-    }
-
 private:
 
     Detector * detector;
     Eigen::Vector3d leverArm;
     SideScanFileProcessor * processor;
-    std::atomic<bool> exterminate{false};
     std::map<std::string, std::string> scannedFiles;
 
+    bool isXtf(const fs::directory_entry & entry) {
+        //eventually can scan other file extensions
+        return entry.path().extension() == ".xtf";
+    }
+
+    bool alreadyScanned(std::string & filepath) {
+        return scannedFiles.count(filepath);
+    }
+
+};
+
+class MonitorThread {
 };
 
 TEST_CASE("Test Monitor") {
 
-    std::string path = "../data/wrecks/";
+    std::string path = "../data/lockTest/";
+    //std::string path = "../data/wrecks/";
 
 
     Eigen::Vector3d leverArm;
@@ -159,19 +160,94 @@ TEST_CASE("Test Monitor") {
             mergeOverlappingObjects);
 
     SideScanFileProcessor * processor = new SideScanFileProcessor();
-
     DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
-    std::thread tw1 = monitor->getThread(path);
 
-    sleep(10);
+    monitor->monitor(path);
 
-    std::cout << "Time is up" << std::endl;
+    std::cout << "monitor->monitor(path) returned" << std::endl;
 
-
-    monitor->stop();
-    tw1.join(); // wait for thread to finish before deleting
-
+    delete processor;
     delete monitor;
+}
+
+TEST_CASE("Test Monitor on locked file linux") {
+
+
+    pid_t processId = fork();
+
+
+    std::string path = "../data/lockTest/";
+    std::string file = "../data/lockTest/s4.xtf";
+
+
+    if (processId == 0) {
+        //child process
+
+        /*Obtain lock on file*/
+        int fd = open(file.c_str(), O_RDWR | O_NOATIME);
+
+        if (fd == -1) {
+            std::cout << "Couldn't open file for lock" << std::endl;
+            REQUIRE(false);
+        }
+
+        struct flock flockStructForTest;
+        memset(&flockStructForTest, 0, sizeof (flockStructForTest));
+
+        flockStructForTest.l_type = F_WRLCK;
+        if (fcntl(fd, F_SETLKW, &flockStructForTest) == -1) // If a lock already set, does not wait
+        {
+            REQUIRE(false);
+        }
+        /*Done Obtaining lock*/
+
+        sleep(10);
+
+        /*Unlock file*/
+        flockStructForTest.l_type = F_UNLCK;
+        fcntl(fd, F_SETLKW, &flockStructForTest); // Release the lock
+        close(fd);
+        /*Done Unlock file*/
+    } else if (processId > 0) {
+        //parent process
+        sleep(1);
+
+        Eigen::Vector3d leverArm;
+        leverArm << 0.0, 0.0, 0.0;
+
+        // setup region of interest detector
+        int fastThreshold = 300;
+        int fastType = cv::FastFeatureDetector::TYPE_9_16;
+        bool fastNonMaxSuppression = false;
+        double dbscanEpsilon = 50;
+        int dbscanMinimumPoints = 20;
+        int mserDelta = 6;
+        int mserMinimumArea = 320;
+        int mserMaximumArea = 15000;
+        bool mergeOverlappingObjects = true;
+
+        RoiDetector * roiDetector = new RoiDetector(
+                fastThreshold,
+                fastType,
+                fastNonMaxSuppression,
+                dbscanEpsilon,
+                dbscanMinimumPoints,
+                mserDelta,
+                mserMinimumArea,
+                mserMaximumArea,
+                mergeOverlappingObjects);
+
+        SideScanFileProcessor * processor = new SideScanFileProcessor();
+        DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
+
+        monitor->monitor(path);
+
+
+
+        delete processor;
+        delete monitor;
+
+    }
 }
 
 

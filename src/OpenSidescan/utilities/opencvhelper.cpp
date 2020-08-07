@@ -74,7 +74,7 @@ bool OpencvHelper::buildColorTable() {
     return true;
 }
 
-void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
+void OpencvHelper::draw(SidescanImage & img, bool showObjectName, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures){
 
     img.resetDisplayedImage();
 
@@ -92,19 +92,26 @@ void OpencvHelper::draw(SidescanImage & img, bool showObjectBoundingBox,bool sho
             cv::rectangle(img.getDisplayedImage(), cv::Rect((*i)->getX(),(*i)->getY(),(*i)->getPixelWidth(),(*i)->getPixelHeight()), cv::Scalar(255,255,255),2);
         }
 
-        if(showObjectSize || showObjectCenter){
+        if(showObjectName || showObjectSize || showObjectCenter){
             //Display object width
 
             std::stringstream ss;
 
+            if(showObjectName){
+                ss << (*i)->getName();
+            }
+
             if(showObjectSize){
+                if(showObjectName){
+                    ss << " ";
+                }
                 ss << (*i)->getWidth() << " m x " << (*i)->getHeight() << " m";
             }
 
             if(showObjectCenter){
 
-                //Add a space if we have size in ss
-                if(showObjectSize){
+                //Add a space if we have name/size in ss
+                if(showObjectName || showObjectSize){
                     ss << " ";
                 }
 

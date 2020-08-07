@@ -53,7 +53,7 @@ private:
     int pixelHeight;
 
     double width; //in meters
-    double height;
+    double height; //height can be NAN if we don't have position data
 
     Position * position;
     void computePosition();

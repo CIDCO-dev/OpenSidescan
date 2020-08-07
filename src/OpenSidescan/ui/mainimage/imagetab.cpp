@@ -33,7 +33,7 @@ ImageTab::ImageTab(SidescanImage & image,QWidget *parent) : image(image),QWidget
 
     showObjectSizesAction = new QAction(QIcon(":/Images/resources/ruler.png"),tr("&Show sizes"));
     showObjectSizesAction->setCheckable(true);
-    showObjectSizesAction->setChecked(true);
+    showObjectSizesAction->setChecked(false);
     connect(showObjectSizesAction,&QAction::triggered,this,&ImageTab::refreshImage);
     toolbar->addAction(showObjectSizesAction);
 
@@ -73,7 +73,7 @@ ImageTab::ImageTab(SidescanImage & image,QWidget *parent) : image(image),QWidget
 }
 
 void ImageTab::refreshImage(){
-    OpencvHelper::draw(image,showObjectBoundingBox->isChecked(),showObjectSizesAction->isChecked(),showObjectCenter->isChecked(), showMicroFeatures->isChecked());
+    OpencvHelper::draw(image,true,showObjectBoundingBox->isChecked(),showObjectSizesAction->isChecked(),showObjectCenter->isChecked(), showMicroFeatures->isChecked());
 
     QPixmap pixmap = QtHelper::cvMatToQPixmap(image.getDisplayedImage());
     imageLabel->setPixmap(pixmap);

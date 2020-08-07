@@ -10,7 +10,7 @@ class OpencvHelper
 public:
     static bool isInsideImage(double x,double y,cv::Mat & img);
 
-    static void draw(SidescanImage & img, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures);
+    static void draw(SidescanImage & img,bool showObjectName, bool showObjectBoundingBox,bool showObjectSize,bool showObjectCenter, bool showMicroFeatures);
 
     static bool isOverlapping(cv::Rect & r1,cv::Rect & r2);
 

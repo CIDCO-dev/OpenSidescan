@@ -45,17 +45,14 @@ void InventoryObject::computeDimensions(){
 
     if( y < image.getPings().size() && y+pixelHeight < image.getPings().size() ){
         Position * pos1 = image.getPings()[y]->getPosition();
-
-        if ( pos1 == nullptr )
-            throw new Exception( "GeoreferencedObject::computeDimensions(): pos1 is nullptr (y: " + std::to_string( y ) + ")" );
-
         Position * pos2  = image.getPings()[y+pixelHeight]->getPosition();
 
-        if ( pos2 == nullptr )
-            throw new Exception( "GeoreferencedObject::computeDimensions(): pos2 is nullptr (y: " + std::to_string( y )
-                                    + ", pixelHeight: " + std::to_string( pixelHeight) + ")" );
-
-        height = Distance::haversine(pos1->getLongitude(),pos1->getLatitude(),pos2->getLongitude(),pos2->getLatitude());
+        if ( pos1 && pos2  ){
+            height = Distance::haversine(pos1->getLongitude(),pos1->getLatitude(),pos2->getLongitude(),pos2->getLatitude());
+        }
+        else{
+            height = std::nan("");
+        }
     }
     else{
         height = 0;

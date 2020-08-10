@@ -31,18 +31,18 @@ pipeline {
 
     stage('Test file lock - MASTER') {
         agent { label 'master'}
-        steps {
-            echo 'yo'
-            echo 'building locker'
-            sh 'Scripts/build_locker.sh'
-            echo 'running locker'
-            sh 'test/locker/build/bin/locker' &
-            echo 'running locker'
-            make lock-test
-        }
-        post {
-            always {
-                junit 'build/reports/lock-test-report.xml'
+        parallel {
+            stage('lock file') {
+                sh 'Scripts/build_locker.sh'
+                sh 'test/locker/build/bin/locker'
+            }
+            stage('try to monitor lokced file') {
+                make lock-test
+            }
+            post {
+                always {
+                    junit 'build/reports/lock-test-report.xml'
+                }
             }
         }
     }

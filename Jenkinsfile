@@ -28,6 +28,24 @@ pipeline {
       }
     }
 */
+
+    stage('Test file lock - MASTER') {
+        agent { label 'master'}
+        steps {
+            sh 'Scripts/build_locker.sh'
+            
+
+            
+
+
+
+        }
+        post {
+            always {
+
+            }
+        }
+    }
     stage('TEST WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {

@@ -118,26 +118,21 @@ static bool fileNotLocked(std::string & filename) {
     
 
     if (fd == -1) {
-        std::cout << "Could not open file descriptor: " << filename << std::endl;
         return false;
     }
     
-    std::cout << "File descriptor opened: " << filename << std::endl;
-
-    std::cout << "Trying to obtain write lock on: " << filename << std::endl;
     struct flock lockStruct;
     memset(&lockStruct, 0, sizeof(lockStruct));
     lockStruct.l_type = F_WRLCK;
     
 
-    if (fcntl(fd, F_SETLKW | LOCK_NB, &lockStruct) == -1) // If a lock already set, does not wait
+    if (fcntl(fd, F_SETLK, &lockStruct) == -1) // If a lock already set, does not wait
     {
-        std::cout << "File already locked: " << filename << std::endl;
         return false;
     }
 
     lockStruct.l_type = F_UNLCK;
-    fcntl(fd, F_SETLKW, &lockStruct); // Release the lock
+    fcntl(fd, F_SETLK, &lockStruct); // Release the lock
 
     close(fd);
 

@@ -30,7 +30,7 @@ pipeline {
 */
 
     stage('Test file lock - MASTER') {
-        /*agent { label 'master'}*/
+        node { label 'master'}
 
         
         

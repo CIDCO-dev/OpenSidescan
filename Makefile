@@ -50,6 +50,12 @@ test: clean
 	mkdir build
 	cd build ; cmake ..; make ; ./tests -r console
 	
+lock-test:
+	mkdir -p $(test_exec_dir)
+	mkdir -p $(test_result_dir)
+	$(CC) $(FLAGS) $(INCLUDES) -o $(test_exec_dir)/lockTests test/lockTestCatch.cpp $(SSFILES) $(THIRDPARTYFILES) `pkg-config --cflags --libs opencv`
+	$(test_exec_dir)/lockTests -r junit -o $(test_result_dir)/unit-tests-report.xml || true
+	
 unit-tests:
 	mkdir -p $(test_exec_dir)
 	mkdir -p $(test_result_dir)

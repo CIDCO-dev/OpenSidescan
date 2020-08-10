@@ -36,8 +36,9 @@ pipeline {
             echo 'building locker'
             sh 'Scripts/build_locker.sh'
             echo 'running locker'
-            sh 'test/locker/build/bin/locker'
+            sh 'test/locker/build/bin/locker' &
             echo 'running locker'
+            make lock-test
             
 
             

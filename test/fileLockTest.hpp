@@ -3,12 +3,12 @@
  */
 
 /* 
- * File:   MonitorTest.hpp
+ * File:   fileLockTest.hpp
  * Author: Jordan McManus
  */
 
-#ifndef MONITORTEST_HPP
-#define MONITORTEST_HPP
+#ifndef FILELOCKTEST_HPP
+#define FILELOCKTEST_HPP
 
 #include "catch.hpp"
 #include <thread>
@@ -41,14 +41,13 @@ class SideScanFileProcessor {
 public:
 
     void processFile(SidescanFile * f) {
-        //In OpenSidescan, add file to project
-        std::cout << "Processing sidescan file: " << f->getFilename() << std::endl;
+        std::cerr << "Processing sidescan file: " << f->getFilename() << std::endl;
+        // The file is locked and should not be processed.
+        REQUIRE(FALSE);
     }
 
     void reportProgress(std::string progress) {
-        //In OpenSidescan, give feedback to user
-        std::cout << progress << std::endl;
-
+        std::cerr << progress << std::endl;
     }
 
 };
@@ -123,11 +122,9 @@ private:
 
 };
 
-TEST_CASE("Test Monitor") {
+TEST_CASE("Test File Lock") {
 
     std::string path = "../data/lockTest/";
-    //std::string path = "../data/wrecks/";
-
 
     Eigen::Vector3d leverArm;
     leverArm << 0.0, 0.0, 0.0;
@@ -161,7 +158,10 @@ TEST_CASE("Test Monitor") {
 
     delete processor;
     delete monitor;
+    
+    REQUIRE(TRUE);
 }
 
-#endif /* MONITORTEST_HPP */
+
+#endif /* FILELOCKTEST_HPP */
 

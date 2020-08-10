@@ -39,20 +39,12 @@ pipeline {
             sh 'test/locker/build/bin/locker' &
             echo 'running locker'
             make lock-test
-            
-
-            
-
-
-
         }
-/*
         post {
             always {
-
+                junit 'build/reports/lock-test-report.xml'
             }
         }
-*/
     }
 /*
     stage('TEST WINDOWS 10') {

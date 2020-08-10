@@ -11,3 +11,4 @@ nbproject/*
 
 *.xtf
 *.xtf.hits
+!/Scripts/build_locker.sh

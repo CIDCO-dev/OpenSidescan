@@ -30,7 +30,9 @@ pipeline {
 */
 
     stage('Test file lock - MASTER') {
-        agent { label 'master'}
+        /*agent { label 'master'}*/
+
+        
         
         parallel {
             stage('lock file') {
@@ -39,8 +41,9 @@ pipeline {
                     sh 'test/locker/build/bin/locker'
                 }
             }
-            stage('try to monitor lokced file') {
+            stage('try to monitor locked file') {
                 steps{
+                    sh 'sleep 5'
                     make lock-test
                 }
                 post {

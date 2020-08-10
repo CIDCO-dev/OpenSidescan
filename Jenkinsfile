@@ -32,7 +32,11 @@ pipeline {
     stage('Test file lock - MASTER') {
         agent { label 'master'}
         steps {
+            echo 'building locker'
             sh 'Scripts/build_locker.sh'
+            echo 'running locker'
+            sh 'test/locker/build/bin/locker'
+            echo 'running locker'
             
 
             
@@ -40,11 +44,13 @@ pipeline {
 
 
         }
+/*
         post {
             always {
 
             }
         }
+*/
     }
 /*
     stage('TEST WINDOWS 10') {

@@ -46,6 +46,7 @@ pipeline {
             }
         }
     }
+/*
     stage('TEST WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
@@ -141,6 +142,7 @@ pipeline {
 
       }
     }
+*/
 
 
   }

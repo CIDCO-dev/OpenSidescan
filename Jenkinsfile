@@ -31,17 +31,22 @@ pipeline {
 
     stage('Test file lock - MASTER') {
         agent { label 'master'}
+        
         parallel {
             stage('lock file') {
-                sh 'Scripts/build_locker.sh'
-                sh 'test/locker/build/bin/locker'
+                steps{
+                    sh 'Scripts/build_locker.sh'
+                    sh 'test/locker/build/bin/locker'
+                }
             }
             stage('try to monitor lokced file') {
-                make lock-test
-            }
-            post {
-                always {
-                    junit 'build/reports/lock-test-report.xml'
+                steps{
+                    make lock-test
+                }
+                post {
+                    always {
+                        junit 'build/reports/lock-test-report.xml'
+                    }
                 }
             }
         }

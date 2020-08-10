@@ -32,6 +32,7 @@ pipeline {
     stage('Test file lock - MASTER') {
         agent { label 'master'}
         steps {
+            echo 'yo'
             echo 'building locker'
             sh 'Scripts/build_locker.sh'
             echo 'running locker'

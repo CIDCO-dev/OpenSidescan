@@ -12,3 +12,4 @@ nbproject/*
 *.xtf
 *.xtf.hits
 !/Scripts/build_locker.sh
+!/test/data/lockTest/s4.xtf

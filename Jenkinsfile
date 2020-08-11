@@ -34,12 +34,12 @@ pipeline {
             stage('lock file') {
                 steps{
                     sh 'Scripts/build_locker.sh'
-                    sh 'test/locker/build/bin/locker'
+                    sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                 }
             }
             stage('try to monitor locked file') {
                 steps{
-                    sh 'sleep 5'
+                    sh 'sleep 10'
                     make lock-test
                 }
                 post {

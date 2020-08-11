@@ -43,7 +43,7 @@ public:
     void processFile(SidescanFile * f) {
         std::cerr << "Processing sidescan file: " << f->getFilename() << std::endl;
         // The file is locked and should not be processed.
-        REQUIRE(FALSE);
+        REQUIRE(false);
     }
 
     void reportProgress(std::string progress) {
@@ -159,7 +159,7 @@ TEST_CASE("Test File Lock") {
     delete processor;
     delete monitor;
     
-    REQUIRE(TRUE);
+    REQUIRE(true);
 }
 
 

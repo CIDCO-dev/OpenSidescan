@@ -15,7 +15,7 @@ pipeline {
     binWinx64PublishDir="$publishDir/$binWinx64Dir"
   }
 
-  agent none
+  agent { label 'master'}
   stages {
 /*
 
@@ -30,10 +30,6 @@ pipeline {
 */
 
     stage('Test file lock - MASTER') {
-        node { label 'master'}
-
-        
-        
         parallel {
             stage('lock file') {
                 steps{

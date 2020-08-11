@@ -40,12 +40,8 @@ pipeline {
             stage('try to monitor locked file') {
                 steps{
                     sh 'sleep 10'
-                    make lock-test
-                }
-                post {
-                    always {
-                        junit 'build/reports/lock-test-report.xml'
-                    }
+                    sh 'make lock-test'
+                    junit 'build/reports/lock-test-report.xml'
                 }
             }
         }

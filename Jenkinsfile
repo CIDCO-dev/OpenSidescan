@@ -34,7 +34,9 @@ pipeline {
             stage('lock file') {
                 steps{
                     sh 'Scripts/build_locker.sh'
-                    //sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
+                    sh 'locking test/data/lockTest/s4.xtf'
+                    sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
+                    sh 'echo locked relased on test/data/lockTest/s4.xtf'
                 }
             }
             stage('try to monitor locked file') {

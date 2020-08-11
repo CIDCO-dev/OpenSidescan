@@ -8,6 +8,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 ]]
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -22,6 +24,8 @@ set_target_properties(lockTests PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries (tests stdc++fs)
 target_link_libraries(tests ${OpenCV_LIBS})
+target_link_libraries (tests Eigen3::Eigen)
 
 target_link_libraries (lockTests stdc++fs)
 target_link_libraries(lockTests ${OpenCV_LIBS})
+target_link_libraries (lockTests Eigen3::Eigen)

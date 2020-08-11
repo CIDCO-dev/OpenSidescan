@@ -40,8 +40,8 @@ pipeline {
             stage('try to monitor locked file') {
                 steps{
                     sh 'Scripts/build_lock_test.sh'
-                    sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
                     sh 'mkdir -p build/reports'
+                    sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
                     junit 'build/reports/lock-test-report.xml'
                 }
             }

@@ -34,13 +34,14 @@ pipeline {
             stage('lock file') {
                 steps{
                     sh 'Scripts/build_locker.sh'
-                    sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
+                    //sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                 }
             }
             stage('try to monitor locked file') {
                 steps{
                     sh 'Scripts/build_lock_test.sh'
                     sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
+                    sh 'mkdir -p build/reports'
                     junit 'build/reports/lock-test-report.xml'
                 }
             }

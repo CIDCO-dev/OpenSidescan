@@ -15,7 +15,7 @@ pipeline {
     binWinx64PublishDir="$publishDir/$binWinx64Dir"
   }
 
-  agent { label 'master'}
+  agent none
   stages {
 /*
 
@@ -29,7 +29,7 @@ pipeline {
     }
 */
 
-/*
+
     stage('Build file lock test') {
         agent { label 'master'}
         steps {
@@ -37,24 +37,27 @@ pipeline {
             sh 'Scripts/build_lock_test.sh'
         }
     }
-*/
+
 
     stage('Test file lock') {
-        script {
-            parallel([
+        parallel {
+            stage('file lock') {
+                agent { label 'master'}
                 steps {
                     sh 'echo locking test/data/lockTest/s4.xtf'
                     sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                     sh 'echo locked relased on test/data/lockTest/s4.xtf'
-                },
-
+                }
+            }
+            stage('monitor') {
+                agent { label 'master'}
                 steps {
                     sh 'sleep 10'
                     sh 'mkdir -p build/reports'
                     sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
                     junit 'build/reports/lock-test-report.xml'
                 }
-            ])
+            }
         }
     }
 

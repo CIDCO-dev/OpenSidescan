@@ -40,9 +40,10 @@ pipeline {
 
 
     stage('Test file lock') {
+        agent { label 'master'}
         parallel {
             stage('file lock') {
-                agent { label 'master'}
+                
                 steps {
                     sh 'echo locking test/data/lockTest/s4.xtf'
                     sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
@@ -50,7 +51,6 @@ pipeline {
                 }
             }
             stage('monitor') {
-                agent { label 'master'}
                 steps {
                     sh 'sleep 10'
                     sh 'mkdir -p build/reports'

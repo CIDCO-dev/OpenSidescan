@@ -29,6 +29,7 @@ pipeline {
     }
 */
 
+/*
     stage('Build file lock test') {
         agent { label 'master'}
         steps {
@@ -36,25 +37,26 @@ pipeline {
             sh 'Scripts/build_lock_test.sh'
         }
     }
+*/
 
     stage('Test file lock') {
-        parallel {
-            stage('lock file') {
-                steps{
-                    sh 'locking test/data/lockTest/s4.xtf'
+        script {
+            parallel([
+                'Test 1': {
+                    sh 'echo locking test/data/lockTest/s4.xtf'
                     sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                     sh 'echo locked relased on test/data/lockTest/s4.xtf'
-                }
-            }
-            stage('try to monitor locked file') {
-                steps{
+                },
+
+                'Test 2': {
                     sh 'sleep 10'
                     sh 'mkdir -p build/reports'
                     sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
                     junit 'build/reports/lock-test-report.xml'
                 }
-            }
+            ])
         }
+    }
 
 /*
         stages {

@@ -30,8 +30,12 @@ pipeline {
 */
 
     stage('Test file lock - MASTER') {
-        sh 'Scripts/build_locker.sh'
-        sh 'Scripts/build_lock_test.sh'
+        
+
+        steps {
+            sh 'Scripts/build_locker.sh'
+            sh 'Scripts/build_lock_test.sh'
+        }
 
         parallel {
             stage('lock file') {

@@ -17,7 +17,6 @@ pipeline {
 
   agent none
   stages {
-/*
 
     stage('BUILD MASTER'){
       agent { label 'master'}
@@ -27,69 +26,9 @@ pipeline {
         archiveArtifacts('OpenSidescan_installer*.run')
       }
     }
-*/
 
 
-    stage('Build file lock test') {
-        agent { label 'master'}
-        steps {
-            sh 'Scripts/build_locker.sh'
-            sh 'Scripts/build_lock_test.sh'
-        }
-    }
-
-
-    stage('Test file lock') {
-        agent { label 'master'}
-        parallel {
-            stage('file lock') {
-                
-                steps {
-                    sh 'echo locking test/data/lockTest/s4.xtf'
-                    sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
-                    sh 'echo locked relased on test/data/lockTest/s4.xtf'
-                }
-            }
-            stage('monitor') {
-                steps {
-                    sh 'sleep 10'
-                    sh 'mkdir -p build/reports'
-                    sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
-                    junit 'build/reports/lock-test-report.xml'
-                }
-            }
-        }
-    }
-
-/*
-        stages {
-            stage('build scripts') {
-                steps{
-                    sh 'Scripts/build_locker.sh'
-                    sh 'Scripts/build_lock_test.sh'
-                }
-            }
-            stage('test file lock') {
-                parallel {
-                    stage('lock file') {
-                        steps{
-                            sh 'locking test/data/lockTest/s4.xtf'
-                            sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
-                            sh 'echo locked relased on test/data/lockTest/s4.xtf'
-                        }
-                    }
-                    stage('try to monitor locked file') {
-                        steps{
-                            sh 'sleep 10'
-                            sh 'mkdir -p build/reports'
-                            sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
-                            junit 'build/reports/lock-test-report.xml'
-                        }
-                    }
-                }
-            }
-        }
-*/
+    
     
 /*
     stage('TEST WINDOWS 10') {

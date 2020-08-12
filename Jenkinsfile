@@ -42,13 +42,13 @@ pipeline {
     stage('Test file lock') {
         script {
             parallel([
-                'Test 1': {
+                steps {
                     sh 'echo locking test/data/lockTest/s4.xtf'
                     sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                     sh 'echo locked relased on test/data/lockTest/s4.xtf'
                 },
 
-                'Test 2': {
+                steps {
                     sh 'sleep 10'
                     sh 'mkdir -p build/reports'
                     sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'

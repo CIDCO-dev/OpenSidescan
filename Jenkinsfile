@@ -27,10 +27,6 @@ pipeline {
       }
     }
 
-
-    
-    
-/*
     stage('TEST WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
@@ -49,7 +45,6 @@ pipeline {
 
         }
     }
-
 
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}
@@ -86,7 +81,6 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }
-
 
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-x64-2'}
@@ -126,9 +120,5 @@ pipeline {
 
       }
     }
-*/
-
-
   }
-
 }

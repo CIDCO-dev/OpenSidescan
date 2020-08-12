@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
     /*Done Obtaining lock*/
 
 
-    //sleep for 180 seconds, then release lock
-    sleep(180);
+    //sleep for 60 seconds, then release lock
+    sleep(60);
 
     /*Unlock file*/
     flockStructForTest.l_type = F_UNLCK;

@@ -30,10 +30,12 @@ pipeline {
 */
 
     stage('Test file lock - MASTER') {
+        sh 'Scripts/build_locker.sh'
+        sh 'Scripts/build_lock_test.sh'
+
         parallel {
             stage('lock file') {
                 steps{
-                    sh 'Scripts/build_locker.sh'
                     sh 'locking test/data/lockTest/s4.xtf'
                     sh 'test/locker/build/bin/locker test/data/lockTest/s4.xtf'
                     sh 'echo locked relased on test/data/lockTest/s4.xtf'
@@ -41,7 +43,7 @@ pipeline {
             }
             stage('try to monitor locked file') {
                 steps{
-                    sh 'Scripts/build_lock_test.sh'
+                    sh 'sleep 10'
                     sh 'mkdir -p build/reports'
                     sh 'test/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
                     junit 'build/reports/lock-test-report.xml'

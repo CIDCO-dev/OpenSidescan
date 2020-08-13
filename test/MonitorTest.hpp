@@ -137,11 +137,17 @@ private:
 
 TEST_CASE("Test file lock with monitor") {
 
+    /*
 #if defined(_WIN32)
 
 
 #else
 #if defined(__linux) || defined(__linux__) || defined(linux)
+
+    
+#endif
+#endif
+     */
 
     if (fork() == 0) {
         //child process
@@ -208,9 +214,6 @@ TEST_CASE("Test file lock with monitor") {
 
         REQUIRE(true);
     }
-#endif
-#endif
-
 
 
 }

@@ -28,7 +28,7 @@ pipeline {
         archiveArtifacts('build/reports/lock-test-report.xml')
       }
     }
-
+/*
     stage('BUILD MASTER'){
       agent { label 'master'}
       steps {
@@ -131,5 +131,7 @@ pipeline {
 
       }
     }
+*/
   }
+
 }

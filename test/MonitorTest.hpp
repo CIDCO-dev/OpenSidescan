@@ -25,12 +25,13 @@
 #include <atomic>
 #include "../src/OpenSidescan/utilities/FileLockUtils.h"
 
-#ifdef _WIN32
-#include <Windows.h>
-#else
 #include <unistd.h>
-#endif
-
+#include <sys/types.h>
+#include <fcntl.h>
+#include <sys/file.h>
+#include <string>
+#include <iostream>
+#include <cstring>
 
 
 //need g++ 8 to remove experimental namespace
@@ -43,12 +44,12 @@ public:
     void processFile(SidescanFile * f) {
         //In OpenSidescan, add file to project
         std::cout << "Processing sidescan file: " << f->getFilename() << std::endl;
+        REQUIRE(false);
     }
 
     void reportProgress(std::string progress) {
         //In OpenSidescan, give feedback to user
         std::cout << progress << std::endl;
-
     }
 
 };
@@ -80,6 +81,7 @@ public:
                 }
             } else {
                 //File is locked, do nothing
+                processor->reportProgress("File is locked by another program: " + filepath);
             }
         }
     }
@@ -123,44 +125,73 @@ private:
 
 };
 
-TEST_CASE("Test Monitor") {
+TEST_CASE("Test file lock with monitor") {
 
-    std::string path = "../data/lockTest/";
-    //std::string path = "../data/wrecks/";
+    if (fork() == 0) {
+        //child process
+        std::string file = "test/data/lockTest/s4.xtf";
+        int fd = open(file.c_str(), O_RDWR | O_NOATIME);
 
+        struct flock flockStructForTest;
+        memset(&flockStructForTest, 0, sizeof (flockStructForTest));
 
-    Eigen::Vector3d leverArm;
-    leverArm << 0.0, 0.0, 0.0;
+        flockStructForTest.l_type = F_WRLCK;
+        if (fcntl(fd, F_SETLKW, &flockStructForTest) == -1) // F_SETLKW waits until lock obtained
+        {
+            //file is already locked
+            REQUIRE(false);
+        }
 
-    // setup region of interest detector
-    int fastThreshold = 300;
-    int fastType = cv::FastFeatureDetector::TYPE_9_16;
-    bool fastNonMaxSuppression = false;
-    double dbscanEpsilon = 50;
-    int dbscanMinimumPoints = 20;
-    int mserDelta = 6;
-    int mserMinimumArea = 320;
-    int mserMaximumArea = 15000;
-    bool mergeOverlappingObjects = true;
+        sleep(10);
 
-    RoiDetector * roiDetector = new RoiDetector(
-            fastThreshold,
-            fastType,
-            fastNonMaxSuppression,
-            dbscanEpsilon,
-            dbscanMinimumPoints,
-            mserDelta,
-            mserMinimumArea,
-            mserMaximumArea,
-            mergeOverlappingObjects);
+        flockStructForTest.l_type = F_UNLCK;
+        fcntl(fd, F_SETLKW, &flockStructForTest); // Release the lock
+        close(fd);
+        
+        REQUIRE(true);
 
-    SideScanFileProcessor * processor = new SideScanFileProcessor();
-    DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
+    } else {
+        //parent process
+        //let child aquire lock
+        sleep(5);
 
-    monitor->monitor(path);
+        std::string path = "test/data/lockTest/";
 
-    delete processor;
-    delete monitor;
+        Eigen::Vector3d leverArm;
+        leverArm << 0.0, 0.0, 0.0;
+
+        // setup region of interest detector
+        int fastThreshold = 300;
+        int fastType = cv::FastFeatureDetector::TYPE_9_16;
+        bool fastNonMaxSuppression = false;
+        double dbscanEpsilon = 50;
+        int dbscanMinimumPoints = 20;
+        int mserDelta = 6;
+        int mserMinimumArea = 320;
+        int mserMaximumArea = 15000;
+        bool mergeOverlappingObjects = true;
+
+        RoiDetector * roiDetector = new RoiDetector(
+                fastThreshold,
+                fastType,
+                fastNonMaxSuppression,
+                dbscanEpsilon,
+                dbscanMinimumPoints,
+                mserDelta,
+                mserMinimumArea,
+                mserMaximumArea,
+                mergeOverlappingObjects);
+
+        SideScanFileProcessor * processor = new SideScanFileProcessor();
+        DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
+
+        monitor->monitor(path);
+
+        delete processor;
+        delete monitor;
+        
+        REQUIRE(true);
+    }
 }
 
 #endif /* MONITORTEST_HPP */

@@ -18,6 +18,16 @@ pipeline {
   agent none
   stages {
 
+    stage('Test MASTER'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_lock_test.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/build/tests -r junit -o build/reports/lock-test-report.xml || true'
+        archiveArtifacts('build/reports/lock-test-report.xml')
+      }
+    }
+
     stage('BUILD MASTER'){
       agent { label 'master'}
       steps {
@@ -74,10 +84,10 @@ pipeline {
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       steps {
-        //sh 'mkdir -p $binMasterPublishDir'
+        sh 'mkdir -p $binMasterPublishDir'
         sh 'mkdir -p $binWinx64PublishDir'
 
-        //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }

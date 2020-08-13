@@ -22,6 +22,7 @@ struct flock flockStruct;
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/file.h>   // For flock structure
+struct flock lockStruct;
 
 #endif
 #endif
@@ -121,7 +122,6 @@ static bool fileNotLocked(std::string & filename) {
         return false;
     }
     
-    struct flock lockStruct;
     memset(&lockStruct, 0, sizeof(lockStruct));
     lockStruct.l_type = F_WRLCK;
     

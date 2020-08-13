@@ -25,7 +25,7 @@ pipeline {
         sh 'mkdir -p build/reports'
         sh 'test/build/tests -r junit -o build/reports/lock-test-report.xml || true'
         sh 'sleep 20' //allow all processes forked in tests to stop
-        archiveArtifacts('build/reports/lock-test-report.xml')
+        junit 'build/reports/lock-test-report.xml'
       }
     }
 /*

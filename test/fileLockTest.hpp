@@ -123,7 +123,6 @@ private:
 };
 
 TEST_CASE("Test File Lock") {
-
     std::string path = "../data/lockTest/";
 
     Eigen::Vector3d leverArm;

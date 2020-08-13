@@ -14,7 +14,6 @@
 
 #include <windows.h>
 #include <stdio.h>
-struct flock flockStruct;
 
 #else
 #if defined(__linux) || defined(__linux__) || defined(linux)

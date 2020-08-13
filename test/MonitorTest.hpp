@@ -11,7 +11,6 @@
 #define MONITORTEST_HPP
 
 #include "catch.hpp"
-#include <thread>
 #include <Eigen/Dense>
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
@@ -24,15 +23,26 @@
 #include <experimental/filesystem>
 #include <atomic>
 #include "../src/OpenSidescan/utilities/FileLockUtils.h"
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <sys/file.h>
 #include <string>
 #include <iostream>
 #include <cstring>
 
+
+#if defined(_WIN32)
+
+#include <windows.h>
+#include <stdio.h>
+
+#else
+#if defined(__linux) || defined(__linux__) || defined(linux)
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <sys/file.h>   // For flock structure
+
+#endif
+#endif
 
 //need g++ 8 to remove experimental namespace
 namespace fs = std::experimental::filesystem;
@@ -127,6 +137,12 @@ private:
 
 TEST_CASE("Test file lock with monitor") {
 
+#if defined(_WIN32)
+
+
+#else
+#if defined(__linux) || defined(__linux__) || defined(linux)
+
     if (fork() == 0) {
         //child process
         std::string file = "test/data/lockTest/s4.xtf";
@@ -147,7 +163,7 @@ TEST_CASE("Test file lock with monitor") {
         flockStructForTest.l_type = F_UNLCK;
         fcntl(fd, F_SETLKW, &flockStructForTest); // Release the lock
         close(fd);
-        
+
         REQUIRE(true);
 
     } else {
@@ -189,9 +205,14 @@ TEST_CASE("Test file lock with monitor") {
 
         delete processor;
         delete monitor;
-        
+
         REQUIRE(true);
     }
+#endif
+#endif
+
+
+
 }
 
 #endif /* MONITORTEST_HPP */

@@ -25,7 +25,7 @@ pipeline {
         sh 'mkdir -p build/reports'
         sh 'test/build/tests -r junit -o build/reports/lock-test-report.xml || true'
         sh 'sleep 20' //allow all processes forked in tests to stop
-        sh 'Scripts/cutReport.sh' 
+        sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/report.xml'
       }
     }

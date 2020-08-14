@@ -40,6 +40,7 @@ test_result_dir=build\\reports
 
 winlocker:
 	mkdir $(test_exec_dir)
+	call cd
 	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\locker\\winlocker.cpp /EHsc /Fewinlocker.exe
 	
 

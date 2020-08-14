@@ -27,6 +27,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <unistd.h>
+#include <sys/types.h>
 
 #if defined(_WIN32)
 
@@ -36,8 +38,7 @@
 #else
 #if defined(__linux) || defined(__linux__) || defined(linux)
 
-#include <unistd.h>
-#include <sys/types.h>
+
 #include <fcntl.h>
 #include <sys/file.h>   // For flock structure
 
@@ -137,18 +138,6 @@ private:
 
 TEST_CASE("Test file lock with monitor") {
 
-    /*
-#if defined(_WIN32)
-
-
-#else
-#if defined(__linux) || defined(__linux__) || defined(linux)
-
-    
-#endif
-#endif
-     */
-
     if (fork() == 0) {
         //child process
         std::string file = "test/data/lockTest/s4.xtf";
@@ -214,8 +203,6 @@ TEST_CASE("Test file lock with monitor") {
 
         REQUIRE(true);
     }
-
-
 }
 
 #endif /* MONITORTEST_HPP */

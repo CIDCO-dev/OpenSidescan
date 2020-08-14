@@ -18,6 +18,18 @@ pipeline {
   agent none
   stages {
 
+    stage('TEST WINDOWS 10') {
+        agent { label 'windows10-x64-2'}
+        steps {
+            bat "echo %cd%"
+            bat "echo %cd%"
+            //compile winlocker
+            bat "make -f MakefileWindows winlocker"
+            bat "echo %cd%"
+        }
+    }
+
+/*
     stage('Test MASTER'){
       agent { label 'master'}
       steps {
@@ -133,5 +145,5 @@ pipeline {
       }
     }
   }
-
+*/
 }

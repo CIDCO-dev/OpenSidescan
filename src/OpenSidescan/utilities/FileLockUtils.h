@@ -28,9 +28,6 @@ struct flock lockStruct;
 
 class FileLockUtils {
 public:
-    
-    
-
 
 #if defined(_WIN32)
 
@@ -143,7 +140,6 @@ static bool fileNotLocked(std::string & filename) {
 static bool fileNotLocked(std::string & filename) {
     return true;
 }
-
 
 #endif
 #endif

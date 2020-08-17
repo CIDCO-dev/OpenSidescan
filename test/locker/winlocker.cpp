@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     
     std::cout << "Locking file: " << file << std::endl;
     
-    LPCSTR lpFileName = file.c_str();
+    LPCWSTR lpFileName = file.c_str();
     
     HANDLE hFile = CreateFileW(lpFileName,
             GENERIC_READ,

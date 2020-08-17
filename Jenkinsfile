@@ -25,6 +25,7 @@ pipeline {
             //compile winlocker
             bat "make -f MakefileWindows locktest"
             bat "echo %cd%"
+            bat "build\\test\\bin\\winLockTest.exe"
         }
     }
 

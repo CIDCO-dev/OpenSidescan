@@ -26,6 +26,7 @@ pipeline {
             bat "make -f MakefileWindows locktest"
             bat "echo %cd%"
             bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
+            junit 'winlock-test-report.xml'
         }
     }
 

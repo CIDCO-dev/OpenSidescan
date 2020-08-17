@@ -3,14 +3,16 @@
  */
 
 /* 
- * File:   MonitorTest.hpp
+ * File:   FileLockLinuxTest.hpp
  * Author: Jordan McManus
  */
 
-#ifndef MONITORTEST_HPP
-#define MONITORTEST_HPP
+#ifndef FILELOCKLINUXTEST_HPP
+#define FILELOCKLINUXTEST_HPP
+
 
 #include "catch.hpp"
+#include <thread>
 #include <Eigen/Dense>
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
@@ -25,27 +27,6 @@
 #include "../src/OpenSidescan/utilities/FileLockUtils.h"
 #include "../src/OpenSidescan/utilities/SideScanFileProcessor.hpp"
 #include "../src/OpenSidescan/utilities/DirectoryMonitor.hpp"
-#include <string>
-#include <iostream>
-#include <cstring>
-
-#include <unistd.h>
-#include <sys/types.h>
-
-#if defined(_WIN32)
-
-#include <windows.h>
-#include <stdio.h>
-
-#else
-#if defined(__linux) || defined(__linux__) || defined(linux)
-
-
-#include <fcntl.h>
-#include <sys/file.h>   // For flock structure
-
-#endif
-#endif
 
 class SideScanFileProcessorForTest : public SideScanFileProcessor {
     //Sub class this to connect with OpenSideScan
@@ -135,5 +116,5 @@ TEST_CASE("Test file lock with monitor, linux version") {
     }
 }
 
-#endif /* MONITORTEST_HPP */
+#endif /* FILELOCKLINUXTEST_HPP */
 

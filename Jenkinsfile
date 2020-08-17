@@ -17,7 +17,14 @@ pipeline {
 
   agent none
   stages {
+    stage('Test file lock WINDOWS 10') {
+        agent { label 'windows10-x64-2'}
+        steps {
+            bat "test\\windowsLockTest\\buildScript.bat"
+        }
+    }
 
+/*
     stage('TEST WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
@@ -29,6 +36,7 @@ pipeline {
             bat "build\\test\\bin\\winlocker.exe test\\data\\lockTest\\s4.xtf"
         }
     }
+*/
 
 
     stage('Test MASTER'){

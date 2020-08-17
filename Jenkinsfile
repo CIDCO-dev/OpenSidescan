@@ -30,7 +30,7 @@ pipeline {
         }
     }
 
-/*
+
     stage('Test MASTER'){
       agent { label 'master'}
       steps {
@@ -42,7 +42,7 @@ pipeline {
         junit 'build/reports/report.xml'
       }
     }
-
+/*
     stage('BUILD MASTER'){
       agent { label 'master'}
       steps {

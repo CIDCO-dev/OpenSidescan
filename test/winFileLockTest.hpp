@@ -105,10 +105,14 @@ TEST_CASE("Test file lock with monitor, windows version") {
     SideScanFileProcessorForTest * processor = new SideScanFileProcessorForTest();
     DirectoryMonitor *monitor = new DirectoryMonitor(roiDetector, processor, leverArm);
 
+    std::cout << "Monitoring folder: " << path << std::endl;
     monitor->monitor(path);
 
     delete processor;
     delete monitor;
+    
+    // let the locking process finish
+    Sleep(15000);
 
     REQUIRE(true);
 

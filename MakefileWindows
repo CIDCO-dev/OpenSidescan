@@ -39,6 +39,7 @@ test_work_dir=build\\test\\work
 test_result_dir=build\\reports
 
 locktest: winlocker
+	mkdir $(test_result_dir)
 	call cd
 	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\winLockCatchMain.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) $(LIBS) /FewinLockTest.exe
 	

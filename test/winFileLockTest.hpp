@@ -39,6 +39,9 @@ TEST_CASE("Test file lock with monitor, windows version") {
         REQUIRE(false);
     }
     
+    
+    Sleep(10000);
+    
     REQUIRE(true);
     
 }

@@ -17,8 +17,12 @@
 
 TEST_CASE("Test file lock with monitor, windows version") {
     
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
     
-    
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
     
     if(CreateProcess("build\\test\\bin\\winlocker.exe",       // Application name
                  " test\\data\\lockTest\\s4.xtf",                 // Additional application arguments
@@ -28,8 +32,8 @@ TEST_CASE("Test file lock with monitor, windows version") {
                  CREATE_DEFAULT_ERROR_MODE,
                  NULL,
                  NULL,
-                 &siStartupInfo,
-                 &piProcessInfo) == FALSE) {
+                 &si,
+                 &pi) == FALSE) {
         
         std::cout << "Couldn't create process" << std::endl;
         REQUIRE(false);

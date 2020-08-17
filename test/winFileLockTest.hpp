@@ -20,7 +20,7 @@
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../src/OpenSidescan/detector/roidetector.h"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
-#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"#include <Eigen/Dense>
+#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../src/OpenSidescan/detector/roidetector.h"

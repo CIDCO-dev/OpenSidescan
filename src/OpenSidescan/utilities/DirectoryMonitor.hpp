@@ -10,6 +10,8 @@
 #ifndef DIRECTORYMONITOR_HPP
 #define DIRECTORYMONITOR_HPP
 
+#include <experimental/filesystem>
+
 //need g++ 8 to remove experimental namespace
 namespace fs = std::experimental::filesystem;
 

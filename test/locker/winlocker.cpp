@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
         return 0;
     }
     
-    Sleep(5000);
+    Sleep(10000);
     
     std::cout << "Unlocking file: " << file << std::endl;
     

@@ -12,7 +12,6 @@
 
 
 #include "catch.hpp"
-#include <thread>
 #include <Eigen/Dense>
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
@@ -22,8 +21,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <experimental/filesystem>
-#include <atomic>
+
 #include "../src/OpenSidescan/utilities/FileLockUtils.h"
 #include "../src/OpenSidescan/utilities/SideScanFileProcessor.hpp"
 #include "../src/OpenSidescan/utilities/DirectoryMonitor.hpp"

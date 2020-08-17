@@ -25,7 +25,7 @@ pipeline {
             //compile winlocker
             bat "make -f MakefileWindows locktest"
             bat "echo %cd%"
-            bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\test\\reports\\winlock-test-report.xml"
+            bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
     }
 

@@ -20,7 +20,11 @@ pipeline {
     stage('Test file lock WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
-            bat "test\\windowsLockTest\\buildScript.bat"
+            bat "echo %cd%"
+            bat "echo %cd%"
+            //compile winlocker
+            bat "make -f MakefileWindows locktest"
+            bat "echo %cd%"
         }
     }
 

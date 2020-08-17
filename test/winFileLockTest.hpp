@@ -62,7 +62,7 @@ TEST_CASE("Test file lock with monitor, windows version") {
             NULL,
             NULL,
             FALSE,
-            CREATE_DEFAULT_ERROR_MODE,
+            DETACHED_PROCESS,
             NULL,
             NULL,
             &si,

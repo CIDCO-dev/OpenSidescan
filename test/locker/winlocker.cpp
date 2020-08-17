@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     
     LPCSTR lpFileName = file.c_str();
     
-    HANDLE hFile = CreateFileA(lpFileName,
+    HANDLE hFile = CreateFileW(lpFileName,
             GENERIC_READ,
             FILE_SHARE_READ,
             NULL, // no security attributes

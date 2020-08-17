@@ -23,9 +23,9 @@ int main(int argc, char** argv) {
     
     std::cout << "Locking file: " << file << std::endl;
     
-    LPCWSTR lpFileName = file.c_str();
+    LPCSTR lpFileName = file.c_str();
     
-    HANDLE hFile = CreateFileW(lpFileName,
+    HANDLE hFile = CreateFileA(lpFileName,
             GENERIC_READ,
             FILE_SHARE_READ,
             NULL, // no security attributes

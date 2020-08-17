@@ -58,6 +58,10 @@ int main(int argc, char** argv) {
         return 0;
     }
     
+    Sleep(5000);
+    
+    std::cout << "Unlocking file: " << file << std::endl;
+    
     // Unlock the file.
     fSuccess = UnlockFileEx(hFile,
             0, // reserved, must be zero

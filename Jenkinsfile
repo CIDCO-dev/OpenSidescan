@@ -26,6 +26,7 @@ pipeline {
             //compile winlocker
             bat "make -f MakefileWindows winlocker"
             bat "echo %cd%"
+            bat "build\\test\\bin\\winlocker.exe test\\data\\lockTest\\s4.xtf"
         }
     }
 

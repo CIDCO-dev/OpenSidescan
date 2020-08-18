@@ -30,7 +30,6 @@ pipeline {
       }
     }
 
-/*
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
@@ -49,6 +48,29 @@ pipeline {
         }
     }
 
+    stage('Unit tests on linux'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_linux_unit_tests.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
+        junit 'opensidescan-linux-test-report.xml'
+      }
+    }
+
+    stage('Unit tests WINDOWS 10') {
+        agent { label 'windows10-x64-2'}
+        steps {
+            bat "make -f MakefileWindows test"
+        }
+        post {
+            always {
+                junit 'build\\reports\\opensidescan-win-test-report.xml'
+            }
+        }
+    }
+
+/*
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
@@ -58,22 +80,7 @@ pipeline {
       }
     }
 
-    stage('TEST WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
-        steps {
-            bat "echo %cd%"
-            //bat "make -f MakefileWindows clean"
-            bat "echo %cd%"
-            //compile and run tests
-            bat "make -f MakefileWindows test"
-            bat "echo %cd%"
-        }
-        post {
-            always {
-                junit 'build\\reports\\*.xml'
-            }
-        }
-    }
+    
 
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}

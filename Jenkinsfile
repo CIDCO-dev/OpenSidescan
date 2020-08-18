@@ -54,7 +54,7 @@ pipeline {
         sh 'Scripts/build_linux_unit_tests.sh'
         sh 'mkdir -p build/reports'
         sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
-        junit 'opensidescan-linux-test-report.xml'
+        junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
 

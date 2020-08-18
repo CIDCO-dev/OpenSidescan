@@ -26,7 +26,13 @@ pipeline {
             bat "make -f MakefileWindows locktest"
             bat "echo %cd%"
             bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
-            junit 'winlock-test-report.xml'
+        }
+        post {
+            always {
+                junit 'build\\reports\\winlock-test-report.xml'
+
+            }
+
         }
     }
 
@@ -41,6 +47,7 @@ pipeline {
             bat "echo %cd%"
             bat "build\\test\\bin\\winlocker.exe test\\data\\lockTest\\s4.xtf"
         }
+
     }
 */
 

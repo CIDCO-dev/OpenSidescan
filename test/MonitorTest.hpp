@@ -29,24 +29,6 @@
 #include <iostream>
 #include <cstring>
 
-#include <unistd.h>
-#include <sys/types.h>
-
-#if defined(_WIN32)
-
-#include <windows.h>
-#include <stdio.h>
-
-#else
-#if defined(__linux) || defined(__linux__) || defined(linux)
-
-
-#include <fcntl.h>
-#include <sys/file.h>   // For flock structure
-
-#endif
-#endif
-
 class SideScanFileProcessorForTest : public SideScanFileProcessor {
     //Sub class this to connect with OpenSideScan
 public:

@@ -70,7 +70,6 @@ pipeline {
         }
     }
 
-/*
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
@@ -156,6 +155,5 @@ pipeline {
 
       }
     }
-*/
   }
 }

@@ -17,7 +17,21 @@ pipeline {
 
   agent none
   stages {
-    stage('Test file lock WINDOWS 10') {
+
+    stage('Test file locking on linux'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_lock_test.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/linuxFileLockTest/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
+        sh 'sleep 20' //allow all processes forked in tests to stop
+        sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
+        junit 'build/reports/cut-report.xml'
+      }
+    }
+
+/*
+    stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
             bat "echo %cd%"
@@ -32,39 +46,10 @@ pipeline {
                 junit 'build\\reports\\winlock-test-report.xml'
 
             }
-
         }
     }
 
-/*
-    stage('TEST WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
-        steps {
-            bat "echo %cd%"
-            bat "echo %cd%"
-            //compile winlocker
-            bat "make -f MakefileWindows winlocker"
-            bat "echo %cd%"
-            bat "build\\test\\bin\\winlocker.exe test\\data\\lockTest\\s4.xtf"
-        }
-
-    }
-*/
-
-/*
-    stage('Test MASTER'){
-      agent { label 'master'}
-      steps {
-        sh 'Scripts/build_lock_test.sh'
-        sh 'mkdir -p build/reports'
-        sh 'test/build/tests -r junit -o build/reports/lock-test-report.xml || true'
-        sh 'sleep 20' //allow all processes forked in tests to stop
-        sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
-        junit 'build/reports/report.xml'
-      }
-    }
-
-    stage('BUILD MASTER'){
+    stage('Build linux installer'){
       agent { label 'master'}
       steps {
         sh 'make'
@@ -86,9 +71,7 @@ pipeline {
         post {
             always {
                 junit 'build\\reports\\*.xml'
-
             }
-
         }
     }
 

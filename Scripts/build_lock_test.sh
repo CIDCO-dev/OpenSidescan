@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p test/build
-cd test/build
+mkdir -p test/linuxFileLockTest/build
+cd test/linuxFileLockTest/build
 cmake ..
 make

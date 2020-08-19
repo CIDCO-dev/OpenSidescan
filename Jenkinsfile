@@ -17,9 +17,60 @@ pipeline {
 
   agent none
   stages {
-/*
 
-    stage('BUILD MASTER'){
+    stage('Test file locking on linux'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_lock_test.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/linuxFileLockTest/build/lockTests -r junit -o build/reports/lock-test-report.xml || true'
+        sh 'sleep 20' //allow all processes forked in tests to stop
+        sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
+        junit 'build/reports/cut-report.xml'
+      }
+    }
+
+    stage('Test file locking on WINDOWS 10') {
+        agent { label 'windows10-x64-2'}
+        steps {
+            bat "echo %cd%"
+            bat "echo %cd%"
+            //compile winlocker
+            bat "make -f MakefileWindows locktest"
+            bat "echo %cd%"
+            bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
+        }
+        post {
+            always {
+                junit 'build\\reports\\winlock-test-report.xml'
+
+            }
+        }
+    }
+
+    stage('Unit tests on linux'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_linux_unit_tests.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
+        junit 'build/reports/opensidescan-linux-test-report.xml'
+      }
+    }
+
+    stage('Unit tests WINDOWS 10') {
+        agent { label 'windows10-x64-2'}
+        steps {
+            bat "make -f MakefileWindows test"
+        }
+        post {
+            always {
+                junit 'build\\reports\\opensidescan-win-test-report.xml'
+            }
+        }
+    }
+
+    stage('Build linux installer'){
       agent { label 'master'}
       steps {
         sh 'make'
@@ -27,26 +78,8 @@ pipeline {
         archiveArtifacts('OpenSidescan_installer*.run')
       }
     }
-*/
-    stage('TEST WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
-        steps {
-            bat "echo %cd%"
-            //bat "make -f MakefileWindows clean"
-            bat "echo %cd%"
-            //compile and run tests
-            bat "make -f MakefileWindows test"
-            bat "echo %cd%"
-        }
-        post {
-            always {
-                junit 'build\\reports\\*.xml'
 
-            }
-
-        }
-    }
-
+    
 
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}
@@ -76,14 +109,13 @@ pipeline {
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       steps {
-        //sh 'mkdir -p $binMasterPublishDir'
+        sh 'mkdir -p $binMasterPublishDir'
         sh 'mkdir -p $binWinx64PublishDir'
 
-        //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
       }
     }
-
 
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-x64-2'}
@@ -123,8 +155,5 @@ pipeline {
 
       }
     }
-
-
   }
-
 }

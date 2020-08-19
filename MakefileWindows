@@ -38,6 +38,18 @@ test_exec_dir=build\\test\\bin
 test_work_dir=build\\test\\work
 test_result_dir=build\\reports
 
+locktest: winlocker
+	mkdir $(test_result_dir)
+	call cd
+	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\winLockCatchMain.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) $(LIBS) /FewinLockTest.exe
+	
+
+winlocker:
+	mkdir $(test_exec_dir)
+	call cd
+	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\locker\\winlocker.cpp /EHsc /Fewinlocker.exe
+	
+
 test: 
 	mkdir $(test_exec_dir)
 	mkdir $(test_result_dir)
@@ -45,7 +57,7 @@ test:
 	call cd
 	call "%windows10_x64_BUILD_TOOLS_ROOT%\\VC\\Auxiliary\\Build\\vcvarsall.bat" x64 && cd build\\test\\bin &&cl ..\\..\\..\\test\\main.cpp $(INCLUDES) /EHsc $(THIRDPARTYFILES) $(SSFILES) $(LIBS) /Fetests.exe
 	call cd
-	call $(test_exec_dir)\\tests.exe -r junit -o $(test_result_dir)\\opensidescan-test-report.xml
+	call $(test_exec_dir)\\tests.exe -r junit -o $(test_result_dir)\\opensidescan-win-test-report.xml
 	call cd
 
 doc:

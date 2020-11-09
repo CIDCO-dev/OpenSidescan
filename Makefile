@@ -1,5 +1,5 @@
 CC=g++
-FLAGS=-O3
+FLAGS=-O3 -lstdc++fs
 INCLUDES=-I/usr/include/eigen3 -I/usr/local/include/opencv
 LIBS=-I/usr/local/include/opencv -I/usr/local/include -L/usr/local/lib -lopencv_dnn -lopencv_highgui -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_videoio -lopencv_imgcodecs -lopencv_features2d -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_core
 QT_INCLUDES=-I/home/jordan/Qt5.14.1/5.14.1/gcc_64/include/QtCore -I../../Qt5.14.1/5.14.1/gcc_64/include -I../../Qt5.14.1/5.14.1/gcc_64/include/QtWidgets -I../../Qt5.14.1/5.14.1/gcc_64/include/QtGui -I../../Qt5.14.1/5.14.1/gcc_64/include/QtXml  -I. -isystem /usr/include/libdrm -I../../Qt5.14.1/5.14.1/gcc_64/mkspecs/linux-g++
@@ -46,6 +46,15 @@ sidescan-detect: prepare
 	
 sidescan-dump: prepare
 	$(CC) $(FLAGS) $(INCLUDES) -o build/bin/sidescan-dump src/cli/sidescan-dump.cpp $(FILES) $(LIBOPENCV)
+	
+test: clean
+	mkdir build
+	cd build ; cmake ..; make ; ./tests -r console
+	
+lock-test:
+	mkdir -p $(test_exec_dir)
+	mkdir -p $(test_result_dir)
+	cd test/build ; cmake ..; make ; ./lockTests -r junit -o ../../build/reports/lock-test-report.xml || true
 	
 unit-tests:
 	mkdir -p $(test_exec_dir)

@@ -21,6 +21,7 @@
 #include "ui/about/aboutdialog.h"
 #include "ui/docks/projectwindow/projectwindow.h"
 #include "ui/detection/detectionwindow.h"
+#include "ui/detection/monitorwindow.h"
 #include "ui/docks/inventorywindow.h"
 #include "ui/docks/vesselgeometrywindow.h"
 
@@ -73,6 +74,12 @@ void MainWindow::buildUI(){
     this->addDockWidget(Qt::RightDockWidgetArea,channelInfo);
     connect(ui->actionShowChannelPropertiesWindow,&QAction::triggered,channelInfo,&ChannelPropertiesWindow::show);
     connect(tabs,&QTabWidget::currentChanged,this,&MainWindow::tabChanged);
+
+    monitorAction = new QAction(QIcon(":/Images/resources/play.png"), QString("Monitor Dir"), this);
+    monitorAction->setCheckable(true);
+    this->ui->mainToolBar->addAction(monitorAction);
+    connect(monitorAction, SIGNAL(triggered()), this, SLOT(monitorActionTriggered()));
+
 
     actionCreate();
 
@@ -786,6 +793,7 @@ void MainWindow::removeSidescanFileFromProject( SidescanFile * file )
 void MainWindow::addFileToProjectWindow( SidescanFile * file )
 {
     projectWindow->addFile(file);
+    refreshObjectInventory();
 }
 
 void MainWindow::tabChanged( int index )
@@ -800,28 +808,66 @@ void MainWindow::tabChanged( int index )
         }
 }
 
-void MainWindow::on_actionMonitor_triggered(bool checked)
+void MainWindow::monitorProgress(QString progress)
 {
-    if(checked){
-        ui->statusBar->showMessage(QString::fromStdString("Monitoring directory for new sidescan files..."));
+    ui->statusBar->showMessage(progress);
+}
 
-        if(monitorThread){
-            delete monitorThread;
-            monitorThread = nullptr;
-        }
+void MainWindow::monitorActionTriggered() {
+    if(!monitorAction->isChecked()) {
 
-        monitorThread = new MonitorThread();
-        monitorThread->start();
+        ui->statusBar->showMessage(QString::fromStdString("Stopping..."));
 
-    }
-    else{
         if(monitorThread){
             monitorThread->stop();
-            delete monitorThread;
-            monitorThread = nullptr;
         }
 
+        monitorAction->setIcon(QIcon(":/Images/resources/play.png"));
+        monitorAction->setChecked(false);
+    } else {
 
-        ui->statusBar->showMessage(QString::fromStdString("Monitoring stopped."));
+        QFileDialog folderDiag(this,  tr("Select folder to monitor"), "");
+        folderDiag.setFileMode(QFileDialog::Directory);
+        folderDiag.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+        if( ! folderDiag.exec() ) {
+             monitorAction->setChecked(false);
+        } else {
+            QString dir = folderDiag.selectedFiles().at(0);
+
+            MonitorWindow monitorWindow(*currentProject,
+                                            fastThresholdValue,
+                                            fastTypeValue,
+                                            fastNonMaxSuppressionValue,
+                                            dbscanEpsilonValue,
+                                            dbscanMinPointsValue,
+                                            mserDeltaValue,
+                                            mserMinimumAreaValue,
+                                            mserMaximumAreaValue,
+                                            mergeOverlappingBoundingBoxesValue,
+                                            this);
+
+            if(monitorWindow.exec() == QDialog::Accepted){
+                //refreshObjectInventory();
+                ui->statusBar->showMessage(QString::fromStdString("Monitoring directory for new sidescan files..."));
+
+                if(monitorThread){
+                    delete monitorThread;
+                    monitorThread = nullptr;
+                }
+
+                monitorThread = new MonitorThread(dir, currentProject, monitorWindow.getDetector());
+                connect( monitorThread, &MonitorThread::fileToBeAddedToProjectWindow,
+                         this, &MainWindow::addFileToProjectWindow);
+                connect(monitorThread, &MonitorThread::updateProgress, this, &MainWindow::monitorProgress);
+
+                monitorAction->setIcon(QIcon(":/Images/resources/stop.png"));
+                monitorThread->start();
+            } else {
+                //reset to "play" icon since action was canceled
+                monitorAction->setIcon(QIcon(":/Images/resources/play.png"));
+                monitorAction->setChecked(false);
+            }
+        }
     }
 }

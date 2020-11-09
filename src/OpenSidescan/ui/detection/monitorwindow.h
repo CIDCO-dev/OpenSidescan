@@ -1,0 +1,122 @@
+#ifndef MONITORWINDOW_H
+#define MONITORWINDOW_H
+
+
+
+
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QLabel>
+#include <QIntValidator>
+
+#include "sidescan/sidescanfile.h"
+#include "sidescan/sidescanimage.h"
+#include "utilities/opencvhelper.h"
+#include "detector/roidetector.h"
+#include "project/project.h"
+
+
+class MonitorWindow : public QDialog
+{
+    Q_OBJECT
+
+public:
+    MonitorWindow(Project & project,
+                    int & fastThresholdValue,
+                    int & fastTypeValue,
+                    bool & fastNonMaxSuppressionValue,
+                    int & dbscanEpsilonValue,
+                    int & dbscanMinPointsValue,
+                    int & mserDeltaValue,
+                    int & mserMinimumAreaValue,
+                    int & mserMaximumAreaValue,
+                    bool & mergeOverlappingBoundingBoxesValue,
+                    QWidget * parent=0
+    );
+
+    int getFastThresholdValue() const { return fastThresholdValue; }
+    int getFastTypeValue() const { return fastTypeValue; }
+    bool getFastNonMaxSuppressionValue() const { return fastNonMaxSuppressionValue; }
+    int getDbscanEpsilonValue() const { return dbscanEpsilonValue; }
+    int getDbscanMinPointsValue() const { return dbscanMinPointsValue; }
+    int getMserDeltaValue() const { return mserDeltaValue; }
+    int getMserMinimumAreaValue() const { return mserMinimumAreaValue; }
+    int getMserMaximumAreaValue() const { return mserMaximumAreaValue; }
+
+    bool getMergeOverlappingBoundingBoxesValue() const { return mergeOverlappingBoundingBoxesValue; }
+
+    Detector * getDetector() {return detector;}
+
+
+private slots:
+    void ok();
+    void cancel();
+
+    void detectorChanged(int i);
+
+private:
+
+    Detector * detector;
+
+    void buildShipwreckDetector();
+    void buildAdvancedDetector();
+
+    void launchDetectionWorker(Detector * detector);
+
+    void createFastParameterBox(QFormLayout * advancedParametersLayout);
+    void createMserParameterBox(QFormLayout * advancedParametersLayout);
+    void createDbscanParameterBox(QFormLayout * advancedParametersLayout);
+
+    Project & project;
+
+    QGroupBox * createDisplayParameterBox();
+
+    QDialogButtonBox * buttonBox;
+
+    QComboBox * cmbDetector;
+    int         currentDetectorIndex;
+
+    //display parameters
+    QGroupBox * displayParameters;
+
+    QCheckBox * mergeBoundingBoxes;
+
+    //FAST parameters
+    QGroupBox * advancedParameters;
+
+    QLineEdit * fastThreshold;
+    QComboBox * fastType;
+    QCheckBox * fastNonMaxSuppression;
+
+    //MSER parameters
+    QLineEdit * mserDelta;
+    QLineEdit * mserMinimumArea;
+    QLineEdit * mserMaximumArea;
+
+
+    //DBSCAN parameters;
+    QLineEdit * dbscanEpsilon;
+    QLineEdit * dbscanMinimumPointCount;
+
+    //Values
+    int & fastThresholdValue;
+    int & fastTypeValue;
+    bool & fastNonMaxSuppressionValue;
+    int & dbscanEpsilonValue;
+    int & dbscanMinPointsValue;
+    int & mserDeltaValue;
+    int & mserMinimumAreaValue;
+    int & mserMaximumAreaValue;
+    bool & mergeOverlappingBoundingBoxesValue;
+
+    void initUI();
+
+};
+
+#endif // MONITORWINDOW_H
+

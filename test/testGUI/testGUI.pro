@@ -49,7 +49,7 @@ win32 {
     LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_calib3d347.lib"
   }
 
-SOURCES += testGUI.cpp \
+SOURCES += \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
     ../../src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp \
@@ -76,11 +76,13 @@ SOURCES += testGUI.cpp \
     ../../src/OpenSidescan/refactorme/progressdialognotclosingrightawayoncancel.cpp \
     ../../src/OpenSidescan/ui/detection/detectionwindow.cpp \
     ../../src/OpenSidescan/ui/detection/workerdetection.cpp \
+    ../../src/OpenSidescan/ui/detection/monitorwindow.cpp \
     ../../src/OpenSidescan/ui/inventory/inventoryobjectmenu.cpp \
     ../../src/OpenSidescan/ui/inventory/inventoryobjectwindow.cpp \
     ../../src/OpenSidescan/ui/mainimage/imagetab.cpp \
     ../../src/OpenSidescan/ui/mainimage/imagetablabel.cpp \
     ../../src/OpenSidescan/ui/mainwindow/mainwindow.cpp \
+    ../../src/OpenSidescan/ui/mainwindow/monitorthread.cpp \
     ../../src/OpenSidescan/ui/mainwindow/workerimportsidescanfiles.cpp \
     ../../src/OpenSidescan/ui/mainwindow/workeropenproject.cpp \
     ../../src/OpenSidescan/ui/training/trainingsampleswindow.cpp \
@@ -89,7 +91,8 @@ SOURCES += testGUI.cpp \
     ../../src/OpenSidescan/utilities/qthelper.cpp \
     ../../src/OpenSidescan/ui/training/parameterscvCreateTrainingSamples.cpp \
     ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.cpp \
-    ../../src/OpenSidescan/detector/roidetector.cpp
+    ../../src/OpenSidescan/detector/roidetector.cpp \
+    testGUI.cpp
 
 HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
     ../../src/OpenSidescan/project/project.h \
@@ -104,6 +107,7 @@ HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
     ../../src/OpenSidescan/sidescan/sidescanimager.h \
     ../../src/OpenSidescan/ui/detection/detectionwindow.h \
     ../../src/OpenSidescan/ui/detection/workerdetection.h \
+    ../../src/OpenSidescan/ui/detection/monitorwindow.h \
     ../../src/OpenSidescan/ui/docks/projectwindow/projecttreeitem.h \
     ../../src/OpenSidescan/ui/docks/projectwindow/projecttreemodel.h \
     ../../src/OpenSidescan/ui/docks/projectwindow/projectwindow.h \
@@ -115,6 +119,7 @@ HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
     ../../src/OpenSidescan/ui/mainimage/imagetab.h \
     ../../src/OpenSidescan/ui/mainimage/imagetablabel.h \
     ../../src/OpenSidescan/ui/mainwindow/mainwindow.h \
+    ../../src/OpenSidescan/ui/mainwindow/monitorthread.h \
     ../../src/OpenSidescan/ui/mainwindow/workerimportsidescanfiles.h \
     ../../src/OpenSidescan/ui/mainwindow/workeropenproject.h \
     ../../src/OpenSidescan/ui/training/trainingsampleswindow.h \

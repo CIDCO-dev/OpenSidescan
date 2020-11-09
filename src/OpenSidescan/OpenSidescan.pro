@@ -57,6 +57,7 @@ SOURCES += main.cpp\
     sidescan/sidescanfile.cpp \
     sidescan/sidescanimage.cpp \
     sidescan/sidescanimager.cpp \
+    ui/detection/monitorwindow.cpp \
     ui/docks/projectwindow/projecttreeitem.cpp \
     ui/docks/projectwindow/projecttreemodel.cpp \
     ui/docks/projectwindow/projectwindow.cpp \
@@ -89,6 +90,7 @@ SOURCES += main.cpp\
 HEADERS  +=     machinelearning/dbscan.h \
     project/project.h \
     inventoryobject/inventoryobject.h \
+    ui/detection/monitorwindow.h \
     ui/training/parameterscvCreateTrainingSamples.h \
     detector/detector.h \
     ui/about/aboutdialog.h \

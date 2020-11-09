@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QScrollArea>
 #include <QLabel>
+#include <QAction>
 
 #include "sidescan/sidescanimage.h"
 #include "sidescan/sidescanimager.h"
@@ -26,7 +27,10 @@
 
 namespace Ui {
 class MainWindow;
+
 }
+
+class MonitorThread;
 
 class MainWindow : public QMainWindow
 {
@@ -76,10 +80,12 @@ public slots:
 
     void tabChanged( int index );
 
+    void monitorProgress(QString progress);
+
 
 private slots:
 
-    void on_actionMonitor_triggered(bool checked);
+    void monitorActionTriggered();
 
 protected:
 
@@ -104,6 +110,7 @@ protected:
     Project              * currentProject = nullptr;
 
     MonitorThread        * monitorThread = nullptr;
+    QAction * monitorAction = nullptr;
 
     //Detection parameters
     int    fastThresholdValue                   = 100;

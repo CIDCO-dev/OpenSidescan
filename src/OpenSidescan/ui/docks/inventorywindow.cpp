@@ -172,7 +172,7 @@ void InventoryWindow::refreshInventoryTable(){
     this->inventoryTable->setColumnCount(7);
 
     QStringList headers;
-    headers << "Name" << "File" << "Channel" << "Longitude" << "Latitude" << "Width (m)" << "Height (m)";
+    headers << "Name" << "File" << "Channel" << "Longitude" << "Latitude" << "Width (m)" << "Length (m)";
     this->inventoryTable->setHorizontalHeaderLabels(headers);
 
     int row =0;

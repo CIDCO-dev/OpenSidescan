@@ -61,7 +61,104 @@ void InventoryObject::computeDimensions(){
 }
 
 void InventoryObject::computePosition(){
+/*
+    if(yCenter < image.getPings().size()){
+        SidescanPing * pingCenter = image.getPings()[yCenter];
 
+        //Get start/end pings to compute the direction vector
+        SidescanPing * startPing = nullptr;
+        SidescanPing * endPing   = nullptr;
+
+        bool reversed = false;
+
+        if(yCenter + 1 < image.getPings().size()){
+            //Compute vector using next position
+            startPing = image.getPings()[yCenter];
+            endPing   = image.getPings()[yCenter+1];
+        }
+        else if(yCenter - 1 > 0) {
+            //No next position, use previous position
+            startPing = image.getPings()[yCenter - 1];
+            endPing   = image.getPings()[yCenter];
+        }
+        else {
+            //Poop.
+            startPing = endPing = pingCenter;
+        }
+
+        //Flip if timestamps are inverted
+        if(startPing->getTimestamp() > endPing->getTimestamp()){
+            SidescanPing * tmp = startPing;
+            startPing = endPing;
+            endPing   = tmp;
+            reversed = true;
+            std::cout << "Inverted timestamps" << std::endl;
+        }
+
+        Eigen::Vector3d startPositionECEF;
+        CoordinateTransform::getPositionECEF(startPositionECEF, *startPing->getPosition());
+
+        Eigen::Vector3d endPositionECEF;
+        CoordinateTransform::getPositionECEF(endPositionECEF, *endPing->getPosition());
+
+        Eigen::Vector3d shipDirection = (endPositionECEF - startPositionECEF).normalized();
+
+        Eigen::Vector3d shipPositionEcef;
+        CoordinateTransform::getPositionECEF(shipPositionEcef, *pingCenter->getPosition());
+
+        Eigen::Vector3d shipNormal = shipPositionEcef.normalized();
+
+        Eigen::Vector3d starboard = shipDirection.cross(shipNormal);
+        Eigen::Vector3d port = -starboard;
+
+        double delta = pingCenter->getDistancePerSample();
+        double distanceToObject = delta*yCenter;
+
+        Eigen::Vector3d sideScanDistanceECEF;
+
+        if(image.isStarboard() || (image.isPort() && reversed)) {
+            sideScanDistanceECEF = starboard*distanceToObject;
+        } else if(image.isPort() || (image.isStarboard() && reversed) ) {
+            sideScanDistanceECEF = port*distanceToObject;
+        } else {
+            position = new Position(
+                        pingCenter->getPosition()->getTimestamp(),
+                        pingCenter->getPosition()->getLatitude(),
+                        pingCenter->getPosition()->getLongitude(),
+                        pingCenter->getPosition()->getEllipsoidalHeight());
+            return; // this image is neither port nor starboard. For now, use ship position
+        }
+
+        // TODO: get this lever arm from platform metadata
+        Eigen::Vector3d antenna2TowPoint = image.getFile().getAntenna2TowPointLeverArm();
+        Eigen::Matrix3d ship2Ecef;
+        ship2Ecef.row(0) = shipDirection;
+        ship2Ecef.row(1) = starboard;
+        ship2Ecef.row(2) = shipNormal;
+        Eigen::Vector3d antenna2TowPointEcef = ship2Ecef*antenna2TowPoint;
+
+        //std::cout << "angle between tangent and normal: " << std::acos(tangentUnitVector.dot(normalUnitVector))*180/M_PI << std::endl;
+
+
+        // TODO: get this layback from xtf file
+        // -tangent vector since tow fish is assumed to be directly behind ship
+        // -normal vector since sensorDepth is positive down (according to XTF doc)
+        Eigen::Vector3d backEcef = pingCenter->getLayback()*(-shipDirection);
+        Eigen::Vector3d downEcef = pingCenter->getSensorDepth()*(-shipNormal);
+        Eigen::Vector3d laybackEcef = backEcef + downEcef;
+
+        position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
+        //set position of this georeferenced object
+        SideScanGeoreferencing::georeferenceSideScanEcef(shipPositionEcef, antenna2TowPointEcef, laybackEcef, sideScanDistanceECEF, *position);
+    }
+    else{
+        position = nullptr;
+    }
+
+    if ( position == nullptr ){
+        throw new Exception( "GeoreferencedObject::computePosition(): position is nullptr" );
+    }
+*/
     if(yCenter < image.getPings().size()){
         SidescanPing * pingCenter = image.getPings()[yCenter];
 

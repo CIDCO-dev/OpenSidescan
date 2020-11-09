@@ -72,7 +72,7 @@ public:
         SidescanFile * file = new SidescanFile(filename, antenna2TowPointLeverArm);
         std::vector<SidescanImage *> * matrixes = new std::vector<SidescanImage *>();
 
-        //std::cerr << "Generating images for " << channels.size() << " channels" << std::endl;
+        std::cerr << "Generating images for " << channels.size() << " channels" << std::endl;
 
         double averageXDistancePerPixel=0.0;
 
@@ -81,7 +81,7 @@ public:
 
             cv::Mat img(channels[i]->size(),channels[i]->at(0)->getSamples().size(), CV_64F,cv::Scalar(0));
 
-//            std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
+            //std::cerr << "SidescanImager::generate(), Rows: " << channels[i]->size() << " Cols: " << channels[i]->at(0)->getSamples().size() << std::endl;
 
             unsigned int attitudeIndex =0 ;
             unsigned int positionIndex =0 ;
@@ -136,7 +136,7 @@ public:
 
                 //generate pixel row
                 for(unsigned int k=0;k<channels[i]->at(j)->getSamples().size();k++){ //k indexes cols
-                    img.at<double>(j, k, 0) = channels[i]->at(j)->getSamples().at(k) ;
+                    img.at<double>(channels[i]->size()-j-1, k, 0) = channels[i]->at(j)->getSamples().at(k) ;
                 }
 
                 averageXDistancePerPixel += channels[i]->at(j)->getDistancePerSample();

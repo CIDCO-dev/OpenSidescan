@@ -35,9 +35,9 @@ TrainingSamplesWindow::TrainingSamplesWindow( QWidget *parent,
     : QDialog( parent ),
       folder( folder ), parameters( parameters ),
       userDidCancel( false ),
-      originalObjectImages( "OriginalObjectImages" ),
-      outputPositiveSamples( "OutputPositiveSamples"),
-      background("Background" )
+      originalObjectImages( "original" ),
+      outputPositiveSamples( "positive"),
+      background("background" )
 {
     qDebug() << "Beginning of TrainingSamplesWindow::TrainingSamplesWindow()\n";
 

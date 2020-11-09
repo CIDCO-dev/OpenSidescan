@@ -477,9 +477,9 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     if ( numberOfObjects == 0 )
         return;
 
-    std::string originalObjectImages = "OriginalObjectImages";
-    std::string outputPositiveSamples = "OutputPositiveSamples";
-    std::string background = "Background";
+    std::string originalObjectImages = "original";
+    std::string outputPositiveSamples = "positive";
+    std::string background = "background";
 
     QString folderOriginalObjectImages = folder + "/" + QObject::tr( originalObjectImages.c_str() );
     QString folderOutputPositiveSamples = folder + "/" + QObject::tr( outputPositiveSamples.c_str() );
@@ -517,8 +517,7 @@ void MainWindow::createAndSaveTrainingObjectSamples( const QString & folder,
     // TODO ? non native
 
     progress.setWindowModality(Qt::WindowModal);
-    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint
-                            | Qt::WindowTitleHint);
+    progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
 
     QThread * workerThread = new QThread( this );
 

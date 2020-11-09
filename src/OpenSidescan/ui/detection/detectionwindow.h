@@ -15,6 +15,7 @@
 #include "sidescan/sidescanimage.h"
 #include "utilities/opencvhelper.h"
 #include "detector/roidetector.h"
+#include "detector/houghdetector.h"
 #include "project/project.h"
 
 
@@ -57,6 +58,7 @@ private slots:
 private:
     void buildShipwreckDetector();
     void buildAdvancedDetector();
+    void buildHoughDetector();
 
     void launchDetectionWorker(Detector * detector);
 

@@ -9,4 +9,5 @@
 
 #include "SideScanImagerTest.h"
 #include "ProjectTest.h"
-
+#include "DetectorTest.h"
+#include "GeoreferencingTest.h"

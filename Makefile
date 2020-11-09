@@ -12,6 +12,7 @@ SSFILES=$(SS)/sidescan/sidescanfile.cpp \
 	$(SS)/sidescan/sidescanimage.cpp \
 	$(SS)/inventoryobject/inventoryobject.cpp \
 	$(SS)/detector/roidetector.cpp \
+	$(SS)/detector/houghdetector.cpp \
 	$(SS)/detector/detector.cpp \
 	$(SS)/utilities/opencvhelper.cpp
 

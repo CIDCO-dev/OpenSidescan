@@ -81,6 +81,11 @@ void DetectionWindow::initUI(){
     //Add detector types
     //If we added them before, the app would trigger a selected() event upon insertion and trigger the redraw login on uninitialized elements
     cmbDetector->addItem(tr("Large Objects (Ex: Shipwrecks)"),"shipwrecks");
+
+    //TODO: reactivate this once debugged
+    //cmbDetector->addItem(tr("Circular objects"),"circles");
+
+
     cmbDetector->addItem(tr("Machine Vision Mode (Expert Users Only)"),"machinevision");
 }
 
@@ -88,12 +93,16 @@ void DetectionWindow::detectorChanged(int i){
     currentDetectorIndex = i;
 
     const char * id = cmbDetector->itemData(i).toString().toStdString().c_str();
+    advancedParameters->setVisible(false);
 
     if(strcmp(id,"shipwrecks")==0){
-        advancedParameters->setVisible(false);
+        //No parameter UI for shipwreck detector
     }
     if(strcmp(id,"machinevision")==0){
        advancedParameters->setVisible(true);
+    }
+    if(strcmp(id,"circles")==0){
+        //No parameter UI for circle detector
     }
 
     this->adjustSize();
@@ -194,6 +203,10 @@ void DetectionWindow::ok(){
     if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("machinevision")==0){
         buildAdvancedDetector();
     }
+    if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("circles")==0){
+        buildHoughDetector();
+    }
+
 
     this->accept();
 }
@@ -210,6 +223,12 @@ void DetectionWindow::buildShipwreckDetector(){
                     15000,
                     true
                 );
+
+    launchDetectionWorker(detector);
+}
+
+void DetectionWindow::buildHoughDetector(){
+    Detector * detector = new HoughDetector();
 
     launchDetectionWorker(detector);
 }

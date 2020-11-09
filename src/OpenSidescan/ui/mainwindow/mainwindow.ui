@@ -411,7 +411,7 @@
    <sender>actionExportHTML</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>actionSaveObjectImages()</slot>
+   <slot>actionExportHTML()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -466,7 +466,7 @@
   <slot>actionSave()</slot>
   <slot>actionSaveAs()</slot>
   <slot>actionExportKmlFile()</slot>
-  <slot>actionSaveObjectImages()</slot>
+  <slot>actionExportHTML()</slot>
   <slot>actionExportTrainingObjectSamples()</slot>
   <slot>actionExportCsvFile()</slot>
  </slots>

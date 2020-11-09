@@ -1,6 +1,6 @@
 /* 
  * File:   DetectObjectsTest.hpp
- * Author: jordan
+ * Author: glm,jordan
  */
 
 #ifndef DETECTOBJECTSTEST_HPP
@@ -12,12 +12,13 @@
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/detector/roidetector.h"
+#include "../src/OpenSidescan/detector/houghdetector.h"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
 #include "opencv2/opencv.hpp"
 
-TEST_CASE("Test Detect Objects") {
+TEST_CASE("Test Wreck Detector") {
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 
@@ -41,19 +42,6 @@ TEST_CASE("Test Detect Objects") {
     }
 
     REQUIRE(image);
-    /*
-    Detector * detector = new RoiDetector(
-                    300,
-                    cv::FastFeatureDetector::TYPE_9_16,
-                    false,
-                    50,
-                    20,
-                    6,
-                    320,
-                    15000,
-                    true
-                );
-    */
 
     // setup region of interest detector
     int fastThreshold = 300;
@@ -76,29 +64,65 @@ TEST_CASE("Test Detect Objects") {
             mserMinimumArea,
             mserMaximumArea,
             mergeOverlappingObjects);
-    
+
     std::vector<InventoryObject*> objectsFound;
-    
+
     roiDetector.detect(*image, objectsFound);
-    
+
     REQUIRE(objectsFound.size() == 1);
-    
+
     InventoryObject* airplane = objectsFound[0];
-    
+
     Position* position = airplane->getPosition();
-    
-    std::cout << "airplane longitude: " << position->getLongitude() << std::endl;
-    std::cout << "airplane latitude: " << position->getLatitude() << std::endl;
-    
+
+    //std::cout << "airplane longitude: " << position->getLongitude() << std::endl;
+    //std::cout << "airplane latitude: " << position->getLatitude() << std::endl;
+
+    //TODO: test position
+
     //clean up pointers
     delete image;
     delete parser;
-    
+
     for(unsigned int i=0; i<objectsFound.size(); i++) {
         delete objectsFound[i];
     }
 }
 
+TEST_CASE("Test Hough Detector"){
+    std::string sidescanFileName = "/media/glm/Backup Plus/Archeo_Beauport_AECOM/StarFish/xtf/22_07_2020_C2.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0, 0, 0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    HoughDetector detector;
+    std::vector<InventoryObject*> objectsFound;
+
+    for(auto i = file->getImages().begin();i!=file->getImages().end();i++){
+	std::vector<InventoryObject*> objectsFound;
+
+    	detector.detect(**i,objectsFound);
+
+	cv::imshow("detect",(*i)->getImage());
+	cv::waitKey();
+
+	if((*i)->getChannelNumber()==0){
+		REQUIRE(objectsFound.size() == 1);
+	}
+	else{
+		REQUIRE(objectsFound.size() == 0);
+	}
+
+    }
+
+}
 
 #endif /* DETECTOBJECTSTEST_HPP */
 

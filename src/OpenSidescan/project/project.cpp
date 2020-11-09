@@ -327,6 +327,10 @@ void Project::saveObjectImages( const QString & absolutePath, const QString & fi
         xmlWriter.writeStartElement("tr");
 
         xmlWriter.writeStartElement("th");
+        xmlWriter.writeCharacters( "Target" );
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("th");
         xmlWriter.writeCharacters( "Name" );
         xmlWriter.writeEndElement();
 
@@ -354,13 +358,8 @@ void Project::saveObjectImages( const QString & absolutePath, const QString & fi
         xmlWriter.writeCharacters( "Height (m)" );
         xmlWriter.writeEndElement();
 
-        xmlWriter.writeStartElement("th");
-        xmlWriter.writeCharacters( "Image" );
-        xmlWriter.writeEndElement();
-
 
         xmlWriter.writeEndElement(); // tr
-
 
         mutex.lock();
 
@@ -371,11 +370,8 @@ void Project::saveObjectImages( const QString & absolutePath, const QString & fi
                 for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
                     // Copy the part of the cv::Mat with the object into a new cv::Mat
-                    cv::Mat objectMat;
+                    cv::Mat objectMat ( (*k)->getPixelHeight() ,(*k)->getPixelWidth(), CV_8UC1 );
                     (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
-
-                    // Create a QPixmap
-                    QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
                     // Find filename that does not already exist
                     QString objectName = QString::fromStdString( (*k)->getName() );
@@ -399,7 +395,7 @@ void Project::saveObjectImages( const QString & absolutePath, const QString & fi
                     }
 
                     // Save pixmap
-                    pixmap.save( objectImageFileNameWithPath );
+                    cv::imwrite(objectImageFileNameWithPath.toStdString(),objectMat);
 
                     xmlWriter.writeStartElement("tr");
 

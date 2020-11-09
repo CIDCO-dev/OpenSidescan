@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
@@ -65,6 +65,7 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
       outFile( outFile ),
       continueWhatYourDoing( continueWhatYourDoing )
 {
+
 }
 
 
@@ -75,11 +76,13 @@ void WorkerTrainingSamples::computeMaxDimensions(SidescanFile & file){
         // k is an iterator to (GeoreferencedObject *)
         for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-            if ( (*k)->getPixelWidth() > maxObjectWidth )
+            if ( (*k)->getPixelWidth() > maxObjectWidth ){
                 maxObjectWidth = (*k)->getPixelWidth();
+            }
 
-            if ( (*k)->getPixelHeight() > maxObjectHeight )
+            if ( (*k)->getPixelHeight() > maxObjectHeight ){
                 maxObjectHeight = (*k)->getPixelHeight();
+            }
         }
     }
 }
@@ -152,11 +155,9 @@ void WorkerTrainingSamples::saveSamples(SidescanFile & file){
             }
 
             // Copy the part of the cv::Mat with the object into a new cv::Mat
-            cv::Mat objectMat;
+            cv::Mat objectMat((*k)->getPixelHeight(),(*k)->getPixelWidth(),CV_8UC1);
             (*j)->getImage()( cv::Rect( (*k)->getX(), (*k)->getY(), (*k)->getPixelWidth(), (*k)->getPixelHeight() ) ).copyTo( objectMat );
 
-            // Create a QPixmap
-            QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
             // Find filename that does not already exist
             QString objectName = QString::fromStdString( (*k)->getName() );
@@ -182,8 +183,7 @@ void WorkerTrainingSamples::saveSamples(SidescanFile & file){
             }
 
             // Save pixmap
-            pixmap.save( objectImageFileNameWithPath );
-
+            cv::imwrite(objectImageFileNameWithPath.toStdString(),objectMat);
 
             int showsamples = 0;
             int width;
@@ -375,11 +375,8 @@ void WorkerTrainingSamples::saveBackgroundImage( SidescanImage * image,
     int height = backgroundBottom - backgroundTop + 1;
 
     // Copy the part of the cv::Mat with the object into a new cv::Mat
-    cv::Mat objectMat;
+    cv::Mat objectMat(height,image->getImage().cols,CV_8UC1);
     image->getImage()( cv::Rect( 0, backgroundTop, image->getImage().cols, height ) ).copyTo( objectMat );
-
-    // Create a QPixmap
-    QPixmap pixmap = QPixmap::fromImage( QtHelper::cvMatToQImage( objectMat ) );
 
     // Find filename that does not already exist
     QString objectName = QString::fromStdString( "Background" );
@@ -405,8 +402,7 @@ void WorkerTrainingSamples::saveBackgroundImage( SidescanImage * image,
     }
 
     // Save pixmap
-    pixmap.save( objectImageFileNameWithPath );
-
+    cv::imwrite(objectImageFileNameWithPath.toStdString(),objectMat);
 
     if ( outFile.is_open() ) {
         // Image's path written in the file must be relative to outFile's location

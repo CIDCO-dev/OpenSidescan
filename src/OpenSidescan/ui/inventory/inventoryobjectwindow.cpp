@@ -43,7 +43,7 @@ void InventoryObjectWindow::initUI(){
 
     layout->addRow(lblWidth,txtWidth);
 
-    QLabel * lblHeight  = new QLabel(tr("Height"),this);
+    QLabel * lblHeight  = new QLabel(tr("Length"),this);
 
     std::string heightString = (!std::isnan(object->getHeight())) ?std::to_string(object->getHeight()) : "Unknown" ;
     QLabel * txtHeight  = new QLabel(tr(heightString.c_str()),this);

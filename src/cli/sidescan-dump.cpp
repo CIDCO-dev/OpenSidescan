@@ -16,6 +16,7 @@
 #include "opencv2/opencv.hpp"
 
 /**Writes the usage information about the datagram-list*/
+
 void printUsage(){
 	std::cerr << "\n\
 	NAME\n\n\

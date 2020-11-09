@@ -83,7 +83,8 @@ SOURCES += main.cpp\
     ui/training/parameterscvCreateTrainingSamples.cpp \
     ui/docks/vesselgeometrywindow.cpp \
     detector/roidetector.cpp \
-    ui/mainwindow/monitorthread.cpp
+    ui/mainwindow/monitorthread.cpp \
+    detector/houghdetector.cpp
 
 
 HEADERS  +=     machinelearning/dbscan.h \
@@ -119,7 +120,8 @@ HEADERS  +=     machinelearning/dbscan.h \
     utilities/qthelper.h \
     ui/docks/vesselgeometrywindow.h \
     detector/roidetector.h \
-    ui/mainwindow/monitorthread.h
+    ui/mainwindow/monitorthread.h \
+    detector/houghdetector.h
 
 FORMS    += ui/mainwindow/mainwindow.ui \
     ui/about/aboutdialog.ui

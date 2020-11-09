@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
@@ -65,6 +65,7 @@ WorkerTrainingSamples::WorkerTrainingSamples( Project * project, const int numbe
       outFile( outFile ),
       continueWhatYourDoing( continueWhatYourDoing )
 {
+
 }
 
 
@@ -75,11 +76,13 @@ void WorkerTrainingSamples::computeMaxDimensions(SidescanFile & file){
         // k is an iterator to (GeoreferencedObject *)
         for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
 
-            if ( (*k)->getPixelWidth() > maxObjectWidth )
+            if ( (*k)->getPixelWidth() > maxObjectWidth ){
                 maxObjectWidth = (*k)->getPixelWidth();
+            }
 
-            if ( (*k)->getPixelHeight() > maxObjectHeight )
+            if ( (*k)->getPixelHeight() > maxObjectHeight ){
                 maxObjectHeight = (*k)->getPixelHeight();
+            }
         }
     }
 }

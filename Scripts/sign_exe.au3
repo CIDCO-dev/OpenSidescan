@@ -5,7 +5,7 @@ Sleep(2000)
 Send($CMD)
 Send("{Enter}")
 Sleep(8000)
-Send(EnvGet("Sign_Password"))
+Send(EnvGet("Sign_Password"),1)
 Send("{Enter}")
 Sleep(4000)
 

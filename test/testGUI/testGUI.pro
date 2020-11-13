@@ -92,6 +92,7 @@ SOURCES += \
     ../../src/OpenSidescan/ui/training/parameterscvCreateTrainingSamples.cpp \
     ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.cpp \
     ../../src/OpenSidescan/detector/roidetector.cpp \
+    ../../src/OpenSidescan/detector/houghdetector.cpp \
     testGUI.cpp
 
 HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
@@ -128,6 +129,7 @@ HEADERS  += ../../src/OpenSidescan/machinelearning/dbscan.h \
     ../../src/OpenSidescan/utilities/qthelper.h \
     ../../src/OpenSidescan/ui/docks/vesselgeometrywindow.h \
     ../../src/OpenSidescan/detector/roidetector.h
+    ../../src/OpenSidescan/detector/houghdetector.h
 
 FORMS    += 	../../src/OpenSidescan/ui/mainwindow/mainwindow.ui \
                 ../../src/OpenSidescan/ui/about/aboutdialog.ui

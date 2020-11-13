@@ -12,7 +12,7 @@
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
     startPing(*image.getPings().at( y)       ),
-    endPing(*image.getPings().at( std::min((int) y+pixelHeight,(int) image.getPings().size())) ),
+    endPing(*image.getPings().at( std::min((int) y+pixelHeight,((int) image.getPings().size()) - 1 )) ),
     x(x),
     y(y),
     pixelWidth(pixelWidth),
@@ -22,7 +22,7 @@ InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidt
 {
     yCenter = y + (pixelHeight/2);
     xCenter = x + (pixelWidth/2);
-
+    
     computeDimensions();
     computePosition();
 }
@@ -57,7 +57,6 @@ void InventoryObject::computeDimensions(){
     else{
         height = 0;
     }
-
 }
 
 void InventoryObject::computePosition(){
@@ -159,16 +158,22 @@ void InventoryObject::computePosition(){
         throw new Exception( "GeoreferencedObject::computePosition(): position is nullptr" );
     }
 */
+    
+    
     if(yCenter < image.getPings().size()){
         SidescanPing * pingCenter = image.getPings()[yCenter];
-
+        
         Eigen::Vector3d shipPositionEcef;
+        if(pingCenter->getPosition() == nullptr) {
+            throw new Exception("GeoreferencedObject::computePosition(): pingCenter has null Position pointer");
+        }
         CoordinateTransform::getPositionECEF(shipPositionEcef, *pingCenter->getPosition());
-
+        
         Eigen::Vector3d tangentUnitVector;
         bool tangentFound = false;
         int offset = 0;
 
+        
         while(!tangentFound) {
             ++offset;
             if(yCenter + offset < image.getPings().size()) {
@@ -211,6 +216,8 @@ void InventoryObject::computePosition(){
                 throw new Exception("GeoreferencedObject::computePosition(): Could not find another position to compute tangent vector to ship trajectory.");
             }
         }
+        
+        
 
         Eigen::Vector3d normalUnitVector = shipPositionEcef.normalized();
 
@@ -255,10 +262,12 @@ void InventoryObject::computePosition(){
 
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
         //set position of this georeferenced object
+        
+        
         SideScanGeoreferencing::georeferenceSideScanEcef(shipPositionEcef, antenna2TowPointEcef, laybackEcef, sideScanDistanceECEF, *position);
     }
     else{
-        position = NULL;
+        position = nullptr;
     }
 
     if ( position == nullptr )

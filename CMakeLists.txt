@@ -6,17 +6,22 @@ project(opensidescan VERSION 0.01)
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+# QT5
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# add the executable
-add_executable(opensidescan ${CMAKE_CURRENT_SOURCE_DIR}src/OpenSidescan/main.cpp)
+
 
 # find_package will locate dependencies wheter they are installed from source or from a package manager
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 3.3 REQUIRED)
 find_package(OpenCV 3.4.7 REQUIRED)
-list(APPEND CMAKE_PREFIX_PATH "/usr/include/x86_64-linux-gnu") # append path list where find_package is looking
+#list(APPEND CMAKE_PREFIX_PATH "/usr/include/x86_64-linux-gnu") # append path list where find_package is looking
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-#message("opencv_libs: " ${OpenCV_LIBS})
+INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS}) #special variable got from find_package() to include QtWidgets dependencies directories
+find_package(Qt5Xml REQUIRED)
+INCLUDE_DIRECTORIES(${Qt5Xml_INCLUDE_DIRS})
 
 set(SS src/OpenSidescan)
 set(SOURCE_FILES ${SS}/sidescan/sidescanfile.cpp;
@@ -26,26 +31,65 @@ set(SOURCE_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/detector/roidetector.cpp;
     ${SS}/detector/houghdetector.cpp;
     ${SS}/detector/detector.cpp;
+    ${SS}/machinelearning/dbscan.cpp;
+    ${SS}/project/project.cpp;
+    ${SS}/ui/detection/monitorwindow.cpp;
+    ${SS}/ui/docks/projectwindow/projecttreeitem.cpp;
+    ${SS}/ui/docks/projectwindow/projecttreemodel.cpp;
+    ${SS}/ui/docks/projectwindow/projectwindow.cpp;
+    ${SS}/ui/docks/channelpropertieswindow.cpp;
+    ${SS}/ui/docks/filepropertieswindow.cpp;
+    ${SS}/ui/docks/inventorywindow.cpp;
+    ${SS}/ui/about/aboutdialog.cpp;
+    ${SS}/refactorme/progressdialognotclosingrightawayoncancel.cpp;
+    ${SS}/ui/detection/detectionwindow.cpp;
+    ${SS}/ui/detection/workerdetection.cpp;
+    ${SS}/ui/inventory/inventoryobjectmenu.cpp;
+    ${SS}/ui/inventory/inventoryobjectwindow.cpp;
+    ${SS}/ui/mainimage/imagetab.cpp;
+    ${SS}/ui/mainimage/imagetablabel.cpp;
+    ${SS}/ui/mainwindow/mainwindow.cpp;
+    ${SS}/ui/mainwindow/workerimportsidescanfiles.cpp;
+    ${SS}/ui/mainwindow/workeropenproject.cpp;
+    ${SS}/ui/training/trainingsampleswindow.cpp;
+    ${SS}/ui/training/workertrainingsamples.cpp;
+    ${SS}/utilities/opencvhelper.cpp;
+    ${SS}/utilities/qthelper.cpp;
+    ${SS}/ui/training/parameterscvCreateTrainingSamples.cpp;
+    ${SS}/ui/docks/vesselgeometrywindow.cpp;
+    ${SS}/ui/mainwindow/monitorthread.cpp;
+    ${SS}/ui/about/aboutdialog.ui
+    ${SS}/ui/mainwindow/mainwindow.ui
     )
 
-set(3RDParty src/thirdparty)
-set(THIRDPARTY ${3rdParty}/MBES-lib/src/datagrams/DatagramParser.cpp;
-    ${3rdParty}/MBES-lib/src/datagrams/DatagramParserFactory.cpp;
-    ${3rdParty}/MBES-lib/src/datagrams/s7k/S7kParser.cpp;
-    ${3rdParty}/MBES-lib/src/datagrams/s7k/S7kParser.cpp;
-    ${3rdParty}/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp;
-    ${3rdParty}/MBES-lib/src/datagrams/xtf/XtfParser.cpp;
-    ${3rdParty}/MBES-lib/src/utils/NmeaUtils.cpp;
-    ${3rdParty}/MBES-lib/src/utils/StringUtils.cpp;
-    ${3rdParty}/MBES-lib/src/sidescan/SidescanPing.cpp;
-    ${3rdParty}/opencv/apps/createsamples/utility.cpp;
+set(3rdParty src/thirdParty/MBES-lib/src)
+set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
+    ${3rdParty}/datagrams/DatagramParserFactory.cpp;
+    ${3rdParty}/datagrams/s7k/S7kParser.cpp;
+    ${3rdParty}/datagrams/kongsberg/KongsbergParser.cpp;
+    ${3rdParty}/datagrams/xtf/XtfParser.cpp;
+    ${3rdParty}/utils/NmeaUtils.cpp;
+    ${3rdParty}/utils/StringUtils.cpp;
+    ${3rdParty}/sidescan/SidescanPing.cpp;
+    src/thridParty/opencv/apps/createsamples/utility.cpp;
+    
     )
 
-add_library(libvar STATIC ${SOURCE_FILES}) 
-target_include_directories(libvar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${SS} ${CMAKE_CURRENT_SOURCE_DIR}/${3rdParty}) # include directories where header files are located
-target_link_libraries(libvar PUBLIC Eigen3::Eigen)
-target_link_libraries(opensidescan PUBLIC libvar Eigen3::Eigen ${OpenCV_LIBS} Qt5::Widgets) # link libraries to executable
-#target_link_libraries(libvar Eigen3::Eigen)
+# headers include directories
+set(INCLUDE_DIR
+    ${SS};
+    ${3rdParty};
+    src/thridParty/opencv/apps/createsamples;
+    ${SS}/ui/mainwindow;
+    )
+
+#INCLUDE_DIRECTORIES(${INCLUDE_DIR})
+add_library(libvar STATIC ${SOURCE_FILES} ${THIRDPARTY}) 
+target_include_directories(libvar PUBLIC ${INCLUDE_DIR}) # include directories where header files are located
+#target_link_libraries(libvar PUBLIC Eigen3::Eigen ${OpenCV_LIBS})
+add_executable(opensidescan src/OpenSidescan/main.cpp)
+target_link_libraries(opensidescan PUBLIC libvar Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS}) # link libraries to executable
+
 
 
 

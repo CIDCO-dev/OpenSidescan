@@ -17,7 +17,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # find_package will locate dependencies wheter they are installed from source or from a package manager
 find_package (Eigen3 3.3 REQUIRED)
 find_package(OpenCV 3.4.7 REQUIRED)
-#list(APPEND CMAKE_PREFIX_PATH "/usr/include/x86_64-linux-gnu") # append path list where find_package is looking
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS}) #special variable got from find_package() to include QtWidgets dependencies directories
 find_package(Qt5Xml REQUIRED)
@@ -60,6 +59,7 @@ set(SOURCE_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/ui/mainwindow/monitorthread.cpp;
     ${SS}/ui/about/aboutdialog.ui
     ${SS}/ui/mainwindow/mainwindow.ui
+    ${SS}/resources.qrc
     )
 
 set(3rdParty src/thirdParty/MBES-lib/src)
@@ -72,7 +72,7 @@ set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
     ${3rdParty}/utils/StringUtils.cpp;
     ${3rdParty}/sidescan/SidescanPing.cpp;
     src/thirdParty/opencv/apps/createsamples/utility.cpp;
-    
+    src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc; 
     )
 
 # headers include directories
@@ -80,16 +80,12 @@ set(INCLUDE_DIR
     ${SS};
     ${3rdParty};
     src/thridParty/opencv/apps/createsamples;
-    #${SS}/ui/mainwindow;
-    #${SS}/sidescan;
+    src/thirdParty/QDarkStyleSheet;
     )
 
 
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIR})
-#add_library(libvar STATIC ${SOURCE_FILES} ${THIRDPARTY}) 
-#target_include_directories(libvar PUBLIC ${INCLUDE_DIR}) # include directories where header files are located
-#target_link_libraries(libvar PUBLIC Eigen3::Eigen ${OpenCV_LIBS})
 add_executable(opensidescan src/OpenSidescan/main.cpp ${SOURCE_FILES} ${THIRDPARTY})
 target_link_libraries(opensidescan PUBLIC Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS}) # link libraries to executable
 

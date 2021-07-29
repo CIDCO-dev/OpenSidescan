@@ -71,7 +71,7 @@ set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
     ${3rdParty}/utils/NmeaUtils.cpp;
     ${3rdParty}/utils/StringUtils.cpp;
     ${3rdParty}/sidescan/SidescanPing.cpp;
-    src/thridParty/opencv/apps/createsamples/utility.cpp;
+    src/thirdParty/opencv/apps/createsamples/utility.cpp;
     
     )
 
@@ -80,15 +80,18 @@ set(INCLUDE_DIR
     ${SS};
     ${3rdParty};
     src/thridParty/opencv/apps/createsamples;
-    ${SS}/ui/mainwindow;
+    #${SS}/ui/mainwindow;
+    #${SS}/sidescan;
     )
 
-#INCLUDE_DIRECTORIES(${INCLUDE_DIR})
-add_library(libvar STATIC ${SOURCE_FILES} ${THIRDPARTY}) 
-target_include_directories(libvar PUBLIC ${INCLUDE_DIR}) # include directories where header files are located
+
+
+INCLUDE_DIRECTORIES(${INCLUDE_DIR})
+#add_library(libvar STATIC ${SOURCE_FILES} ${THIRDPARTY}) 
+#target_include_directories(libvar PUBLIC ${INCLUDE_DIR}) # include directories where header files are located
 #target_link_libraries(libvar PUBLIC Eigen3::Eigen ${OpenCV_LIBS})
-add_executable(opensidescan src/OpenSidescan/main.cpp)
-target_link_libraries(opensidescan PUBLIC libvar Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS}) # link libraries to executable
+add_executable(opensidescan src/OpenSidescan/main.cpp ${SOURCE_FILES} ${THIRDPARTY})
+target_link_libraries(opensidescan PUBLIC Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS}) # link libraries to executable
 
 
 

@@ -18,12 +18,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 find_package (Eigen3 3.3 REQUIRED)
 find_package(OpenCV 3.4.7 REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS}) #special variable got from find_package() to include QtWidgets dependencies directories
 find_package(Qt5Xml REQUIRED)
-INCLUDE_DIRECTORIES(${Qt5Xml_INCLUDE_DIRS})
+
 
 set(SS src/OpenSidescan)
-set(SOURCE_FILES ${SS}/sidescan/sidescanfile.cpp;
+set(LIB_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/sidescan/sidescanimager.cpp;
     ${SS}/sidescan/sidescanimage.cpp;
     ${SS}/inventoryobject/inventoryobject.cpp;
@@ -59,7 +58,7 @@ set(SOURCE_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/ui/mainwindow/monitorthread.cpp;
     ${SS}/ui/about/aboutdialog.ui
     ${SS}/ui/mainwindow/mainwindow.ui
-    ${SS}/resources.qrc
+    
     )
 
 set(3rdParty src/thirdParty/MBES-lib/src)
@@ -72,7 +71,7 @@ set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
     ${3rdParty}/utils/StringUtils.cpp;
     ${3rdParty}/sidescan/SidescanPing.cpp;
     src/thirdParty/opencv/apps/createsamples/utility.cpp;
-    src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc; 
+     
     )
 
 # headers include directories
@@ -83,11 +82,17 @@ set(INCLUDE_DIR
     src/thirdParty/QDarkStyleSheet;
     )
 
+set(SOURCE ${SS}/main.cpp;
+    src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
+    ${SS}/resources.qrc;)
+
+add_library(dep ${LIB_FILES} ${THIRDPARTY})
+target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIR})
-add_executable(opensidescan src/OpenSidescan/main.cpp ${SOURCE_FILES} ${THIRDPARTY})
-target_link_libraries(opensidescan PUBLIC Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS}) # link libraries to executable
+add_executable(opensidescan ${SOURCE})
+target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
 
 
 

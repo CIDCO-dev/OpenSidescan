@@ -17,7 +17,7 @@ find_package(OpenCV 3.4.7 REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5Xml REQUIRED)
 
-
+# opensidescan sources
 set(SS src/OpenSidescan)
 set(LIB_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/sidescan/sidescanimager.cpp;
@@ -53,11 +53,11 @@ set(LIB_FILES ${SS}/sidescan/sidescanfile.cpp;
     ${SS}/ui/training/parameterscvCreateTrainingSamples.cpp;
     ${SS}/ui/docks/vesselgeometrywindow.cpp;
     ${SS}/ui/mainwindow/monitorthread.cpp;
-    ${SS}/ui/about/aboutdialog.ui
-    ${SS}/ui/mainwindow/mainwindow.ui
-    
+    ${SS}/ui/about/aboutdialog.ui;
+    ${SS}/ui/mainwindow/mainwindow.ui;
     )
 
+# thirdParty sources
 set(3rdParty src/thirdParty/MBES-lib/src)
 set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
     ${3rdParty}/datagrams/DatagramParserFactory.cpp;

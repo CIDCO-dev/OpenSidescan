@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # set the project name
-project(opensidescan VERSION 0.01)
+project(opensidescan VERSION 1.0)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -10,9 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-
 
 # find_package will locate dependencies wheter they are installed from source or from a package manager
 find_package (Eigen3 3.3 REQUIRED)
@@ -81,16 +78,18 @@ set(INCLUDE_DIR
     src/thridParty/opencv/apps/createsamples;
     src/thirdParty/QDarkStyleSheet;
     )
+INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 
+# executable sources files
 set(SOURCE ${SS}/main.cpp;
     src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
     ${SS}/resources.qrc;)
 
+# linking dependencies
 add_library(dep ${LIB_FILES} ${THIRDPARTY})
 target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 
 
-INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 add_executable(opensidescan ${SOURCE})
 target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
 

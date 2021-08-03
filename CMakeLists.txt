@@ -68,7 +68,6 @@ set(THIRDPARTY ${3rdParty}/datagrams/DatagramParser.cpp;
     ${3rdParty}/utils/StringUtils.cpp;
     ${3rdParty}/sidescan/SidescanPing.cpp;
     src/thirdParty/opencv/apps/createsamples/utility.cpp;
-     
     )
 
 # headers include directories
@@ -83,7 +82,8 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 # executable sources files
 set(SOURCE ${SS}/main.cpp;
     src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
-    ${SS}/resources.qrc;)
+    ${SS}/resources.qrc;
+    )
 
 # linking dependencies
 add_library(dep ${LIB_FILES} ${THIRDPARTY})

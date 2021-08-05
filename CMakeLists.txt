@@ -11,11 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# find_package will locate dependencies wheter they are installed from source or from a package manager
-find_package (Eigen3 3.3 REQUIRED)
-find_package(OpenCV 3.4.7 REQUIRED)
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5Xml REQUIRED)
+
 
 # opensidescan sources
 set(SS src/OpenSidescan)
@@ -84,15 +80,24 @@ set(SOURCE ${SS}/main.cpp;
     src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
     ${SS}/resources.qrc;
     )
+if(UNIX)
+	message("*nix like cmake")
 
-# linking dependencies
-add_library(dep ${LIB_FILES} ${THIRDPARTY})
-target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
+	# find_package will locate dependencies wheter they are installed from source or from a package manager
+	find_package (Eigen3 3.3 REQUIRED)
+	find_package(OpenCV 3.4.7 REQUIRED)
+	find_package(Qt5 COMPONENTS Widgets REQUIRED)
+	find_package(Qt5Xml REQUIRED)
 
 
-add_executable(opensidescan ${SOURCE})
-target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
+	# linking dependencies
+	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 
+
+	add_executable(opensidescan ${SOURCE})
+	target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
+endif()
 
 
 

@@ -94,10 +94,19 @@ if(UNIX)
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 
-
-	add_executable(opensidescan ${SOURCE})
-	target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
+endif()
+if(WIN32)
+	message("windows cmake")
+	include_directories(C:/LIBS/eigen)
+	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
+	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
+	# linking dependencies
+	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
+	
 endif()
 
-
+add_executable(opensidescan ${SOURCE})
+target_link_libraries(opensidescan PUBLIC ${OpenCV_LIBS} dep)
 

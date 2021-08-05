@@ -1,4 +1,4 @@
-#Linux instruction
+# Linux instruction
 windows instruction will follow
 
 # Install dependencies
@@ -23,9 +23,9 @@ git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
 ./opensidescan
 
 
-#Windows instruction
+# Windows instruction
 
-#install dependencies:
+# install dependencies:
 suggestion for install dependencies location : C:\LIBS\
 download eigen 3.3.X https://eigen.tuxfamily.org/
 download the executable file of opencv 3.4.7 https://github.com/opencv/opencv/releases/tag/3.4.7

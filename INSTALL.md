@@ -48,7 +48,7 @@ git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
 
 3- cmake ..
 
-4- make
+4- msbuild.exe opensidescan.sln
 
 # run:
 ./Debug/opensidescan

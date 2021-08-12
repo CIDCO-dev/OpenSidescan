@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # set the project name
-project(opensidescan VERSION 1.0)
+project(Opensidescan VERSION 1.0)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -104,9 +104,31 @@ if(WIN32)
 	# linking dependencies
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
+	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)
+	set(QT_DLLS_PATH C:/Qt2/5.12.11/msvc2015_64/bin)
+	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
+				${QT_DLLS_PATH}/QT5Core.dll
+				${QT_DLLS_PATH}/QT5Gui.dll
+	)
+	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
+	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
+	set(CPACK_NSIS_PACKAGE_NAME "Opensidescan")
+	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources/cidco_icon.ico")
+	set(CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '$desktop\\\\Opensidescan.lnk' '$INSTDIR\\\\bin\\\\Opensidescan.exe' ")
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA "CreateShortCut '$desktop\\\\Opensidescan.lnk' '$INSTDIR\\\\bin\\\\Opensidescan.exe' ")
 	
 endif()
 
-add_executable(opensidescan ${SOURCE})
-target_link_libraries(opensidescan PUBLIC ${OpenCV_LIBS} dep)
+add_executable(${PROJECT_NAME} ${SOURCE})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS} dep)
 
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VENDOR "CIDCO")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_VERBATIM_VARIABLES true)
+set(CPACK_PACKAGE_VERSION_MAJOR)
+set(CPACK_PACKAGE_VERSION_MINOR)
+set(CPACK_PACKAGE_VERSION_PATCH)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+include(CPack)

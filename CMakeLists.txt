@@ -93,19 +93,19 @@ if(UNIX)
 	#find_package(Qt5Xml REQUIRED)
 
 	# linking dependencies
-    target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
-	target_link_libraries(opensidescan PUBLIC dep) # link libraries to executable
-endif()
+	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 
+endif()
 if(WIN32)
-    message("windows cmake")
+	message("windows cmake")
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
 	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	# linking dependencies
-	target_link_libraries(dep ${OpenCV_LIBS} Qt5::Widgets Qt5::Xml)
-	target_link_libraries(opensidescan PUBLIC dep)
-	
+	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
 	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)
 	set(QT_DLLS_PATH C:/Qt2/5.12.11/msvc2015_64/bin)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
@@ -114,11 +114,18 @@ if(WIN32)
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-
+	set(CPACK_NSIS_PACKAGE_NAME "Opensidescan")
+	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources/cidco_icon.ico")
+	set(CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '$desktop\\\\Opensidescan.lnk' '$INSTDIR\\\\bin\\\\Opensidescan.exe' ")
+	set(CPACK_NSIS_DELETE_ICONS_EXTRA "CreateShortCut '$desktop\\\\Opensidescan.lnk' '$INSTDIR\\\\bin\\\\Opensidescan.exe' ")
+	
 endif()
 
+add_executable(${PROJECT_NAME} ${SOURCE})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS} dep)
+
 include(InstallRequiredSystemLibraries)
-set(CPACK_PACKAGE_NAME "Opensidescan")
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_VERBATIM_VARIABLES true)

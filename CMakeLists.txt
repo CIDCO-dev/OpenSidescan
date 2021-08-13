@@ -1,3 +1,10 @@
+#[[
+Opensidescan cmake config file
+
+written by : Patrick Charron-Morneau
+Date : 13 August 2021
+
+]]
 cmake_minimum_required(VERSION 3.13)
 
 # set the project name
@@ -89,13 +96,13 @@ if(UNIX)
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 3.4.7 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
-	#find_package(Qt5Xml REQUIRED)
-	# linking dependencies
+		
+	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} ${SOURCE})
+	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
-
 
 endif()
 if(WIN32)
@@ -104,9 +111,11 @@ if(WIN32)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
 	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
-	# linking dependencies
+	
+	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCE})
+	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
@@ -132,8 +141,7 @@ if(WIN32)
 	
 endif()
 
-
-
+# Packaging
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")

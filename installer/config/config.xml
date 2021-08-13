@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Installer>
-    <Name>OpenSidescan</Name>
-    <Version>1.0.0</Version>
-    <Title>CIDCO OpenSidescan Installer</Title>
-    <Publisher>CIDCO</Publisher>
-    <StartMenuDir>CIDCO</StartMenuDir>
-    <TargetDir>@HomeDir@/OpenSidescan</TargetDir>
-</Installer>

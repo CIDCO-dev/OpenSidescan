@@ -86,7 +86,7 @@ if(UNIX)
 	message("*nix like cmake")
 
 	# find_package will locate dependencies wheter they are installed from source or from a package manager
-	find_package (Eigen3 3.3 REQUIRED)
+	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 3.4.7 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
 	#find_package(Qt5Xml REQUIRED)
@@ -128,7 +128,7 @@ if(WIN32)
 	LIST(APPEND CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk' '$INSTDIR\\\\bin\\\\${PROJECT_NAME}.exe' ")# add START MENU shortcut
 	LIST(APPEND CPACK_NSIS_DELETE_ICONS_EXTRA "Delete '$SMPROGRAMS\\\\$START_MENU\\\\${PROJECT_NAME}.lnk'")# remove START MENU shortcut
 	set(CPACK_PACKAGE_ICON  "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources\\\\splash.bmp") #picture during installation
-	set(CPACK_NSIS_MUI_FINISHPAGE_RUN ON)# ask to run program at the end
+	set(CPACK_NSIS_MUI_FINISHPAGE_RUN ${PROJECT_NAME}.exe)# ask to run program at the end
 	
 endif()
 

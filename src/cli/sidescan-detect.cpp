@@ -23,7 +23,7 @@
 void printUsage(){
 	std::cerr << "\n\
 	NAME\n\n\
-	sidescan-detect - Dumps sidescan data to an image file\n\n\
+	sidescan-detect - Dumps sidescan data of an image file\n\n\
 	SYNOPSIS\n \
 	sidescan-detect file fastThreshold dbscanEpsilon dbscanMinPts mserDelta mserMinimumArea mserMaximumArea\n\n\
 	DESCRIPTION\n\n \

@@ -319,7 +319,8 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
 
         //compute fitness
         double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
-        double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; //TODO: add recall
+        double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; 
+        //TODO: add recall
         
         std::cerr << "[-] " << precision << "% / " << recall << " % (" << (*g)->fastThreshold << " " << (*g)->dbscanEpsilon << " " << (*g)->dbscanMinPts << " " << (*g)->mserDelta << " " << (*g)->mserMinArea << " " << (*g)->mserMaxArea << " )" << std::endl;
         

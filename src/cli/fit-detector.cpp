@@ -16,7 +16,10 @@
 #include "../OpenSidescan/sidescan/sidescanimager.h"
 #include "../OpenSidescan/sidescan/sidescanfile.h"
 #include "../OpenSidescan/sidescan/sidescanimage.h"
-#include "../OpenSidescan/utilities/opencvhelper.h"
+//#include "../OpenSidescan/utilities/opencvhelper.h"
+#include "../OpenSidescan/inventoryobject/inventoryobject.h"
+#include "../OpenSidescan/detector/roidetector.h"
+
 #include <Eigen/Dense>
 
 #define POPULATION_SIZE 100
@@ -222,7 +225,7 @@ void cancerize(std::vector<genome*> & genomes){
     genomes.insert(genomes.end(),offsprings.begin(),offsprings.end());    
 }
 
-bool insideHits(GeoreferencedObject * obj,std::vector<hit*> & hits){
+bool insideHits(InventoryObject * obj,std::vector<hit*> & hits){
     for(auto i=hits.begin();i!=hits.end();i++){
         if(
                 (*i)->channel == obj->getImage().getChannelNumber() &&
@@ -236,7 +239,7 @@ bool insideHits(GeoreferencedObject * obj,std::vector<hit*> & hits){
     return false;
 }
 
-bool insideDetections(hit * h, std::vector<GeoreferencedObject*> & detections){
+bool insideDetections(hit * h, std::vector<InventoryObject*> & detections){
     for(auto i=detections.begin();i!=detections.end();i++){
         if(
                 h->channel == (*i)->getImage().getChannelNumber() &&
@@ -272,31 +275,22 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
         //using each file
         for(unsigned int fileIdx=0;fileIdx<files.size();fileIdx++){
             
-            std::vector<GeoreferencedObject*> detections;            
+            std::vector<InventoryObject*> detections;            
  
                     //and each image
             for(auto i=files[fileIdx]->getImages().begin();i!=files[fileIdx]->getImages().end();i++){                
-                    OpencvHelper::detectObjects(
-                                                detections,
-                                                *files[fileIdx],
-                                                **i,
-                                                (*g)->fastThreshold,
-                                                cv::FastFeatureDetector::TYPE_9_16,
-                                                false,
-                                                (*g)->dbscanEpsilon,
-                                                (*g)->dbscanMinPts,
-                                                (*g)->mserDelta,
-                                                (*g)->mserMinArea,
-                                                (*g)->mserMaxArea,
-                                                0.25,
-                                                0.2,
-                                                200,
-                                                1.01,
-                                                0.003,
-                                                5,
-                                                false,
-                                                true
-                    );                
+                    //TODO : selector detector type
+                    RoiDetector roiDetector(
+                                            (*g)->fastThreshold,
+                                            cv::FastFeatureDetector::TYPE_9_16,
+                                            false,
+                                            (*g)->dbscanEpsilon,
+                                            (*g)->dbscanMinPts,
+                                            (*g)->mserDelta,
+                                            (*g)->mserMinArea,
+                                            (*g)->mserMaxArea,
+                                            true
+                                           );                 
             }
             
             //update precision stats

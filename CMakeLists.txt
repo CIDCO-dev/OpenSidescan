@@ -88,7 +88,16 @@ set(SOURCE  ${SS}/main.cpp;
 			${SS}/resources/icon.rc;
     )
 
-
+set(CLI_SOURCE 
+            ${SS}/sidescan/sidescanfile.cpp;
+            ${SS}/sidescan/sidescanimager.cpp;
+            ${SS}/sidescan/sidescanimage.cpp;
+            ${SS}/inventoryobject/inventoryobject.cpp;
+            ${SS}/detector/roidetector.cpp;
+            ${SS}/detector/houghdetector.cpp;
+            ${SS}/detector/detector.cpp;
+            ${SS}/utilities/opencvhelper.cpp;
+   )
 if(UNIX)
 	message("*nix like cmake")
 
@@ -99,10 +108,19 @@ if(UNIX)
 		
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	add_library(fit_dep ${CLI_SOURCE} ${THIRDPARTY})
+	add_library(cli_dep ${CLI_SOURCE})
 	add_executable(${PROJECT_NAME} ${SOURCE})
+	add_executable(fit-detector src/cli/fit-detector.cpp )
+	add_executable(sidescan-detect src/cli/sidescan-detect.cpp)
+	set_target_properties(fit-detector PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
+	target_link_libraries(fit_dep Eigen3::Eigen ${OpenCV_LIBS})
+	target_link_libraries(fit-detector PUBLIC fit_dep)
+	target_link_libraries(sidescan-detect PUBLIC fit_dep)
 
 endif()
 if(WIN32)

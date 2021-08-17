@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
+* Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
 /*
@@ -14,8 +14,10 @@
 #include <vector>
 #include <string>
 #include <opencv2/opencv.hpp>
-#include "../OpenSidescan/sidescanimager.h"
-#include "../OpenSidescan/opencvhelper.h"
+#include "../OpenSidescan/sidescan/sidescanimager.h"
+#include "../OpenSidescan/utilities/opencvhelper.h"
+#include "../OpenSidescan/detector/roidetector.h"
+#include "../OpenSidescan/inventoryobject/inventoryobject.h"
 
 /**Writes the usage information about the datagram-list*/
 void printUsage(){
@@ -25,7 +27,7 @@ void printUsage(){
 	SYNOPSIS\n \
 	sidescan-detect file fastThreshold dbscanEpsilon dbscanMinPts mserDelta mserMinimumArea mserMaximumArea\n\n\
 	DESCRIPTION\n\n \
-	Copyright 2017 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
+	Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
 	exit(1);
 }
 
@@ -53,27 +55,41 @@ int main (int argc , char ** argv ){
         
         
         
-        int fastThreshold = std::atoi(argv[2]);
-        int dbscanEpsilon = std::atoi(argv[3]);
-        int dbscanMinPts  = std::atoi(argv[4]);
-        int mserDelta = std::atoi(argv[5]);
-        int mserMinimumArea = std::atoi(argv[6]);
-        int mserMaximumArea = std::atoi(argv[7]);
+    int fastThreshold = std::atoi(argv[2]);
+    int dbscanEpsilon = std::atoi(argv[3]);
+    int dbscanMinPts  = std::atoi(argv[4]);
+    int mserDelta = std::atoi(argv[5]);
+    int mserMinimumArea = std::atoi(argv[6]);
+    int mserMaximumArea = std::atoi(argv[7]);
         
 	try{
-                SidescanImager imager;
-                DatagramParser * parser = DatagramParserFactory::build(fileName,imager);
-                parser->parse(fileName);
-
-                SidescanFile * file = imager.generate(fileName);
-                
-                for(auto i=file->getImages().begin();i!=file->getImages().end();i++){
-                    std::vector<GeoreferencedObject*> objects;
-                    
-                    OpencvHelper::detectObjects(objects,*file,**i,fastThreshold,cv::FastFeatureDetector::TYPE_9_16,false,dbscanEpsilon,dbscanMinPts,mserDelta,mserMinimumArea,mserMaximumArea,0.25,0.2,200,1.01,0.003,5,false,true);
-                    
-                    for(auto j=objects.begin();j!=objects.end();j++){
-                        std::cout << (**i).getChannelNumber() << " " << (*j)->getX() << " " << (*j)->getY() << " " << (*j)->getPixelWidth() << " " << (*j)->getPixelHeight() << std::endl;
+        SidescanImager imager;
+        DatagramParser * parser = DatagramParserFactory::build(fileName,imager);
+        parser->parse(fileName);
+        
+        Eigen::Vector3d leverArm(0, 0, 0);
+        
+        SidescanFile * file = imager.generate(fileName,leverArm);
+        SidescanImage *image;
+        
+        for(auto i=file->getImages().begin();i!=file->getImages().end();i++){
+            std::vector<InventoryObject*> objects;
+            //TODO : selector detector type
+            RoiDetector roiDetector(
+                                    fastThreshold,
+                                    cv::FastFeatureDetector::TYPE_9_16,
+                                    false,
+                                    dbscanEpsilon,
+                                    dbscanMinPts,
+                                    mserDelta,
+                                    mserMinimumArea,
+                                    mserMaximumArea,
+                                    true
+                                   );
+                                   
+            roiDetector.detect(**i, objects);
+            for(auto j=objects.begin();j!=objects.end();j++){std::cout << (**i).getChannelNumber() << " " << (*j)->getX() << " " << (*j)->getY() 
+                                                                << " "  << (*j)->getPixelWidth() << " " << (*j)->getPixelHeight() << std::endl;
                     }
                 }
 

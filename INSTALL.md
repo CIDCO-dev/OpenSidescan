@@ -30,14 +30,19 @@ git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
 
 4- make
 
+to launch opensidescan from anywhere
+
+5- sudo make install
+
 # run:
-./opensidescan
+./Opensidescan
 
 
 # Windows instruction
 
-# Download Opensidescan installer 
-https://github.com/CIDCO-dev/OpenSidescan/installer
+# Download Opensidescan installer
+copy paste link in browser 
+https://github.com/cidco-dev/OpenSidescan/raw/master/installer/Opensidescan-1.0.0-win64.exe
 
 # Install 
 double click

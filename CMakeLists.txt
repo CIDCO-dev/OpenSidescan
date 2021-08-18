@@ -1,3 +1,10 @@
+#[[
+Opensidescan cmake config file
+
+written by : Patrick Charron-Morneau
+Date : 13 August 2021
+
+]]
 cmake_minimum_required(VERSION 3.13)
 
 # set the project name
@@ -81,21 +88,42 @@ set(SOURCE  ${SS}/main.cpp;
 			${SS}/resources/icon.rc;
     )
 
-
+set(CLI_SOURCE 
+            ${SS}/sidescan/sidescanfile.cpp;
+            ${SS}/sidescan/sidescanimager.cpp;
+            ${SS}/sidescan/sidescanimage.cpp;
+            ${SS}/inventoryobject/inventoryobject.cpp;
+            ${SS}/detector/roidetector.cpp;
+            ${SS}/detector/houghdetector.cpp;
+            ${SS}/detector/detector.cpp;
+            ${SS}/utilities/opencvhelper.cpp;
+   )
 if(UNIX)
 	message("*nix like cmake")
 
 	# find_package will locate dependencies wheter they are installed from source or from a package manager
-	find_package (Eigen3 3.3 REQUIRED)
+	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 3.4.7 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
-	#find_package(Qt5Xml REQUIRED)
-	# linking dependencies
+		
+	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
+	add_library(fit_dep ${CLI_SOURCE} ${THIRDPARTY})
+	add_library(cli_dep ${CLI_SOURCE})
 	add_executable(${PROJECT_NAME} ${SOURCE})
+	add_executable(fit-detector src/cli/fit-detector.cpp )
+	add_executable(sidescan-detect src/cli/sidescan-detect.cpp)
+	add_executable(sidescan-dump src/cli/sidescan-dump.cpp)
+	set_target_properties(fit-detector PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	set_target_properties(sidescan-dump PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
-
+	target_link_libraries(fit_dep Eigen3::Eigen ${OpenCV_LIBS})
+	target_link_libraries(fit-detector PUBLIC fit_dep)
+	target_link_libraries(sidescan-detect PUBLIC fit_dep)
+	target_link_libraries(sidescan-dump PUBLIC fit_dep)
 
 endif()
 if(WIN32)
@@ -104,9 +132,11 @@ if(WIN32)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
 	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
-	# linking dependencies
+	
+	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCE})
+	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
@@ -128,12 +158,11 @@ if(WIN32)
 	LIST(APPEND CPACK_NSIS_CREATE_ICONS_EXTRA "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk' '$INSTDIR\\\\bin\\\\${PROJECT_NAME}.exe' ")# add START MENU shortcut
 	LIST(APPEND CPACK_NSIS_DELETE_ICONS_EXTRA "Delete '$SMPROGRAMS\\\\$START_MENU\\\\${PROJECT_NAME}.lnk'")# remove START MENU shortcut
 	set(CPACK_PACKAGE_ICON  "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources\\\\splash.bmp") #picture during installation
-	set(CPACK_NSIS_MUI_FINISHPAGE_RUN ON)# ask to run program at the end
+	set(CPACK_NSIS_MUI_FINISHPAGE_RUN ${PROJECT_NAME}.exe)# ask to run program at the end
 	
 endif()
 
-
-
+# Packaging
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")

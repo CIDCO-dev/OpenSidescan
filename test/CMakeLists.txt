@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(tests)
-
+include(CTest)
+message("cmake test file")
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.4.7 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -35,3 +36,6 @@ set_target_properties(tests PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries (tests stdc++fs)
 target_link_libraries(tests ${OpenCV_LIBS})
 target_link_libraries (tests Eigen3::Eigen)
+
+# add_test(name target param)
+add_test("test0" tests)

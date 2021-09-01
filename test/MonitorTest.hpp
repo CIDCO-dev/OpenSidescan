@@ -34,7 +34,7 @@ class SideScanFileProcessorForTest : public SideScanFileProcessor {
 public:
 
     void processFile(SidescanFile * f) {
-        std::string filenameTest = "../data/lockTest/s4.xtf";
+        std::string filenameTest = "test/data/lockTest/s4.xtf";
         REQUIRE(filenameTest.compare(f->getFilename()) == 0);
         REQUIRE(f->getImages().size() == 2);
         REQUIRE(f->getImages()[1]->getObjects().size() == 1);
@@ -48,7 +48,7 @@ public:
 
 TEST_CASE("Test monitor") {
 
-    std::string path = "../data/lockTest/";
+    std::string path = "test/data/lockTest/";
 
     Eigen::Vector3d leverArm;
     leverArm << 0.0, 0.0, 0.0;

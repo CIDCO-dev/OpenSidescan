@@ -16,8 +16,11 @@ pipeline {
   }
 
   agent none
+  
+  
+  
   stages {
-
+/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -47,7 +50,7 @@ pipeline {
             }
         }
     }
-
+*/
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -156,4 +159,5 @@ pipeline {
       }
     }
   }
+  
 }

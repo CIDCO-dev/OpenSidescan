@@ -76,7 +76,7 @@ pipeline {
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
-        sh 'Scripts/build_installer.sh'
+        bat "Scripts/build_installer.bat"
       }
     }*/
 

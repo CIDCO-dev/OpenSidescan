@@ -89,7 +89,7 @@ pipeline {
 		stash 'build/**' , name: 'installer'
       }
     }
-    /*
+    
     stage('SIGN installer and exe for WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -104,7 +104,7 @@ pipeline {
         archiveArtifacts('OpenSidescan-*.exe')
         */
        }
-     }*/
+     }
 	/*
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}

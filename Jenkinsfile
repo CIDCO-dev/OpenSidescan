@@ -60,7 +60,7 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }*/
-
+	/*
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -71,17 +71,17 @@ pipeline {
                 junit 'build\\reports\\opensidescan-win-test-report.xml'
             }
         }
-    }
-
+    }*/
+	/*
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
         sh 'Scripts/build_installer.sh'
       }
-    }
+    }*/
 
     
-	/*
+	
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}
       steps {
@@ -98,7 +98,7 @@ pipeline {
 
       }
     }
-
+	/*
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       steps {

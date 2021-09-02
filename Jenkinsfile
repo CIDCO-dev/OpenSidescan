@@ -32,7 +32,7 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }
-
+	/*
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-x64-2'}
         steps {
@@ -49,7 +49,7 @@ pipeline {
 
             }
         }
-    }
+    }*/
 
     stage('Unit tests on linux'){
       agent { label 'master'}

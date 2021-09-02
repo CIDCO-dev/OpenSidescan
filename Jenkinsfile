@@ -87,14 +87,14 @@ pipeline {
       steps {
 		sh 'Scripts/build_opensidescan_win.sh'
 
-		
+		/*
         bat "Scripts\\sign_exe.au3"
         bat "Scripts\\package_opensidescan_gui.bat"
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
 
         archiveArtifacts('OpenSidescan_installer*.exe')
-		
+		*/
 
       }
     }

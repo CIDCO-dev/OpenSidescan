@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	/* FONCTIONNE
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -50,7 +50,7 @@ pipeline {
             }
         }
     }*/
-	/*
+	/* FONCTIONNE
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -72,8 +72,8 @@ pipeline {
             }
         }
     }*/
-	/*
-    stage('Build linux installer'){
+	/* FONCTIONNE
+    stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
         sh 'Scripts/build_installer.sh'
@@ -81,23 +81,25 @@ pipeline {
     }*/
 
     
-	
-    stage('BUILD WINDOWS 10'){
+	/* FONCTIONNE */
+    stage('BUILD OPENSIDESCAN exe and installer FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-
-		/*
+      }
+    }
+    /*
+    stage('SIGN installer and exe for WINDOWS 10'){
+      agent{label 'windows10-x64-2'}
+      steps{
         bat "Scripts\\sign_exe.au3"
         bat "Scripts\\package_opensidescan_gui.bat"
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
 
         archiveArtifacts('OpenSidescan_installer*.exe')
-		*/
-
-      }
-    }
+       }
+     }*/
 	/*
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}

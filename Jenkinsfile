@@ -85,7 +85,7 @@ pipeline {
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
-		bat "Scripts\build_opensidescan_win.bat"
+		bat "Scripts/build_opensidescan_win.bat"
 
 		/*
         bat "Scripts\\sign_exe.au3"

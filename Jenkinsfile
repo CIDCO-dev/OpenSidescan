@@ -81,7 +81,7 @@ pipeline {
     }*/
 
     
-	/* ne signe pas
+	/* ne signe pas */
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -96,7 +96,7 @@ pipeline {
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
        }
-     }*/
+     }
      
      /* FONCTIONNE */
     stage('BUILD OPENSIDESCAN INSTALLER FOR WINDOWS 10'){

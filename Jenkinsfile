@@ -89,7 +89,7 @@ pipeline {
 		stash includes: 'build/Release/**' , name: 'executable'
       }
     }
-    /* FONCTIONNE */
+
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{

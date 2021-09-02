@@ -83,7 +83,7 @@ pipeline {
     
 	
     stage('BUILD WINDOWS 10'){
-      agent { label 'windows10-x64-2'}
+      agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		sh 'Scripts/build_opensidescan_windows.sh'
 

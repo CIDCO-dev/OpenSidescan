@@ -76,7 +76,7 @@ pipeline {
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
-        bat "Scripts/build_installer.bat"
+        sh 'Scripts/build_installer.sh'
       }
     }*/
 
@@ -85,7 +85,7 @@ pipeline {
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
-		sh 'Scripts\build_opensidescan_win.sh'
+		bat "Scripts\build_opensidescan_win.sh"
 
 		/*
         bat "Scripts\\sign_exe.au3"

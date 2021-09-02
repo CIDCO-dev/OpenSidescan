@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-/*
+
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -72,7 +72,7 @@ pipeline {
             }
         }
     }
-*/
+
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
@@ -81,28 +81,20 @@ pipeline {
     }
 
     
-
+	/*
     stage('BUILD WINDOWS 10'){
       agent { label 'windows10-x64-2'}
       steps {
-        //compile
-        bat "Scripts\\build_opensidescan_gui.bat"
+		sh 'Scripts/build_opensidescan_windows.sh'
 
-        script {
-            if ( fileExists('build\\release\\OpenSidescan.exe') == false) {
-                echo 'Jenkinsfile: build\\release\\OpenSidescan.exe does not exist, calling error()'
-                error("Build failed because 'build\\release\\OpenSidescan.exe' does not exist")
-            }
-        }
-
-
+		/*
         bat "Scripts\\sign_exe.au3"
         bat "Scripts\\package_opensidescan_gui.bat"
         bat "Scripts\\build_installer.bat %version%"
         bat "Scripts\\sign_installer.au3 %version%"
 
         archiveArtifacts('OpenSidescan_installer*.exe')
-
+		*/
 
       }
     }
@@ -156,6 +148,7 @@ pipeline {
 
       }
     }
+	*/
   }
   
 }

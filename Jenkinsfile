@@ -102,7 +102,7 @@ pipeline {
     stage('BUILD OPENSIDESCAN INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
-		bat "Scripts/build_opensidescan_win.bat"
+		bat "Scripts/build_installer.bat"
 		stash includes: 'build/**' , name: 'installer'
       }
     }

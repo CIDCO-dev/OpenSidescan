@@ -107,12 +107,12 @@ pipeline {
       }
     }
     /* FONCTIONNE */
-    stage('SIGN installer and exe for WINDOWS 10'){
+    stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
-        bat "Scripts\\build_installer.bat
-        bat "Scripts\\sign_installer.au3
+        bat "Scripts\\build_installer.bat"
+        bat "Scripts\\sign_installer.au3"
         archiveArtifacts('OpenSidescan-*.exe')
 
        }

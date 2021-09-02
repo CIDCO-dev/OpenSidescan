@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -31,10 +31,10 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }
+    }*/
 	/*
     stage('Test file locking on WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
+        agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "echo %cd%"
             bat "echo %cd%"
@@ -50,7 +50,7 @@ pipeline {
             }
         }
     }*/
-
+	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -59,10 +59,10 @@ pipeline {
         sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
-    }
+    }*/
 
     stage('Unit tests WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
+        agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "make -f MakefileWindows test"
         }
@@ -111,7 +111,7 @@ pipeline {
     }
 
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
-      agent { label 'windows10-x64-2'}
+      agent { label 'windows10-build-opensidescan-vm'}
       steps {
 
         bat "echo %cd%"

@@ -94,15 +94,7 @@ pipeline {
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'executable'
-      	
         bat "Scripts\\sign_exe.au3"
-        /*
-        bat "Scripts\\package_opensidescan_gui.bat"
-        bat "Scripts\\build_installer.bat %version%"
-        bat "Scripts\\sign_installer.au3 %version%"
-
-        archiveArtifacts('OpenSidescan-*.exe')
-        */
        }
      }
      
@@ -111,23 +103,18 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-		stash includes: 'build/Release/**' , name: 'executable'
+		stash includes: 'build/**' , name: 'installer'
       }
     }
     /* FONCTIONNE */
     stage('SIGN installer and exe for WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
-      	unstash 'executable'
-      	
-        
-        /*
-        bat "Scripts\\package_opensidescan_gui.bat"
-        bat "Scripts\\build_installer.bat %version%"
-        bat "Scripts\\sign_installer.au3 %version%"
-
+      	unstash 'installer'
+        bat "Scripts\\build_installer.bat
+        bat "Scripts\\sign_installer.au3
         archiveArtifacts('OpenSidescan-*.exe')
-        */
+
        }
      }
 	/*

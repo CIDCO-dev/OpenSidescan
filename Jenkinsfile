@@ -86,7 +86,7 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-		stash 'build/**' , name: 'installer'
+		stash includes: 'build/**' , name: 'installer'
       }
     }
     

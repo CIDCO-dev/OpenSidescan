@@ -20,7 +20,7 @@
 
 TEST_CASE("Test Wreck Detector") {
 
-    std::string sidescanFileName = "../data/wrecks/plane1.xtf";
+    std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 
     SidescanImager imager;
     DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);
@@ -91,7 +91,7 @@ TEST_CASE("Test Wreck Detector") {
 
 TEST_CASE("Test Hough Detector"){
     //std::string sidescanFileName = "/media/glm/Backup Plus/Archeo_Beauport_AECOM/StarFish/xtf/22_07_2020_C2.xtf";
-    std::string sidescanFileName = "../data/starfish/22_07_2020_C2.xtf";
+    std::string sidescanFileName = "test/data/starfish/22_07_2020_C2.xtf";
 
     SidescanImager imager;
     DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);

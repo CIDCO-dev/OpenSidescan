@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
+* Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
 /*
@@ -20,11 +20,11 @@
 void printUsage(){
 	std::cerr << "\n\
 	NAME\n\n\
-	sidescan-dump - Dumps sidescan data to an image file\n\n\
+	sidescan-dump - Dumps sidescan data of an image file\n\n\
 	SYNOPSIS\n \
 	sidescan-dump file\n\n\
 	DESCRIPTION\n\n \
-	Copyright 2017 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
+	Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
 	exit(1);
 }
 

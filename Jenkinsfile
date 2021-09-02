@@ -16,8 +16,11 @@ pipeline {
   }
 
   agent none
+  
+  
+  
   stages {
-
+/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -69,13 +72,11 @@ pipeline {
             }
         }
     }
-
+*/
     stage('Build linux installer'){
       agent { label 'master'}
       steps {
-        sh 'make'
-        sh 'Scripts/build_installer.sh $version'
-        archiveArtifacts('OpenSidescan_installer*.run')
+        sh 'Scripts/build_installer.sh'
       }
     }
 
@@ -156,4 +157,5 @@ pipeline {
       }
     }
   }
+  
 }

@@ -17,7 +17,6 @@ pipeline {
   agent {label 'windows10-x64-2'}
   options {skipDefaultCheckout()}
 
-  agent none
   
   
   

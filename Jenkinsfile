@@ -14,6 +14,8 @@ pipeline {
     binWinx64Dir="windows-x64"
     binWinx64PublishDir="$publishDir/$binWinx64Dir"
   }
+  agent {label 'windows10-x64-2'}
+  options {skipDefaultCheckout()}
 
   agent none
   

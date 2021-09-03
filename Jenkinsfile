@@ -100,7 +100,7 @@ pipeline {
      }
      
      /* FONCTIONNE */
-    stage('BUILD OPENSIDESCAN INSTALLER FOR WINDOWS 10'){
+    stage('PACKAGE INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
       	unstash 'executable'

@@ -2,7 +2,7 @@ $CMD='"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool" si
 
 Run("cmd.exe")
 Sleep(2000)
-Send($SIGN)
+Send($CMD)
 Send("{Enter}")
 Sleep(4000)
 WinClose("C:\Windows\SYSTEM32\cmd.exe", "")

@@ -85,31 +85,34 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-		stash includes: 'build/Release/**' , name: 'executable'
+		stash includes: './**' , name: 'executable'
       }
     }
 
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
+      options {skipDefaultCheckout()}
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
-        stash includes: 'build/Release/**' , name: 'executable'
+        stash includes: './**' , name: 'executable'
        }
      }
      
      /* FONCTIONNE */
     stage('PACKAGE INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
+      options {skipDefaultCheckout()}
       steps {
       	unstash 'executable'
 		bat "Scripts/build_installer.bat"
-		stash includes: 'build/**' , name: 'installer'
+		stash includes: './**' , name: 'installer'
       }
     }
     /* todo : passer version en argument*/
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
+      options {skipDefaultCheckout()}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3"
@@ -126,7 +129,7 @@ pipeline {
         sh 'mkdir -p $binWinx64PublishDir'
 
         /*sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'*/
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
 	/*

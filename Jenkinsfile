@@ -107,14 +107,14 @@ pipeline {
 		stash includes: 'build/**' , name: 'installer'
       }
     }
-    /* FONCTIONNE */
+    /* todo : passer version en argument*/
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       options {skipDefaultCheckout()}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3"
-        archiveArtifacts('OpenSidescan-*.exe')
+        archiveArtifacts('OpenSidescan-1.0.0.exe')
 
        }
      }

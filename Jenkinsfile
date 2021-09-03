@@ -37,7 +37,6 @@ pipeline {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "echo %cd%"
-            bat "echo %cd%"
             //compile winlocker
             bat "Scripts/winlocktest.bat"
             bat "test\\win-fileLock-test\\build\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"

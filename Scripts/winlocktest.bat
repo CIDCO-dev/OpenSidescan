@@ -1,4 +1,4 @@
-mkdir -p test/win-fileLock-test/build
+mkdir test/win-fileLock-test/build
 cd test/win-fileLock-test/build
 cmake ..
-msbuild.exe wintest.sln
+msbuild.exe test/win-fileLock-test/build/wintest.sln

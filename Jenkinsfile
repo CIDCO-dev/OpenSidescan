@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/* FONCTIONNE
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -31,8 +31,8 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }*/
-	/*
+    }
+	
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -49,8 +49,8 @@ pipeline {
 
             }
         }
-    }*/
-	/* FONCTIONNE
+    }
+	
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -59,7 +59,7 @@ pipeline {
         sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
-    }*/
+    }
 	/*
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
@@ -72,13 +72,13 @@ pipeline {
             }
         }
     }*/
-	/* FONCTIONNE
+	
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
         sh 'Scripts/build_opensidescan.sh'
       }
-    }*/
+    }
 
     
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
@@ -98,7 +98,7 @@ pipeline {
        }
      }
      
-     /* FONCTIONNE */
+     
     stage('PACKAGE INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -122,10 +122,7 @@ pipeline {
       agent { label 'master'}
       options {skipDefaultCheckout()}
       steps {
-        /*sh 'mkdir -p $binMasterPublishDir'*/
         sh 'mkdir -p $binWinx64PublishDir'
-
-        /*sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'*/
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }

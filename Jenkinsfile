@@ -85,34 +85,31 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-		stash includes: '**' , name: 'executable'
+		stash includes: 'build/Release/**' , name: 'executable'
       }
     }
 
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
-      options {skipDefaultCheckout()}
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
-        stash includes: '**' , name: 'executable'
+        stash includes: 'build/Release/**' , name: 'executable'
        }
      }
      
      /* FONCTIONNE */
     stage('PACKAGE INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
-      options {skipDefaultCheckout()}
       steps {
       	unstash 'executable'
 		bat "Scripts/build_installer.bat"
-		stash includes: '**' , name: 'installer'
+		stash includes: 'build/**' , name: 'installer'
       }
     }
     /* todo : passer version en argument*/
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
-      options {skipDefaultCheckout()}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3"

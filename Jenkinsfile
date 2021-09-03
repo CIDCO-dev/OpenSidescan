@@ -14,8 +14,7 @@ pipeline {
     binWinx64Dir="windows-x64"
     binWinx64PublishDir="$publishDir/$binWinx64Dir"
   }
-  agent {label 'windows10-x64-2'}
-  options {skipDefaultCheckout()}
+	agent none
 
   
   
@@ -82,7 +81,6 @@ pipeline {
     }*/
 
     
-	/* ne signe pas */
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -93,6 +91,7 @@ pipeline {
 
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
+      options {skipDefaultCheckout()}
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
@@ -112,6 +111,7 @@ pipeline {
     /* FONCTIONNE */
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
+      options {skipDefaultCheckout()}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3"

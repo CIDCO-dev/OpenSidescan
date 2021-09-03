@@ -120,12 +120,13 @@ pipeline {
 	
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
+      options {skipDefaultCheckout()}
       steps {
         /*sh 'mkdir -p $binMasterPublishDir'*/
         sh 'mkdir -p $binWinx64PublishDir'
 
         /*sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'*/
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan-1.0.0-win64.exe $binWinx64PublishDir/OpenSidescan-1.0.0-win64.exe'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
 	/*

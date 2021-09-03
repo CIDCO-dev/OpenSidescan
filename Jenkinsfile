@@ -85,7 +85,7 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
-		stash includes: './**' , name: 'executable'
+		stash includes: '**' , name: 'executable'
       }
     }
 
@@ -95,7 +95,7 @@ pipeline {
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
-        stash includes: './**' , name: 'executable'
+        stash includes: '**' , name: 'executable'
        }
      }
      
@@ -106,7 +106,7 @@ pipeline {
       steps {
       	unstash 'executable'
 		bat "Scripts/build_installer.bat"
-		stash includes: './**' , name: 'installer'
+		stash includes: '**' , name: 'installer'
       }
     }
     /* todo : passer version en argument*/

@@ -5,7 +5,7 @@ written by : Patrick Charron-Morneau
 Date : 13 August 2021
 
 ]]
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 project(Opensidescan VERSION 1.0.0)

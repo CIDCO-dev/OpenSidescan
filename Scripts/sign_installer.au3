@@ -1,5 +1,5 @@
 $CMD='"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool" sign /debug /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a OpenSidescan-*.exe'
-$SIGN=StringReplace($CMD, "VERSION", $CmdLine[1])
+::$SIGN=StringReplace($CMD, "VERSION", $CmdLine[1])
 
 
 Run("cmd.exe")

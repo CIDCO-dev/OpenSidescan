@@ -76,7 +76,7 @@ pipeline {
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
-        sh 'Scripts/build_installer.sh'
+        sh 'Scripts/build_opensidescan.sh'
       }
     }*/
 
@@ -114,22 +114,22 @@ pipeline {
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3"
-        archiveArtifacts('OpenSidescan-1.0.0.exe')
+        archiveArtifacts('OpenSidescan-1.0.0-win64.exe')
 
        }
      }
-	/*
+	
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       steps {
-        sh 'mkdir -p $binMasterPublishDir'
+        /*sh 'mkdir -p $binMasterPublishDir'*/
         sh 'mkdir -p $binWinx64PublishDir'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
+        /*sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'*/
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan-1.0.0-win64.exe $binWinx64PublishDir/OpenSidescan-1.0.0-win64.exe'
       }
     }
-
+	/*
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {

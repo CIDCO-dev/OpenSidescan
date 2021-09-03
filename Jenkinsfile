@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -31,17 +31,16 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }
-	/*
+    }*/
+	
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "echo %cd%"
             bat "echo %cd%"
             //compile winlocker
-            bat "make -f MakefileWindows locktest"
-            bat "echo %cd%"
-            bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
+            bat "Scripts/winlocktest.bat"
+            bat "test\\win-fileLock-test\\build\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
             always {
@@ -49,8 +48,8 @@ pipeline {
 
             }
         }
-    }*/
-	
+    }
+	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -59,7 +58,7 @@ pipeline {
         sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
-    }
+    }*/
 	/*
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
@@ -72,7 +71,7 @@ pipeline {
             }
         }
     }*/
-	
+	/*
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
@@ -106,8 +105,8 @@ pipeline {
 		bat "Scripts/build_installer.bat"
 		stash includes: 'build/**' , name: 'installer'
       }
-    }
-    /* todo : passer version en argument*/
+    }*/
+    /* todo : passer version en argument
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -125,7 +124,7 @@ pipeline {
         sh 'mkdir -p $binWinx64PublishDir'
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
-    }
+    }*/
 	/*
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-build-opensidescan-vm'}

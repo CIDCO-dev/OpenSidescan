@@ -28,6 +28,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/detector/houghdetector.cpp;
                 ${SS}/detector/detector.cpp;
                 ${SS}/machinelearning/dbscan.cpp;
+                ${SS}/utilities/opencvhelper.cpp;
     )
 
 # thirdParty sources
@@ -74,10 +75,10 @@ if(WIN32)
 	
 		# creating targets
 	add_library(lockcath-dep ${LIB_FILES} ${THIRDPARTY})
-	add_executable(winLockTest winlocker.cpp)
+	add_executable(wincatchLockTest winlocker.cpp)
 	# linking dependencies
 	target_link_libraries(lockcath-dep ${OpenCV_LIBS})
-	target_link_libraries(winLockTest PUBLIC lockcath-dep)
+	target_link_libraries(wincatchLockTest PUBLIC lockcath-dep)
 
 	
 endif()

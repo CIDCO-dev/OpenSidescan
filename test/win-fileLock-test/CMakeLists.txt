@@ -47,17 +47,9 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
 # headers include directories
 set(INCLUDE_DIR ${SS};
                 ${3rdParty};
-                #src/thridParty/opencv/apps/createsamples;
-                #src/thirdParty/QDarkStyleSheet;
     )
 INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 
-# executable sources files
-set(SOURCE  ${SS}/main.cpp;
-            #src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
-            #${SS}/resources.qrc;
-			#${SS}/resources/icon.rc;
-    )
 
 if(WIN32)
 	message("windows cmake")
@@ -75,7 +67,7 @@ if(WIN32)
 	
 		# creating targets
 	add_library(lockcath-dep ${LIB_FILES} ${THIRDPARTY})
-	add_executable(wincatchLockTest winlocker.cpp)
+	add_executable(wincatchLockTest winLockCatchMain.cpp)
 	# linking dependencies
 	target_link_libraries(lockcath-dep ${OpenCV_LIBS})
 	target_link_libraries(wincatchLockTest PUBLIC lockcath-dep)

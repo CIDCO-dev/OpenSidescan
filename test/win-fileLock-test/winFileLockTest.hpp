@@ -16,20 +16,20 @@
 #include <string>
 
 #include <Eigen/Dense>
-#include "../src/OpenSidescan/sidescan/sidescanfile.h"
-#include "../src/OpenSidescan/sidescan/sidescanimager.h"
-#include "../src/OpenSidescan/detector/roidetector.h"
-#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
-#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
-#include "../src/OpenSidescan/sidescan/sidescanfile.h"
-#include "../src/OpenSidescan/sidescan/sidescanimager.h"
-#include "../src/OpenSidescan/detector/roidetector.h"
-#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
-#include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
+#include "../../src/OpenSidescan/sidescan/sidescanfile.h"
+#include "../../src/OpenSidescan/sidescan/sidescanimager.h"
+#include "../../src/OpenSidescan/detector/roidetector.h"
+#include "../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
+#include "../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
+#include "../../src/OpenSidescan/sidescan/sidescanfile.h"
+#include "../../src/OpenSidescan/sidescan/sidescanimager.h"
+#include "../../src/OpenSidescan/detector/roidetector.h"
+#include "../../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
+#include "../../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 
-#include "../src/OpenSidescan/utilities/FileLockUtils.h"
-#include "../src/OpenSidescan/utilities/SideScanFileProcessor.hpp"
-#include "../src/OpenSidescan/utilities/DirectoryMonitor.hpp"
+#include "../../src/OpenSidescan/utilities/FileLockUtils.h"
+#include "../../src/OpenSidescan/utilities/SideScanFileProcessor.hpp"
+#include "../../src/OpenSidescan/utilities/DirectoryMonitor.hpp"
 
 class SideScanFileProcessorForTest : public SideScanFileProcessor {
     //Sub class this to connect with OpenSideScan
@@ -56,8 +56,8 @@ TEST_CASE("Test file lock with monitor, windows version") {
     ZeroMemory(&si, sizeof (si));
     si.cb = sizeof (si);
     ZeroMemory(&pi, sizeof (pi));
-
-    if (CreateProcess("test\\win-fileLock-test\\build\\winlocker.exe", // Application name
+	
+    if (CreateProcess("test\\win-fileLock-test\\build\\winlocker.exe",
             " test\\data\\lockTest\\s4.xtf", // Additional application arguments
             NULL,
             NULL,

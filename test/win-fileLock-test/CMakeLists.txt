@@ -59,13 +59,9 @@ if(WIN32)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	
 	# creating targets
-	#add_library(locker-dep )
 	add_executable(winlocker winlocker.cpp)
-	# linking dependencies
-	#target_link_libraries(locker-dep ${OpenCV_LIBS})
-	#target_link_libraries(winlocker PUBLIC locker-dep)
 	
-		# creating targets
+	# creating targets
 	add_library(lockcath-dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(wincatchLockTest winLockCatchMain.cpp)
 	# linking dependencies

@@ -91,8 +91,6 @@ pipeline {
         stash includes: 'build/Release/**' , name: 'executable'
        }
      }
-     
-     
     stage('PACKAGE INSTALLER FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -101,7 +99,9 @@ pipeline {
 		stash includes: 'build/**' , name: 'installer'
       }
     }
+	*/
     //todo : passer version en argument
+	/*
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -111,7 +111,6 @@ pipeline {
 
        }
      }
-	
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       options {skipDefaultCheckout()}
@@ -119,25 +118,25 @@ pipeline {
         sh 'mkdir -p $binWinx64PublishDir'
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
-    }*/
-	
+    }
+	*/
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
-
         bat "echo %cd%"
 		bat "build_test_gui.bat"
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
-
+		/*
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
+        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
       }
       post {
         always {
           junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
         }
       }
+	  */
     }
 	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){

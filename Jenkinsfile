@@ -127,12 +127,11 @@ pipeline {
 
         bat "echo %cd%"
 		bat "build_test_gui.bat"
-		/*
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
-		*/
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+
       }
       post {
         always {

@@ -32,7 +32,7 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }*/
-	
+	/*
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -47,7 +47,7 @@ pipeline {
 
             }
         }
-    }
+    }*/
 	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
@@ -124,7 +124,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }*/
-	/*
+	
     stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -149,7 +149,7 @@ pipeline {
         }
       }
     }
-
+	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {

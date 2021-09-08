@@ -121,8 +121,6 @@ void testGUI::initTestCase()
 
 void testGUI::interactWithModalWindowActionImport()
 {
-    qDebug() << tr( "Beginning of interactWithModalWindowActionImport()" );
-
     std::cout << "Beginning of interactWithModalWindowActionImport()" << std::endl;
 
     mainWindow->show();
@@ -151,14 +149,14 @@ void testGUI::interactWithModalWindowActionImport()
                         "\"" + tr( "../../../test/data/wrecks/scotsman3.xtf" ) + "\" ";
 
     QTest::keyClicks(lineEdit, filename );
-
+	
     QVERIFY2( lineEdit->text() == filename, "interactWithModalWindowActionImport: filename is not the same in the QLineEdit");
-
+	
     // Find the button to accept and close the modal window
     // The buttons are within a QDialogButtonBox
     QDialogButtonBox *buttonBox = modalWidget->findChild<QDialogButtonBox*>("buttonBox");
     QVERIFY2( buttonBox, "interactWithModalWindowActionImport: buttonBox tests false");
-
+	
     // The buttons don't have object names,
     // I have to go through the list of buttons and find the button with
     // the desired text
@@ -167,7 +165,7 @@ void testGUI::interactWithModalWindowActionImport()
 
     QString acceptButtonText = tr( "&Open" );
     QPushButton * acceptButton = nullptr;
-
+	
     for (QAbstractButton *button : listButtonBox) {
         if ( button->text() == acceptButtonText )
             acceptButton = static_cast<QPushButton * >( button );
@@ -184,12 +182,13 @@ void testGUI::interactWithModalWindowActionImport()
 
     mainWindow->show();
     QTest::qWait(500);
+
 }
 
 
 void testGUI::useMenuImportToLoadSidescanFile()
 {
-    qDebug() << tr( "Beginning of 'useMenuImportToLoadSidescanFile()'" );
+	std::cout << "Beginning of useMenuImportToLoadSidescanFile()" << std::endl;
 
     if ( mainWindow ) {
         delete mainWindow;
@@ -243,7 +242,6 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
     // Keyboard for import sidescan file
     QTest::keyClick( menuFile, 'i', Qt::AltModifier );
-
 
 
 }

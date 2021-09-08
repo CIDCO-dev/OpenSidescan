@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -97,9 +97,9 @@ pipeline {
 		stash includes: 'build/**' , name: 'installer'
       }
     }
-	*/
+	
     //todo : passer version en argument
-	/*
+	
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -117,7 +117,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
-	*/
+	/*
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -145,7 +145,7 @@ pipeline {
 
       }
     }
-
+	*/
   }
   
 }

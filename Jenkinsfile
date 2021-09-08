@@ -46,7 +46,7 @@ pipeline {
             }
         }
     }
-	*/
+	
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -56,7 +56,7 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-	
+	*/
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {

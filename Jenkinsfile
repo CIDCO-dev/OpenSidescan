@@ -31,8 +31,7 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }*/
-	/*
+    }
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -47,8 +46,7 @@ pipeline {
 
             }
         }
-    }*/
-	/*
+    }
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -57,8 +55,7 @@ pipeline {
         sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
-    }*/
-	/*
+    }
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -69,8 +66,7 @@ pipeline {
                 junit 'build\\reports\\opensidescan-win-test-report.xml'
             }
         }
-    }*/
-	/*
+    }
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
@@ -104,8 +100,8 @@ pipeline {
 		bat "Scripts/build_installer.bat"
 		stash includes: 'build/**' , name: 'installer'
       }
-    }*/
-    /* todo : passer version en argument
+    }
+    //todo : passer version en argument
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -130,18 +126,13 @@ pipeline {
       steps {
 
         bat "echo %cd%"
-
-        bat "ScriptsTestGUI\\build_test_gui.bat"
-        bat "ScriptsTestGUI\\copy_dll_for_test_gui_gui.bat"
-        bat "ScriptsTestGUI\\run_test_gui.bat"
-
-        bat "echo %cd%"
-
+		bat "build_test_gui.bat"
+		/*
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
-
+		*/
       }
       post {
         always {

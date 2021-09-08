@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -46,6 +46,7 @@ pipeline {
             }
         }
     }
+	*/
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -55,11 +56,12 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-	/* TODO
+	
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
-            bat "make -f MakefileWindows test"
+            bat "Scripts/win-unittest.bat"
+			bat "test/build/tests.exe
         }
         post {
             always {
@@ -67,7 +69,7 @@ pipeline {
             }
         }
     }
-	*/
+	
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
@@ -82,7 +84,7 @@ pipeline {
 		stash includes: 'build/Release/**' , name: 'executable'
       }
     }
-
+	/*
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -119,7 +121,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
-	/*
+	
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {

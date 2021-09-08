@@ -5,9 +5,9 @@
 
 
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "../catch.hpp"
 
-#include "SideScanImagerTest.h"
-#include "ProjectTest.h"
-#include "DetectorTest.h"
-#include "GeoreferencingTest.h"
+#include "../SideScanImagerTest.h"
+#include "../ProjectTest.h"
+#include "../DetectorTest.h"
+#include "../GeoreferencingTest.h"

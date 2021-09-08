@@ -1,7 +1,7 @@
 
 //#include <iostream>
 
-#include "catch.hpp"
+#include "../catch.hpp"
 
 #include "../../src/OpenSidescan/sidescanimager.h"
 #include "../../src/OpenSidescan/sidescanimage.h"

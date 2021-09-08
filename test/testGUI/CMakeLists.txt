@@ -84,14 +84,14 @@ if(WIN32)
 	message("Gui test")
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
-	find_package(Qt5 5.12 COMPONENTS Widgets Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
+	find_package(Qt5 5.12 COMPONENTS Widgets Core Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Test REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5Test)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCE})
 	# linking dependencies
-	target_link_libraries(dep Qt5::Widgets Qt5::Test Qt5::Xml ${OpenCV_LIBS})
+	target_link_libraries(dep Qt5::Widgets Qt5::Core Qt5::Test Qt5::Xml ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
 	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)

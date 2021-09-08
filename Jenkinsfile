@@ -38,7 +38,6 @@ pipeline {
             bat "echo %cd%"
             //compile winlocker
             bat "Scripts/winlocktest.bat"
-            /*bat "test\\win-fileLock-test\\build\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"*/
         }
         post {
             always {
@@ -74,7 +73,6 @@ pipeline {
       }
     }
 
-    
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {

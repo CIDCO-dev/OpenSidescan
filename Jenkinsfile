@@ -123,7 +123,6 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "build_test_gui.bat"
-		/*
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
         archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
@@ -134,7 +133,6 @@ pipeline {
           junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
         }
       }
-	  */
     }
 	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){

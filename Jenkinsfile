@@ -61,7 +61,6 @@ pipeline {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "Scripts/win-unittest.bat"
-			bat "test/build/tests.exe
         }
         post {
             always {

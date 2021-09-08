@@ -2,6 +2,6 @@ mkdir test\build\
 mkdir build\reports\
 cd test/build
 cmake .. -DCMAKE_GENERATOR_PLATFORM=x64
-MSBuild.exe win_unit_test.sln
+MSBuild.exe Debug/win_unit_test.sln
 Move Debug/* ../
-tests.exe
+tests.exe -r junit -o ../../build/reports/win-unittest-result.xml

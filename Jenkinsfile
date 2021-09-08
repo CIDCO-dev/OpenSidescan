@@ -122,7 +122,7 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
         bat "echo %cd%"
-		bat "Scripts\\build_test_gui.bat"
+		bat "ScriptsTestGUI/build_test_gui.bat"
         archiveArtifacts('build\\Debug\\test-report-OpenSidescanXUNIT.xml')
         archiveArtifacts('build\\Debug\\test-report-OpenSidescan.xml')
         archiveArtifacts('build\\Debug\\test-report-OpenSidescanTAP.txt')

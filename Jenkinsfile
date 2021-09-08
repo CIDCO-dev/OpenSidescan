@@ -85,7 +85,7 @@ pipeline {
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'executable'
-        bat "Scripts\\sign_exe.au3"
+        bat "Scripts/sign_exe.au3"
         stash includes: 'build/Release/**' , name: 'executable'
        }
      }
@@ -104,7 +104,7 @@ pipeline {
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
-        bat "Scripts\\sign_installer.au3"
+        bat "Scripts/sign_installer.au3"
         archiveArtifacts('build/Opensidescan-1.0.0-win64.exe')
 
        }
@@ -118,19 +118,19 @@ pipeline {
       }
     }
 	*/
-    stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
+    stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
         bat "echo %cd%"
-		bat "build_test_gui.bat"
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+		bat "Scripts/build_test_gui.bat"
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
+        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
       }
       post {
         always {
-          junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
+          //junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
         }
       }
     }

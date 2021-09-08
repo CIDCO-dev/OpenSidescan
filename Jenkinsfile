@@ -123,14 +123,14 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "Scripts/build_test_gui.bat"
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        //archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
+        archiveArtifacts('build\\Debug\\test-report-OpenSidescanXUNIT.xml')
+        archiveArtifacts('build\\Debug\\test-report-OpenSidescan.xml')
+        archiveArtifacts('build\\Debug\\test-report-OpenSidescanTAP.txt')
+        archiveArtifacts('build\\Debug\\test-report-OpenSidescanTXT.txt')
       }
       post {
         always {
-          //junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
+          junit 'build\\Debug\\test-report-OpenSidescanXUNIT.xml'
         }
       }
     }

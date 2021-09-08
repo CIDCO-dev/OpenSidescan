@@ -123,8 +123,7 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-        archiveArtifacts('build\\Debug\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('build\\Debug\\testGUI_result.xml')
+        archiveArtifacts('build\\Debug\\testGUI_result_XUNIT.xml')
       }
       post {
         always {
@@ -132,7 +131,7 @@ pipeline {
         }
       }
     }
-	/*
+
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -142,11 +141,11 @@ pipeline {
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Debug/test-report-OpenSidescan* $publishTestOutputWinx64Dir'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Debug/testGUI_result_XUNIT.xml $publishTestOutputWinx64Dir'
 
       }
     }
-	*/
+
   }
   
 }

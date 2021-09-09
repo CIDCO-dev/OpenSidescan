@@ -31,8 +31,8 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }*/
-	/*
+    }
+	
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -49,8 +49,8 @@ pipeline {
 
             }
         }
-    }*/
-	/*
+    }
+	
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {

@@ -112,7 +112,7 @@ pipeline {
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
-        bat "Scripts/sign_installer.au3"
+        bat "Script\\sign_installer.au3"
         archiveArtifacts('build/Opensidescan-1.0.0-win64.exe')
 
        }

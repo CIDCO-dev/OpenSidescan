@@ -58,7 +58,7 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-	*/
+	
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -71,7 +71,7 @@ pipeline {
             }
         }
     }
-	/*
+	
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
@@ -129,15 +129,15 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-        archiveArtifacts('build\\Debug\\testGUI_result_XUNIT.xml')
+		bat "test\\testGUI\\buildRelease\\Opensidescan_gui_Tests.exe -r junit -o build\\reports\\testGUI.xml"
       }
       post {
         always {
-          junit 'build\\Debug\\test-report-OpenSidescanXUNIT.xml'
+          junit 'build\\Debug\\testGUI.xml'
         }
       }
     }
-	
+	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -151,7 +151,7 @@ pipeline {
 
       }
     }
-	
+	*/
   }
   
 }

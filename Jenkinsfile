@@ -31,7 +31,7 @@ pipeline {
         sh 'Scripts/cutReport.sh' //Cut the second set of test result from the forked process
         junit 'build/reports/cut-report.xml'
       }
-    }
+    }*/
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -46,7 +46,7 @@ pipeline {
             }
         }
     }
-	
+	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -82,8 +82,8 @@ pipeline {
 		bat "Scripts/build_opensidescan_win.bat"
 		stash includes: 'build/Release/**' , name: 'executable'
       }
-    }*/
-	/*
+    }
+	
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
@@ -134,7 +134,7 @@ pipeline {
         }
       }
     }
-	/*
+	
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -148,7 +148,7 @@ pipeline {
 
       }
     }
-	*/
+	
   }
   
 }

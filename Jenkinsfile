@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -80,7 +80,7 @@ pipeline {
         sh 'Scripts/build_opensidescan.sh'
       }
     }
-	
+	*/
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -93,7 +93,7 @@ pipeline {
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'executable'
-        bat "Scripts/sign_exe.au3"
+        bat "Scripts\\sign_exe.au3"
         stash includes: 'build/Release/**' , name: 'executable'
        }
      }

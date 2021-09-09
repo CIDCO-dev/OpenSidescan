@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -80,7 +80,7 @@ pipeline {
         sh 'Scripts/build_opensidescan.sh'
       }
     }
-	*/
+	
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -140,7 +140,7 @@ pipeline {
         }
       }
     }
-	/*
+	
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -150,11 +150,11 @@ pipeline {
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Debug/testGUI_result_XUNIT.xml $publishTestOutputWinx64Dir'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Reports/testGUI.xml $publishTestOutputWinx64Dir'
 
       }
     }
-	*/
+	
   }
   
 }

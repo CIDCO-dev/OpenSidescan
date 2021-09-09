@@ -68,14 +68,14 @@ pipeline {
             }
         }
     }
-	
+	/*
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
         sh 'Scripts/build_opensidescan.sh'
       }
     }
-
+	*/
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {

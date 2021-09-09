@@ -19,24 +19,24 @@ std::string current_working_direction() {
 
 TEST_CASE("Test normal image") {
     
-    //std::cout << "current working directory: " << current_working_direction() << std::endl;
+    std::cout << "current working directory: " << current_working_direction() << std::endl;
 
     std::string sidescanFileName = "test/data/wrecks/scotsman1.xtf";
     
-    //std::cout << "opening file: " << sidescanFileName << std::endl;
+    std::cout << "opening file: " << sidescanFileName << std::endl;
 
     SidescanImager imager;
     
-    //std::cout << "Building parser..." << std::endl;
+    std::cout << "Building parser..." << std::endl;
     DatagramParser * parser = DatagramParserFactory::build(sidescanFileName,imager);
     
     //std::cout << "Print name of tag 0: " << std::endl;
     //parser->getName(0);
     
-    //std::cout << "Parsing file..." << std::endl;
+    std::cout << "Parsing file..." << std::endl;
     parser->parse(sidescanFileName);
     
-    //std::cout << "File parsed." << std::endl;
+    std::cout << "File parsed." << std::endl;
 
     Eigen::Vector3d leverArm(0,0,0);
 

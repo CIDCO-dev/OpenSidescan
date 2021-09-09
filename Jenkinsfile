@@ -38,7 +38,7 @@ pipeline {
             bat "echo %cd%"
             //compile winlocker
             bat "Scripts/winlocktest.bat"
-			bat "build\\test\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
+			bat "test\\build\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
             always {

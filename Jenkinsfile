@@ -64,7 +64,7 @@ pipeline {
         }
         post {
             always {
-                junit 'build\\reports\\opensidescan-win-test-report.xml'
+                junit 'build\\reports\\win-unittest.xml'
             }
         }
     }
@@ -75,14 +75,14 @@ pipeline {
         sh 'Scripts/build_opensidescan.sh'
       }
     }
-	*/
+	
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
 		bat "Scripts/build_opensidescan_win.bat"
 		stash includes: 'build/Release/**' , name: 'executable'
       }
-    }
+    }*/
 	/*
     stage('SIGN EXECUTABLE WINDOWS 10'){
       agent{label 'windows10-x64-2'}
@@ -120,7 +120,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
-	
+	*/
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -134,7 +134,7 @@ pipeline {
         }
       }
     }
-
+	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {

@@ -10,7 +10,7 @@
 #ifndef WINFILELOCKTEST_HPP
 #define WINFILELOCKTEST_HPP
 
-#include "catch.hpp"
+#include "../catch.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <string>

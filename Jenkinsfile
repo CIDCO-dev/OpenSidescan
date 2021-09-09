@@ -32,7 +32,7 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }*/
-	
+	/*
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
@@ -49,7 +49,7 @@ pipeline {
 
             }
         }
-    }
+    }*/
 	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
@@ -131,13 +131,12 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-		bat "echo %cd%"
-		bat "echo %cd%"
-		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\testGUI.xml -xml"
+		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\testGUI.xml -xunitxml"
+		archiveArtifacts('build\\reports\\testGUI.xml')
       }
       post {
         always {
-          junit 'build\\Debug\\testGUI.xml'
+          junit 'build\\reports\\testGUI.xml'
         }
       }
     }

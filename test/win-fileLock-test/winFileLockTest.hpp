@@ -57,7 +57,7 @@ TEST_CASE("Test file lock with monitor, windows version") {
     si.cb = sizeof (si);
     ZeroMemory(&pi, sizeof (pi));
 	
-    if (CreateProcess("winlocker.exe",
+    if (CreateProcess("test\\win-fileLock-test\\build\\Debug\\winlocker.exe",
             " test\\data\\lockTest\\s4.xtf", // Additional application arguments
             NULL,
             NULL,

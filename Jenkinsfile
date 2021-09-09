@@ -36,9 +36,11 @@ pipeline {
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
-            bat "echo %cd%"
+            
             //compile winlocker
             bat "Scripts/winlocktest.bat"
+			bat "echo %cd%"
+			bat "echo %cd%"
 			bat "test\\win-fileLock-test\\build\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
@@ -129,6 +131,8 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
+		bat "echo %cd%"
+		bat "echo %cd%"
 		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\testGUI.xml -xml"
       }
       post {

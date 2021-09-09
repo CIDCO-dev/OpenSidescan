@@ -32,14 +32,14 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }*/
-	/*
+	
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "echo %cd%"
             //compile winlocker
             bat "Scripts/winlocktest.bat"
-			bat "test\\win-fileLock-test\\build\\Debug\\wincatchLockTest.exe -o build\\reports\\winlock-test-report.xml -xml"
+			bat "test\\win-fileLock-test\\build\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
             always {
@@ -47,7 +47,7 @@ pipeline {
 
             }
         }
-    }*/
+    }
 	/*
     stage('Unit tests on linux'){
       agent { label 'master'}
@@ -129,7 +129,7 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -r junit -o build\\reports\\testGUI.xml"
+		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\testGUI.xml -xml"
       }
       post {
         always {

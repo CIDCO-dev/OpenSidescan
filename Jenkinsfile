@@ -129,7 +129,7 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-		bat "test\\testGUI\\buildRelease\\Opensidescan_gui_Tests.exe -r junit -o build\\reports\\testGUI.xml"
+		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -r junit -o build\\reports\\testGUI.xml"
       }
       post {
         always {

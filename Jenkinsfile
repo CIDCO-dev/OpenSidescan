@@ -38,7 +38,7 @@ pipeline {
             bat "echo %cd%"
             //compile winlocker
             bat "Scripts/winlocktest.bat"
-			bat "build\\test\\Debug\\wincatchLockTest.exe -r junit -o ..\\..\\..\\build\\reports\\winlock-test-report.xml"
+			bat "build\\test\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
             always {
@@ -62,7 +62,7 @@ pipeline {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "Scripts/win-unittest.bat"
-			bat "test\\build\\tests.exe -r junit -o ..\\..\\build\\reports\\win-unittest.xml"
+			bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
         }
         post {
             always {

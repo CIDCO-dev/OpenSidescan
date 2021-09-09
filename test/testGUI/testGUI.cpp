@@ -198,7 +198,7 @@ void testGUI::useMenuImportToLoadSidescanFile()
     mainWindow = new MainWindow;
 
     QVERIFY2( mainWindow, "useMenuImportToLoadSidescanFile: mainWindow tests false");
-;
+
 
 //    QVERIFY2( false, "useMenuImportToLoadSidescanFile: false on purpose");
 

@@ -75,7 +75,7 @@ set(INCLUDE_DIR ${SS};
 INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 
 # executable sources files
-set(SOURCE  testGUI.cpp;
+set(SOURCE  testGUI2.cpp;
             ../../src/thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc;
             ${SS}/resources.qrc;
 			${SS}/resources/icon.rc;

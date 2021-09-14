@@ -482,13 +482,8 @@ void testGUI::useMenuImportToLoadSidescanFile()
 
 	std::cout << "DEBUG 1" << std::endl;
 
-    // Keyboard for import sidescan file
+    QTest::keyClick( menuFile, 'i', Qt::AltModifier );
 
-    //QTest::keyClick( menuFile, 'i', Qt::AltModifier );
-
-
-
-	std::cout << "END !! of useMenuImportToLoadSidescanFile()" << std::endl;
 
 }
 

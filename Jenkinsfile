@@ -136,7 +136,7 @@ pipeline {
       }
       post {
         always {
-          junit 'build\\reports\\testGUI.xml'
+          junit 'build\\reports\\win-testGUI.xml'
         }
       }
     }

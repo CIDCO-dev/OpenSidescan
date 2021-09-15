@@ -140,7 +140,7 @@ pipeline {
         }
       }
     }
-    
+    /*
     stage('Linux GUI tests'){
       agent { label 'master'}
       steps {
@@ -151,7 +151,7 @@ pipeline {
       }
 
     }
-	
+	*/
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -162,7 +162,7 @@ pipeline {
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/win-testGUI.xml $publishTestOutputWinx64Dir'
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/linux-testGUI.xml $publishTestOutputWinx64Dir'
+        //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/linux-testGUI.xml $publishTestOutputWinx64Dir'
 
       }
     }

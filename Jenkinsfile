@@ -144,7 +144,7 @@ pipeline {
     stage('Linux GUI tests'){
       agent { label 'master'}
       steps {
-		sh "ScriptsTestGUI/linux_test_gui.sh"
+		sh "ScriptsTestGUI/gui_test_linux.sh"
 		archiveArtifacts('build/reports/testGUI.xml')
       }
       post {

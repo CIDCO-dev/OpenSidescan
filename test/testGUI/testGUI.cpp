@@ -292,9 +292,7 @@ void testGUI::interactWithModalWindowActionImport()
 
 
 
-    QString filename = "\"" + tr( "../../../test/data/wrecks/plane1.xtf" )  + "\" "
-
-                        "\"" + tr( "../../../test/data/wrecks/scotsman3.xtf" ) + "\" ";
+    QString filename = "\"" + tr( "test/data/wrecks/plane1.xtf" ) ;
 
 
 

@@ -146,8 +146,8 @@ pipeline {
       steps {
 		sh "ScriptsTestGUI/gui_test_linux.sh"
 		sh 'test/testGUI/build/Opensidescan_gui_Tests -o build/reports/linux-testGUI.xml -xunitxml'
-		junit 'build/reports/testGUI.xml'
-		archiveArtifacts('build/reports/testGUI.xml')
+		junit 'build/reports/linux-testGUI.xml'
+		archiveArtifacts('build/reports/linux-testGUI.xml')
       }
 
     }
@@ -161,7 +161,8 @@ pipeline {
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/testGUI.xml $publishTestOutputWinx64Dir'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/win-testGUI.xml $publishTestOutputWinx64Dir'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/linux-testGUI.xml $publishTestOutputWinx64Dir'
 
       }
     }

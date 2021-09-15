@@ -1,14 +1,8 @@
-$CMD='"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool" sign /debug /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a OpenSidescan_installer_VERSION.exe'
-$SIGN=StringReplace($CMD, "VERSION", $CmdLine[1])
-
+$CMD='"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool" sign /debug /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a build/OpenSidescan-1.0.0-win64.exe'
 
 Run("cmd.exe")
 Sleep(2000)
-Send($SIGN)
-Send("{Enter}")
-Sleep(8000)
-Send(EnvGet("Sign_Password"),1)
+Send($CMD)
 Send("{Enter}")
 Sleep(4000)
-
 WinClose("C:\Windows\SYSTEM32\cmd.exe", "")

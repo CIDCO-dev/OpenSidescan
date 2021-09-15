@@ -14,10 +14,13 @@ pipeline {
     binWinx64Dir="windows-x64"
     binWinx64PublishDir="$publishDir/$binWinx64Dir"
   }
+	agent none
 
-  agent none
+  
+  
+  
   stages {
-
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -29,16 +32,16 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }
-
+	
     stage('Test file locking on WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
+        agent { label 'windows10-build-opensidescan-vm'}
         steps {
-            bat "echo %cd%"
-            bat "echo %cd%"
+            
             //compile winlocker
-            bat "make -f MakefileWindows locktest"
-            bat "echo %cd%"
-            bat "build\\test\\bin\\winLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
+            bat "Scripts/winlocktest.bat"
+			bat "echo %cd%"
+			bat "echo %cd%"
+			bat "test\\win-fileLock-test\\build\\Debug\\wincatchLockTest.exe -r junit -o build\\reports\\winlock-test-report.xml"
         }
         post {
             always {
@@ -47,7 +50,7 @@ pipeline {
             }
         }
     }
-
+	
     stage('Unit tests on linux'){
       agent { label 'master'}
       steps {
@@ -57,91 +60,98 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-
+	
     stage('Unit tests WINDOWS 10') {
-        agent { label 'windows10-x64-2'}
+        agent { label 'windows10-build-opensidescan-vm'}
         steps {
-            bat "make -f MakefileWindows test"
+            bat "Scripts/win-unittest.bat"
+			bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
         }
         post {
             always {
-                junit 'build\\reports\\opensidescan-win-test-report.xml'
+                junit 'build\\reports\\win-unittest.xml'
             }
         }
     }
-
-    stage('Build linux installer'){
+	
+    stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
-        sh 'make'
-        sh 'Scripts/build_installer.sh $version'
-        archiveArtifacts('OpenSidescan_installer*.run')
+        sh 'Scripts/build_opensidescan.sh'
       }
     }
-
-    
-
-    stage('BUILD WINDOWS 10'){
-      agent { label 'windows10-x64-2'}
+	
+    stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
+      agent { label 'windows10-build-opensidescan-vm'}
       steps {
-        //compile
-        bat "Scripts\\build_opensidescan_gui.bat"
-
-        script {
-            if ( fileExists('build\\release\\OpenSidescan.exe') == false) {
-                echo 'Jenkinsfile: build\\release\\OpenSidescan.exe does not exist, calling error()'
-                error("Build failed because 'build\\release\\OpenSidescan.exe' does not exist")
-            }
-        }
-
-
-        bat "Scripts\\sign_exe.au3"
-        bat "Scripts\\package_opensidescan_gui.bat"
-        bat "Scripts\\build_installer.bat %version%"
-        bat "Scripts\\sign_installer.au3 %version%"
-
-        archiveArtifacts('OpenSidescan_installer*.exe')
-
-
+		bat "Scripts/build_opensidescan_win.bat"
+		stash includes: 'build/Release/**' , name: 'executable'
       }
     }
+	
+    stage('SIGN EXECUTABLE WINDOWS 10'){
+      agent{label 'windows10-x64-2'}
+      steps{
+      	unstash 'executable'
+        bat "Scripts\\sign_exe.au3"
+        stash includes: 'build/Release/**' , name: 'executable'
+       }
+     }
+    stage('PACKAGE INSTALLER FOR WINDOWS 10'){
+      agent { label 'windows10-build-opensidescan-vm'}
+      steps {
+      	unstash 'executable'
+		bat "Scripts/build_installer.bat"
+		stash includes: 'build/**' , name: 'installer'
+      }
+    }
+	
+    //todo : passer version en argument
+	
+    stage('SIGN INSTALLER WINDOWS 10'){
+      agent{label 'windows10-x64-2'}
+      steps{
+      	unstash 'installer'
+        bat "Scripts\\sign_installer.au3"
+        archiveArtifacts('build/Opensidescan-1.0.0-win64.exe')
 
+       }
+     }
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
+      options {skipDefaultCheckout()}
       steps {
-        sh 'mkdir -p $binMasterPublishDir'
         sh 'mkdir -p $binWinx64PublishDir'
-
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.run $binMasterPublishDir/OpenSidescan_installer_$version.run'
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/OpenSidescan_installer_$version.exe $binWinx64PublishDir/OpenSidescan_installer_$version.exe'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
-
-    stage('BUILD TEST WINDOWS 10 AND RUN TEST'){
-      agent { label 'windows10-x64-2'}
+	
+    stage('Windows GUI tests'){
+      agent { label 'windows10-build-opensidescan-vm'}
       steps {
-
         bat "echo %cd%"
-
-        bat "ScriptsTestGUI\\build_test_gui.bat"
-        bat "ScriptsTestGUI\\copy_dll_for_test_gui_gui.bat"
-        bat "ScriptsTestGUI\\run_test_gui.bat"
-
-        bat "echo %cd%"
-
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescan.xml')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTAP.txt')
-        archiveArtifacts('buildTest\\release\\folderRunTest\\test-report-OpenSidescanTXT.txt')
-
+		bat "ScriptsTestGUI/build_test_gui.bat"
+		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\win-testGUI.xml -xunitxml"
+		archiveArtifacts('build\\reports\\win-testGUI.xml')
       }
       post {
         always {
-          junit 'buildTest\\release\\folderRunTest\\test-report-OpenSidescanXUNIT.xml'
+          junit 'build\\reports\\win-testGUI.xml'
         }
       }
     }
+    /*
+    stage('Linux GUI tests'){
+      agent { label 'master'}
+      steps {
+		sh "ScriptsTestGUI/gui_test_linux.sh"
+		sh 'test/testGUI/build/Opensidescan_gui_Tests -o build/reports/linux-testGUI.xml -xunitxml'
+		junit 'build/reports/linux-testGUI.xml'
+		archiveArtifacts('build/reports/linux-testGUI.xml')
+      }
 
+    }
+	*/
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -151,9 +161,12 @@ pipeline {
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
         sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/buildTest/release/folderRunTest/test-report-OpenSidescan* $publishTestOutputWinx64Dir'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/win-testGUI.xml $publishTestOutputWinx64Dir'
+        //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/linux-testGUI.xml $publishTestOutputWinx64Dir'
 
       }
     }
+	
   }
+  
 }

@@ -1,7 +1,7 @@
 #ifndef PROJECTTEST_H
 #define PROJECTTEST_H
 
-#include "catch.hpp"
+#include "../catch.hpp"
 #include "../../src/OpenSidescan/project/project.h"
 
 TEST_CASE("Test write Project") {

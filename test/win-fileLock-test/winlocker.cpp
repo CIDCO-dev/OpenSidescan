@@ -13,7 +13,7 @@
 #include <string>
 
 int main(int argc, char** argv) {
-    
+    std::cout<<argv[argc - 1]<<"\n";
     if (argc != 2) {
         std::cout << "USAGE: locker [filename]" << std::endl;
         return 0;

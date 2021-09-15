@@ -5,7 +5,7 @@ written by : Patrick Charron-Morneau
 Date : 13 August 2021
 
 ]]
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 project(Opensidescan VERSION 1.0.0)
@@ -108,8 +108,7 @@ if(UNIX)
 		
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
-	add_library(fit_dep ${CLI_SOURCE} ${THIRDPARTY})
-	add_library(cli_dep ${CLI_SOURCE})
+	add_library(cli_dep ${CLI_SOURCE} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} ${SOURCE})
 	add_executable(fit-detector src/cli/fit-detector.cpp )
 	add_executable(sidescan-detect src/cli/sidescan-detect.cpp)
@@ -120,10 +119,10 @@ if(UNIX)
 	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
-	target_link_libraries(fit_dep Eigen3::Eigen ${OpenCV_LIBS})
-	target_link_libraries(fit-detector PUBLIC fit_dep)
-	target_link_libraries(sidescan-detect PUBLIC fit_dep)
-	target_link_libraries(sidescan-dump PUBLIC fit_dep)
+	target_link_libraries(cli_dep Eigen3::Eigen ${OpenCV_LIBS})
+	target_link_libraries(fit-detector PUBLIC cli_dep)
+	target_link_libraries(sidescan-detect PUBLIC cli_dep)
+	target_link_libraries(sidescan-dump PUBLIC cli_dep)
 
 endif()
 if(WIN32)
@@ -174,3 +173,33 @@ set(CPACK_PACKAGE_VERSION_PATCH)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 include(CPack)
 
+#[[
+windows installer pipeline
+install dependencies:
+suggestion for install dependencies location : C:\LIBS\
+download eigen 3.3.X https://eigen.tuxfamily.org/
+download the executable file of opencv 3.4.7 https://github.com/opencv/opencv/releases/tag/3.4.7
+add to path env : C:\LIBS\opencv\build\x64\vc15\bin   ** restart terminal after adding path ..its not linux
+here we can leave default location
+download visual studio : during installation select desktop dev c++ kit https://visualstudio.microsoft.com/downloads/
+download qtcreator 5.12.X https://www.qt.io/qt-5-12
+add to path env : C:\Qt\5.12.11\msvc2015_64\bin   ** restart terminal after adding path ..its not linux
+
+
+
+Download Opensidescan
+git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
+
+
+
+Install ( git bash required + add path env for cmake and git )
+1- navigate to Opensidescan directory
+2-mkdir build && cd build
+3- cmake ..
+4- msbuild.exe opensidescan.sln
+
+build installer :
+>cmake ..
+>msbuild.exe opensidescan.sln /property:configuration=Release
+>cpack
+]]

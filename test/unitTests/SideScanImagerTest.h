@@ -1,7 +1,7 @@
 #ifndef SIDESCANIMAGERTEST_H
 #define SIDESCANIMAGERTEST_H
 
-#include "catch.hpp"
+#include "../catch.hpp"
 #include <string>
 #include "../../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../../src/OpenSidescan/sidescan/sidescanfile.h"

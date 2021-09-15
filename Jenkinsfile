@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -140,20 +140,18 @@ pipeline {
         }
       }
     }
-    */
+    
     stage('Linux GUI tests'){
       agent { label 'master'}
       steps {
 		sh "ScriptsTestGUI/gui_test_linux.sh"
+		sh 'test/testGUI/build/Opensidescan_gui_Tests -o build/reports/linux-testGUI.xml -xunitxml'
+		junit 'build/reports/testGUI.xml'
 		archiveArtifacts('build/reports/testGUI.xml')
       }
-      post {
-        always {
-          junit 'build/reports/testGUI.xml'
-        }
-      }
+
     }
-	/*
+	
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -167,7 +165,7 @@ pipeline {
 
       }
     }
-	*/
+	
   }
   
 }

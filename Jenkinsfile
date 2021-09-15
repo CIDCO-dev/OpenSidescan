@@ -142,7 +142,7 @@ pipeline {
     }
     */
     stage('Linux GUI tests'){
-      agent { label 'windows10-build-opensidescan-vm'}
+      agent { label 'master'}
       steps {
 		sh "ScriptsTestGUI/linux_test_gui.sh"
 		archiveArtifacts('build/reports/testGUI.xml')

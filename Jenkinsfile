@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -125,14 +125,14 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
       }
     }
-	
+	*/
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
 		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\win-testGUI.xml -xunitxml"
-		archiveArtifacts('build\\reports\\testGUI.xml')
+		archiveArtifacts('build\\reports\\win-testGUI.xml')
       }
       post {
         always {

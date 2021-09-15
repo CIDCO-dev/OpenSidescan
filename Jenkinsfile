@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -32,7 +32,7 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }
-	
+	/*
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {

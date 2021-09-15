@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -131,7 +131,7 @@ pipeline {
       steps {
         bat "echo %cd%"
 		bat "ScriptsTestGUI/build_test_gui.bat"
-		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\testGUI.xml -xunitxml"
+		bat "test\\testGUI\\build\\Release\\Opensidescan_gui_Tests.exe -o build\\reports\\win-testGUI.xml -xunitxml"
 		archiveArtifacts('build\\reports\\testGUI.xml')
       }
       post {
@@ -140,7 +140,20 @@ pipeline {
         }
       }
     }
-	
+    */
+    stage('Linux GUI tests'){
+      agent { label 'windows10-build-opensidescan-vm'}
+      steps {
+		sh "ScriptsTestGUI/linux_test_gui.sh"
+		archiveArtifacts('build/reports/testGUI.xml')
+      }
+      post {
+        always {
+          junit 'build/reports/testGUI.xml'
+        }
+      }
+    }
+	/*
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -154,7 +167,7 @@ pipeline {
 
       }
     }
-	
+	*/
   }
   
 }

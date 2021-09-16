@@ -2,7 +2,7 @@
 * Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
-#include "../catch.cpp"
+
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -348,7 +348,7 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
 }
 
 
-int main(){
+TEST_CASE("fit-detector"){
 
     srand (time(NULL));    
     
@@ -406,5 +406,8 @@ int main(){
         std::cerr << "Error: " << e->what() << std::endl;
     }
     
-    return 0;
+    REQUIRE( bestFit->fitness >= 89 );
+    
+    
+    //return 0;
 }

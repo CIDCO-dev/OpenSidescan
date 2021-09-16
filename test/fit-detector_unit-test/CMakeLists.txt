@@ -48,7 +48,7 @@ set(INCLUDE_DIR ${SS};
 INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 
 # executable sources files
-set(SOURCE  fit-detector_test.cpp;
+set(SOURCE  main.cpp;
 
     )
 

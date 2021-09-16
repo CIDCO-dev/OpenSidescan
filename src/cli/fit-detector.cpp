@@ -272,51 +272,55 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
         int recalled = 0;
         int recallCount = 0;
         
+        //TODO : selector detector type
+        //
+        RoiDetector roiDetector(
+                                (*g)->fastThreshold,
+                                cv::FastFeatureDetector::TYPE_9_16,
+                                false,
+                                (*g)->dbscanEpsilon,
+                                (*g)->dbscanMinPts,
+                                (*g)->mserDelta,
+                                (*g)->mserMinArea,
+                                (*g)->mserMaxArea,
+                                true
+                               );                
+        
         //using each file
         for(unsigned int fileIdx=0;fileIdx<files.size();fileIdx++){
-            
+            //std::cout<<"fileIdx : "<<fileIdx<<std::endl;
             std::vector<InventoryObject*> detections;            
- 
-                    //and each image
-            for(auto i=files[fileIdx]->getImages().begin();i!=files[fileIdx]->getImages().end();i++){                
-                    //TODO : selector detector type
-                    RoiDetector roiDetector(
-                                            (*g)->fastThreshold,
-                                            cv::FastFeatureDetector::TYPE_9_16,
-                                            false,
-                                            (*g)->dbscanEpsilon,
-                                            (*g)->dbscanMinPts,
-                                            (*g)->mserDelta,
-                                            (*g)->mserMinArea,
-                                            (*g)->mserMaxArea,
-                                            true
-                                           );                 
-            }
             
-            //update precision stats
-            for(auto detection=detections.begin();detection != detections.end(); detection++){
-                if(insideHits(*detection,* hits[fileIdx])){
-                    //std::cerr << "HIT" << std::endl;
-                    truePositive++;
-                }
+                //and each image
+                for(auto i=files[fileIdx]->getImages().begin();i!=files[fileIdx]->getImages().end();i++){                
+                    
+                     roiDetector.detect(**i, detections);
                 
-                precisionCount++;
-            }
-            
-            //update recall stats
-            for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
-                if(insideDetections(*h,detections)){
-                    recalled++;
                 }
-                
-                recallCount++;
-            }
-            
-            for(auto i=detections.begin();i!=detections.end();i++){
-                delete (*i);
-            }
-        }
-
+                    //update precision stats
+                    for(auto detection=detections.begin();detection != detections.end(); detection++){
+                        //std::cout<<"detection size: "<<detections.size()<<std::endl;
+                        if(insideHits(*detection,* hits[fileIdx])){
+                            //std::cerr << "HIT" << std::endl;
+                            truePositive++;
+                        }
+                        
+                        precisionCount++;
+                    }
+                    
+                    //update recall stats
+                    for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
+                        if(insideDetections(*h,detections)){
+                            recalled++;
+                        }
+                        
+                        recallCount++;
+                    }
+                    
+                    for(auto i=detections.begin();i!=detections.end();i++){
+                        delete (*i);
+                    }
+         }
         //compute fitness
         double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
         double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; 

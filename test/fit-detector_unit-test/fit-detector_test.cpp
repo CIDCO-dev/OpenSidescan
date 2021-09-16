@@ -2,7 +2,7 @@
 * Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
-
+#include "../catch.cpp"
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -124,6 +124,19 @@ void randomize(genome * g){
 
 void initGenomes(std::vector<genome*> & genomes){
     std::cerr << "[+] Initializing " << POPULATION_SIZE << " genomes" << std::endl;
+    
+    genome *g1 = (genome*)malloc(sizeof(genome));
+    //148 108 10 5 63 15000
+    //define first genome to test if fit detector will be >= than g1.fitness
+    g1->fastThreshold = 148;
+    g1->dbscanEpsilon = 108;
+    g1->dbscanMinPts = 10;
+    g1->mserDelta = 5;
+    g1->mserMinArea = 63;
+    g1->mserMaxArea = 15000;
+    g1->fitness = 89;
+    
+    genomes.push_back(g1);
     
     for(int i=0;i<POPULATION_SIZE;i++){
         genome * g = (genome*)malloc(sizeof(genome));
@@ -373,7 +386,7 @@ int main(){
             
             //compute progress
             double progress = bestFit->fitness - lastFit;
-            
+
             if(progress > 0){
                 decimate(genomes);
                 repopulate(genomes);        

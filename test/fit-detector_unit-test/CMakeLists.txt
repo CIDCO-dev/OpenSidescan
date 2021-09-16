@@ -8,7 +8,7 @@ Date : sept
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-project(fit-detector_test VERSION 1.0.0)
+project(fit-detector_test)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)

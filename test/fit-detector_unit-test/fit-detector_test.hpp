@@ -138,7 +138,7 @@ void initGenomes(std::vector<genome*> & genomes){
     
     genomes.push_back(g1);
     
-    for(int i=0;i<POPULATION_SIZE;i++){
+    for(int i=0;i<POPULATION_SIZE - 1 ;i++){
         genome * g = (genome*)malloc(sizeof(genome));
         
         randomize(g);

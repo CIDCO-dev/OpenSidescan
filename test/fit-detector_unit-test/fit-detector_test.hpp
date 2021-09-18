@@ -352,7 +352,7 @@ TEST_CASE("fit-detector"){
 
     srand (time(NULL));    
     
-    std::string directory = "../../../test/fit-detector_unit-test/testdata";
+    std::string directory = "test/fit-detector_unit-test/testdata";
     
     std::vector<SidescanFile*>       files;
     std::vector<std::vector<hit*> *> hits;

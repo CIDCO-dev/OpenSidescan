@@ -51,7 +51,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
     
     if(dir = opendir(directoryPath.c_str())){
         
-        std::cerr << "Processing " << directoryPath << std::endl;
+        //std::cerr << "Processing " << directoryPath << std::endl;
         
         dirent* file;
         
@@ -64,9 +64,9 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                 filenameStream << directoryPath << "/" << file->d_name;
                 std::string fileName(filenameStream.str());
                 
-                std::cerr << "[+] Processing " << fileName << std::endl;
+                //std::cerr << "[+] Processing " << fileName << std::endl;
                 
-                std::cerr << "[-]     Reading image data from " << fileName << std::endl;                
+                //std::cerr << "[-]     Reading image data from " << fileName << std::endl;                
                 
                 //Read image data
                 SidescanImager imager;
@@ -84,7 +84,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                 filenameStream << directoryPath << "/" << file->d_name << ".hits";
                 std::string hitsFilename = filenameStream.str();
                 
-                std::cerr << "[-]     Reading hits data from " << hitsFilename << std::endl;
+                //std::cerr << "[-]     Reading hits data from " << hitsFilename << std::endl;
                 
                 std::ifstream hitsFile(hitsFilename);
                 
@@ -99,7 +99,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                             fileHits->push_back(h);
                         }
                     }
-                    std::cerr << "[+]     " << fileHits->size() << " hits read" << std::endl;
+                    //std::cerr << "[+]     " << fileHits->size() << " hits read" << std::endl;
                     hits.push_back(fileHits);
                     hitsFile.close();
                 }
@@ -109,7 +109,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
         closedir(dir);
     }
     else{
-        std::cerr << "Can't open directory " << directoryPath << std::endl;
+        //std::cerr << "Can't open directory " << directoryPath << std::endl;
     }
 }
 
@@ -123,7 +123,7 @@ void randomize(genome * g){
 }
 
 void initGenomes(std::vector<genome*> & genomes){
-    std::cerr << "[+] Initializing " << POPULATION_SIZE << " genomes" << std::endl;
+    //std::cerr << "[+] Initializing " << POPULATION_SIZE << " genomes" << std::endl;
     
     genome *g1 = (genome*)malloc(sizeof(genome));
     //148 108 10 5 63 15000
@@ -150,7 +150,7 @@ void initGenomes(std::vector<genome*> & genomes){
 bool sortGenome (genome* i,genome* j) { return (i->fitness>j->fitness); }
 
 void decimate(std::vector<genome*> & genomes){
-    std::cerr << "[+] Decimating" << std::endl;
+    //std::cerr << "[+] Decimating" << std::endl;
     
     std::sort(genomes.begin(),genomes.end(),sortGenome);
     
@@ -204,7 +204,7 @@ void mutate(genome * h){
 void repopulate(std::vector<genome*> & genomes){
     std::vector<genome*> offsprings;
     
-    std::cerr << "[+] Repopulating..." << std::endl;    
+    //std::cerr << "[+] Repopulating..." << std::endl;    
     
     while(offsprings.size()<DECIMATION_SIZE){
         genome * f = genomes.at(rand() % genomes.size());        
@@ -223,7 +223,7 @@ void repopulate(std::vector<genome*> & genomes){
 void cancerize(std::vector<genome*> & genomes){
     std::vector<genome*> offsprings;
     
-    std::cerr << "[+] Cancerizing..." << std::endl;    
+    //std::cerr << "[+] Cancerizing..." << std::endl;    
     
     while(offsprings.size()<DECIMATION_SIZE){
         genome * g = (genome*)malloc(sizeof(genome));
@@ -265,7 +265,7 @@ bool insideDetections(hit * h, std::vector<InventoryObject*> & detections){
 genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits){
     genome* bestFit = NULL;
     
-    std::cerr << "[+] Updating fitness values" << std::endl;
+    //std::cerr << "[+] Updating fitness values" << std::endl;
     
     //for every genome
     for(auto g=genomes.begin();g!=genomes.end();g++){       
@@ -334,9 +334,9 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
         double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
         double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; 
         //TODO: add recall
-        
+        /*
         std::cerr << "[-] " << precision << "% / " << recall << " % (" << (*g)->fastThreshold << " " << (*g)->dbscanEpsilon << " " << (*g)->dbscanMinPts << " " << (*g)->mserDelta << " " << (*g)->mserMinArea << " " << (*g)->mserMaxArea << " )" << std::endl;
-        
+        */
         fitness = precision + recall; 
         
         (*g)->fitness = fitness;
@@ -373,12 +373,12 @@ TEST_CASE("fit-detector"){
         loadFiles(files,hits,directory);
         
         while((!bestFit || bestFit->fitness < fitThreshold) && nbGen < genMaxCount){
-            std::cerr<<"[+] unit test 10 generations , each generation have 10 genomes"<<std::endl;
-            std::cerr << "[+] Generation " << nbGen << std::endl;
+            //std::cerr<<"[+] unit test 10 generations , each generation have 10 genomes"<<std::endl;
+            //std::cerr << "[+] Generation " << nbGen << std::endl;
             
             bestFit = updateFitnesses(genomes,files,hits);
             
-            std::cerr << "[-] Best fitness: " << bestFit->fitness << std::endl;
+            //std::cerr << "[-] Best fitness: " << bestFit->fitness << std::endl;
             
             if(bestFit->fitness > fitThreshold){
                 break;
@@ -398,9 +398,9 @@ TEST_CASE("fit-detector"){
             nbGen++;
             lastFit = bestFit->fitness;
         }
-        
+        /*
         std::cerr << "[-] " << bestFit->fitness << "%  " << "(" << bestFit->fastThreshold << " " << bestFit->dbscanEpsilon << " " << bestFit->dbscanMinPts << " " << bestFit->mserDelta << " " << bestFit->mserMinArea << " " << bestFit->mserMaxArea << " )" << std::endl;
-        
+       */ 
     }
     catch(Exception * e){
         std::cerr << "Error: " << e->what() << std::endl;

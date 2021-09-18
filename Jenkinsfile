@@ -63,10 +63,10 @@ pipeline {
 	stage('fit-detector Unit test'){
       agent { label 'master'}
       steps {
-        sh 'Scripts/build_linux_unit_tests.sh'
+        sh 'Scripts/fit-detector_unit-test.sh'
         sh 'mkdir -p build/reports'
-        sh 'test/build/fit-detector_test -r junit -o build/reports/fit-detector_unit-test.xml || true'
-        junit 'build/reports/fit-detector_unit-test.xml'
+        sh 'test/fit-detector_unit-test/build/fit-detector_test -r junit -o build/reports/fit-detector_test_result.xml || true'
+        junit 'build/reports/fit-detector_test_result.xml'
       }
     }
     stage('Unit tests WINDOWS 10') {

@@ -60,7 +60,15 @@ pipeline {
         junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-	
+	stage('fit-detector Unit test'){
+      agent { label 'master'}
+      steps {
+        sh 'Scripts/build_linux_unit_tests.sh'
+        sh 'mkdir -p build/reports'
+        sh 'test/build/fit-detector_test -r junit -o build/reports/fit-detector_unit-test.xml || true'
+        junit 'build/reports/fit-detector_unit-test.xml'
+      }
+    }
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {

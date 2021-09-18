@@ -22,8 +22,8 @@
 
 #include <Eigen/Dense>
 
-#define POPULATION_SIZE 100
-#define DECIMATION_SIZE 80
+#define POPULATION_SIZE 10
+#define DECIMATION_SIZE 8
 
 typedef struct{
     int channel;
@@ -42,10 +42,6 @@ typedef struct{
     int fitness;
 } genome;
 
-void printUsage(){
-    std::cerr << "fitDetector directory" << std::endl;
-    exit(1);
-}
 
 void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits, std::string & directoryPath){
     DIR *dir = NULL;
@@ -129,7 +125,20 @@ void randomize(genome * g){
 void initGenomes(std::vector<genome*> & genomes){
     std::cerr << "[+] Initializing " << POPULATION_SIZE << " genomes" << std::endl;
     
-    for(int i=0;i<POPULATION_SIZE;i++){
+    genome *g1 = (genome*)malloc(sizeof(genome));
+    //148 108 10 5 63 15000
+    //define first genome to test if fit detector will be >= than g1.fitness
+    g1->fastThreshold = 148;
+    g1->dbscanEpsilon = 108;
+    g1->dbscanMinPts = 10;
+    g1->mserDelta = 5;
+    g1->mserMinArea = 63;
+    g1->mserMaxArea = 15000;
+    g1->fitness = 89;
+    
+    genomes.push_back(g1);
+    
+    for(int i=0;i<POPULATION_SIZE - 1 ;i++){
         genome * g = (genome*)malloc(sizeof(genome));
         
         randomize(g);
@@ -339,16 +348,11 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
 }
 
 
-int main(int argc,char** argv){
-    
-    if(argc != 2){
-        printUsage();
-        return 1;
-    }
-    
+TEST_CASE("fit-detector"){
+
     srand (time(NULL));    
     
-    std::string directory = argv[1];
+    std::string directory = "../../../test/fit-detector_unit-test/testdata";
     
     std::vector<SidescanFile*>       files;
     std::vector<std::vector<hit*> *> hits;
@@ -361,7 +365,7 @@ int main(int argc,char** argv){
     double fitThreshold   = 199.999;
 
     int nbGen = 0;    
-    int genMaxCount = 1000;
+    int genMaxCount = 10;
     
     
     try{
@@ -369,6 +373,7 @@ int main(int argc,char** argv){
         loadFiles(files,hits,directory);
         
         while((!bestFit || bestFit->fitness < fitThreshold) && nbGen < genMaxCount){
+            std::cerr<<"[+] unit test 10 generations , each generation have 10 genomes"<<std::endl;
             std::cerr << "[+] Generation " << nbGen << std::endl;
             
             bestFit = updateFitnesses(genomes,files,hits);
@@ -381,7 +386,7 @@ int main(int argc,char** argv){
             
             //compute progress
             double progress = bestFit->fitness - lastFit;
-            
+
             if(progress > 0){
                 decimate(genomes);
                 repopulate(genomes);        
@@ -401,5 +406,8 @@ int main(int argc,char** argv){
         std::cerr << "Error: " << e->what() << std::endl;
     }
     
-    return 0;
+    REQUIRE( bestFit->fitness >= 89 );
+    
+    
+    //return 0;
 }

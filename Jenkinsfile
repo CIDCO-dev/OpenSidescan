@@ -65,6 +65,7 @@ pipeline {
       steps {
         sh 'Scripts/fit-detector_unit-test.sh'
         sh 'mkdir -p build/reports'
+        sh 'pwd'
         sh 'test/fit-detector_unit-test/build/fit-detector_test -r junit -o build/reports/fit-detector_test_result.xml || true'
         junit 'build/reports/fit-detector_test_result.xml'
       }

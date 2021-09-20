@@ -108,12 +108,17 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                     hitsFile.close();
                 }
             }
+            else{
+                std::cerr << "Can't open file " << file->d_name << std::endl;
+                throw std::runtime_error("Can't open .hits file");
+            }
         }
         
         closedir(dir);
     }
     else{
         std::cerr << "Can't open directory " << directoryPath << std::endl;
+        throw std::runtime_error("Can't open directory");
     }
 }
 
@@ -399,7 +404,7 @@ int main(int argc,char** argv){
         std::cerr << "[-] " << bestFit->fitness << "%  " << "(" << bestFit->fastThreshold << " " << bestFit->dbscanEpsilon << " " << bestFit->dbscanMinPts << " " << bestFit->mserDelta << " " << bestFit->mserMinArea << " " << bestFit->mserMaxArea << " )" << std::endl;
         
     }
-    catch(Exception * e){
+    catch(Exception  *e){
         std::cerr << "Error: " << e->what() << std::endl;
     }
     

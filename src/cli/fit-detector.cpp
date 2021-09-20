@@ -297,29 +297,31 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
                      roiDetector.detect(**i, detections);
                 
                 }
-                    //update precision stats
-                    for(auto detection=detections.begin();detection != detections.end(); detection++){
-                        //std::cout<<"detection size: "<<detections.size()<<std::endl;
-                        if(insideHits(*detection,* hits[fileIdx])){
-                            //std::cerr << "HIT" << std::endl;
-                            truePositive++;
-                        }
-                        
-                        precisionCount++;
+                std::cout<<"detection size: "<<detections.size()<<std::endl;
+                //update precision stats
+                for(auto detection=detections.begin();detection != detections.end(); detection++){
+                    //std::cout<<"detection size: "<<detections.size()<<std::endl;
+                    if(insideHits(*detection,* hits[fileIdx])){
+                        //std::cerr << "HIT" << std::endl;
+                        truePositive++;
                     }
                     
-                    //update recall stats
-                    for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
-                        if(insideDetections(*h,detections)){
-                            recalled++;
-                        }
-                        
-                        recallCount++;
+                    precisionCount++;
+                }
+                
+                //update recall stats
+                for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
+                    if(insideDetections(*h,detections)){
+                        recalled++;
                     }
                     
-                    for(auto i=detections.begin();i!=detections.end();i++){
-                        delete (*i);
-                    }
+                    recallCount++;
+                }
+                
+                for(auto i=detections.begin();i!=detections.end();i++){
+                    delete (*i);
+                }
+            detections.clear();
          }
         //compute fitness
         double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;

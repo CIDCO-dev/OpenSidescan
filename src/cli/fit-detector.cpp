@@ -108,12 +108,17 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                     hitsFile.close();
                 }
             }
+            else{
+                std::cerr << "Can't open file " << file->d_name << std::endl;
+                throw std::runtime_error("Can't open .hits file");
+            }
         }
         
         closedir(dir);
     }
     else{
         std::cerr << "Can't open directory " << directoryPath << std::endl;
+        throw std::runtime_error("Can't open directory");
     }
 }
 
@@ -297,29 +302,31 @@ genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*
                      roiDetector.detect(**i, detections);
                 
                 }
-                    //update precision stats
-                    for(auto detection=detections.begin();detection != detections.end(); detection++){
-                        //std::cout<<"detection size: "<<detections.size()<<std::endl;
-                        if(insideHits(*detection,* hits[fileIdx])){
-                            //std::cerr << "HIT" << std::endl;
-                            truePositive++;
-                        }
-                        
-                        precisionCount++;
+                std::cout<<"detection size: "<<detections.size()<<std::endl;
+                //update precision stats
+                for(auto detection=detections.begin();detection != detections.end(); detection++){
+                    //std::cout<<"detection size: "<<detections.size()<<std::endl;
+                    if(insideHits(*detection,* hits[fileIdx])){
+                        //std::cerr << "HIT" << std::endl;
+                        truePositive++;
                     }
                     
-                    //update recall stats
-                    for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
-                        if(insideDetections(*h,detections)){
-                            recalled++;
-                        }
-                        
-                        recallCount++;
+                    precisionCount++;
+                }
+                
+                //update recall stats
+                for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
+                    if(insideDetections(*h,detections)){
+                        recalled++;
                     }
                     
-                    for(auto i=detections.begin();i!=detections.end();i++){
-                        delete (*i);
-                    }
+                    recallCount++;
+                }
+                
+                for(auto i=detections.begin();i!=detections.end();i++){
+                    delete (*i);
+                }
+            detections.clear();
          }
         //compute fitness
         double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
@@ -397,7 +404,7 @@ int main(int argc,char** argv){
         std::cerr << "[-] " << bestFit->fitness << "%  " << "(" << bestFit->fastThreshold << " " << bestFit->dbscanEpsilon << " " << bestFit->dbscanMinPts << " " << bestFit->mserDelta << " " << bestFit->mserMinArea << " " << bestFit->mserMaxArea << " )" << std::endl;
         
     }
-    catch(Exception * e){
+    catch(Exception  *e){
         std::cerr << "Error: " << e->what() << std::endl;
     }
     

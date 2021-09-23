@@ -67,6 +67,8 @@ public slots:
     void actionExportKmlFile();
 
     void actionExportCsvFile();
+    
+    void actionExportHitsFile();
 
 
     void fileSelected(const QItemSelection & selection);
@@ -86,6 +88,7 @@ public slots:
 private slots:
 
     void monitorActionTriggered();
+
 
 protected:
 

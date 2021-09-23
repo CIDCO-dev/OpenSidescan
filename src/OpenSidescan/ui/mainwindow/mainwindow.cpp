@@ -871,3 +871,25 @@ void MainWindow::monitorActionTriggered() {
         }
     }
 }
+
+void MainWindow::actionExportHitsFile(){
+    if(currentProject){
+        QString fileName = QFileDialog::getSaveFileName( this,
+                                                        tr("Export as Hits File"),
+                                                        "",
+                                                        tr("CSV File (*.hits)"),
+                                                            nullptr,
+                                                            QFileDialog::DontUseNativeDialog );
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".hits")){
+                sFilename = sFilename + std::string(".hits");
+            }
+
+            currentProject->exportInventoryAsCsv(sFilename);
+        }
+    }
+}
+

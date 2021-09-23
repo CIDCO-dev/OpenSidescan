@@ -121,7 +121,7 @@ void load_HITS_Files(std::vector<std::vector<hit*>*> & hits, std::string & direc
                         }
                         else{
                             std::cerr<<"\n\n\n"<<file->d_name<<"\n"; 
-                            throw std::runtime_error("hit file not formatted properly"); //seems to be unstable
+                            throw std::runtime_error("hit file not formatted properly");
                         }
                     }
                     std::cerr << "[+]     " << fileHits->size() << " hits read" << std::endl;

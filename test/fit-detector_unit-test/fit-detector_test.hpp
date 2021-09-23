@@ -1,8 +1,6 @@
 /*
-* Copyright 2019 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
+* Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
-
-
 #include <string>
 #include <iostream>
 #include <cstdio>
@@ -10,20 +8,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <unistd.h>
-#include <time.h>
 #include "../thirdParty/MBES-lib/src/utils/StringUtils.hpp"
 #include "../OpenSidescan/sidescan/sidescanimager.h"
 #include "../OpenSidescan/sidescan/sidescanfile.h"
 #include "../OpenSidescan/sidescan/sidescanimage.h"
-//#include "../OpenSidescan/utilities/opencvhelper.h"
 #include "../OpenSidescan/inventoryobject/inventoryobject.h"
 #include "../OpenSidescan/detector/roidetector.h"
 
 #include <Eigen/Dense>
 
-#define POPULATION_SIZE 10
-#define DECIMATION_SIZE 8
 
 typedef struct{
     int channel;
@@ -31,19 +24,8 @@ typedef struct{
     int y;
 } hit ;
 
-typedef struct{
-    int fastThreshold;
-    int dbscanEpsilon;
-    int dbscanMinPts;
-    int mserDelta;
-    int mserMinArea;
-    int mserMaxArea;
-    
-    int fitness;
-} genome;
 
-
-void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits, std::string & directoryPath){
+void load_SSS_Files(std::vector<SidescanFile*> & files, std::string & directoryPath){
     DIR *dir = NULL;
     
     //TODO: read this lever arm from metadata or user input
@@ -51,7 +33,7 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
     
     if(dir = opendir(directoryPath.c_str())){
         
-        std::cerr << "Processing " << directoryPath << std::endl;
+        //std::cerr << "Processing " << directoryPath << std::endl;
         
         dirent* file;
         
@@ -64,9 +46,9 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                 filenameStream << directoryPath << "/" << file->d_name;
                 std::string fileName(filenameStream.str());
                 
-                std::cerr << "[+] Processing " << fileName << std::endl;
+                //std::cerr << "[+] Processing " << fileName << std::endl;
                 
-                std::cerr << "[-]     Reading image data from " << fileName << std::endl;                
+                //std::cerr << "[-]     Reading image data from " << fileName << std::endl;                
                 
                 //Read image data
                 SidescanImager imager;
@@ -74,17 +56,35 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                 parser->parse(fileName);
 
                 SidescanFile * sidescanFile = imager.generate(fileName, antenna2TowPoint);
-
+                REQUIRE(sidescanFile);
                 files.push_back(sidescanFile);
-                
-                //delete parser;
-                
-                //Read hits -------------------------------------                
+                REQUIRE(files.size() == 1 );
+            }
+        }
+        
+        closedir(dir);
+    }
+    else{
+        throw std::runtime_error("Can't open directory");
+    }
+}
+void load_HITS_Files(std::vector<std::vector<hit*>*> & hits, std::string & directoryPath){
+    DIR *dir = NULL;
+    if(dir = opendir(directoryPath.c_str())){
+        
+        //std::cerr << "Processing " << directoryPath << std::endl;
+        
+        dirent* file;
+        
+        std::stringstream filenameStream;
+        
+        while(file=readdir(dir)){
+            if(StringUtils::ends_with(file->d_name,".hits")){ 
                 filenameStream.str("");
-                filenameStream << directoryPath << "/" << file->d_name << ".hits";
+                filenameStream << directoryPath << "/" << file->d_name;
                 std::string hitsFilename = filenameStream.str();
                 
-                std::cerr << "[-]     Reading hits data from " << hitsFilename << std::endl;
+                //std::cerr << "[-]     Reading hits data from " << hitsFilename << std::endl;
                 
                 std::ifstream hitsFile(hitsFilename);
                 
@@ -98,141 +98,28 @@ void loadFiles(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> 
                         if(sscanf(line.c_str(),"%d %d %d",&h->channel,&h->x,&h->y) == 3){
                             fileHits->push_back(h);
                         }
+                        else{
+                            std::cerr<<file->d_name<<"\n"; 
+                            throw std::runtime_error("hits file not formatted properly"); //seems to be unstable
+                        }
                     }
-                    std::cerr << "[+]     " << fileHits->size() << " hits read" << std::endl;
+                    //std::cerr << "[+]     " << fileHits->size() << " hits read" << std::endl;
+                    REQUIRE(fileHits->size() == 2);
                     hits.push_back(fileHits);
                     hitsFile.close();
                 }
+                
             }
+            
         }
         
         closedir(dir);
     }
     else{
-        std::cerr << "Can't open directory " << directoryPath << std::endl;
+        throw std::runtime_error("Can't open directory");
     }
 }
 
-void randomize(genome * g){
-        g->fastThreshold= rand() % 300 + 100;
-        g->dbscanEpsilon= rand() % 100 + 10;
-        g->dbscanMinPts = rand() % 10 + 10;
-        g->mserDelta= rand() % 10 + 5;
-        g->mserMinArea= rand() % 1000 + 10;
-        g->mserMaxArea = 15000;    
-}
-
-void initGenomes(std::vector<genome*> & genomes){
-    std::cerr << "[+] Initializing " << POPULATION_SIZE << " genomes" << std::endl;
-    
-    genome *g1 = (genome*)malloc(sizeof(genome));
-    //148 108 10 5 63 15000
-    //define first genome to test if fit detector will be >= than g1.fitness
-    g1->fastThreshold = 148;
-    g1->dbscanEpsilon = 108;
-    g1->dbscanMinPts = 10;
-    g1->mserDelta = 5;
-    g1->mserMinArea = 63;
-    g1->mserMaxArea = 15000;
-    g1->fitness = 89;
-    
-    genomes.push_back(g1);
-    
-    for(int i=0;i<POPULATION_SIZE - 1 ;i++){
-        genome * g = (genome*)malloc(sizeof(genome));
-        
-        randomize(g);
-        
-        genomes.push_back(g);
-    }
-}
-
-bool sortGenome (genome* i,genome* j) { return (i->fitness>j->fitness); }
-
-void decimate(std::vector<genome*> & genomes){
-    std::cerr << "[+] Decimating" << std::endl;
-    
-    std::sort(genomes.begin(),genomes.end(),sortGenome);
-    
-    for(auto i=genomes.begin()+(POPULATION_SIZE-DECIMATION_SIZE);i!=genomes.end();i++){
-        free(*i);
-    }
-    
-    genomes.resize(POPULATION_SIZE - DECIMATION_SIZE);
-}
-
-genome * crossover(genome * f,genome * g){
-    genome * h = (genome*)malloc(sizeof(genome));
-    
-    h->fastThreshold= (rand() % 100 > 50)? g->fastThreshold : f->fastThreshold;
-    h->dbscanEpsilon= (rand() % 100 > 50)? g->dbscanEpsilon : f->dbscanEpsilon;
-    h->dbscanMinPts = (rand() % 100 > 50)? g->dbscanMinPts  : f->dbscanMinPts;
-    h->mserDelta= (rand() % 100 > 50)? g->mserDelta : f->mserDelta;
-    h->mserMinArea= (rand() % 100 > 50)? g->mserMinArea : f->mserMinArea;
-    h->mserMaxArea= (rand() % 100 > 50)? g->mserMaxArea : f->mserMaxArea;
-    h->fitness = 0;
-    
-    return h;
-}
-
-void mutate(genome * h){
-    
-    int mutation = (rand() % 20) - 10; // -10 to 10
-    
-    if(rand() % 100 > 90 && h->fastThreshold + mutation > 0){
-        h->fastThreshold= h->fastThreshold + mutation;
-    }
-    
-    if(rand() % 100 > 90 && h->dbscanEpsilon + mutation > 0){
-        h->dbscanEpsilon= h->dbscanEpsilon  + mutation;
-    }
-    
-    if(rand() % 100 > 90 && h->dbscanMinPts + mutation > 0){
-        h->dbscanMinPts= h->dbscanMinPts + mutation;
-    }
-    
-    if(rand() % 100 > 90 && h->mserDelta + mutation >0){
-        h->mserDelta= h->mserDelta + mutation;   
-    }
-    
-    if(rand() % 100 > 90 && h->mserMinArea + mutation > 0){
-        h->mserMinArea= h->mserMinArea + mutation;
-    }
-    
-}
-
-void repopulate(std::vector<genome*> & genomes){
-    std::vector<genome*> offsprings;
-    
-    std::cerr << "[+] Repopulating..." << std::endl;    
-    
-    while(offsprings.size()<DECIMATION_SIZE){
-        genome * f = genomes.at(rand() % genomes.size());        
-        genome * g = genomes.at(rand() % genomes.size());
-        
-        if(f != g){
-            genome * offspring = crossover(f,g);
-            mutate(offspring);
-            offsprings.push_back(offspring);
-        }
-    }
-    
-    genomes.insert(genomes.end(),offsprings.begin(),offsprings.end());
-}
-
-void cancerize(std::vector<genome*> & genomes){
-    std::vector<genome*> offsprings;
-    
-    std::cerr << "[+] Cancerizing..." << std::endl;    
-    
-    while(offsprings.size()<DECIMATION_SIZE){
-        genome * g = (genome*)malloc(sizeof(genome));
-        randomize(g);
-        offsprings.push_back(g);
-    }
-    
-    genomes.insert(genomes.end(),offsprings.begin(),offsprings.end());    
-}
 
 bool insideHits(InventoryObject * obj,std::vector<hit*> & hits){
     for(auto i=hits.begin();i!=hits.end();i++){
@@ -262,152 +149,71 @@ bool insideDetections(hit * h, std::vector<InventoryObject*> & detections){
     return false;
 }
 
-genome* updateFitnesses(std::vector<genome*> & genomes,std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits){
-    genome* bestFit = NULL;
+void testing_inside_X_functions(std::vector<SidescanFile*> & files,std::vector<std::vector<hit*> *> & hits){
     
-    std::cerr << "[+] Updating fitness values" << std::endl;
+    int truePositive   = 0;
+    int precisionCount = 0;
     
-    //for every genome
-    for(auto g=genomes.begin();g!=genomes.end();g++){       
+    int recalled = 0;
+    int recallCount = 0;
+          
+    std::vector<InventoryObject*> detections; 
+    SidescanFile *element = files[0];
+    SidescanImage * image = element->getImages()[1];
+    REQUIRE(image);
+    InventoryObject crabpot4_1(*image,600,1050,700,1150);
+    InventoryObject crabpot4_2(*image,500,1300,600,1400);
+    InventoryObject false_detect1(*image,1,1,100,100);
+    InventoryObject false_detect2(*image,100,100,200,200);
+    detections.push_back(&crabpot4_1);
+    detections.push_back(&crabpot4_2);
+    detections.push_back(&false_detect1);
+    detections.push_back(&false_detect2); 
+        // check if detection contain a hit
+        for(auto detection=detections.begin();detection != detections.end(); detection++){
+            if(insideHits(*detection,* hits[0])){ 
+                truePositive++;
+            }
+            precisionCount++;
+        }
         
-        if(!bestFit) bestFit=*g;
-        
-        //recompute fitness
-        double fitness = 0.0;
-        
-        int truePositive   = 0;
-        int precisionCount = 0;
-        
-        int recalled = 0;
-        int recallCount = 0;
-        
-        //TODO : selector detector type
-        //
-        RoiDetector roiDetector(
-                                (*g)->fastThreshold,
-                                cv::FastFeatureDetector::TYPE_9_16,
-                                false,
-                                (*g)->dbscanEpsilon,
-                                (*g)->dbscanMinPts,
-                                (*g)->mserDelta,
-                                (*g)->mserMinArea,
-                                (*g)->mserMaxArea,
-                                true
-                               );                
-        
-        //using each file
-        for(unsigned int fileIdx=0;fileIdx<files.size();fileIdx++){
-            //std::cout<<"fileIdx : "<<fileIdx<<std::endl;
-            std::vector<InventoryObject*> detections;            
-            
-                //and each image
-                for(auto i=files[fileIdx]->getImages().begin();i!=files[fileIdx]->getImages().end();i++){                
-                    
-                     roiDetector.detect(**i, detections);
-                
-                }
-                    //update precision stats
-                    for(auto detection=detections.begin();detection != detections.end(); detection++){
-                        //std::cout<<"detection size: "<<detections.size()<<std::endl;
-                        if(insideHits(*detection,* hits[fileIdx])){
-                            //std::cerr << "HIT" << std::endl;
-                            truePositive++;
-                        }
-                        
-                        precisionCount++;
-                    }
-                    
-                    //update recall stats
-                    for(auto h=hits[fileIdx]->begin(); h!=hits[fileIdx]->end(); h++){
-                        if(insideDetections(*h,detections)){
-                            recalled++;
-                        }
-                        
-                        recallCount++;
-                    }
-                    
-                    for(auto i=detections.begin();i!=detections.end();i++){
-                        delete (*i);
-                    }
-         }
-        //compute fitness
-        double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
-        double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; 
-        //TODO: add recall
-        
-        std::cerr << "[-] " << precision << "% / " << recall << " % (" << (*g)->fastThreshold << " " << (*g)->dbscanEpsilon << " " << (*g)->dbscanMinPts << " " << (*g)->mserDelta << " " << (*g)->mserMinArea << " " << (*g)->mserMaxArea << " )" << std::endl;
-        
-        fitness = precision + recall; 
-        
-        (*g)->fitness = fitness;
-        
-        if(bestFit->fitness < fitness)  bestFit= (*g);
-    }
+        // check if all hits have been detect
+        for(auto h=hits[0]->begin(); h!=hits[0]->end(); h++){
+            if(insideDetections(*h,detections)){ 
+                recalled++;
+            }
+            recallCount++;
+        }
+
+    detections.clear();
+
+    double precision = (truePositive > 0 && precisionCount > 0)?((double)truePositive/(double)precisionCount) * 100 : 0.0;
+    double recall = (recalled > 0 && recallCount > 0)?((double)recalled/(double)recallCount)*100:0.0; 
     
-    return bestFit;
+    //std::cout<<"True positive : "<< precision<<"\n";
+    //std::cout<<"% of targets detected : "<<recall<<"\n";
+    REQUIRE (precision == 50);
+    REQUIRE (recall == 100);
+
 }
 
 
 TEST_CASE("fit-detector"){
-
-    srand (time(NULL));    
     
     std::string directory = "../../../test/fit-detector_unit-test/testdata";
-    
     std::vector<SidescanFile*>       files;
     std::vector<std::vector<hit*> *> hits;
-
-    std::vector<genome*>             genomes;
-    
-    double lastFit = 0.0;
-    
-    genome * bestFit= NULL;    
-    double fitThreshold   = 199.999;
-
-    int nbGen = 0;    
-    int genMaxCount = 10;
-    
     
     try{
-        initGenomes(genomes);
-        loadFiles(files,hits,directory);
-        
-        while((!bestFit || bestFit->fitness < fitThreshold) && nbGen < genMaxCount){
-            std::cerr<<"[+] unit test 10 generations , each generation have 10 genomes"<<std::endl;
-            std::cerr << "[+] Generation " << nbGen << std::endl;
-            
-            bestFit = updateFitnesses(genomes,files,hits);
-            
-            std::cerr << "[-] Best fitness: " << bestFit->fitness << std::endl;
-            
-            if(bestFit->fitness > fitThreshold){
-                break;
-            }
-            
-            //compute progress
-            double progress = bestFit->fitness - lastFit;
+        load_SSS_Files(files,directory);
+        load_HITS_Files(hits,directory);
+        REQUIRE(files.size() == hits.size());
 
-            if(progress > 0){
-                decimate(genomes);
-                repopulate(genomes);        
-            }
-            else{
-                decimate(genomes);
-                cancerize(genomes);
-            }
-            nbGen++;
-            lastFit = bestFit->fitness;
+        testing_inside_X_functions(files,hits);
         }
-        
-        std::cerr << "[-] " << bestFit->fitness << "%  " << "(" << bestFit->fastThreshold << " " << bestFit->dbscanEpsilon << " " << bestFit->dbscanMinPts << " " << bestFit->mserDelta << " " << bestFit->mserMinArea << " " << bestFit->mserMaxArea << " )" << std::endl;
-        
+
+    catch(Exception  *e){
+    std::cerr << "Error: " << e->what() << std::endl;
     }
-    catch(Exception * e){
-        std::cerr << "Error: " << e->what() << std::endl;
-    }
-    
-    REQUIRE( bestFit->fitness >= 89 );
-    
-    
-    //return 0;
+
 }

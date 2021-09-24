@@ -154,10 +154,9 @@ void Project::write(std::string & filename){
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");
 
-        //TODO: use relative file paths
         QString sssRelativePath = projectDir.relativeFilePath(QString::fromStdString((*i)->getFilename()));
 
-        qDebug()<<sssRelativePath<<"\n";
+        //qDebug()<<sssRelativePath<<"\n";
 
         xmlWriter.writeAttribute(QString::fromStdString("filename"),sssRelativePath);
 
@@ -306,24 +305,6 @@ void Project::exportInventoryAsHits(std::string & path){
             std::cerr<<"cant create new file"<<std::endl;
         }
     }
-
-    /*
-    std::ofstream outFile;
-    outFile.open( filename, std::ofstream::out );
-    if( outFile.is_open() ){
-        mutex.lock();
-        for(auto i = files.begin(); i != files.end(); ++i){
-            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
-                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-                    outFile<<(*i)->getFilename<< " " <<(*j)->getChannelNumber()<< " "   << (*k)->getXCenter() << " " << (*k)->getYCenter() << "\n";
-                }
-            }
-        }
-        mutex.unlock();
-        outFile.close();
-    }
-
-    */
 }
 
 

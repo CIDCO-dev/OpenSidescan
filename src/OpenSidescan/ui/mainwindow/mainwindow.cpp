@@ -877,7 +877,7 @@ void MainWindow::actionExportHitsFile(){
         QString fileName = QFileDialog::getSaveFileName( this,
                                                         tr("Export as Hits File"),
                                                         "",
-                                                        tr("CSV File (*.hits)"),
+                                                        tr("HITS File (*.hits)"),
                                                             nullptr,
                                                             QFileDialog::DontUseNativeDialog );
 
@@ -888,7 +888,7 @@ void MainWindow::actionExportHitsFile(){
                 sFilename = sFilename + std::string(".hits");
             }
 
-            currentProject->exportInventoryAsCsv(sFilename);
+            currentProject->exportInventoryAsHits(sFilename);
         }
     }
 }

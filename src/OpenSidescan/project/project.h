@@ -26,6 +26,8 @@ public:
     void exportInventoryAsKml(std::string & filename);
 
     void exportInventoryAsCsv(std::string & filename);
+    
+    void exportInventoryAsHits(std::string & filename);
 
 
     std::string & getFilename(){ return filename;}

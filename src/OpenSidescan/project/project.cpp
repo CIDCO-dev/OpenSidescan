@@ -270,6 +270,31 @@ void Project::exportInventoryAsCsv(std::string & filename){
     }
 }
 
+void Project::exportInventoryAsHits(std::string & filename){
+    std::ofstream outFile;
+    outFile.open( filename, std::ofstream::out );
+
+    if( outFile.is_open() ){
+        //outFile << "name" << "," << "description" << "," << "longitude" << "," << "latitude" << "\n";
+
+        //outFile << std::fixed << std::setprecision(15);
+
+        mutex.lock();
+
+        for(auto i = files.begin(); i != files.end(); ++i){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    //Position * pos = (*k)->getPosition();
+                    outFile<<(*j)->getChannelNumber()<< " "   << (*k)->getXCenter() << " " << (*k)->getYCenter() << "\n";
+                }
+            }
+        }
+
+        mutex.unlock();
+
+        outFile.close();
+    }
+}
 
 
 //void Project::saveObjectImages( const QString & folder )

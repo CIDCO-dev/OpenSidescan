@@ -146,11 +146,20 @@ void Project::write(std::string & filename){
     xmlWriter.writeAttribute(QString::fromStdString("leverArmY"),QString::number(antenna2TowPointLeverArm[1]));
     xmlWriter.writeAttribute(QString::fromStdString("leverArmZ"),QString::number(antenna2TowPointLeverArm[2]));
 
+    //prepare to compute relative file paths
+    QFileInfo fileInfo(QString::fromStdString(filename));
+    QDir projectDir(fileInfo.canonicalPath());
+
+
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");
 
         //TODO: use relative file paths
-        xmlWriter.writeAttribute(QString::fromStdString("filename"),QString::fromStdString((*i)->getFilename()));
+        QString sssRelativePath = projectDir.relativeFilePath(QString::fromStdString((*i)->getFilename()));
+
+        qDebug()<<sssRelativePath<<"\n";
+
+        xmlWriter.writeAttribute(QString::fromStdString("filename"),sssRelativePath);
 
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             //TODO: write objects
@@ -272,7 +281,6 @@ void Project::exportInventoryAsCsv(std::string & filename){
 
 void Project::exportInventoryAsHits(std::string & path){
     int pos = 0;
-    std::cerr<<files.size()<<"\n";
     for(auto i = files.begin(); i != files.end(); ++i){
         std::string filename = path;
         std::string fileName = (*i)->getFilename();
@@ -284,7 +292,6 @@ void Project::exportInventoryAsHits(std::string & path){
         std::ofstream outFile;
         outFile.open( filename, std::ofstream::out );
         if( outFile.is_open() ){
-            std::cerr<<filename<<std::endl;
             mutex.lock();
             for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
                 for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){

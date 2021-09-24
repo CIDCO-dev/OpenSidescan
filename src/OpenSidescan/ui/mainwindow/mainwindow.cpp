@@ -665,6 +665,9 @@ void MainWindow::actionSave()
 {
     if(currentProject){
         if(currentProject->getFilename().size() > 0){
+
+
+
             currentProject->write(currentProject->getFilename());
             this->setWindowTitle(QString::fromStdString(std::string(currentProject->getFilename())));
         }

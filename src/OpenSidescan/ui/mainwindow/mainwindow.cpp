@@ -874,21 +874,17 @@ void MainWindow::monitorActionTriggered() {
 
 void MainWindow::actionExportHitsFile(){
     if(currentProject){
-        QString fileName = QFileDialog::getSaveFileName( this,
-                                                        tr("Export as Hits File"),
-                                                        "",
-                                                        tr("HITS File (*.hits)"),
-                                                            nullptr,
-                                                            QFileDialog::DontUseNativeDialog );
+        QString path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Select Directory"),
+                                                         "",
+                                                         QFileDialog::ShowDirsOnly
+                                                         | QFileDialog::DontResolveSymlinks);
 
-        if(fileName.size() > 0){
-            std::string sFilename = fileName.toStdString();
+        if(path.size() > 0){
+            std::string sPath = path.toStdString();
 
-            if(!StringUtils::ends_with(sFilename.c_str(),".hits")){
-                sFilename = sFilename + std::string(".hits");
-            }
 
-            currentProject->exportInventoryAsHits(sFilename);
+            currentProject->exportInventoryAsHits(sPath);
         }
     }
 }

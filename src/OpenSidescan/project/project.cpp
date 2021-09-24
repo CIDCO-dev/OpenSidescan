@@ -270,30 +270,53 @@ void Project::exportInventoryAsCsv(std::string & filename){
     }
 }
 
-void Project::exportInventoryAsHits(std::string & filename){
-    std::ofstream outFile;
-    outFile.open( filename, std::ofstream::out );
+void Project::exportInventoryAsHits(std::string & path){
+    int pos = 0;
+    std::cerr<<files.size()<<"\n";
+    for(auto i = files.begin(); i != files.end(); ++i){
+        std::string filename = path;
+        std::string fileName = (*i)->getFilename();
+        pos = fileName.rfind("/");
+        fileName.erase(0,pos);
+        fileName.append(".hits");
+        filename.append(fileName);
 
-    if( outFile.is_open() ){
-        //outFile << "name" << "," << "description" << "," << "longitude" << "," << "latitude" << "\n";
-
-        //outFile << std::fixed << std::setprecision(15);
-
-        mutex.lock();
-
-        for(auto i = files.begin(); i != files.end(); ++i){
+        std::ofstream outFile;
+        outFile.open( filename, std::ofstream::out );
+        if( outFile.is_open() ){
+            std::cerr<<filename<<std::endl;
+            mutex.lock();
             for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
                 for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-                    //Position * pos = (*k)->getPosition();
                     outFile<<(*j)->getChannelNumber()<< " "   << (*k)->getXCenter() << " " << (*k)->getYCenter() << "\n";
                 }
             }
+            mutex.unlock();
+            outFile.close();
+            fileName = "";
         }
+        else{
+            std::cerr<<"cant create new file"<<std::endl;
+        }
+    }
 
+    /*
+    std::ofstream outFile;
+    outFile.open( filename, std::ofstream::out );
+    if( outFile.is_open() ){
+        mutex.lock();
+        for(auto i = files.begin(); i != files.end(); ++i){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    outFile<<(*i)->getFilename<< " " <<(*j)->getChannelNumber()<< " "   << (*k)->getXCenter() << " " << (*k)->getYCenter() << "\n";
+                }
+            }
+        }
         mutex.unlock();
-
         outFile.close();
     }
+
+    */
 }
 
 

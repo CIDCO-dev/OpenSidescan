@@ -281,15 +281,18 @@ void Project::exportInventoryAsCsv(std::string & filename){
 void Project::exportInventoryAsHits(std::string & path){
     int pos = 0;
     for(auto i = files.begin(); i != files.end(); ++i){
-        std::string filename = path;
-        std::string fileName = (*i)->getFilename();
-        pos = fileName.rfind("/");
-        fileName.erase(0,pos);
-        fileName.append(".hits");
-        filename.append(fileName);
+
+        std::string filename = (*i)->getFilename();
+        QFileInfo fileInfo(QString::fromStdString(filename));
+        QString FileName = fileInfo.fileName();
+        QFileInfo pathInfo(QString::fromStdString(path));
+        pathInfo.setFile(QString::fromStdString(path),FileName);
+        QString filePath = pathInfo.filePath();
+        std::string Path = filePath.toStdString();
+        Path.append(".hits");
 
         std::ofstream outFile;
-        outFile.open( filename, std::ofstream::out );
+        outFile.open( Path, std::ofstream::out );
         if( outFile.is_open() ){
             mutex.lock();
             for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
@@ -299,7 +302,7 @@ void Project::exportInventoryAsHits(std::string & path){
             }
             mutex.unlock();
             outFile.close();
-            fileName = "";
+            Path = "";
         }
         else{
             std::cerr<<"cant create new file"<<std::endl;

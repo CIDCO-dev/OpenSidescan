@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>641</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -58,6 +58,8 @@
      <addaction name="actionExportHTML"/>
      <addaction name="actionExportKmlFile"/>
      <addaction name="actionExportTrainingObjectSamples"/>
+     <addaction name="actionExportHitsFile"/>
+     <addaction name="actionExport_PyTorch_Training"/>
     </widget>
     <addaction name="actionFindObjects"/>
     <addaction name="menuExport_Inventory"/>
@@ -241,6 +243,16 @@
   <action name="actionShowVesselGeometryWindow">
    <property name="text">
     <string>VesselGeometry</string>
+   </property>
+  </action>
+  <action name="actionExportHitsFile">
+   <property name="text">
+    <string>Export HITS file</string>
+   </property>
+  </action>
+  <action name="actionExport_PyTorch_Training">
+   <property name="text">
+    <string>Export PyTorch Training</string>
    </property>
   </action>
  </widget>
@@ -441,6 +453,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExportHitsFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionExportHitsFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExport_PyTorch_Training</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionExportPyTorch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionOpen()</slot>
@@ -455,5 +499,7 @@
   <slot>actionExportHTML()</slot>
   <slot>actionExportTrainingObjectSamples()</slot>
   <slot>actionExportCsvFile()</slot>
+  <slot>actionExportHitsFile()</slot>
+  <slot>actionExportPyTorch()</slot>
  </slots>
 </ui>

@@ -67,6 +67,9 @@ public slots:
     void actionExportKmlFile();
 
     void actionExportCsvFile();
+    
+    void actionExportHitsFile();
+    void actionExportPyTorch();
 
 
     void fileSelected(const QItemSelection & selection);

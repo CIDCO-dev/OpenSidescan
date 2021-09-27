@@ -665,6 +665,9 @@ void MainWindow::actionSave()
 {
     if(currentProject){
         if(currentProject->getFilename().size() > 0){
+
+
+
             currentProject->write(currentProject->getFilename());
             this->setWindowTitle(QString::fromStdString(std::string(currentProject->getFilename())));
         }
@@ -870,4 +873,43 @@ void MainWindow::monitorActionTriggered() {
             }
         }
     }
+}
+
+void MainWindow::actionExportHitsFile(){
+    if(currentProject){
+        QString path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Select Directory"),
+                                                         "",
+                                                         QFileDialog::ShowDirsOnly
+                                                         | QFileDialog::DontResolveSymlinks);
+
+        if(path.size() > 0){
+            std::string sPath = path.toStdString();
+
+
+            currentProject->exportInventoryAsHits(sPath);
+        }
+    }
+}
+
+void MainWindow::actionExportPyTorch(){
+    if(currentProject){
+        QString fileName = QFileDialog::getSaveFileName( this,
+                                                        tr("Export as PyHits"),
+                                                        "",
+                                                        tr("CSV File (*.PyHits)"),
+                                                            nullptr,
+                                                            QFileDialog::DontUseNativeDialog );
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".PyHits")){
+                sFilename = sFilename + std::string(".PyHits");
+            }
+
+            currentProject->exportInventory4PyTorch(sFilename);
+        }
+    }
+
 }

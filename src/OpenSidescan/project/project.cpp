@@ -146,11 +146,19 @@ void Project::write(std::string & filename){
     xmlWriter.writeAttribute(QString::fromStdString("leverArmY"),QString::number(antenna2TowPointLeverArm[1]));
     xmlWriter.writeAttribute(QString::fromStdString("leverArmZ"),QString::number(antenna2TowPointLeverArm[2]));
 
+    //prepare to compute relative file paths
+    QFileInfo fileInfo(QString::fromStdString(filename));
+    QDir projectDir(fileInfo.canonicalPath());
+
+
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");
 
-        //TODO: use relative file paths
-        xmlWriter.writeAttribute(QString::fromStdString("filename"),QString::fromStdString((*i)->getFilename()));
+        QString sssRelativePath = projectDir.relativeFilePath(QString::fromStdString((*i)->getFilename()));
+
+        //qDebug()<<sssRelativePath<<"\n";
+
+        xmlWriter.writeAttribute(QString::fromStdString("filename"),sssRelativePath);
 
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             //TODO: write objects
@@ -270,6 +278,36 @@ void Project::exportInventoryAsCsv(std::string & filename){
     }
 }
 
+void Project::exportInventoryAsHits(std::string & path){
+    for(auto i = files.begin(); i != files.end(); ++i){
+
+        std::string filename = (*i)->getFilename();
+        QFileInfo fileInfo(QString::fromStdString(filename));
+        QString FileName = fileInfo.fileName();
+        QFileInfo pathInfo(QString::fromStdString(path));
+        pathInfo.setFile(QString::fromStdString(path),FileName);
+        QString filePath = pathInfo.filePath();
+        std::string Path = filePath.toStdString();
+        Path.append(".hits");
+
+        std::ofstream outFile;
+        outFile.open( Path, std::ofstream::out );
+        if( outFile.is_open() ){
+            mutex.lock();
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    outFile<<(*j)->getChannelNumber()<< " "   << (*k)->getXCenter() << " " << (*k)->getYCenter() << "\n";
+                }
+            }
+            mutex.unlock();
+            outFile.close();
+            Path = "";
+        }
+        else{
+            std::cerr<<"cant create new file"<<std::endl;
+        }
+    }
+}
 
 
 //void Project::saveObjectImages( const QString & folder )
@@ -512,3 +550,32 @@ bool Project::containsFile(std::string & filename){
     return res;
 }
 
+void Project::exportInventory4PyTorch(std::string & filename){
+
+    QString FileName = QString::fromStdString(filename);
+    filename = FileName.toStdString();
+    qDebug()<<QString::fromStdString(filename)<<"\n";
+
+    std::ofstream outFile;
+    outFile.open( filename, std::ofstream::out );
+    if( outFile.is_open() ){
+        mutex.lock();
+        for(auto i = files.begin(); i != files.end(); ++i){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    std::string name = (*i)->getFilename();
+                    QFileInfo fileInfo(QString::fromStdString(name));
+                    QString Name = fileInfo.fileName();
+                    qDebug()<<Name<<"\n";
+                    name = Name.toStdString();
+                    outFile<< name<<" "<< (*j)->getChannelNumber()<<" "<< (*k)->getX()<<" "<< (*k)->getY() <<" "<<(*k)->getPixelWidth()<<" "<<(*k)->getPixelHeight()<<"\n";
+                }
+            }
+        }
+            mutex.unlock();
+            outFile.close();
+        }
+    else{
+        std::cerr<<"cant create new file"<<std::endl;
+    }
+}

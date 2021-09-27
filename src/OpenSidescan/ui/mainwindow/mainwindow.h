@@ -69,6 +69,7 @@ public slots:
     void actionExportCsvFile();
     
     void actionExportHitsFile();
+    void actionExportPyTorch();
 
 
     void fileSelected(const QItemSelection & selection);
@@ -88,7 +89,6 @@ public slots:
 private slots:
 
     void monitorActionTriggered();
-
 
 protected:
 

@@ -892,3 +892,24 @@ void MainWindow::actionExportHitsFile(){
     }
 }
 
+void MainWindow::actionExportPyTorch(){
+    if(currentProject){
+        QString fileName = QFileDialog::getSaveFileName( this,
+                                                        tr("Export as PyHits"),
+                                                        "",
+                                                        tr("CSV File (*.PyHits)"),
+                                                            nullptr,
+                                                            QFileDialog::DontUseNativeDialog );
+
+        if(fileName.size() > 0){
+            std::string sFilename = fileName.toStdString();
+
+            if(!StringUtils::ends_with(sFilename.c_str(),".PyHits")){
+                sFilename = sFilename + std::string(".PyHits");
+            }
+
+            currentProject->exportInventory4PyTorch(sFilename);
+        }
+    }
+
+}

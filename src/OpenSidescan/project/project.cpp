@@ -279,7 +279,6 @@ void Project::exportInventoryAsCsv(std::string & filename){
 }
 
 void Project::exportInventoryAsHits(std::string & path){
-    int pos = 0;
     for(auto i = files.begin(); i != files.end(); ++i){
 
         std::string filename = (*i)->getFilename();
@@ -551,3 +550,32 @@ bool Project::containsFile(std::string & filename){
     return res;
 }
 
+void Project::exportInventory4PyTorch(std::string & filename){
+
+    QString FileName = QString::fromStdString(filename);
+    filename = FileName.toStdString();
+    qDebug()<<QString::fromStdString(filename)<<"\n";
+
+    std::ofstream outFile;
+    outFile.open( filename, std::ofstream::out );
+    if( outFile.is_open() ){
+        mutex.lock();
+        for(auto i = files.begin(); i != files.end(); ++i){
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+                for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                    std::string name = (*i)->getFilename();
+                    QFileInfo fileInfo(QString::fromStdString(name));
+                    QString Name = fileInfo.fileName();
+                    qDebug()<<Name<<"\n";
+                    name = Name.toStdString();
+                    outFile<< name<<" "<< (*j)->getChannelNumber()<<" "<< (*k)->getX()<<" "<< (*k)->getY() <<" "<<(*k)->getPixelWidth()<<" "<<(*k)->getPixelHeight()<<"\n";
+                }
+            }
+        }
+            mutex.unlock();
+            outFile.close();
+        }
+    else{
+        std::cerr<<"cant create new file"<<std::endl;
+    }
+}

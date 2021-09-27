@@ -29,6 +29,7 @@ public:
     
     void exportInventoryAsHits(std::string & filename);
 
+    void exportInventory4PyTorch(std::string & filename);
 
     std::string & getFilename(){ return filename;}
     void          setFilename(std::string & fileName){ filename=fileName;}

@@ -58,6 +58,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/ui/mainwindow/monitorthread.cpp;
                 ${SS}/ui/about/aboutdialog.ui;
                 ${SS}/ui/mainwindow/mainwindow.ui;
+                ${SS}/telemetryManager/telemetrymanager.cpp;
     )
 
 # thirdParty sources
@@ -104,7 +105,7 @@ if(UNIX)
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 3.4.7 REQUIRED)
-	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
+	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
 		
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
@@ -117,7 +118,7 @@ if(UNIX)
 	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-dump PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	# linking dependencies
-	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 	target_link_libraries(cli_dep Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(fit-detector PUBLIC cli_dep)

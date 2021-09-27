@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT       += core gui xml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     ui/docks/vesselgeometrywindow.cpp \
     detector/roidetector.cpp \
     ui/mainwindow/monitorthread.cpp \
-    detector/houghdetector.cpp
+    detector/houghdetector.cpp \
+    telemetryManager/telemetrymanager.cpp
 
 
 HEADERS  +=     machinelearning/dbscan.h \
@@ -121,7 +122,8 @@ HEADERS  +=     machinelearning/dbscan.h \
     ui/docks/vesselgeometrywindow.h \
     detector/roidetector.h \
     ui/mainwindow/monitorthread.h \
-    detector/houghdetector.h
+    detector/houghdetector.h \
+    telemetryManager/telemetrymanager.h
 
 FORMS    += ui/mainwindow/mainwindow.ui \
     ui/about/aboutdialog.ui

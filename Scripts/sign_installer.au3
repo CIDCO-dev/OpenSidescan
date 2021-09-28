@@ -4,7 +4,7 @@ $SIGN=StringReplace($CMD, "VERSION", $CmdLine[1])
 
 Run("cmd.exe")
 Sleep(2000)
-Send($CMD)
+Send($SIGN)
 Send("{Enter}")
 Sleep(4000)
 WinClose("C:\Windows\SYSTEM32\cmd.exe", "")

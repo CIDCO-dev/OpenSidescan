@@ -84,6 +84,7 @@ pipeline {
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
+        echo "why its so simple with linux but windows is all over the place"
         echo $version
 		bat "Scripts/build_opensidescan_win.bat $version"
 		stash includes: 'build/Release/**' , name: 'executable'

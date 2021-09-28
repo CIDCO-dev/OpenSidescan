@@ -3,13 +3,16 @@
 
 
 TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
-    //QNetworkAccessManager *manager;
-    //QNetworkRequest *request ;
     request->setUrl(QUrl("https://www.google.ca/")); // "http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"
 }
 
-void TelemetryManager::send_telemetry(){
+TelemetryManager::~TelemetryManager(){
+    delete manager;
+    delete request;
+}
 
+void TelemetryManager::send_telemetry(){
+    /*
     reply = manager->get(*request);
     QEventLoop event;
     connect(reply, SIGNAL(finished()), &event, SLOT(quit()));
@@ -17,4 +20,18 @@ void TelemetryManager::send_telemetry(){
     QString content = reply->readAll();
 
     qDebug()<<content;
+    */
+    manager->get(*request);
+    QObject::connect(manager, &QNetworkAccessManager::finished,this, [=](QNetworkReply *reply) {
+                if (reply->error()) {
+                    qDebug() << reply->errorString();
+                    return;
+                }
+
+                QString answer = reply->readAll();
+
+                qDebug() << answer;
+            }
+        );
+
 }

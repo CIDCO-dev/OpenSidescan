@@ -13,6 +13,7 @@ class TelemetryManager : public QWidget
     Q_OBJECT
 public:
     explicit TelemetryManager(QWidget *parent = nullptr);
+    ~TelemetryManager();
     void send_telemetry();
 
 

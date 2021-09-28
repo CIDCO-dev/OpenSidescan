@@ -130,14 +130,14 @@ if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
-	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
+	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCE})
 	# linking dependencies
-	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
 	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)
@@ -145,6 +145,7 @@ if(WIN32)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
 				${QT_DLLS_PATH}/QT5Core.dll
 				${QT_DLLS_PATH}/QT5Gui.dll
+				${QT_DLLS_PATH}/Qt5Network.dll
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)

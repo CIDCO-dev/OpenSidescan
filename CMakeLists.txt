@@ -8,7 +8,7 @@ Date : 13 August 2021
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-project(Opensidescan VERSION 1.0.0)
+project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -148,7 +148,7 @@ if(WIN32)
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in  control panel
+	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer
 	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources/splash.ico") # installer icon
@@ -168,9 +168,7 @@ set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_VERSION_MAJOR)
-set(CPACK_PACKAGE_VERSION_MINOR)
-set(CPACK_PACKAGE_VERSION_PATCH)
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 include(CPack)
 

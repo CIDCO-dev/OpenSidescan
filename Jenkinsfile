@@ -77,7 +77,7 @@ pipeline {
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
-        sh 'Scripts/build_opensidescan.sh'
+        sh 'Scripts/build_opensidescan.sh $version'
       }
     }
 	

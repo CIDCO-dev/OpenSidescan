@@ -2,5 +2,5 @@
 
 mkdir build/
 cd build/
-cmake ..
-make Opensidescan
+cmake .. -DPROJECT_VERSION
+make -j8 Opensidescan

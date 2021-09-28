@@ -1,8 +1,8 @@
 echo "build opensidescan windows script"
-set version=%1
+
 
 mkdir build
 cd build
-cmake .. -DCMAKE_GENERATOR_PLATFORM=x64 -DPROJECT_VERSION=%version%
+cmake .. -DCMAKE_GENERATOR_PLATFORM=x64 -DPROJECT_VERSION=%1
 msbuild.exe opensidescan.sln /property:configuration=release
 

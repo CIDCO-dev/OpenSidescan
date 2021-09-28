@@ -3,7 +3,7 @@
 
 
 TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
-    request->setUrl(QUrl("https://www.google.ca/")); // "http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"
+    request->setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY")); // "http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"
 }
 
 TelemetryManager::~TelemetryManager(){
@@ -12,15 +12,16 @@ TelemetryManager::~TelemetryManager(){
 }
 
 void TelemetryManager::send_telemetry(){
-    /*
+
     reply = manager->get(*request);
     QEventLoop event;
     connect(reply, SIGNAL(finished()), &event, SLOT(quit()));
     event.exec();
     QString content = reply->readAll();
 
-    qDebug()<<content;
-    */
+    //qDebug()<<content;
+
+    /*
     manager->get(*request);
     QObject::connect(manager, &QNetworkAccessManager::finished,this, [=](QNetworkReply *reply) {
                 if (reply->error()) {
@@ -30,8 +31,14 @@ void TelemetryManager::send_telemetry(){
 
                 QString answer = reply->readAll();
 
-                qDebug() << answer;
             }
-        );
 
+        );
+        */
+    if (content  != ""){
+        qDebug()<< content<<"\n";
+    }
+    else{
+        qDebug()<<"keep searching for Atlantis\n";
+    }
 }

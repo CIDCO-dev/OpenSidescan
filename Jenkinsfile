@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	
+	/*
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -80,7 +80,7 @@ pipeline {
         sh 'Scripts/build_opensidescan.sh $version'
       }
     }
-	
+	*/
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {

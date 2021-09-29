@@ -103,15 +103,13 @@ pipeline {
 		stash includes: 'build/**' , name: 'installer'
       }
     }
-	
-    //todo : passer version en argument
-	
+		
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
-        bat "Scripts\\sign_installer.au3"
-        archiveArtifacts('build/Opensidescan-$version-win64.exe')
+        bat "Scripts\\sign_installer.au3 $version"
+        archiveArtifacts('build/Opensidescan-*-win64.exe')
 
        }
      }
@@ -120,7 +118,7 @@ pipeline {
       options {skipDefaultCheckout()}
       steps {
         sh 'mkdir -p $binWinx64PublishDir'
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-*-win64.exe $binWinx64PublishDir/'
       }
     }
 	

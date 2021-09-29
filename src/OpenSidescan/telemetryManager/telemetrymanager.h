@@ -7,6 +7,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QEventLoop>
+#include <QGuiApplication>
+#include <QSysInfo>
 
 class TelemetryManager : public QWidget
 {
@@ -21,6 +23,7 @@ private:
     QNetworkAccessManager * manager = new QNetworkAccessManager;
     QNetworkRequest * request = new QNetworkRequest();
     QNetworkReply * reply;
+    QString os, gui, kernel, version;
 
 };
 

@@ -50,8 +50,9 @@ int main(int argc, char *argv[])
     sleep(1);
 
 
-    TelemetryManager bigbro;
-    bigbro.send_telemetry();
+    TelemetryManager user;
+    user.send_telemetry();
+
 
     for(int i=0;i<3;i++){
         splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));

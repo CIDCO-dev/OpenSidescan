@@ -15,8 +15,8 @@ TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
     qDebug()<<version;
 }
 TelemetryManager::~TelemetryManager(){
-    //delete manager;
-    //delete request;
+    delete manager;
+    delete request;
 }
 
 void TelemetryManager::send_telemetry(){

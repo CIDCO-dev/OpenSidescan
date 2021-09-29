@@ -99,6 +99,9 @@ set(CLI_SOURCE
             ${SS}/detector/detector.cpp;
             ${SS}/utilities/opencvhelper.cpp;
    )
+   
+add_compile_definitions(PROJECT_VERSION=${PROJECT_VERSION})
+
 if(UNIX)
 	message("*nix like cmake")
 

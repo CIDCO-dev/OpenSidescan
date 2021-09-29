@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
     splash.show();
     sleep(1);
 
-
     TelemetryManager user;
     user.send_telemetry();
 

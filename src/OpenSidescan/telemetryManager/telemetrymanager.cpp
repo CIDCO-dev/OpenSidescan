@@ -1,14 +1,18 @@
 #include "telemetrymanager.h"
 #include <QDebug>
 
+//convert macro to string
+#define str(x) #x
+#define str1(x) str(x)
+#define Version str1(PROJECT_VERSION)
+
 
 TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
     os = QSysInfo::productType() + " " + QSysInfo::productVersion();
     kernel = QSysInfo::kernelType() + " " + QSysInfo::kernelVersion();
     gui = QGuiApplication::platformName();
-    version = "todo";
+    version = version.fromStdString(Version);
     request->setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"));
-
     qDebug()<<os;
     qDebug()<<kernel;
     qDebug()<<gui;

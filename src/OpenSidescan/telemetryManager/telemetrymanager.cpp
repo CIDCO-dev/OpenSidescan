@@ -8,15 +8,17 @@
 
 
 TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
+    request->setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"));
+    /*
     os = QSysInfo::productType() + " " + QSysInfo::productVersion();
     kernel = QSysInfo::kernelType() + " " + QSysInfo::kernelVersion();
     gui = QGuiApplication::platformName();
     version = version.fromStdString(Version);
-    request->setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"));
     qDebug()<<os;
     qDebug()<<kernel;
     qDebug()<<gui;
     qDebug()<<version;
+    */
 }
 TelemetryManager::~TelemetryManager(){
     delete manager;

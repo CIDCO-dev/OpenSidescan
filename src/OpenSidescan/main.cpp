@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
     TelemetryManager user;
     user.send_telemetry();
+    user.~TelemetryManager();
 
 
     for(int i=0;i<3;i++){

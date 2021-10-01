@@ -552,23 +552,37 @@ bool Project::containsFile(std::string & filename){
 
 void Project::exportInventory4PyTorch(std::string & filename){
 
-    QString FileName = QString::fromStdString(filename);
-    filename = FileName.toStdString();
-    qDebug()<<QString::fromStdString(filename)<<"\n";
+    QString path = QString::fromStdString(filename);
+    QFileInfo fileInfo(QString::fromStdString(filename));
+    QString namedfile = fileInfo.fileName();
+    path.chop(namedfile.size());
+    std::cout<<path.toStdString()<<"\n";
 
     std::ofstream outFile;
     outFile.open( filename, std::ofstream::out );
     if( outFile.is_open() ){
         mutex.lock();
-        for(auto i = files.begin(); i != files.end(); ++i){
-            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+        for(auto i = files.begin(); i != files.end(); ++i){ //all xtf files in project
+
+            for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){ //each files has X number of channel/image
+
                 for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
                     std::string name = (*i)->getFilename();
                     QFileInfo fileInfo(QString::fromStdString(name));
-                    QString Name = fileInfo.fileName();
-                    qDebug()<<Name<<"\n";
+                    QString Name = fileInfo.fileName(); //filename without path
                     name = Name.toStdString();
-                    outFile<< name<<" "<< (*j)->getChannelNumber()<<" "<< (*k)->getX()<<" "<< (*k)->getY() <<" "<<(*k)->getPixelWidth()<<" "<<(*k)->getPixelHeight()<<"\n";
+
+                    QString chan = QString::number((*j)->getChannelNumber());
+                    Name.chop(4); //filename without .xtf extention
+                    Name = path + Name + "-" + chan + ".jpg";
+                    std::string image_name = Name.toStdString(); //picture filename
+                    cv::Mat image = (*j)->getImage();
+                    std::cout<<image_name<<" " <<image.size()<< "\n";
+                    cv::imwrite(image_name,image);
+
+                    std::string channel = chan.toStdString();
+                    outFile<< name <<" "<< channel <<" "<< (*k)->getX()<<" "<< (*k)->getY() <<" "<<(*k)->getPixelWidth()<<" "<<(*k)->getPixelHeight()<<"\n";
+                    //Name.clear();
                 }
             }
         }

@@ -23,7 +23,8 @@ private:
     QNetworkAccessManager * manager = new QNetworkAccessManager;
     QNetworkRequest * request = new QNetworkRequest();
     QNetworkReply * reply;
-    QString os, gui, kernel, version;
+    //to be continued
+    //QString os, gui, kernel, version;
 
 };
 

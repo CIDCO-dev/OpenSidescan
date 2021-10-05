@@ -550,8 +550,58 @@ bool Project::containsFile(std::string & filename){
     return res;
 }
 
-void Project::exportInventory4PyTorch(std::string & filename){
+void Project::exportInventory4PyTorch(std::string & path){
 
+    for(auto i = files.begin(); i != files.end(); ++i){
+        for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                std::string filename = (*i)->getFilename();
+                QString chan = QString::number((*j)->getChannelNumber());
+                std::string channel = chan.toStdString();
+                QFileInfo fileInfo(QString::fromStdString(filename));
+                QString FileName = fileInfo.fileName();
+                QFileInfo pathInfo(QString::fromStdString(path));
+                pathInfo.setFile(QString::fromStdString(path),FileName);
+                QString filePath = pathInfo.filePath();
+                std::string Path = filePath.toStdString();
+                std::string image_name = Path + channel;
+                Path.append("-" + channel + ".PyHits");
+                //Path.append(".PyHits");
+
+                std::ofstream outFile;
+                outFile.open( Path, std::ofstream::out );
+                if( outFile.is_open() ){
+                    mutex.lock();
+                    cv::Mat image = (*j)->getImage();
+                    cv::Size shape = image.size();
+                    int width = shape.width;
+                    int height = shape.height;
+                    float xCenter = ((*k)->getXCenter()/width);
+                    float yCenter = ((*k)->getYCenter()/height);
+                    float norm_width = ((*k)->getPixelWidth()/width);
+                    float norm_height = ((*k)->getPixelHeight()/height);
+                    //outFile<< xCenter <<" "<< yCenter <<" "<< norm_width <<" "<< norm_height <<"\n";
+
+                    image_name = image_name + ".jpg";
+                    std::cout<<image_name<<" " <<image.size()<< "\n";
+                    //cv::imwrite(image_name,image);
+                    mutex.unlock();
+                    outFile.close();
+                    Path = "";
+                }
+                else{
+                    std::cerr<<"cant create new file"<<std::endl;
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+/*
     QString path = QString::fromStdString(filename);
     QFileInfo fileInfo(QString::fromStdString(filename));
     QString namedfile = fileInfo.fileName();
@@ -592,4 +642,5 @@ void Project::exportInventory4PyTorch(std::string & filename){
     else{
         std::cerr<<"cant create new file"<<std::endl;
     }
+    */
 }

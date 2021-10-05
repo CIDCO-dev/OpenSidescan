@@ -8,7 +8,7 @@
 
 
 TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
-    request->setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"));
+    request.setUrl(QUrl("http://apps.cidco.ca/SBP-web-web/CheckLicense?code=OPENSIDESCAN-COMMUNITY"));
     /*
     os = QSysInfo::productType() + " " + QSysInfo::productVersion();
     kernel = QSysInfo::kernelType() + " " + QSysInfo::kernelVersion();
@@ -21,25 +21,24 @@ TelemetryManager::TelemetryManager(QWidget *parent) : QWidget(parent){
     */
 }
 TelemetryManager::~TelemetryManager(){
-    delete manager;
-    delete request;
+
 }
 
 void TelemetryManager::send_telemetry(){
 
-    reply = manager->get(*request);
+    QNetworkReply * reply = manager.get(request);
     QEventLoop event;
     connect(reply, SIGNAL(finished()), &event, SLOT(quit()));
     event.exec();
     QString content = reply->readAll();
 
     QVariant statusCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute );
-    if (statusCode  != 403){
-        qDebug()<< "The server understood the request, but will not fulfill it.";
+    if (statusCode  != 200){
+        //todo
     }
     else{
-        qDebug()<<"keep searching for Atlantis";
+        //todo
     }
 
-
+    delete reply;
 }

@@ -20,9 +20,8 @@ public:
 
 
 private:
-    QNetworkAccessManager * manager = new QNetworkAccessManager;
-    QNetworkRequest * request = new QNetworkRequest();
-    QNetworkReply * reply;
+    QNetworkAccessManager manager;
+    QNetworkRequest request;
     //to be continued
     //QString os, gui, kernel, version;
 

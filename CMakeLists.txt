@@ -8,7 +8,7 @@ Date : 13 August 2021
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-project(Opensidescan VERSION 1.0.0)
+project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -58,6 +58,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/ui/mainwindow/monitorthread.cpp;
                 ${SS}/ui/about/aboutdialog.ui;
                 ${SS}/ui/mainwindow/mainwindow.ui;
+                ${SS}/telemetrymanager/telemetrymanager.cpp;
     )
 
 # thirdParty sources
@@ -98,13 +99,16 @@ set(CLI_SOURCE
             ${SS}/detector/detector.cpp;
             ${SS}/utilities/opencvhelper.cpp;
    )
+   
+add_compile_definitions(PROJECT_VERSION=${PROJECT_VERSION})
+
 if(UNIX)
 	message("*nix like cmake")
 
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 3.4.7 REQUIRED)
-	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
+	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
 		
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
@@ -117,7 +121,7 @@ if(UNIX)
 	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-dump PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	# linking dependencies
-	target_link_libraries(dep Qt5::Widgets Qt5::Xml Eigen3::Eigen ${OpenCV_LIBS})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 	target_link_libraries(cli_dep Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(fit-detector PUBLIC cli_dep)
@@ -129,14 +133,14 @@ if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
-	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
+	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCE})
 	# linking dependencies
-	target_link_libraries(dep Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
+	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
 	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)
@@ -144,10 +148,11 @@ if(WIN32)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
 				${QT_DLLS_PATH}/QT5Core.dll
 				${QT_DLLS_PATH}/QT5Gui.dll
+				${QT_DLLS_PATH}/Qt5Network.dll
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in  control panel
+	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer
 	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/${SS}/resources/splash.ico") # installer icon
@@ -167,39 +172,6 @@ set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_VERSION_MAJOR)
-set(CPACK_PACKAGE_VERSION_MINOR)
-set(CPACK_PACKAGE_VERSION_PATCH)
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 include(CPack)
-
-#[[
-windows installer pipeline
-install dependencies:
-suggestion for install dependencies location : C:\LIBS\
-download eigen 3.3.X https://eigen.tuxfamily.org/
-download the executable file of opencv 3.4.7 https://github.com/opencv/opencv/releases/tag/3.4.7
-add to path env : C:\LIBS\opencv\build\x64\vc15\bin   ** restart terminal after adding path ..its not linux
-here we can leave default location
-download visual studio : during installation select desktop dev c++ kit https://visualstudio.microsoft.com/downloads/
-download qtcreator 5.12.X https://www.qt.io/qt-5-12
-add to path env : C:\Qt\5.12.11\msvc2015_64\bin   ** restart terminal after adding path ..its not linux
-
-
-
-Download Opensidescan
-git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
-
-
-
-Install ( git bash required + add path env for cmake and git )
-1- navigate to Opensidescan directory
-2-mkdir build && cd build
-3- cmake ..
-4- msbuild.exe opensidescan.sln
-
-build installer :
->cmake ..
->msbuild.exe opensidescan.sln /property:configuration=Release
->cpack
-]]

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd test/locker
-make locker
+make -j8 locker

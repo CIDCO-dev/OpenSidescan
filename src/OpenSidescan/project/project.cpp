@@ -574,18 +574,38 @@ void Project::exportInventory4Yolo(std::string & path){
                 if( outFile.is_open() ){
                     mutex.lock();
                     cv::Mat image = (*j)->getImage();
-                    cv::Size shape = image.size();
-                    int width = shape.width;
-                    int height = shape.height;
-                    float xCenter = ((*k)->getXCenter()/width);
-                    float yCenter = ((*k)->getYCenter()/height);
-                    float norm_width = ((*k)->getPixelWidth()/width);
-                    float norm_height = ((*k)->getPixelHeight()/height);
-                    //outFile<< xCenter <<" "<< yCenter <<" "<< norm_width <<" "<< norm_height <<"\n";
+                    cv::Size image_dimension = image.size();
+                    std::cout<<image.size()<<"\n";
+                    int width = image_dimension.width;
+                    int height = image_dimension.height;
+                    std::cout<<height<<"\n";
+                    int delta_height =0;
+                    int detection_height_start = (*k)->getY();
+                    std::cout<<detection_height_start<<"\n";
+                    //besoin d'un expert en math ou de plus de temps pour changer le systeme de reference matriciel
+                    if(height > 1000){
+                        delta_height = height - 1000;
+                        height = height - delta_height;
+                        detection_height_start = detection_height_start - delta_height;
+                        int end_range_height = height + 2000;
+                        if(end_range_height >= image_dimension.height){
+                            end_range_height = image_dimension.height;
+                            height = end_range_height - 1000;
+                        }
+                        std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<height<<" "<<"end : "<<end_range_height<<"\n" ;
+                        image = image(cv::Range(height,end_range_height), cv::Range(0,image_dimension.width));
+                    }
+
+                    double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
+                    double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(height));
+                    double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
+                    double detect_norm_height = double(double((*k)->getPixelHeight())/double(height));
+
+                    outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "<< detect_norm_width <<" "<< detect_norm_height <<"\n";
 
                     image_name = image_name + ".jpg";
-                    std::cout<<image_name<<" " <<image.size()<< "\n";
-                    //cv::imwrite(image_name,image);
+                    std::cout<< image_name << " " << image.size() << "\n";
+                    cv::imwrite(image_name,image);
                     mutex.unlock();
                     outFile.close();
                     Path = "";

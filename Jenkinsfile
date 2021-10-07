@@ -145,7 +145,6 @@ pipeline {
 		junit 'build/reports/linux-testGUI.xml'
 		archiveArtifacts('build/reports/linux-testGUI.xml')
       }
-
     }
 	*/
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
@@ -166,4 +165,3 @@ pipeline {
   }
   
 }
-

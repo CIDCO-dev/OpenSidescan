@@ -903,7 +903,7 @@ void MainWindow::actionExportYolo(){
         if(path.size() > 0){
             std::string sPath = path.toStdString();
 
-            currentProject->exportInventory4PyTorch(sPath);
+            currentProject->exportInventory4Yolo(sPath);
         }
     }
 

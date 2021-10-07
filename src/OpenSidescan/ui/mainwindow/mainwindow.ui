@@ -59,6 +59,7 @@
      <addaction name="actionExportKmlFile"/>
      <addaction name="actionExportTrainingObjectSamples"/>
      <addaction name="actionExportHitsFile"/>
+     <addaction name="actionExport_yolov5_training_format"/>
     </widget>
     <addaction name="actionFindObjects"/>
     <addaction name="menuExport_Inventory"/>
@@ -247,6 +248,11 @@
   <action name="actionExportHitsFile">
    <property name="text">
     <string>Export HITS file</string>
+   </property>
+  </action>
+  <action name="actionExport_yolov5_training_format">
+   <property name="text">
+    <string>Export yolov5 training format</string>
    </property>
   </action>
  </widget>
@@ -463,6 +469,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport_yolov5_training_format</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionExportYolo()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionOpen()</slot>
@@ -478,5 +500,6 @@
   <slot>actionExportTrainingObjectSamples()</slot>
   <slot>actionExportCsvFile()</slot>
   <slot>actionExportHitsFile()</slot>
+  <slot>actionExportYolo()</slot>
  </slots>
 </ui>

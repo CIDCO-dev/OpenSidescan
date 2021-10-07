@@ -70,6 +70,8 @@ public slots:
     
     void actionExportHitsFile();
 
+    void actionExportYolo();
+
 
     void fileSelected(const QItemSelection & selection);
     void objectSelected(InventoryObject * object);

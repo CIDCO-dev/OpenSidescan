@@ -49,9 +49,8 @@ int main(int argc, char *argv[])
     splash.show();
     sleep(1);
     
-    TelemetryManager user;
+    TelemetryManager telemetry;
     user.send_telemetry();
-    user.~TelemetryManager();
 
     for(int i=0;i<3;i++){
         splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));

@@ -556,6 +556,7 @@ void Project::exportInventory4Yolo(std::string & path){
     for(auto i = files.begin(); i != files.end(); ++i){
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
+                //if inventory object channel == image channel
                 std::string filename = (*i)->getFilename();
                 QString chan = QString::number((*j)->getChannelNumber());
                 std::string channel = chan.toStdString();
@@ -565,9 +566,8 @@ void Project::exportInventory4Yolo(std::string & path){
                 pathInfo.setFile(QString::fromStdString(path),FileName);
                 QString filePath = pathInfo.filePath();
                 std::string Path = filePath.toStdString();
-                std::string image_name = Path + channel;
-                Path.append("-" + channel + ".PyHits");
-                //Path.append(".PyHits");
+                std::string image_name = Path + "-" + channel;
+                Path.append("-" + channel + ".txt");
 
                 std::ofstream outFile;
                 outFile.open( Path, std::ofstream::out );
@@ -575,24 +575,27 @@ void Project::exportInventory4Yolo(std::string & path){
                     mutex.lock();
                     cv::Mat image = (*j)->getImage();
                     cv::Size image_dimension = image.size();
-                    std::cout<<image.size()<<"\n";
+                    //std::cout<<image.size()<<"\n";
                     int width = image_dimension.width;
                     int height = image_dimension.height;
-                    std::cout<<height<<"\n";
+                    std::cout<<"image height "<<height<<"\n";
                     int delta_height =0;
                     int detection_height_start = (*k)->getY();
-                    std::cout<<detection_height_start<<"\n";
+                    std::cout<<"detection height "<< detection_height_start<<"\n";
                     //besoin d'un expert en math ou de plus de temps pour changer le systeme de reference matriciel
+                    //j'ai pris pour aquis aussi que la majorite des largeur d'images sont environ 1000pixels
+                    //pour train yolov5 les images doivent etre carre
                     if(height > 1000){
                         delta_height = height - 1000;
                         height = height - delta_height;
                         detection_height_start = detection_height_start - delta_height;
-                        int end_range_height = height + 2000;
+
+                        int end_range_height = height + 1000;
                         if(end_range_height >= image_dimension.height){
                             end_range_height = image_dimension.height;
                             height = end_range_height - 1000;
                         }
-                        std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<height<<" "<<"end : "<<end_range_height<<"\n" ;
+                        //std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<height<<" "<<"end : "<<end_range_height<<"\n" ;
                         image = image(cv::Range(height,end_range_height), cv::Range(0,image_dimension.width));
                     }
 

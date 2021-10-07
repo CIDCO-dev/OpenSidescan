@@ -665,6 +665,9 @@ void MainWindow::actionSave()
 {
     if(currentProject){
         if(currentProject->getFilename().size() > 0){
+
+
+
             currentProject->write(currentProject->getFilename());
             this->setWindowTitle(QString::fromStdString(std::string(currentProject->getFilename())));
         }
@@ -871,3 +874,21 @@ void MainWindow::monitorActionTriggered() {
         }
     }
 }
+
+void MainWindow::actionExportHitsFile(){
+    if(currentProject){
+        QString path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Select Directory"),
+                                                         "",
+                                                         QFileDialog::ShowDirsOnly
+                                                         | QFileDialog::DontResolveSymlinks);
+
+        if(path.size() > 0){
+            std::string sPath = path.toStdString();
+
+
+            currentProject->exportInventoryAsHits(sPath);
+        }
+    }
+}
+

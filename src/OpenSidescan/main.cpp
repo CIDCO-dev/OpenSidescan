@@ -1,6 +1,7 @@
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
 #include "ui/mainwindow/mainwindow.h"
+#include "telemetrymanager/telemetrymanager.h"
 #include <QApplication>
 #include <QSplashScreen>
 
@@ -47,6 +48,9 @@ int main(int argc, char *argv[])
 
     splash.show();
     sleep(1);
+    
+    TelemetryManager telemetry;
+    user.send_telemetry();
 
     for(int i=0;i<3;i++){
         splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));

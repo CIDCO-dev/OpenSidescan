@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     sleep(1);
     
     TelemetryManager telemetry;
-    user.send_telemetry();
+    telemetry.send_telemetry();
 
     for(int i=0;i<3;i++){
         splash.showMessage(captions[rand()%16],Qt::AlignHCenter|Qt::AlignBottom,QColor("white"));

@@ -551,70 +551,112 @@ bool Project::containsFile(std::string & filename){
     return res;
 }
 
-void Project::exportInventory4Yolo(std::string & path){
 
-    for(auto i = files.begin(); i != files.end(); ++i){
+
+void Project::exportInventory4Yolo(std::string & path){
+//todo : if two detection can fit in same image
+    for(auto i = files.begin(); i != files.end(); ++i){      
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
+            int image_count =0;
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-                //if inventory object channel == image channel
-                std::string filename = (*i)->getFilename();
-                QString chan = QString::number((*j)->getChannelNumber());
-                std::string channel = chan.toStdString();
+                std::cout<<(*k)->getName()<<"\n";                            //get inventory obj name
+
+                std::string filename = (*i)->getFilename();             //get file name
                 QFileInfo fileInfo(QString::fromStdString(filename));
                 QString FileName = fileInfo.fileName();
                 QFileInfo pathInfo(QString::fromStdString(path));
                 pathInfo.setFile(QString::fromStdString(path),FileName);
                 QString filePath = pathInfo.filePath();
-                std::string Path = filePath.toStdString();
-                std::string image_name = Path + "-" + channel;
-                Path.append("-" + channel + ".txt");
+                std::string FILEPATH = filePath.toStdString();
+
+                QString chan = QString::number((*j)->getChannelNumber());  //get channel number
+                std::string channel = chan.toStdString();
+                image_count ++;                                             //number of detection in image
+                QString ImageCount = QString::number(image_count);
+                std::string count = ImageCount.toStdString();
+
+                FILEPATH.append("-" + channel + count);
+                std::string image_name = FILEPATH + ".jpg";  //image name
+                FILEPATH.append(".txt");                    //hits file name
+                std::cout<<image_name <<"\n";
+                std::cout<<FILEPATH<<"\n";
 
                 std::ofstream outFile;
-                outFile.open( Path, std::ofstream::out );
+                outFile.open( FILEPATH, std::ofstream::out );
                 if( outFile.is_open() ){
                     mutex.lock();
-                    cv::Mat image = (*j)->getImage();
+                    cv::Mat image = (*j)->getImage();                           //get image
                     cv::Size image_dimension = image.size();
-                    //std::cout<<image.size()<<"\n";
+                    int height = image_dimension.height;                        //get image height
                     int width = image_dimension.width;
-                    int height = image_dimension.height;
-                    std::cout<<"image height "<<height<<"\n";
-                    int delta_height =0;
-                    int detection_height_start = (*k)->getY();
-                    std::cout<<"detection height "<< detection_height_start<<"\n";
-                    //besoin d'un expert en math ou de plus de temps pour changer le systeme de reference matriciel
-                    //j'ai pris pour aquis aussi que la majorite des largeur d'images sont environ 1000pixels
-                    //pour train yolov5 les images doivent etre carre
-                    if(height > 1000){
-                        delta_height = height - 1000;
-                        height = height - delta_height;
-                        detection_height_start = detection_height_start - delta_height;
+                    std::cout<<"image dimension "<<image.size()<<"\n";
 
-                        int end_range_height = height + 1000;
-                        if(end_range_height >= image_dimension.height){
-                            end_range_height = image_dimension.height;
-                            height = end_range_height - 1000;
-                        }
-                        //std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<height<<" "<<"end : "<<end_range_height<<"\n" ;
-                        image = image(cv::Range(height,end_range_height), cv::Range(0,image_dimension.width));
+                    int start_range_height = (*k)->getY() ;                        //get detection height
+                    int end_range_height = start_range_height + 500;
+                    std::cout<<"start range height "<< start_range_height<<"\n";
+                    std::cout<<"end range height "<< end_range_height<<"\n";
+
+                    //ici on crop autour de la detection
+                    //todo matrix tanslation / changing reference system
+                    //beaucoup de place a amelioration
+                    if(start_range_height > 1000 && start_range_height > 600){
+                        start_range_height = start_range_height - 500;
                     }
 
+                    if(end_range_height >= image_dimension.height){
+                        end_range_height = image_dimension.height;
+                    }
+                    //ici on s'assure que le la hauteur la nouvelle image est = 1000
+                    //j'ai choisi 1000 car la plus part des images sidescan on une largeur de +/- 1000
+                    int delta_crop_region = end_range_height - start_range_height;
+                    if(delta_crop_region < 1000 && image_dimension.height > 1000){
+                        int delta_top = start_range_height - 0;
+                        int delta_bot = image_dimension.height - end_range_height;
+                        if(delta_bot > delta_top){
+                            end_range_height += delta_crop_region;
+                        }
+                        else{
+                            start_range_height -= (1000 - delta_crop_region);
+                        }
+                    }
+
+                    std::cout<<image.size()<<"\n";
+                    std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<start_range_height<<" "
+                            <<"end : "<<end_range_height<<"\n" ;
+                    image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
+                    /*
+                    One row per object
+                    Each row is class x_center y_center width height format.
+                    Box coordinates must be in normalized xywh format (from 0 - 1).
+                    If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
+                    */
+
+                    //need to double check manually
                     double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
                     double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(height));
                     double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
                     double detect_norm_height = double(double((*k)->getPixelHeight())/double(height));
 
-                    outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "<< detect_norm_width <<" "<< detect_norm_height <<"\n";
+                    //for debugging purposes
+                    /*
+                    int norm_detect_xCenter = (*k)->getXCenter();
+                    int norm_detect_yCenter = (*k)->getPixelHeight();
+                    int detect_norm_width = (*k)->getPixelWidth();
+                    int detect_norm_height = (*k)->getPixelHeight();
+                    */
+                    outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
+                           << detect_norm_width <<" "<< detect_norm_height <<"\n";
 
-                    image_name = image_name + ".jpg";
-                    std::cout<< image_name << " " << image.size() << "\n";
+                    //image_name = image_name + count + ".jpg";
+                    std::cout<< image_name << " " << image.size() << "\n\n\n";
                     cv::imwrite(image_name,image);
                     mutex.unlock();
                     outFile.close();
-                    Path = "";
+                    FILEPATH = "";
                 }
+
                 else{
-                    std::cerr<<"cant create new file"<<std::endl;
+                std::cerr<<"cant create new file"<<std::endl;
                 }
             }
         }

@@ -148,16 +148,16 @@ void Project::write(std::string & filename){
     xmlWriter.writeAttribute(QString::fromStdString("leverArmZ"),QString::number(antenna2TowPointLeverArm[2]));
 
     //prepare to compute relative file paths
-    QFileInfo fileInfo(QString::fromStdString(filename));
+    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
     QDir projectDir(fileInfo.canonicalPath());
-
+    qDebug()<<fileInfo.canonicalPath();
 
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");
 
         QString sssRelativePath = projectDir.relativeFilePath(QString::fromStdString((*i)->getFilename()));
 
-        //qDebug()<<sssRelativePath<<"\n";
+        qDebug()<<sssRelativePath<<"\n";
 
         xmlWriter.writeAttribute(QString::fromStdString("filename"),sssRelativePath);
 
@@ -593,7 +593,7 @@ void Project::exportInventory4Yolo(std::string & path){
                     if( outFile.is_open() ){
                         mutex.lock();
                         //ici on crop autour de la detection
-                        int start_range_height = (*k)->getY() - width/2 ;                        //get detection height
+                        int start_range_height = (*k)->getY() - width/2 ;
                         int end_range_height = (*k)->getY() + width/2;
                         std::cout<<"start range height "<< start_range_height<<"\n";
                         std::cout<<"end range height "<< end_range_height<<"\n";
@@ -613,6 +613,7 @@ void Project::exportInventory4Yolo(std::string & path){
                         std::cout<<image.size()<<"\n";
                         std::cout<<"height start : "<<start_range_height<<" "
                                 <<"height end : "<<end_range_height<<"\n" ;
+                        //
                         QPoint top_left_corner(0, start_range_height);
                         QPoint bottom_left_corner(width, end_range_height);
                         image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));

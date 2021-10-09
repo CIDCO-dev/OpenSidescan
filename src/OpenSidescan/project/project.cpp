@@ -628,11 +628,12 @@ void Project::exportInventory4Yolo(std::string & path){
                         If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
                         */
 
-                        //need to double check manually
+                        // need to be double checked manually
+                        // les images vont etre de dimension [width X width] , on divise donc par width pour normaliser
                         double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
-                        double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(height));
+                        double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(width));
                         double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
-                        double detect_norm_height = double(double((*k)->getPixelHeight())/double(height));
+                        double detect_norm_height = double(double((*k)->getPixelHeight())/double(width));
 
                         //for debugging purposes
                         /*

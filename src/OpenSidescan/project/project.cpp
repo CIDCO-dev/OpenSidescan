@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QtXml>
 #include <QPixmap>
+#include <QPoint>
 
 #include "sidescan/sidescanimager.h"
 #include "utilities/qthelper.h"
@@ -559,7 +560,6 @@ void Project::exportInventory4Yolo(std::string & path){
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             int image_count =0;
             for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-                std::cout<<(*k)->getName()<<"\n";                            //get inventory obj name
 
                 std::string filename = (*i)->getFilename();             //get file name
                 QFileInfo fileInfo(QString::fromStdString(filename));
@@ -581,82 +581,88 @@ void Project::exportInventory4Yolo(std::string & path){
                 std::cout<<image_name <<"\n";
                 std::cout<<FILEPATH<<"\n";
 
-                std::ofstream outFile;
-                outFile.open( FILEPATH, std::ofstream::out );
-                if( outFile.is_open() ){
-                    mutex.lock();
-                    cv::Mat image = (*j)->getImage();                           //get image
-                    cv::Size image_dimension = image.size();
-                    int height = image_dimension.height;                        //get image height
-                    int width = image_dimension.width;
-                    std::cout<<"image dimension "<<image.size()<<"\n";
+                cv::Mat image = (*j)->getImage();                           //get image
+                cv::Size image_dimension = image.size();
+                int height = image_dimension.height;                        //get image height
+                int width = image_dimension.width;
+                std::cout<<"image dimension "<<image.size()<<"\n";
 
-                    int start_range_height = (*k)->getY() ;                        //get detection height
-                    int end_range_height = start_range_height + 500;
-                    std::cout<<"start range height "<< start_range_height<<"\n";
-                    std::cout<<"end range height "<< end_range_height<<"\n";
+                if(width <= height){
+                    std::ofstream outFile;
+                    outFile.open( FILEPATH, std::ofstream::out );
+                    if( outFile.is_open() ){
+                        mutex.lock();
+                        //ici on crop autour de la detection
+                        int start_range_height = (*k)->getY() - width/2 ;                        //get detection height
+                        int end_range_height = start_range_height + width/2;
+                        QPoint top_left_corner(0, start_range_height);
+                        QPoint bottom_left_corner(width, end_range_height);
+                        std::cout<<"start range height "<< start_range_height<<"\n";
+                        std::cout<<"end range height "<< end_range_height<<"\n";
 
-                    //ici on crop autour de la detection
-                    //todo matrix tanslation / changing reference system
-                    //beaucoup de place a amelioration
-                    if(start_range_height > 1000 && start_range_height > 600){
-                        start_range_height = start_range_height - 500;
-                    }
-
-                    if(end_range_height >= image_dimension.height){
-                        end_range_height = image_dimension.height;
-                    }
-                    //ici on s'assure que le la hauteur la nouvelle image est = 1000
-                    //j'ai choisi 1000 car la plus part des images sidescan on une largeur de +/- 1000
-                    int delta_crop_region = end_range_height - start_range_height;
-                    if(delta_crop_region < 1000 && image_dimension.height > 1000){
-                        int delta_top = start_range_height - 0;
-                        int delta_bot = image_dimension.height - end_range_height;
-                        if(delta_bot > delta_top){
-                            end_range_height += delta_crop_region;
+                        if(start_range_height < 0 || end_range_height > height ){
+                            if(start_range_height < 0 ){
+                                end_range_height = (width + start_range_height);
+                                start_range_height = 0;
+                            }
+                            if(end_range_height > height){
+                                start_range_height -= (end_range_height - width);
+                                end_range_height = height;
+                            }
                         }
                         else{
-                            start_range_height -= (1000 - delta_crop_region);
+                            std::cout<<image.size()<<"\n";
+                            std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<start_range_height<<" "
+                                    <<"end : "<<end_range_height<<"\n" ;
+                            image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
                         }
+
+
+
+
+
+                        /*
+                        One row per object
+                        Each row is class x_center y_center width height format.
+                        Box coordinates must be in normalized xywh format (from 0 - 1).
+                        If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
+                        */
+
+                        //need to double check manually
+                        double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
+                        double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(height));
+                        double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
+                        double detect_norm_height = double(double((*k)->getPixelHeight())/double(height));
+
+                        //for debugging purposes
+                        /*
+                        int norm_detect_xCenter = (*k)->getXCenter();
+                        int norm_detect_yCenter = (*k)->getPixelHeight();
+                        int detect_norm_width = (*k)->getPixelWidth();
+                        int detect_norm_height = (*k)->getPixelHeight();
+                        */
+                        outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
+                               << detect_norm_width <<" "<< detect_norm_height <<"\n";
+
+                        //image_name = image_name + count + ".jpg";
+                        std::cout<< image_name << " " << image.size() << "\n\n\n";
+                        cv::imwrite(image_name,image);
+                        mutex.unlock();
+                        outFile.close();
+                        FILEPATH = "";
+                    }
+                    else{
+                        std::cerr<<"cant create new file"<<std::endl;
                     }
 
-                    std::cout<<image.size()<<"\n";
-                    std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<start_range_height<<" "
-                            <<"end : "<<end_range_height<<"\n" ;
-                    image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
-                    /*
-                    One row per object
-                    Each row is class x_center y_center width height format.
-                    Box coordinates must be in normalized xywh format (from 0 - 1).
-                    If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
-                    */
-
-                    //need to double check manually
-                    double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
-                    double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(height));
-                    double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
-                    double detect_norm_height = double(double((*k)->getPixelHeight())/double(height));
-
-                    //for debugging purposes
-                    /*
-                    int norm_detect_xCenter = (*k)->getXCenter();
-                    int norm_detect_yCenter = (*k)->getPixelHeight();
-                    int detect_norm_width = (*k)->getPixelWidth();
-                    int detect_norm_height = (*k)->getPixelHeight();
-                    */
-                    outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
-                           << detect_norm_width <<" "<< detect_norm_height <<"\n";
-
-                    //image_name = image_name + count + ".jpg";
-                    std::cout<< image_name << " " << image.size() << "\n\n\n";
-                    cv::imwrite(image_name,image);
-                    mutex.unlock();
-                    outFile.close();
-                    FILEPATH = "";
                 }
-
                 else{
-                std::cerr<<"cant create new file"<<std::endl;
+                    QMessageBox msgBox;
+                    msgBox.setIcon(QMessageBox::Critical);
+                    msgBox.setText("Sidescan file is not normal");
+                    msgBox.setInformativeText("Width is bigger than height");
+                    msgBox.exec();
+                    return;
                 }
             }
         }

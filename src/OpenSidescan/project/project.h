@@ -4,7 +4,11 @@
 #include <vector>
 #include <mutex>
 
+#include <QObject>
+#include <QWidget>
+#include <QMessageBox>
 #include <QString>
+
 
 #include "sidescan/sidescanfile.h"
 

@@ -578,14 +578,14 @@ void Project::exportInventory4Yolo(std::string & path){
                 FILEPATH.append("-" + channel + count);
                 std::string image_name = FILEPATH + ".jpg";  //image name
                 FILEPATH.append(".txt");                    //hits file name
-                std::cout<<image_name <<"\n";
+                std::cout<<"\n" << image_name << "\n";
                 std::cout<<FILEPATH<<"\n";
 
                 cv::Mat image = (*j)->getImage();                           //get image
                 cv::Size image_dimension = image.size();
                 int height = image_dimension.height;                        //get image height
                 int width = image_dimension.width;
-                std::cout<<"image dimension "<<image.size()<<"\n";
+                std::cout<< "image dimension "<<image.size()<<"\n";
 
                 if(width <= height){
                     std::ofstream outFile;
@@ -594,28 +594,28 @@ void Project::exportInventory4Yolo(std::string & path){
                         mutex.lock();
                         //ici on crop autour de la detection
                         int start_range_height = (*k)->getY() - width/2 ;                        //get detection height
-                        int end_range_height = start_range_height + width/2;
-                        QPoint top_left_corner(0, start_range_height);
-                        QPoint bottom_left_corner(width, end_range_height);
+                        int end_range_height = (*k)->getY() + width/2;
                         std::cout<<"start range height "<< start_range_height<<"\n";
                         std::cout<<"end range height "<< end_range_height<<"\n";
 
                         if(start_range_height < 0 || end_range_height > height ){
+
                             if(start_range_height < 0 ){
-                                end_range_height = (width + start_range_height);
+                                end_range_height -= start_range_height;
                                 start_range_height = 0;
                             }
                             if(end_range_height > height){
-                                start_range_height -= (end_range_height - width);
+                                start_range_height = height - width;
                                 end_range_height = height;
                             }
                         }
-                        else{
-                            std::cout<<image.size()<<"\n";
-                            std::cout<<"width: "<<image_dimension.width<<" "<<"height "<<start_range_height<<" "
-                                    <<"end : "<<end_range_height<<"\n" ;
-                            image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
-                        }
+
+                        std::cout<<image.size()<<"\n";
+                        std::cout<<"height start : "<<start_range_height<<" "
+                                <<"height end : "<<end_range_height<<"\n" ;
+                        QPoint top_left_corner(0, start_range_height);
+                        QPoint bottom_left_corner(width, end_range_height);
+                        image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
 
 
 
@@ -645,7 +645,7 @@ void Project::exportInventory4Yolo(std::string & path){
                                << detect_norm_width <<" "<< detect_norm_height <<"\n";
 
                         //image_name = image_name + count + ".jpg";
-                        std::cout<< image_name << " " << image.size() << "\n\n\n";
+                        std::cout<< image_name << " " << image.size() << "\n\n";
                         cv::imwrite(image_name,image);
                         mutex.unlock();
                         outFile.close();

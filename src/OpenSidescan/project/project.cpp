@@ -644,8 +644,19 @@ void Project::exportInventory4Yolo(std::string & path){
                                 int detect_norm_width = obj->getPixelWidth();
                                 int detect_norm_height = obj->getPixelHeight();
                                 */
-
-                                outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
+                                //Hardcoded class
+                                //class map could be build by reading inventory obj
+                                std::map<std::string,int> CLASS { {"crabtrap", 0}, {"rope", 1}, {"shipwreck", 2}, };
+                                auto search = CLASS.find(obj->getName());
+                                int Class = 0;
+                                if (search != CLASS.end()) {
+                                        std::cout << "Found " << search->first << " " << search->second << '\n';
+                                        Class = search->second;
+                                    } else {
+                                        std::cout << "Not found\n";
+                                        Class = CLASS.size() + 1;
+                                    }
+                                outFile<< Class <<" "<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
                                        << detect_norm_width <<" "<< detect_norm_height <<"\n";
                             }
                         }

@@ -619,11 +619,12 @@ void Project::exportInventory4Yolo(std::string & path){
                         crop_image.width = image_dimension.width;
                         crop_image.height = end_range_height;
 
-                        for(unsigned int index2 = 0; index2 < (*j)->getObjects().size(); index2++){
+                        int inside_count = 0;
+                        for(unsigned int index2 = index; index2 < (*j)->getObjects().size(); index2++){
                             auto obj = (*j)->getObjects().at(index2);
                             if(obj->is_inside(crop_image) == true){
                                 std::cout<<"is inside \n";
-
+                                inside_count++;
                                 /*
                                 One row per object
                                 Each row is class x_center y_center width height format.
@@ -631,26 +632,24 @@ void Project::exportInventory4Yolo(std::string & path){
                                 If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
                                 */
 
-                                // need to be double checked manually
-
+                                // les images vont etre de dimension [width X width] , on divise donc par width pour normaliser
                                 double norm_detect_xCenter = double((obj->getXCenter()/double(width)));
                                 double norm_detect_yCenter = double((double(obj->getPixelHeight())/2.0)/double(width));
                                 double detect_norm_width = double((obj->getPixelWidth()/double(width)));
                                 double detect_norm_height = double(double(obj->getPixelHeight())/double(width));
-
                                 //for debugging purposes
-/*
+                                /*
                                 int norm_detect_xCenter = obj->getXCenter();
                                 int norm_detect_yCenter = obj->getYCenter();
                                 int detect_norm_width = obj->getPixelWidth();
                                 int detect_norm_height = obj->getPixelHeight();
-*/
+                                */
+
                                 outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
                                        << detect_norm_width <<" "<< detect_norm_height <<"\n";
-
                             }
                         }
-
+                        index += inside_count - 1;
                         mutex.unlock();
                         outFile.close();
                         FILEPATH = "";

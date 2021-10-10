@@ -150,14 +150,14 @@ void Project::write(std::string & filename){
     //prepare to compute relative file paths
     QFileInfo fileInfo(QCoreApplication::applicationFilePath());
     QDir projectDir(fileInfo.canonicalPath());
-    qDebug()<<fileInfo.canonicalPath();
+    //qDebug()<<fileInfo.canonicalPath();
 
     for(auto i=files.begin();i!=files.end();i++){
         xmlWriter.writeStartElement("File");
 
         QString sssRelativePath = projectDir.relativeFilePath(QString::fromStdString((*i)->getFilename()));
 
-        qDebug()<<sssRelativePath<<"\n";
+        //qDebug()<<sssRelativePath<<"\n";
 
         xmlWriter.writeAttribute(QString::fromStdString("filename"),sssRelativePath);
 
@@ -280,7 +280,7 @@ void Project::exportInventoryAsCsv(std::string & filename){
 }
 
 void Project::exportInventoryAsHits(std::string & path){
-    int pos = 0;
+
     for(auto i = files.begin(); i != files.end(); ++i){
 
         std::string filename = (*i)->getFilename();
@@ -552,15 +552,13 @@ bool Project::containsFile(std::string & filename){
     return res;
 }
 
-
-
 void Project::exportInventory4Yolo(std::string & path){
 //todo : if two detection can fit in same image
     for(auto i = files.begin(); i != files.end(); ++i){      
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             int image_count =0;
-            for(auto k=(*j)->getObjects().begin();k!=(*j)->getObjects().end();k++){
-
+            for(unsigned int index = 0; index < (*j)->getObjects().size(); index++){
+                auto k = (*j)->getObjects().at(index);
                 std::string filename = (*i)->getFilename();             //get file name
                 QFileInfo fileInfo(QString::fromStdString(filename));
                 QString FileName = fileInfo.fileName();
@@ -578,8 +576,9 @@ void Project::exportInventory4Yolo(std::string & path){
                 FILEPATH.append("-" + channel + count);
                 std::string image_name = FILEPATH + ".jpg";  //image name
                 FILEPATH.append(".txt");                    //hits file name
-                std::cout<<"\n" << image_name << "\n";
-                std::cout<<FILEPATH<<"\n";
+                std::cout<<"\n";
+                //std::cout<< image_name << "\n";
+                //std::cout<<FILEPATH<<"\n";
 
                 cv::Mat image = (*j)->getImage();                           //get image
                 cv::Size image_dimension = image.size();
@@ -593,15 +592,14 @@ void Project::exportInventory4Yolo(std::string & path){
                     if( outFile.is_open() ){
                         mutex.lock();
                         //ici on crop autour de la detection
-                        int start_range_height = (*k)->getY() - width/2 ;
-                        int end_range_height = (*k)->getY() + width/2;
-                        std::cout<<"start range height "<< start_range_height<<"\n";
-                        std::cout<<"end range height "<< end_range_height<<"\n";
+                        int start_range_height = k->getY() - width/2 ;
+                        int end_range_height = k->getY() + width/2;
 
+                        //handle execptions
                         if(start_range_height < 0 || end_range_height > height ){
 
                             if(start_range_height < 0 ){
-                                end_range_height -= start_range_height;
+                                end_range_height = width;
                                 start_range_height = 0;
                             }
                             if(end_range_height > height){
@@ -610,45 +608,49 @@ void Project::exportInventory4Yolo(std::string & path){
                             }
                         }
 
-                        std::cout<<image.size()<<"\n";
                         std::cout<<"height start : "<<start_range_height<<" "
                                 <<"height end : "<<end_range_height<<"\n" ;
-                        //
-                        QPoint top_left_corner(0, start_range_height);
-                        QPoint bottom_left_corner(width, end_range_height);
                         image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
-
-
-
-
-
-                        /*
-                        One row per object
-                        Each row is class x_center y_center width height format.
-                        Box coordinates must be in normalized xywh format (from 0 - 1).
-                        If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
-                        */
-
-                        // need to be double checked manually
-                        // les images vont etre de dimension [width X width] , on divise donc par width pour normaliser
-                        double norm_detect_xCenter = double(((*k)->getXCenter()/double(width)));
-                        double norm_detect_yCenter = double((double((*k)->getPixelHeight())/2.0)/double(width));
-                        double detect_norm_width = double(((*k)->getPixelWidth()/double(width)));
-                        double detect_norm_height = double(double((*k)->getPixelHeight())/double(width));
-
-                        //for debugging purposes
-                        /*
-                        int norm_detect_xCenter = (*k)->getXCenter();
-                        int norm_detect_yCenter = (*k)->getPixelHeight();
-                        int detect_norm_width = (*k)->getPixelWidth();
-                        int detect_norm_height = (*k)->getPixelHeight();
-                        */
-                        outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
-                               << detect_norm_width <<" "<< detect_norm_height <<"\n";
-
-                        //image_name = image_name + count + ".jpg";
-                        std::cout<< image_name << " " << image.size() << "\n\n";
                         cv::imwrite(image_name,image);
+
+                        struct region crop_image;
+                        crop_image.x = 0;
+                        crop_image.y = start_range_height;
+                        crop_image.width = image_dimension.width;
+                        crop_image.height = end_range_height;
+
+                        for(unsigned int index2 = 0; index2 < (*j)->getObjects().size(); index2++){
+                            auto obj = (*j)->getObjects().at(index2);
+                            if(obj->is_inside(crop_image) == true){
+                                std::cout<<"is inside \n";
+
+                                /*
+                                One row per object
+                                Each row is class x_center y_center width height format.
+                                Box coordinates must be in normalized xywh format (from 0 - 1).
+                                If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
+                                */
+
+                                // need to be double checked manually
+
+                                double norm_detect_xCenter = double((obj->getXCenter()/double(width)));
+                                double norm_detect_yCenter = double((double(obj->getPixelHeight())/2.0)/double(width));
+                                double detect_norm_width = double((obj->getPixelWidth()/double(width)));
+                                double detect_norm_height = double(double(obj->getPixelHeight())/double(width));
+
+                                //for debugging purposes
+/*
+                                int norm_detect_xCenter = obj->getXCenter();
+                                int norm_detect_yCenter = obj->getYCenter();
+                                int detect_norm_width = obj->getPixelWidth();
+                                int detect_norm_height = obj->getPixelHeight();
+*/
+                                outFile<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
+                                       << detect_norm_width <<" "<< detect_norm_height <<"\n";
+
+                            }
+                        }
+
                         mutex.unlock();
                         outFile.close();
                         FILEPATH = "";
@@ -662,7 +664,7 @@ void Project::exportInventory4Yolo(std::string & path){
                     QMessageBox msgBox;
                     msgBox.setIcon(QMessageBox::Critical);
                     msgBox.setText("Sidescan file is not normal");
-                    msgBox.setInformativeText("Width is bigger than height");
+                    msgBox.setInformativeText("Width is bigger than height \n file :" + QString::fromStdString((*i)->getFilename()));
                     msgBox.exec();
                     return;
                 }

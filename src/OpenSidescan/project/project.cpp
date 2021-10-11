@@ -674,12 +674,11 @@ void Project::exportInventory4Yolo(std::string & path){
                         else{
                             std::cerr<<"cant create new file"<<std::endl;
                         }
-                        index += inside_count - 1;
-                        mutex.unlock();
-                        outFile.close();
-                        FILEPATH = "";
                     }
+                    index += inside_count - 1;
                 }
+                mutex.unlock();
+                outFile.close();
             }
         }
     }

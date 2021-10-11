@@ -6,7 +6,6 @@
 #include <QFile>
 #include <QtXml>
 #include <QPixmap>
-#include <QPoint>
 
 #include "sidescan/sidescanimager.h"
 #include "utilities/qthelper.h"
@@ -553,7 +552,6 @@ bool Project::containsFile(std::string & filename){
 }
 
 void Project::exportInventory4Yolo(std::string & path){
-//todo : if two detection can fit in same image
     for(auto i = files.begin(); i != files.end(); ++i){      
         for(auto j=(*i)->getImages().begin();j!=(*i)->getImages().end();j++){
             int image_count =0;
@@ -569,114 +567,106 @@ void Project::exportInventory4Yolo(std::string & path){
 
                 QString chan = QString::number((*j)->getChannelNumber());  //get channel number
                 std::string channel = chan.toStdString();
-                image_count ++;                                             //number of detection in image
+                image_count ++;                                             //image number
                 QString ImageCount = QString::number(image_count);
                 std::string count = ImageCount.toStdString();
 
-                FILEPATH.append("-" + channel + count);
-                std::string image_name = FILEPATH + ".jpg";  //image name
-                FILEPATH.append(".txt");                    //hits file name
-                std::cout<<"\n";
-                //std::cout<< image_name << "\n";
-                //std::cout<<FILEPATH<<"\n";
+                FILEPATH.append("-" + channel + "_" + count);
+                std::string image_name = FILEPATH + ".jpg";  //final image name
+                FILEPATH.append(".txt");                    //final hits file name
 
                 cv::Mat image = (*j)->getImage();                           //get image
                 cv::Size image_dimension = image.size();
                 int height = image_dimension.height;                        //get image height
                 int width = image_dimension.width;
-                std::cout<< "image dimension "<<image.size()<<"\n";
+                int start_range_height = 0;
+                int end_range_height = 0;
 
-                if(width <= height){
-                    std::ofstream outFile;
-                    outFile.open( FILEPATH, std::ofstream::out );
-                    if( outFile.is_open() ){
-                        mutex.lock();
-                        //ici on crop autour de la detection
-                        int start_range_height = k->getY() - width/2 ;
-                        int end_range_height = k->getY() + width/2;
+                //cropping selection
+                if(width < height){
+                    start_range_height = k->getY() - width/2 ;
+                    end_range_height = k->getY() + width/2;
 
-                        //handle execptions
-                        if(start_range_height < 0 || end_range_height > height ){
+                    //handle cropping selection execptions
+                    if(start_range_height < 0 || end_range_height > height ){
 
-                            if(start_range_height < 0 ){
-                                end_range_height = width;
-                                start_range_height = 0;
-                            }
-                            if(end_range_height > height){
-                                start_range_height = height - width;
-                                end_range_height = height;
-                            }
+                        if(start_range_height < 0 ){
+                            end_range_height = width;
+                            start_range_height = 0;
                         }
+                        if(end_range_height > height){
+                            start_range_height = height - width;
+                            end_range_height = height;
+                        }
+                    }
+                }
+                else{
+                    start_range_height = 0 ;
+                    end_range_height = image_dimension.height;
+                }
 
-                        std::cout<<"height start : "<<start_range_height<<" "
-                                <<"height end : "<<end_range_height<<"\n" ;
-                        image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
-                        cv::imwrite(image_name,image);
+                image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));
+                cv::imwrite(image_name,image);
 
-                        struct region crop_image;
-                        crop_image.x = 0;
-                        crop_image.y = start_range_height;
-                        crop_image.width = image_dimension.width;
-                        crop_image.height = end_range_height;
+                std::ofstream outFile;
+                outFile.open( FILEPATH, std::ofstream::out );
+                if( outFile.is_open() ){
+                    mutex.lock();
 
-                        int inside_count = 0;
-                        for(unsigned int index2 = index; index2 < (*j)->getObjects().size(); index2++){
-                            auto obj = (*j)->getObjects().at(index2);
-                            if(obj->is_inside(crop_image) == true){
-                                std::cout<<"is inside \n";
-                                inside_count++;
-                                /*
-                                One row per object
-                                Each row is class x_center y_center width height format.
-                                Box coordinates must be in normalized xywh format (from 0 - 1).
-                                If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
-                                */
+                    // All element in cropping section gets written to same file
+                    //not handling partial bounding box
+                    struct region crop_image{0,start_range_height,image_dimension.width,end_range_height};
+                    int inside_count = 0;
+                    for(unsigned int index2 = index; index2 < (*j)->getObjects().size(); index2++){
+                        auto obj = (*j)->getObjects().at(index2);
+                        if(obj->is_inside(crop_image) == true){
+                            //std::cout<<"is inside \n";
+                            inside_count++;
+                            /*
+                            One row per object
+                            Each row is class x_center y_center width height format.
+                            Box coordinates must be in normalized xywh format (from 0 - 1).
+                            If your boxes are in pixels, divide x_center and width by image width, and y_center and height by image height.
+                            */
 
-                                // les images vont etre de dimension [width X width] , on divise donc par width pour normaliser
-                                double norm_detect_xCenter = double((obj->getXCenter()/double(width)));
-                                double norm_detect_yCenter = double((double(obj->getPixelHeight())/2.0)/double(width));
-                                double detect_norm_width = double((obj->getPixelWidth()/double(width)));
-                                double detect_norm_height = double(double(obj->getPixelHeight())/double(width));
-                                //for debugging purposes
-                                /*
-                                int norm_detect_xCenter = obj->getXCenter();
-                                int norm_detect_yCenter = obj->getYCenter();
-                                int detect_norm_width = obj->getPixelWidth();
-                                int detect_norm_height = obj->getPixelHeight();
-                                */
-                                //Hardcoded class
-                                //class map could be build by reading inventory obj
-                                std::map<std::string,int> CLASS { {"crabtrap", 0}, {"rope", 1}, {"shipwreck", 2}, };
-                                auto search = CLASS.find(obj->getName());
-                                int Class = 0;
-                                if (search != CLASS.end()) {
-                                        std::cout << "Found " << search->first << " " << search->second << '\n';
-                                        Class = search->second;
-                                    } else {
-                                        std::cout << "Not found\n";
-                                        Class = CLASS.size() + 1;
-                                    }
-                                outFile<< Class <<" "<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
-                                       << detect_norm_width <<" "<< detect_norm_height <<"\n";
-                            }
+                            // images are dimension [width X width] , to normalise we divide by [width X width]
+                            double norm_detect_xCenter = double((obj->getXCenter()/double(width)));
+                            double norm_detect_yCenter = double((double(obj->getPixelHeight())/2.0)/double(width));
+                            double detect_norm_width = double((obj->getPixelWidth()/double(width)));
+                            double detect_norm_height = double(double(obj->getPixelHeight())/double(width));
+                            //for debugging purposes
+                            /*
+                            int norm_detect_xCenter = obj->getXCenter();
+                            int norm_detect_yCenter = obj->getYCenter();
+                            int detect_norm_width = obj->getPixelWidth();
+                            int detect_norm_height = obj->getPixelHeight();
+                            */
+
+                            //Hardcoded class
+                            //class map could be build by reading inventory obj
+                            std::map<std::string,int> CLASS { {"crabtrap", 0}, {"rope", 1}, {"shipwreck", 2}, };
+                            auto search = CLASS.find(obj->getName()); //object inventory name is class name
+                            int Class = 0;
+                            if (search != CLASS.end()) {
+                                    //std::cout << "Found " << search->first << " " << search->second << '\n';
+                                    Class = search->second;
+                                } else {
+                                    //std::cout << "Not found\n";
+                                    Class = CLASS.size() + 1;
+                                }
+
+                            outFile<< Class <<" "<< norm_detect_xCenter <<" "<< norm_detect_yCenter <<" "
+                                << detect_norm_width <<" "<< detect_norm_height <<"\n";
+
+                        }
+                        else{
+                            std::cerr<<"cant create new file"<<std::endl;
                         }
                         index += inside_count - 1;
                         mutex.unlock();
                         outFile.close();
                         FILEPATH = "";
                     }
-                    else{
-                        std::cerr<<"cant create new file"<<std::endl;
-                    }
-
-                }
-                else{
-                    QMessageBox msgBox;
-                    msgBox.setIcon(QMessageBox::Critical);
-                    msgBox.setText("Sidescan file is not normal");
-                    msgBox.setInformativeText("Width is bigger than height \n file :" + QString::fromStdString((*i)->getFilename()));
-                    msgBox.exec();
-                    return;
                 }
             }
         }

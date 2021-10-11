@@ -601,8 +601,20 @@ void Project::exportInventory4Yolo(std::string & path){
                     }
                 }
                 else{
-                    start_range_height = 0 ;
                     end_range_height = image_dimension.height;
+                    int padding = image_dimension.width - image_dimension.height;
+                    cv::copyMakeBorder( image, image, 0, padding, 0, 0, cv::BORDER_CONSTANT);
+                    image_dimension = image.size();
+                }
+
+                if(end_range_height - start_range_height != image_dimension.width){
+                    qDebug()<<"bug";
+                    if(image_dimension.width - (end_range_height - start_range_height) > 0){
+                        end_range_height += (image_dimension.width - (end_range_height - start_range_height));
+                    }
+                    else{
+                        end_range_height -= ((end_range_height - start_range_height) - image_dimension.width );
+                    }
                 }
 
                 image = image(cv::Range(start_range_height, end_range_height), cv::Range(0,image_dimension.width));

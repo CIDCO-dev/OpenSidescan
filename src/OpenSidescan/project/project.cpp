@@ -608,7 +608,6 @@ void Project::exportInventory4Yolo(std::string & path){
                 }
 
                 if(end_range_height - start_range_height != image_dimension.width){
-                    qDebug()<<"bug";
                     if(image_dimension.width - (end_range_height - start_range_height) > 0){
                         end_range_height += (image_dimension.width - (end_range_height - start_range_height));
                     }
@@ -671,11 +670,11 @@ void Project::exportInventory4Yolo(std::string & path){
                                 << detect_norm_width <<" "<< detect_norm_height <<"\n";
 
                         }
-                        else{
-                            std::cerr<<"cant create new file"<<std::endl;
-                        }
                     }
                     index += inside_count - 1;
+                }
+                else{
+                    std::cerr<<"cant create new file"<<std::endl;
                 }
                 mutex.unlock();
                 outFile.close();

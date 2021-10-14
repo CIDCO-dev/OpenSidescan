@@ -69,7 +69,6 @@ public slots:
     void actionExportCsvFile();
     
     void actionExportHitsFile();
-    void actionExportPyTorch();
 
     void actionExportYolo();
 

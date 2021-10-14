@@ -69,6 +69,7 @@ public slots:
     void actionExportCsvFile();
     
     void actionExportHitsFile();
+    void actionExportPyTorch();
 
     void actionExportYolo();
 
@@ -90,7 +91,6 @@ public slots:
 private slots:
 
     void monitorActionTriggered();
-
 
 protected:
 

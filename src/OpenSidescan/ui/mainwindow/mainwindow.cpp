@@ -904,6 +904,7 @@ void MainWindow::actionExportYolo(){
             std::string sPath = path.toStdString();
 
             currentProject->exportInventory4Yolo(sPath);
+
         }
     }
 

@@ -59,7 +59,7 @@
      <addaction name="actionExportKmlFile"/>
      <addaction name="actionExportTrainingObjectSamples"/>
      <addaction name="actionExportHitsFile"/>
-     <addaction name="actionExport_PyTorch_Training"/>
+     <addaction name="actionExport_yolov5_training_format"/>
     </widget>
     <addaction name="actionFindObjects"/>
     <addaction name="menuExport_Inventory"/>
@@ -250,9 +250,9 @@
     <string>Export HITS file</string>
    </property>
   </action>
-  <action name="actionExport_PyTorch_Training">
+  <action name="actionExport_yolov5_training_format">
    <property name="text">
-    <string>Export PyTorch Training</string>
+    <string>Export yolov5 training format</string>
    </property>
   </action>
  </widget>
@@ -470,10 +470,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionExport_PyTorch_Training</sender>
+   <sender>actionExport_yolov5_training_format</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>actionExportPyTorch()</slot>
+   <slot>actionExportYolo()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -500,6 +500,6 @@
   <slot>actionExportTrainingObjectSamples()</slot>
   <slot>actionExportCsvFile()</slot>
   <slot>actionExportHitsFile()</slot>
-  <slot>actionExportPyTorch()</slot>
+  <slot>actionExportYolo()</slot>
  </slots>
 </ui>

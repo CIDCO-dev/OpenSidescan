@@ -9,6 +9,12 @@
 class SidescanFile;
 class SidescanImage;
 
+struct region{
+    int x;
+    int y;
+    int width;
+    int height;
+};
 
 class InventoryObject
 {
@@ -41,6 +47,7 @@ public:
     std::string & getDescription() { return description;}
     void setDescription(std::string & newDescription) { description = newDescription;}
 
+    bool is_inside(struct region & area);
 
 private:
     int x; //top left corner

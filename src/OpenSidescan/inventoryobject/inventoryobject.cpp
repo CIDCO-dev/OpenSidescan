@@ -273,3 +273,21 @@ void InventoryObject::computePosition(){
     if ( position == nullptr )
         throw new Exception( "GeoreferencedObject::computePosition(): position is nullptr" );
 }
+
+bool InventoryObject::is_inside(struct region & area){
+    /*
+    std::cout<<"area:"<<"\n";
+    std::cout<<area.x<<" "<<area.y<<" "<<area.width<<" "<<area.height<<"\n";
+    std::cout<<"invetory object:"<<"\n";
+    std::cout<<this->getX()<<" "<<this->getY()<<" "<<this->getX() + this->getPixelWidth()<<" "<<this->getY() + this->getPixelHeight()<<"\n";
+    */
+    if(
+            (area.x <= this->getX()) && (area.width >= (this->getX() + this->getPixelWidth())) &&
+            (area.y <= this->getY()) && (area.height >= (this->getY() + this->getPixelHeight()))
+    ){
+        return true;
+    }
+    else{
+        return false;
+    }
+}

@@ -20,7 +20,6 @@ pipeline {
   
   
   stages {
-	
     stage('Test file locking on linux'){
       agent { label 'master'}
       steps {
@@ -77,14 +76,13 @@ pipeline {
     stage('Build opensidescan linux'){
       agent { label 'master'}
       steps {
-        sh 'Scripts/build_opensidescan.sh'
+        sh 'Scripts/build_opensidescan.sh $version'
       }
     }
-	
     stage('BUILD OPENSIDESCAN FOR WINDOWS 10'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
-		bat "Scripts/build_opensidescan_win.bat"
+		bat "Scripts/build_opensidescan_win.bat $version"
 		stash includes: 'build/Release/**' , name: 'executable'
       }
     }
@@ -101,19 +99,17 @@ pipeline {
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
       	unstash 'executable'
-		bat "Scripts/build_installer.bat"
+		bat "Scripts/build_installer.bat $version"
 		stash includes: 'build/**' , name: 'installer'
       }
     }
-	
-    //todo : passer version en argument
-	
+		
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
-        bat "Scripts\\sign_installer.au3"
-        archiveArtifacts('build/Opensidescan-1.0.0-win64.exe')
+        bat "Scripts\\sign_installer.au3 $version"
+        archiveArtifacts('build/Opensidescan-*-win64.exe')
 
        }
      }
@@ -122,7 +118,7 @@ pipeline {
       options {skipDefaultCheckout()}
       steps {
         sh 'mkdir -p $binWinx64PublishDir'
-        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-1.0.0-win64.exe $binWinx64PublishDir/Opensidescan-1.0.0-win64.exe'
+        sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-*-win64.exe $binWinx64PublishDir/'
       }
     }
 	
@@ -149,7 +145,6 @@ pipeline {
 		junit 'build/reports/linux-testGUI.xml'
 		archiveArtifacts('build/reports/linux-testGUI.xml')
       }
-
     }
 	*/
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
@@ -158,8 +153,8 @@ pipeline {
 
         sh 'mkdir -p $publishTestOutputWinx64Dir'
 
-        sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
-        sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
+        //sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/'
+        //sh 'ls -al /var/lib/jenkins/jobs/$name/builds/$patch/archive/'
 
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/win-testGUI.xml $publishTestOutputWinx64Dir'
         //sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/reports/linux-testGUI.xml $publishTestOutputWinx64Dir'

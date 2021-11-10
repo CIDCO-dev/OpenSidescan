@@ -892,23 +892,19 @@ void MainWindow::actionExportHitsFile(){
     }
 }
 
-void MainWindow::actionExportPyTorch(){
+void MainWindow::actionExportYolo(){
     if(currentProject){
-        QString fileName = QFileDialog::getSaveFileName( this,
-                                                        tr("Export as PyHits"),
-                                                        "",
-                                                        tr("CSV File (*.PyHits)"),
-                                                            nullptr,
-                                                            QFileDialog::DontUseNativeDialog );
+        QString path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Select Directory"),
+                                                         "",
+                                                         QFileDialog::ShowDirsOnly
+                                                         | QFileDialog::DontResolveSymlinks);
 
-        if(fileName.size() > 0){
-            std::string sFilename = fileName.toStdString();
+        if(path.size() > 0){
+            std::string sPath = path.toStdString();
 
-            if(!StringUtils::ends_with(sFilename.c_str(),".PyHits")){
-                sFilename = sFilename + std::string(".PyHits");
-            }
+            currentProject->exportInventory4Yolo(sPath);
 
-            currentProject->exportInventory4PyTorch(sFilename);
         }
     }
 

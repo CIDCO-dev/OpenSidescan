@@ -133,7 +133,7 @@ endif()
 if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	
@@ -144,7 +144,7 @@ if(WIN32)
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
-	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world347.dll)
+	set(CV_DLLS C:/LIBS/opencv4.5/opencv/build/x64/vc15/bin/opencv_world454.dll)
 	set(QT_DLLS_PATH C:/Qt2/5.12.11/msvc2015_64/bin)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
 				${QT_DLLS_PATH}/QT5Core.dll

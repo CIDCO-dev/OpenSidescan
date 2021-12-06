@@ -132,10 +132,12 @@ RESOURCES +=  resources.qrc
 
 RESOURCES +=  ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
 
-CONFIG+=link_pkgconfig
+CONFIG+=link_pkgconfig c++11
 
 #CONFIG -= precompile_header
 
 unix{
-        PKGCONFIG+=opencv eigen3
+        PKGCONFIG+=eigen3
+        LIBS+= -L/usr/local/lib -lopencv_stitching -lopencv_highgui -lopencv_dnn -lopencv_ml -lopencv_videoio -lopencv_video -lopencv_objdetect -lopencv_calib3d -lopencv_imgcodecs -lopencv_features2d -lopencv_flann -lopencv_photo -lopencv_imgproc -lopencv_core
+        INCLUDEPATH += /usr/local/include/opencv4
 }

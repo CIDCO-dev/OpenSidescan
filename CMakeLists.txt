@@ -107,7 +107,8 @@ if(UNIX)
 
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-	find_package(OpenCV 3.4.7 REQUIRED)
+	#find_package(OpenCV 3.4.7 REQUIRED)
+	find_package(OpenCV 4.5 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
 		
 	# creating targets

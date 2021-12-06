@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QAction>
+#include "opencv2/opencv.hpp"
 
 #include "sidescan/sidescanimage.h"
 #include "sidescan/sidescanimager.h"
@@ -118,7 +119,7 @@ protected:
 
     //Detection parameters
     int    fastThresholdValue                   = 100;
-    int    fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
+    cv::FastFeatureDetector::DetectorType  fastTypeValue = cv::FastFeatureDetector::TYPE_9_16;
     bool   fastNonMaxSuppressionValue           = false;
     int    dbscanEpsilonValue                   = 50;
     int    dbscanMinPointsValue                 = 10;

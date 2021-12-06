@@ -9,7 +9,7 @@
 
 MonitorWindow::MonitorWindow(Project & project,
                                  int & fastThresholdValue,
-                                 int & fastTypeValue,
+                                 cv::FastFeatureDetector::DetectorType & fastTypeValue,
                                  bool & fastNonMaxSuppressionValue,
                                  int & dbscanEpsilonValue,
                                  int & dbscanMinPointsValue,
@@ -212,7 +212,8 @@ void MonitorWindow::buildAdvancedDetector(){
         fastThresholdValue = std::atoi(sFastThreshold.c_str());
 
         if(fastThresholdValue > 0){
-                fastTypeValue = fastType->currentData().toInt();
+                int temp_fastTypeValue = fastType->currentData().toInt();
+                fastTypeValue = RoiDetector::toCvFastType(temp_fastTypeValue);
 
                 if(fastTypeValue > 0){
 

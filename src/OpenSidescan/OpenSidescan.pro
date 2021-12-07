@@ -25,22 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 win32 {
     RC_ICONS = resources\\cidco_icon.ico
 
-    INCLUDEPATH += "C:\\Program Files (x86)\\Eigen3\\include\\eigen3" \
-                    "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\include"
+    INCLUDEPATH += "C:\\LIBS\\eigen" \
+                   "C:\\LIBS\\opencv4.5\\opencv\\build\\include"
 
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_core347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_features2d347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_imgcodecs347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_imgproc347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_ml347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_photo347.lib"
-
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_flann347.lib"
-
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_highgui347.lib"
-    LIBS += "C:\\Program Files\\OpenCV-3.4.7\\opencv\\release\\install\\x64\\vc15\\lib\\opencv_calib3d347.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\libopencv_core454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_features2d454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_imgcodecs454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_imgproc454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_ml454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_photo454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_flann454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_highgui454.lib"
+    LIBS += "C:\\LIBS\\opencv4.5\\opencv\\build\\x64\\vc15\\opencv_calib3d454.lib"
   }
-
 SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/datagrams/DatagramParser.cpp \
     ../thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.cpp \
@@ -132,7 +129,7 @@ RESOURCES +=  resources.qrc
 
 RESOURCES +=  ../thirdParty/QDarkStyleSheet/qdarkstyle/style.qrc
 
-CONFIG+=link_pkgconfig c++11
+CONFIG+=link_pkgconfig
 
 #CONFIG -= precompile_header
 

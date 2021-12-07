@@ -43,7 +43,7 @@ endif()
 if(WIN32)
 	message("windows unit-test")
 	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 3.4.7 REQUIRED PATHS C:/LIBS/opencv/build)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.12 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 

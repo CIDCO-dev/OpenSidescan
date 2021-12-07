@@ -82,7 +82,7 @@ TEST_CASE("Test file lock with monitor, windows version") {
 
     // setup region of interest detector
     int fastThreshold = 300;
-    int fastType = cv::FastFeatureDetector::TYPE_9_16;
+    cv::FastFeatureDetector::DetectorType fastType = cv::FastFeatureDetector::TYPE_9_16;
     bool fastNonMaxSuppression = false;
     double dbscanEpsilon = 50;
     int dbscanMinimumPoints = 20;

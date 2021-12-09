@@ -114,7 +114,7 @@ pipeline {
        }
      }
     stage('PUBLISH ON SERVER'){
-      agent { label 'ubnt20-build-opensidescan-vm'}
+      agent { label 'master'}
       options {skipDefaultCheckout()}
       steps {
         sh 'mkdir -p $binWinx64PublishDir'
@@ -148,7 +148,7 @@ pipeline {
     }
 	*/
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
-      agent { label 'ubnt20-build-opensidescan-vm'}
+      agent { label 'master'}
       steps {
 
         sh 'mkdir -p $publishTestOutputWinx64Dir'

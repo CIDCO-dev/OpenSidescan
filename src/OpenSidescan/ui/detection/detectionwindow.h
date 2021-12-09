@@ -26,7 +26,7 @@ class DetectionWindow : public QDialog
 public:
     DetectionWindow(Project & project,
                     int & fastThresholdValue,
-                    int & fastTypeValue,
+                    cv::FastFeatureDetector::DetectorType & fastTypeValue,
                     bool & fastNonMaxSuppressionValue,
                     int & dbscanEpsilonValue,
                     int & dbscanMinPointsValue,
@@ -99,7 +99,7 @@ private:
 
     //Values
     int & fastThresholdValue;
-    int & fastTypeValue;
+    cv::FastFeatureDetector::DetectorType & fastTypeValue;
     bool & fastNonMaxSuppressionValue;
     int & dbscanEpsilonValue;
     int & dbscanMinPointsValue;

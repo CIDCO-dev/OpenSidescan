@@ -11,7 +11,7 @@ class RoiDetector : public Detector
 public:
     RoiDetector(
             int fastThreshold,
-            int fastType,
+            cv::FastFeatureDetector::DetectorType fastType,
             bool fastNonMaxSuppression,
             double dbscanEpsilon,
             int dbscanMinimumPoints,
@@ -20,12 +20,12 @@ public:
             int mserMaximumArea,
             bool mergeOverlappingObjects
             );
-
+   static cv::FastFeatureDetector::DetectorType toCvFastType (int fasType);
     void detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound);
 
 private:
     int fastThreshold;
-    int fastType;
+    cv::FastFeatureDetector::DetectorType fastType;
     bool fastNonMaxSuppression;
     double dbscanEpsilon;
     int dbscanMinimumPoints;

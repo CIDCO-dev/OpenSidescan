@@ -71,7 +71,7 @@ TEST_CASE( "Test Georeferencing" ) {
 
     //Detection parameters
     int    fastThresholdValue                   = 358;
-    int    fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
+    cv::FastFeatureDetector::DetectorType  fastTypeValue                        = cv::FastFeatureDetector::TYPE_9_16;
     bool   fastNonMaxSuppressionValue           = false;
     double    dbscanEpsilonValue                   = 51;
     int    dbscanMinPointsValue                 = 19;

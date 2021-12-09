@@ -21,7 +21,7 @@ pipeline {
   
   stages {
     stage('Test file locking on linux'){
-      agent { label 'master'}
+      agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
         sh 'Scripts/build_lock_test.sh'
         sh 'mkdir -p build/reports'
@@ -51,7 +51,7 @@ pipeline {
     }
 	
     stage('Unit tests on linux'){
-      agent { label 'master'}
+      agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
         sh 'Scripts/build_linux_unit_tests.sh'
         sh 'mkdir -p build/reports'
@@ -74,7 +74,7 @@ pipeline {
     }
 	
     stage('Build opensidescan linux'){
-      agent { label 'master'}
+      agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
         sh 'Scripts/build_opensidescan.sh $version'
       }
@@ -138,7 +138,7 @@ pipeline {
     }
     /*
     stage('Linux GUI tests'){
-      agent { label 'master'}
+      agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
 		sh "ScriptsTestGUI/gui_test_linux.sh"
 		sh 'test/testGUI/build/Opensidescan_gui_Tests -o build/reports/linux-testGUI.xml -xunitxml'

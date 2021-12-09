@@ -4,7 +4,7 @@ project(locktest)
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.5 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")

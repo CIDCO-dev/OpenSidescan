@@ -28,7 +28,7 @@ class MonitorWindow : public QDialog
 public:
     MonitorWindow(Project & project,
                     int & fastThresholdValue,
-                    int & fastTypeValue,
+                    cv::FastFeatureDetector::DetectorType & fastTypeValue,
                     bool & fastNonMaxSuppressionValue,
                     int & dbscanEpsilonValue,
                     int & dbscanMinPointsValue,
@@ -40,7 +40,7 @@ public:
     );
 
     int getFastThresholdValue() const { return fastThresholdValue; }
-    int getFastTypeValue() const { return fastTypeValue; }
+    cv::FastFeatureDetector::DetectorType getFastTypeValue() const { return fastTypeValue; }
     bool getFastNonMaxSuppressionValue() const { return fastNonMaxSuppressionValue; }
     int getDbscanEpsilonValue() const { return dbscanEpsilonValue; }
     int getDbscanMinPointsValue() const { return dbscanMinPointsValue; }
@@ -105,7 +105,7 @@ private:
 
     //Values
     int & fastThresholdValue;
-    int & fastTypeValue;
+    cv::FastFeatureDetector::DetectorType & fastTypeValue;
     bool & fastNonMaxSuppressionValue;
     int & dbscanEpsilonValue;
     int & dbscanMinPointsValue;

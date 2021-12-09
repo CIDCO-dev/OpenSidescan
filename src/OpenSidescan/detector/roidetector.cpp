@@ -1,8 +1,25 @@
 #include "roidetector.h"
 
-RoiDetector::RoiDetector(int fastThreshold,int fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool mergeOverlappingObjects):fastThreshold(fastThreshold),fastType(fastType),fastNonMaxSuppression(fastNonMaxSuppression),dbscanEpsilon(dbscanEpsilon),dbscanMinimumPoints(dbscanMinimumPoints),mserDelta(mserDelta),mserMinimumArea(mserMinimumArea),mserMaximumArea(mserMaximumArea),mergeOverlappingObjects(mergeOverlappingObjects)
+RoiDetector::RoiDetector(int fastThreshold,cv::FastFeatureDetector::DetectorType fastType,bool fastNonMaxSuppression,double dbscanEpsilon,int dbscanMinimumPoints,int mserDelta,int mserMinimumArea,int mserMaximumArea,bool mergeOverlappingObjects):fastThreshold(fastThreshold),fastType(fastType),fastNonMaxSuppression(fastNonMaxSuppression),dbscanEpsilon(dbscanEpsilon),dbscanMinimumPoints(dbscanMinimumPoints),mserDelta(mserDelta),mserMinimumArea(mserMinimumArea),mserMaximumArea(mserMaximumArea),mergeOverlappingObjects(mergeOverlappingObjects)
 {
 
+}
+
+cv::FastFeatureDetector::DetectorType RoiDetector::toCvFastType (int fastType){
+
+    switch(fastType){
+    case 0:
+        return cv::FastFeatureDetector::TYPE_5_8;
+        break;
+    case 1:
+        return cv::FastFeatureDetector::TYPE_7_12;
+        break;
+    case 2:
+        return cv::FastFeatureDetector::TYPE_9_16;
+        break;
+    default:
+        return cv::FastFeatureDetector::TYPE_9_16;
+    }
 }
 
 void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound){

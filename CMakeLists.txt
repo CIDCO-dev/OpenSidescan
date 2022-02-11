@@ -108,7 +108,7 @@ if(UNIX)
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	#find_package(OpenCV 3.4.7 REQUIRED)
-	find_package(OpenCV 4.5 REQUIRED)
+	find_package(OpenCV 4.2 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
 		
 	# creating targets
@@ -133,7 +133,7 @@ endif()
 if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
+	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
 	

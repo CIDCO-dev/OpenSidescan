@@ -121,7 +121,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-*-win64.exe $binWinx64PublishDir/'
       }
     }
-	
+/*	
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}
       steps {
@@ -136,7 +136,7 @@ pipeline {
         }
       }
     }
-    /*
+ */   /*
     stage('Linux GUI tests'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
@@ -147,6 +147,7 @@ pipeline {
       }
     }
 	*/
+    /*		  
     stage('PUBLISH WINDOWS TEST RESULTS ON SERVER'){
       agent { label 'master'}
       steps {
@@ -161,7 +162,7 @@ pipeline {
 
       }
     }
-	
+*/	
   }
   
 }

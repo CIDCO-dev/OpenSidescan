@@ -86,7 +86,9 @@ public:
                 
                 equalizeHist(I,I);
                 fastNlMeansDenoising(I,I);  
-                blur(I,I,cv::Size(2,2));
+              
+		//TODO: make this a command-line parameter
+		// blur(I,I,cv::Size(2,2));
                 
 		imwrite(ss.str(), I);
             }

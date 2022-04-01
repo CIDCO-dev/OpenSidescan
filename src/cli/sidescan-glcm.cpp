@@ -64,7 +64,7 @@ public:
         
         void computeGlcm(cv::Mat &img, int windowSize){
         	if(windowSize % 2 == 0){
-        		std::cerr<<"windowSize must be odd !\n"
+        		std::cerr<<"windowSize must be odd !\n";
         		return;
         	}
         	else{
@@ -96,7 +96,7 @@ public:
 		    			}
 		    			
 		    			cv::Mat transposedGlcm(cv::Size(256,256), CV_64F, cv::Scalar(0));
-		    			cv::transposed(glcm, transposedGlcm);
+		    			cv::transpose(glcm, transposedGlcm);
 		    			cv::Mat normalizedGlcm = (glcm + transposedGlcm)/(count*2);
 		    			
 		    			double energy = 0;
@@ -106,21 +106,26 @@ public:
 		    			double correlation = 0;
 		    			double shade = 0;
 		    			double prominence = 0;
-		    			for(int r = 0; r <normalizedGlcm.rows; r++){
-		    				for(int c = 0; c<normalizedGlcm.cols; c++){
-		    					double value = normalizedGlcm.at<double>(r,c,0);
-		    					energy += value * value;	
-		    					contrast += (r-c)*(r-c)*value;
-		    					homogeneity += value/(1.0+((r-c)*(r-c)));
-		    					entropy += -(log(value)*value);
+		    			double glcmMean = 0;
+		    			double squaredVarianceIntensity = 0;
+		    			for(int c = 0; c <normalizedGlcm.cols; c++){
+		    				for(int r = 0; r<normalizedGlcm.rows; r++){
+		    					double pij = normalizedGlcm.at<double>(r,c,0);
+		    					energy += pij * pij;	
+		    					contrast += (c-r)*(c-r)*pij;
+		    					homogeneity += pij/(1.0+((c-r)*(c-r)));
+		    					entropy += -(log(pij)*pij);
+		    					double intensity = (double)img.at<uchar>(col,row,0);
+		    					glcmMean += pij * intensity;
+		    					squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
+		    					correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);
 		    					
-		    						    					
 		    				}
 		    			}	    			
 		    		}
 		    	}
 		    	
-		    	std::cout<<glcm<<"\n";
+		    	//std::cout<<glcm<<"\n";
         		return;
 		    }
 

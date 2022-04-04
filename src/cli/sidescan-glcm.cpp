@@ -62,12 +62,20 @@ public:
         
         //windowSize must be odd
         
-        void computeGlcm(cv::Mat &img, int windowSize){
+        void computeGlcm(cv::Mat &img, int windowSize, std::vector<std::vector<std::vector<double>>> &processedFeatures){
         	if(windowSize % 2 == 0){
         		std::cerr<<"windowSize must be odd !\n";
         		return;
         	}
         	else{
+        		
+        		std::vector<double> features;
+        		std::vector<std::vector<double>> ys;
+        		//std::vector<std::vector<std::vector<double> xs;
+        		features.reserve(7);
+        		ys.reserve(img.rows);
+        		//xs.reserve(img.cols);
+        		
 		    	//for every pixel in image
 		    	for(int col = windowSize/2; col<img.cols - (windowSize/2); col=col+(windowSize/2)){
 		    		for (int row = windowSize/2; row<img.rows - (windowSize/2); row=row+(windowSize/2)){
@@ -107,9 +115,13 @@ public:
 		    			double shade = 0;
 		    			double prominence = 0;
 		    			double glcmMean = 0;
+		    			double sigma = 0;
 		    			double squaredVarianceIntensity = 0;
+		    			double A = 0;
+		    			double B = 0;
 		    			for(int c = 0; c <normalizedGlcm.cols; c++){
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){
+		    				
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
 		    					energy += pij * pij;	
 		    					contrast += (c-r)*(c-r)*pij;
@@ -117,18 +129,61 @@ public:
 		    					entropy += -(log(pij)*pij);
 		    					double intensity = (double)img.at<uchar>(col,row,0);
 		    					glcmMean += pij * intensity;
+		    					sigma = intensity - glcmMean; //XXX or squared root of squaredVarianceIntensity
 		    					squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
-		    					correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);
-		    					
+		    					correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);	
 		    				}
-		    			}	    			
-		    		}
-		    	}
-		    	
-		    	//std::cout<<glcm<<"\n";
-        		return;
-		    }
+		    				
+		    			}
 
+		    			for(int c = 0; c <normalizedGlcm.cols; c++){
+		    				for(int r = 0; r<normalizedGlcm.rows; r++){
+		    					double pij = normalizedGlcm.at<double>(r,c,0);
+								A = (pow((col+row)- 2*glcmMean, 3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));
+									
+									if(A > 0){
+										shade += pow(A, 1/3);
+									}
+									else if(A<0){
+										shade += pow(A, 1/3) * -1 ;
+									}
+									else{
+										shade += 0;
+									}
+									
+									B = (pow((col+row)- 2*glcmMean, 4)*pij)/(4* pow(sigma, 4)* pow(1+correlation, 2));
+									
+									if(B > 0){
+										prominence += pow(B, 1/4);
+									}
+									else if(B < 0){
+										prominence += pow(B, 1/4) * -1 ;
+									}
+									else{
+										prominence += 0;
+									}
+							}
+						}
+						
+						features.push_back(energy);
+						features.push_back(contrast);
+						features.push_back(homogeneity);
+						features.push_back(entropy);
+						features.push_back(correlation);
+						features.push_back(shade);
+						features.push_back(prominence);
+						ys.push_back(features);
+						features.clear();
+						//std::cout<<"features : "<<energy<<" "<<contrast<<" "<<homogeneity<<" "<<entropy<<" "
+						//						<<correlation<<" "<<shade<<" "<<prominence<<" "<<"\n";    			
+		    		}
+		    		
+		    		processedFeatures.push_back(ys);
+		    		ys.clear();
+		    	}
+	
+		    }
+		return;
         }
         
         void generateImages(){
@@ -163,10 +218,15 @@ public:
 				// blur(I,I,cv::Size(2,2));
                 
                 // output classes
+                int windowSize = 31; // TODO make it a param
                 cv::Mat classes;
-                computeGlcm(I, 31);
+                std::vector<std::vector<std::vector<double>>> processedFeatures;
+                processedFeatures.reserve(I.cols/windowSize);
+                computeGlcm(I, windowSize, processedFeatures);
                 
-                //std::cout<<classes<<"\n";
+                std::cout<<processedFeatures[0][1][2]<<"\n";
+                std::cout<<processedFeatures[10][20][2]<<"\n";
+                std::cout<<processedFeatures[66][25][6]<<"\n";
 				//imwrite(ss.str(), classes);
             }
         }
@@ -208,7 +268,7 @@ int main (int argc , char ** argv ){
 
 		parser->parse(fileName);
                 
-                sidescan.generateImages();
+		sidescan.generateImages();
 	}
 	catch(std::exception * e){
 		std::cerr << "[-] Error while parsing " << fileName << ": " << e->what() << std::endl;

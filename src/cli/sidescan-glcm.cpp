@@ -146,12 +146,23 @@ public:
 		    			for(int c = 0; c <normalizedGlcm.cols; c++){
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
-		    					double intensity = (double)img.at<uchar>(col,row,0);
 		    					if(pij != 0){
 		    						//XXX handle very small squaredVarianceIntensity
+		    						if(squaredVarianceIntensity < 1.0e-15){
+		    							squaredVarianceIntensity = 1.0e-15;
+		    						}
 									correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);
+
+								}
+							}
+						}
+						for(int c = 0; c <normalizedGlcm.cols; c++){
+		    				for(int r = 0; r<normalizedGlcm.rows; r++){
+		    					double pij = normalizedGlcm.at<double>(r,c,0);
+		    					if(pij != 0){
+		    						double intensity = (double)img.at<uchar>(col,row,0);
 									sigma = intensity - glcmMean; //XXX or sqrt(squaredVarianceIntensity);
-									
+										
 									A=(pow((col+row)-2*glcmMean,3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));	
 									if(A > 0){
 										shade += pow(abs(A), 1/3);
@@ -169,8 +180,8 @@ public:
 										prominence += pow(abs(B), 1/4) * -1 ;
 									}
 								}
-							}
-						}
+		    				}
+		    			}
 						
 						features.push_back(energy);
 						features.push_back(contrast);

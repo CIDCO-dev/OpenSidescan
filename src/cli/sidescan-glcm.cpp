@@ -15,6 +15,7 @@
 #include <string>
 #include "opencv2/opencv.hpp"
 #include <cmath>
+#include <limits>
 
 /**Writes the usage information about the datagram-list*/
 
@@ -123,15 +124,21 @@ public:
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){
 		    				
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
-		    					energy += pij * pij;	
-		    					contrast += (c-r)*(c-r)*pij;
-		    					homogeneity += pij/(1.0+((c-r)*(c-r)));
-		    					entropy += -(log(pij)*pij);
 		    					double intensity = (double)img.at<uchar>(col,row,0);
-		    					glcmMean += pij * intensity;
-		    					sigma = intensity - glcmMean; //XXX or squared root of squaredVarianceIntensity
-		    					squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
-		    					correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);	
+
+		    					if(pij != 0){
+									homogeneity += pij/(1.0+((c-r)*(c-r)));
+									energy += pij * pij;
+									contrast += (c-r)*(c-r)*pij;
+									entropy += -(log(pij)*pij);
+									squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
+									glcmMean += pij * intensity;
+								}
+								else{
+									break;
+									// += 0 to all feature
+								}
+	
 		    				}
 		    				
 		    			}
@@ -139,29 +146,29 @@ public:
 		    			for(int c = 0; c <normalizedGlcm.cols; c++){
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
-								A = (pow((col+row)- 2*glcmMean, 3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));
+		    					double intensity = (double)img.at<uchar>(col,row,0);
+		    					if(pij != 0){
+		    						//XXX handle very small squaredVarianceIntensity
+									correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);
+									sigma = intensity - glcmMean; //XXX or sqrt(squaredVarianceIntensity);
 									
+									A=(pow((col+row)-2*glcmMean,3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));	
 									if(A > 0){
-										shade += pow(A, 1/3);
+										shade += pow(abs(A), 1/3);
 									}
 									else if(A<0){
-										shade += pow(A, 1/3) * -1 ;
+										shade += pow(abs(A), 1/3) * -1 ;
 									}
-									else{
-										shade += 0;
-									}
+									
 									
 									B = (pow((col+row)- 2*glcmMean, 4)*pij)/(4* pow(sigma, 4)* pow(1+correlation, 2));
-									
 									if(B > 0){
-										prominence += pow(B, 1/4);
+										prominence += pow(abs(B), 1/4);
 									}
 									else if(B < 0){
-										prominence += pow(B, 1/4) * -1 ;
+										prominence += pow(abs(B), 1/4) * -1 ;
 									}
-									else{
-										prominence += 0;
-									}
+								}
 							}
 						}
 						
@@ -224,9 +231,13 @@ public:
                 processedFeatures.reserve(I.cols/windowSize);
                 computeGlcm(I, windowSize, processedFeatures);
                 
-                std::cout<<processedFeatures[0][1][2]<<"\n";
-                std::cout<<processedFeatures[10][20][2]<<"\n";
-                std::cout<<processedFeatures[66][25][6]<<"\n";
+				for(auto &v:processedFeatures){
+					for(auto &feature: v){
+						std::cout<<feature[0] << " "<<feature[1] << " "<<feature[2] << " "<<feature[3] << " "
+								<<feature[4] << " "<<feature[5] << " "<<feature[6] << "\n";
+					}
+				}
+				
 				//imwrite(ss.str(), classes);
             }
         }

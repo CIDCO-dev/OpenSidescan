@@ -61,9 +61,9 @@ public:
             channels[ping->getChannelNumber()]->push_back(ping);
         }
         
-        //windowSize must be odd
         
         void computeGlcm(cv::Mat &img, int windowSize, std::vector<std::vector<std::vector<double>>> &processedFeatures){
+        
         	if(windowSize % 2 == 0){
         		std::cerr<<"windowSize must be odd !\n";
         		return;
@@ -72,16 +72,14 @@ public:
         		
         		std::vector<double> features;
         		std::vector<std::vector<double>> ys;
-        		//std::vector<std::vector<std::vector<double> xs;
         		features.reserve(7);
         		ys.reserve(img.rows);
-        		//xs.reserve(img.cols);
         		
 		    	//for every pixel in image
 		    	for(int col = windowSize/2; col<img.cols - (windowSize/2); col=col+(windowSize/2)){
 		    		for (int row = windowSize/2; row<img.rows - (windowSize/2); row=row+(windowSize/2)){
 		    			//compute glcm over window
-		    			cv::Mat glcm(cv::Size(256,256), CV_64F, cv::Scalar(0)); // XXX:is 32 bit enough?
+		    			cv::Mat glcm(cv::Size(256,256), CV_64F, cv::Scalar(0)); // XXX
 		    			int count = 0;
 		    			
 		    			
@@ -192,8 +190,7 @@ public:
 						features.push_back(prominence);
 						ys.push_back(features);
 						features.clear();
-						//std::cout<<"features : "<<energy<<" "<<contrast<<" "<<homogeneity<<" "<<entropy<<" "
-						//						<<correlation<<" "<<shade<<" "<<prominence<<" "<<"\n";    			
+   			
 		    		}
 		    		
 		    		processedFeatures.push_back(ys);
@@ -235,6 +232,12 @@ public:
 				//TODO: make this a command-line parameter
 				// blur(I,I,cv::Size(2,2));
                 
+                int start = filename.rfind("/");
+                std::string outputFilename= filename.substr(filename.rfind("/") +1, 
+                											filename.size() - (filename.rfind(".")-2));
+				
+				outputFilename += "_" + std::to_string(i) + ".haralick";
+                
                 // output classes
                 int windowSize = 31; // TODO make it a param
                 cv::Mat classes;
@@ -242,10 +245,13 @@ public:
                 processedFeatures.reserve(I.cols/windowSize);
                 computeGlcm(I, windowSize, processedFeatures);
                 
+                
+                std::ofstream outputFile;
+				outputFile.open (outputFilename);
 				for(auto &v:processedFeatures){
 					for(auto &feature: v){
-						std::cout<<feature[0] << " "<<feature[1] << " "<<feature[2] << " "<<feature[3] << " "
-								<<feature[4] << " "<<feature[5] << " "<<feature[6] << "\n";
+						outputFile<< feature[0]<<" "<< feature[1]<<" "<< feature[2]<<" "
+								<< feature[3]<<" "<< feature[4]<<" "<< feature[5]<<" "<< feature[6]<<"\n";
 					}
 				}
 				

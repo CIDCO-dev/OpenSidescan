@@ -129,7 +129,6 @@ public:
 									energy += pij * pij;
 									contrast += (c-r)*(c-r)*pij;
 									entropy += -(log(pij)*pij);
-									squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
 									glcmMean += pij * intensity;
 								}
 								else{
@@ -140,6 +139,17 @@ public:
 		    				}
 		    				
 		    			}
+		    			
+		    			for(int c = 0; c <normalizedGlcm.cols; c++){
+		    				for(int r = 0; r<normalizedGlcm.rows; r++){
+		    					double pij = normalizedGlcm.at<double>(r,c,0);
+		    					double intensity = (double)img.at<uchar>(col,row,0);
+		    					if(pij != 0){
+		    						squaredVarianceIntensity += pij*((intensity - glcmMean)*(intensity - glcmMean));
+								}
+							}
+						}
+		    			
 
 		    			for(int c = 0; c <normalizedGlcm.cols; c++){
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){

@@ -169,7 +169,7 @@ public:
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
 		    					if(pij != 0){
 		    						double intensity = (double)img.at<uchar>(col,row,0);
-									sigma = intensity - glcmMean; //XXX or sqrt(squaredVarianceIntensity);
+									sigma = sqrt(squaredVarianceIntensity);
 										
 									A=(pow((col+row)-2*glcmMean,3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));	
 									if(A > 0){

@@ -171,21 +171,21 @@ public:
 		    						double intensity = (double)img.at<uchar>(col,row,0);
 									sigma = sqrt(squaredVarianceIntensity);
 										
-									A=(pow((col+row)-2*glcmMean,3)*pij)/(pow(sigma, 3)*(sqrt(2*(1+correlation))));	
+									A=(pow((col+row)-2.0*glcmMean,3)*pij)/(pow(sigma, 3)*(sqrt(2.0*(1+correlation))));	
 									if(A > 0){
-										shade += pow(abs(A), 1/3);
+										shade += pow(abs(A), 1.0/3);
 									}
 									else if(A<0){
-										shade += pow(abs(A), 1/3) * -1 ;
+										shade += pow(abs(A), 1.0/3) * -1 ;
 									}
 									
 									
-									B = (pow((col+row)- 2*glcmMean, 4)*pij)/(4* pow(sigma, 4)* pow(1+correlation, 2));
+									B = (pow((col+row)- 2.0*glcmMean, 4)*pij)/(4.0* pow(sigma, 4)* pow(1+correlation, 2));
 									if(B > 0){
-										prominence += pow(abs(B), 1/4);
+										prominence += pow(abs(B), 1.0/4);
 									}
 									else if(B < 0){
-										prominence += pow(abs(B), 1/4) * -1 ;
+										prominence += pow(abs(B), 1.0/4) * -1 ;
 									}
 								}
 		    				}

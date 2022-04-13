@@ -128,16 +128,14 @@ public:
 									homogeneity += pij/(1.0+((c-r)*(c-r)));
 									energy += pij * pij;
 									contrast += (c-r)*(c-r)*pij;
-									entropy += -(log(pij)*pij);
+									entropy += -(log(pij)*pij); // pij will never be under 0
 									glcmMean += pij * intensity;
 								}
 								else{
 									break;
 									// += 0 to all feature
 								}
-	
 		    				}
-		    				
 		    			}
 		    			
 		    			for(int c = 0; c <normalizedGlcm.cols; c++){

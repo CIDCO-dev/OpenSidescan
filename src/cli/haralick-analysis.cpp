@@ -1,69 +1,52 @@
 #include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <vector>
+#include <cstddef>
+//#include <fstream>
+//#include <algorithm>
+//#include <vector>
+
 #include <mlpack/core.hpp>
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/neighbor_search/ns_model.hpp>
-/*
+
+//#include <mlpack/prereqs.hpp>
+//#include <mlpack/core/util/io.hpp>
+//#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "mlpack/methods/gmm/gmm.hpp"
+//#include "diagonal_gmm.hpp"
+#include "mlpack/methods/gmm/no_constraint.hpp"
+//#include "diagonal_constraint.hpp"
+
+//#include <mlpack/methods/kmeans/refined_start.hpp>
+
 int main (int argc , char ** argv ){
-	if (argc < 2) {
-		std::cerr << "usage: ./haralick-analysis <csv input filePath>" <<"\n";
+	if (argc < 3) {
+		std::cerr << "usage: ./haralick-analysis <csv input filePath> <gaussians>" <<"\n";
 		
 		return -1;
 	}
 	
 	
 	arma::mat data;
-	mlpack::data::Load(argv[1], data, true);
-	std::cout<<"ok\n";
+	mlpack::data::Load(argv[1], data, true); //std::move(data)
+	std::cerr<<"data loaded\n";
 	
-	/*
-	typedef mlpack::neighbor::NSModel<mlpack::neighbor::NearestNeighborSort> KNNModel;
+	int gaussians = std::stoi(argv[2]); //TODO handle errors
+	
+	mlpack::gmm::GMM* gmm = NULL;
+	gmm = new mlpack::gmm::GMM(std::size_t(gaussians), data.n_rows);
+	
+	double likelihood;
+	const size_t maxIterations = 300;
+	const double tolerance = 1e-10;
+	const std::size_t kmeansMaxIterations = 1000;
+	const std::size_t trials = 1;
 
-	// We either have to load the reference data, or we have to load the model.
-	KNNModel* knn;
-
-	knn = new KNNModel();
-
-	KNNModel::TreeTypes tree = KNNModel::KD_TREE; //any other type of trees
-	mlpack::neighbor::NeighborSearchMode searchMode = mlpack::neighbor::DUAL_TREE_MODE;
-	mlpack::Timers timers;
-	//bool randomBasis = false;
-	double tau = 1.0 , rho = 2.0, epsilon = 1.0;
-	const int X = 1;
-	//set param
-	//std::cout<<"ok\n";
-	//knn->SearchMode() = mlpack::neighbor::DUAL_TREE_MODE;
-	//std::cout<<"ok1\n";
-	knn->TreeType() = tree;
-	//std::cout<<"ok2\n";
-	//knn->RandomBasis() = randomBasis; //bool
-	knn->LeafSize() = size_t(X); //int >0
-	knn->Tau() = tau; //double >=0.0
-	knn->Rho() = rho; //double >=1.0
-    //knn->Epsilon() = epsilon; // double >= 0.0
-	knn->BuildModel(std::move(data), size_t(X), searchMode, epsilon);
+	mlpack::gmm::EMFit<> em(maxIterations, tolerance, mlpack::kmeans::KMeans<>(kmeansMaxIterations));
+	std::cerr<<"ok \n";
+	likelihood = gmm->Train(std::move(data), 1, false, em);
 	
-	int k = 5;
-	
-	// Now run the search.
-	arma::Mat<size_t> neighbors;
-	arma::mat distances;
-	
-	knn->Search(k, neighbors, distances);
-	
-	
-	arma::Mat<size_t> neighbors;
-	arma::mat distances;
-	//mlpack::neighbor::NeighborSearch<mlpack::neighbor::NearestNeighborSort, mlpack::neighbor::Manhatta> NNModel(data);
-	std::cout<<"ok2\n";
-	NNModel.Search(5, neighbors, distances);
-	
-	mlpack::Log::Info << "Search complete." << std::endl;
-		
+	std::cout<< "Log-likelihood of estimate: " << likelihood << "." << std::endl;
 	
 	return 0;
 	
 }
-*/
+

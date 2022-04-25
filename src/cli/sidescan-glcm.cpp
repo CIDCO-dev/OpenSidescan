@@ -16,6 +16,7 @@
 #include "opencv2/opencv.hpp"
 #include <cmath>
 #include <limits>
+#include <math.h>
 
 /**Writes the usage information about the datagram-list*/
 
@@ -153,10 +154,12 @@ public:
 		    				for(int r = 0; r<normalizedGlcm.rows; r++){
 		    					double pij = normalizedGlcm.at<double>(r,c,0);
 		    					if(pij != 0){
+		    						/*
 		    						//XXX handle very small squaredVarianceIntensity
 		    						if(squaredVarianceIntensity < 1.0e-15){
 		    							squaredVarianceIntensity = 1.0e-15;
 		    						}
+		    						*/
 									correlation += pij*(((c-glcmMean)*(r-glcmMean))/squaredVarianceIntensity);
 
 								}
@@ -188,7 +191,7 @@ public:
 								}
 		    				}
 		    			}
-						
+						//TODO isnan check
 						features.push_back(energy);
 						features.push_back(contrast);
 						features.push_back(homogeneity);
@@ -240,11 +243,10 @@ public:
 				//TODO: make this a command-line parameter
 				// blur(I,I,cv::Size(2,2));
                 
-                int start = filename.rfind("/");
                 std::string outputFilename= filename.substr(filename.rfind("/") +1, 
                 											filename.size() - (filename.rfind(".")-2));
 				
-				outputFilename += "_" + std::to_string(i) + ".haralick";
+				outputFilename += "_" + std::to_string(i) + "_haralick.csv";
                 
                 // output classes
                 int windowSize = 31; // TODO make it a param
@@ -258,8 +260,20 @@ public:
 				outputFile.open (outputFilename);
 				for(auto &v:processedFeatures){
 					for(auto &feature: v){
-						outputFile<< feature[0]<<" "<< feature[1]<<" "<< feature[2]<<" "
-								<< feature[3]<<" "<< feature[4]<<" "<< feature[5]<<" "<< feature[6]<<"\n";
+						if(!isnan(feature[0]) && !isnan(feature[1]) && !isnan(feature[2]) && !isnan(feature[3]) && !isnan(feature[4]) && 
+						!isnan(feature[5]) && !isnan(feature[6])){
+							if(!isinf(feature[0]) && !isinf(feature[1]) && !isinf(feature[2]) && !isinf(feature[3]) && !isinf(feature[4]) && 
+							!isinf(feature[5]) && !isinf(feature[6])){
+								outputFile<< feature[0]<<","<< feature[1]<<","<< feature[2]<<","
+								<< feature[3]<<","<< feature[4]<<","<< feature[5]<<","<< feature[6]<<"\n";
+							}
+							else{
+								std::cerr << "contains inf, skip feature \n";
+							}
+						}
+						else{
+							std::cerr << "contains nan, skip feature \n";
+						}
 					}
 				}
 				

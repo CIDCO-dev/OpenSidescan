@@ -45,6 +45,7 @@ int main (int argc , char ** argv ){
 	likelihood = gmm->Train(std::move(data), 1, false, em);
 	
 	std::cout<< "Log-likelihood of estimate: " << likelihood << "." << std::endl;
+	std::cout<< "nb gaussians: " << gmm->Gaussians() << "." << std::endl;
 	
 	return 0;
 	

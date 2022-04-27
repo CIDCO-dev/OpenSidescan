@@ -2,7 +2,7 @@
 windows instruction will follow
 
 # Install dependencies (on Ubuntu)
-sudo apt install libeigen3-dev qt5-default git cmake libopencv-dev
+sudo apt install libeigen3-dev qt5-default git cmake libopencv-dev libmlpack3
 
 # Download Opensidescan
 git clone --recursive https://github.com/CIDCO-dev/OpenSidescan

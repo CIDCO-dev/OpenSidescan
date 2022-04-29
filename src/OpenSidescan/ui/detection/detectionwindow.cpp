@@ -82,6 +82,9 @@ void DetectionWindow::initUI(){
     //If we added them before, the app would trigger a selected() event upon insertion and trigger the redraw login on uninitialized elements
     cmbDetector->addItem(tr("Large Objects (Ex: Shipwrecks)"),"shipwrecks");
 
+    //yolov5 model
+    cmbDetector->addItem(tr("Ghost gear (Crab trap)"),"Ghostgear");
+
     //TODO: reactivate this once debugged
     //cmbDetector->addItem(tr("Circular objects"),"circles");
 
@@ -103,6 +106,9 @@ void DetectionWindow::detectorChanged(int i){
     }
     if(strcmp(id,"circles")==0){
         //No parameter UI for circle detector
+    }
+    if(strcmp(id,"Ghostgear")==0){
+        //No parameter UI for crab trap
     }
 
     this->adjustSize();
@@ -205,6 +211,9 @@ void DetectionWindow::ok(){
     }
     if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("circles")==0){
         buildHoughDetector();
+    }
+    if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("Ghostgear")==0){
+        buildShipwreckDetector();
     }
 
 
@@ -313,6 +322,12 @@ void DetectionWindow::buildAdvancedDetector(){
         //TODO: whine about missing threshold
     }
 }
+
+void DetectionWindow::buildYolov5Detector(){
+    Detector * detector = new Yolov5Detector();
+    launchDetectionWorker(detector);
+}
+
 
 void DetectionWindow::launchDetectionWorker(Detector * detector){
     QProgressDialog progress("Finding objects...", QString(), 0, project.getFileCount(), this);

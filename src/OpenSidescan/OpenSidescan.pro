@@ -48,6 +48,7 @@ SOURCES += main.cpp\
     ../thirdParty/MBES-lib/src/utils/StringUtils.cpp \
     ../thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp \
     ../thirdParty/opencv/apps/createsamples/utility.cpp \
+    detector/yolov5detector.cpp \
     machinelearning/dbscan.cpp \
     project/project.cpp \
     inventoryobject/inventoryobject.cpp \
@@ -86,6 +87,7 @@ SOURCES += main.cpp\
 
 
 HEADERS  +=     machinelearning/dbscan.h \
+    detector/yolov5detector.h \
     project/project.h \
     inventoryobject/inventoryobject.h \
     ui/detection/monitorwindow.h \

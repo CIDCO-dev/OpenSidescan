@@ -191,16 +191,8 @@ public:
 								}
 		    				}
 		    			}
-						//TODO isnan check
-						features.push_back(energy);
-						features.push_back(contrast);
-						features.push_back(homogeneity);
-						features.push_back(entropy);
-						features.push_back(correlation);
-						features.push_back(shade);
-						features.push_back(prominence);
+						features = {energy, contrast, homogeneity, entropy, correlation, shade, prominence};
 						ys.push_back(features);
-						features.clear();
    			
 		    		}
 		    		

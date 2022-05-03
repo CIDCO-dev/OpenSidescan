@@ -10,7 +10,7 @@
 class Yolov5Detector : public Detector
 {
 public:
-    Yolov5Detector();
+    Yolov5Detector(std::string modelPath);
     void detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound);
 
 private:

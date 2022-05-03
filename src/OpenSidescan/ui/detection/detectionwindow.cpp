@@ -4,7 +4,9 @@
 #include <QCoreApplication>
 
 #include <QStyledItemDelegate>
-
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
 #include <QThread>
 
@@ -213,7 +215,7 @@ void DetectionWindow::ok(){
         buildHoughDetector();
     }
     if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("Ghostgear")==0){
-        buildShipwreckDetector();
+       buildGhostGearDetector();
     }
 
 
@@ -323,8 +325,20 @@ void DetectionWindow::buildAdvancedDetector(){
     }
 }
 
-void DetectionWindow::buildYolov5Detector(){
-    Detector * detector = new Yolov5Detector();
+void DetectionWindow::buildGhostGearDetector(){
+
+    QFileInfo modelPath(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx");
+    std::cerr<<(modelPath.absoluteFilePath()).toStdString()<<"\n";
+    Detector * detector = new Yolov5Detector((modelPath.absoluteFilePath()).toStdString());
+    launchDetectionWorker(detector);
+}
+
+void DetectionWindow::buildYolov5Detector(std::string modelPath){
+    //TODO
+    //build UI
+    //get path from UI
+
+    Detector * detector = new Yolov5Detector(modelPath);
     launchDetectionWorker(detector);
 }
 

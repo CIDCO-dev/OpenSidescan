@@ -587,7 +587,7 @@ void Project::exportInventory4Yolo(std::string & path){
                     start_range_height = k->getY() - width/2 ;
                     end_range_height = k->getY() + width/2;
 
-                    //handle cropping selection execptions
+                    //handle cropping selection exceptions
                     if(start_range_height < 0 || end_range_height > height ){
 
                         if(start_range_height < 0 ){

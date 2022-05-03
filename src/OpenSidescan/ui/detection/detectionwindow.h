@@ -60,7 +60,8 @@ private:
     void buildShipwreckDetector();
     void buildAdvancedDetector();
     void buildHoughDetector();
-    void buildYolov5Detector();
+    void buildYolov5Detector(std::string modelPath);
+    void buildGhostGearDetector();
 
     void launchDetectionWorker(Detector * detector);
 

@@ -59,6 +59,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/ui/about/aboutdialog.ui;
                 ${SS}/ui/mainwindow/mainwindow.ui;
                 ${SS}/telemetrymanager/telemetrymanager.cpp;
+                ${SS}/detector/yolov5detector.cpp
     )
 
 # thirdParty sources

@@ -110,7 +110,8 @@ if(UNIX)
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 4.2 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
-		
+	make_directory("${CMAKE_CURRENT_SOURCE_DIR}/models")
+	file(DOWNLOAD http://updates.cidco.ca/Opensidescan-modeles/crabtrap-beta.onnx "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrap-beta.onnx" SHOW_PROGRESS)
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_library(cli_dep ${CLI_SOURCE} ${THIRDPARTY})

@@ -5,6 +5,7 @@
 //#include <vector>
 
 #include <mlpack/core.hpp>
+#include <limits> 
 
 //#include <mlpack/prereqs.hpp>
 //#include <mlpack/core/util/io.hpp>
@@ -31,7 +32,7 @@ int main (int argc , char ** argv ){
 	
 	int maxGaussians = std::stoi(argv[2]); //TODO handle errors
 	int gaussian = 1;
-	std::vector<double> metric;
+	std::vector<double> metric{-std::numeric_limits<double>::max()};
 	double likelihood;
 
 	do{
@@ -51,7 +52,7 @@ int main (int argc , char ** argv ){
 	metric.push_back(likelihood);
 	gaussian++;
 	}
-	while(gaussian <= maxGaussians && likelihood >= *(metric.end()-1));
+	while(gaussian <= maxGaussians && likelihood > *(metric.end()-2));
 
 	std::cout<<"optimal: "<< gaussian-1<< "\n";
 	

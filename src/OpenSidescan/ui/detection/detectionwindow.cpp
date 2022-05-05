@@ -7,8 +7,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-
+#include <QMessageBox>
 #include <QThread>
+#include <QFileDialog>
 
 #include "workerdetection.h"
 
@@ -70,6 +71,17 @@ void DetectionWindow::initUI(){
 
     mainLayout->addWidget(advancedParameters);
 
+    //yolo parameters box
+    yoloParameters = new QGroupBox(tr("Custom YoloV5 parameters"));
+
+    QGridLayout * yoloParametersLayout = new QGridLayout();
+    yoloParameters->setLayout(yoloParametersLayout);
+
+    createYoloParameterBox(yoloParametersLayout);
+
+    mainLayout->addWidget(yoloParameters);
+
+    //dialog param
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     buttonBox->setObjectName( "buttonBox" );
 
@@ -84,9 +96,10 @@ void DetectionWindow::initUI(){
     //If we added them before, the app would trigger a selected() event upon insertion and trigger the redraw login on uninitialized elements
     cmbDetector->addItem(tr("Large Objects (Ex: Shipwrecks)"),"shipwrecks");
 
-    //yolov5 model
+    //Ghost gear model
     cmbDetector->addItem(tr("Ghost gear (Crab trap)"),"Ghostgear");
-
+    //yolov5 model
+    cmbDetector->addItem(tr("Custom yoloV5 Model"),"CustomYolo");
     //TODO: reactivate this once debugged
     //cmbDetector->addItem(tr("Circular objects"),"circles");
 
@@ -99,6 +112,7 @@ void DetectionWindow::detectorChanged(int i){
 
     const char * id = cmbDetector->itemData(i).toString().toStdString().c_str();
     advancedParameters->setVisible(false);
+    yoloParameters->setVisible(false);
 
     if(strcmp(id,"shipwrecks")==0){
         //No parameter UI for shipwreck detector
@@ -112,8 +126,36 @@ void DetectionWindow::detectorChanged(int i){
     if(strcmp(id,"Ghostgear")==0){
         //No parameter UI for crab trap
     }
+    if(strcmp(id,"CustomYolo")==0){
+        yoloParameters->setVisible(true);
+    }
 
     this->adjustSize();
+}
+
+void DetectionWindow::createYoloParameterBox(QGridLayout * yoloParametersLayout){
+    scoresThreshold = new QLineEdit();
+    nmsThreshold = new QLineEdit();
+    confidenceThreshold = new QLineEdit();
+    modelPath = new QLineEdit();
+    modelDialogButton = new QPushButton("...", this);
+
+    connect(modelDialogButton, &QPushButton::clicked, this, &DetectionWindow::selectModel);
+
+    scoresThreshold->insert("0.5");
+    nmsThreshold->insert("0.45");
+    confidenceThreshold->insert("0.3");
+
+    yoloParametersLayout->addWidget(new QLabel(tr("model")),0,0);
+    yoloParametersLayout->addWidget(modelPath,0,1);
+    yoloParametersLayout->addWidget(modelDialogButton,0,2);
+    yoloParametersLayout->addWidget(new QLabel(tr("scores threshold")),1,0);
+    yoloParametersLayout->addWidget(scoresThreshold,1,1);
+    yoloParametersLayout->addWidget(new QLabel(tr("non max suppression threshold")),2,0);
+    yoloParametersLayout->addWidget(nmsThreshold,2,1);
+    yoloParametersLayout->addWidget(new QLabel(tr("confidence threshold")),3,0);
+    yoloParametersLayout->addWidget(confidenceThreshold,3,1);
+
 }
 
 void DetectionWindow::createFastParameterBox(QFormLayout * advancedParametersLayout){
@@ -216,6 +258,9 @@ void DetectionWindow::ok(){
     }
     if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("Ghostgear")==0){
        buildGhostGearDetector();
+    }
+    if(cmbDetector->itemData(currentDetectorIndex).toString().toStdString().compare("CustomYolo")==0){
+      buildYolov5Detector();
     }
 
 
@@ -327,21 +372,66 @@ void DetectionWindow::buildAdvancedDetector(){
 
 void DetectionWindow::buildGhostGearDetector(){
 
-    QFileInfo modelPath(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx");
-    std::cerr<<(modelPath.absoluteFilePath()).toStdString()<<"\n";
-    Detector * detector = new Yolov5Detector((modelPath.absoluteFilePath()).toStdString());
+    QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx");
+    std::cerr<<(modelPathInfo.absoluteFilePath()).toStdString()<<"\n";
+    Detector * detector = new Yolov5Detector((modelPathInfo.absoluteFilePath()).toStdString());
     launchDetectionWorker(detector);
 }
 
-void DetectionWindow::buildYolov5Detector(std::string modelPath, float scoresThresh, float nmsThresh, float confidenceThresh){
-    //TODO
-    //build UI
-    //get path from UI
+void DetectionWindow::buildYolov5Detector(){
 
-    Detector * detector = new Yolov5Detector(modelPath, scoresThresh, nmsThresh, nmsThresh);
-    launchDetectionWorker(detector);
+    float scoresThresholdValue;
+    float nmsThresholdValue;
+    float confidenceThresholdValue;
+    std::string modelFilePath;
+
+    if(!modelPath->text().isEmpty()){
+        try{
+            scoresThresholdValue = std::stof(scoresThreshold->text().toStdString());
+            nmsThresholdValue = std::stof(nmsThreshold->text().toStdString());
+            confidenceThresholdValue = std::stof(confidenceThreshold->text().toStdString());
+            modelFilePath = modelPath->text().toStdString();
+        }
+        catch(const std::exception &e){
+            QString errorMessage = e.what();
+            QMessageBox msgBox;
+            msgBox.setText(errorMessage);
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+        }
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText(tr("Please select a model"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+    }
+    QFileInfo fileInfo(QString::fromStdString(modelFilePath));
+    std::cerr<<(fileInfo.absoluteFilePath()).toStdString()<<"\n";
+    if(scoresThresholdValue >0 && scoresThresholdValue <1 &&
+       nmsThresholdValue > 0 && nmsThresholdValue < 1 &&
+       confidenceThresholdValue >0 && confidenceThresholdValue<1){
+            Detector * detector = new Yolov5Detector((fileInfo.absoluteFilePath()).toStdString(), scoresThresholdValue, nmsThresholdValue, confidenceThresholdValue);
+            launchDetectionWorker(detector);
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText(tr("All thresholds must be between 0 and 1"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+    }
 }
 
+void DetectionWindow::selectModel(){
+    QString fileName = QFileDialog::getOpenFileName( this,
+                                                      tr("Select Model"),
+                                                      "",
+                                                      tr("yoloV5 model (*.onnx)"),
+                                                        nullptr,
+                                                        QFileDialog::DontUseNativeDialog );
+    modelPath->insert(fileName);
+
+}
 
 void DetectionWindow::launchDetectionWorker(Detector * detector){
     QProgressDialog progress("Finding objects...", QString(), 0, project.getFileCount(), this);

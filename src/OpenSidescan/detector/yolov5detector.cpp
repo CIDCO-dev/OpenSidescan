@@ -6,7 +6,6 @@
 
 Yolov5Detector::Yolov5Detector(std::string modelPath , float scoresThresh, float nmsThresh, float confidenceThresh)
 {
-    //std::string modelPath = "/home/pat/projet/libtorch_imports/latest.onnx"; //TODO
     QString model(QString::fromStdString(modelPath));
     this->scoresThreshold = scoresThresh;
     this->nmsThreshold = nmsThresh;

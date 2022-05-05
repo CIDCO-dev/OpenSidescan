@@ -333,12 +333,12 @@ void DetectionWindow::buildGhostGearDetector(){
     launchDetectionWorker(detector);
 }
 
-void DetectionWindow::buildYolov5Detector(std::string modelPath){
+void DetectionWindow::buildYolov5Detector(std::string modelPath, float scoresThresh, float nmsThresh, float confidenceThresh){
     //TODO
     //build UI
     //get path from UI
 
-    Detector * detector = new Yolov5Detector(modelPath);
+    Detector * detector = new Yolov5Detector(modelPath, scoresThresh, nmsThresh, nmsThresh);
     launchDetectionWorker(detector);
 }
 

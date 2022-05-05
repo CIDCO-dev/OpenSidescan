@@ -60,7 +60,7 @@ private:
     void buildShipwreckDetector();
     void buildAdvancedDetector();
     void buildHoughDetector();
-    void buildYolov5Detector(std::string modelPath);
+    void buildYolov5Detector(std::string modelPath, float scoresThreshold = 0.5, float nmsThreshold = 0.45, float confidenceThreshold = 0.3);
     void buildGhostGearDetector();
 
     void launchDetectionWorker(Detector * detector);

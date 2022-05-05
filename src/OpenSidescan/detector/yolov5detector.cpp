@@ -1,13 +1,36 @@
 #include "yolov5detector.h"
 #include <QDebug>
+#include <QString>
+#include <QFileInfo>
+#include <QMessageBox>
 
-Yolov5Detector::Yolov5Detector(std::string modelPath)
+Yolov5Detector::Yolov5Detector(std::string modelPath , float scoresThresh, float nmsThresh, float confidenceThresh)
 {
     //std::string modelPath = "/home/pat/projet/libtorch_imports/latest.onnx"; //TODO
-    this->net = cv::dnn::readNetFromONNX(modelPath);
+    QString model(QString::fromStdString(modelPath));
+    this->scoresThreshold = scoresThresh;
+    this->nmsThreshold = nmsThresh;
+    this->confidenceThreshold = confidenceThresh;
+    if(QFileInfo::exists(model)){
+        try{
+            this->net = cv::dnn::readNetFromONNX(modelPath);
+        }
+        catch(cv::Exception &e){
+            QString errorMessage = e.what();
+            QMessageBox msgBox;
+            msgBox.setText(errorMessage);
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.exec();
+        }
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("model not found");
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+    }
     //TODO load file with class name -> idealy parse yml file used for training
 }
-
 
 void Yolov5Detector::detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound){
 
@@ -34,17 +57,14 @@ void Yolov5Detector::detect(SidescanImage & image,std::vector<InventoryObject*> 
             std::vector<int> indices;
             std::vector<float> scores;
             //TODO
-            // add to constructor
-            const float scoresThreshold = 0.5;
-            const float nmsThreshold = 0.45;
-            const float confidenceThreshold = 0.3;
+
             std::string className = "Crab trap "; //XXX
 
             for(int i =0; i < detections.rows; i++){
 
                 float confidence = detections.at<float>(i,4);
 
-                if(confidence > confidenceThreshold){
+                if(confidence > this->confidenceThreshold){
 
                     cv::Mat guess = detections(cv::Range(i,i+1),cv::Range(5, detections.cols));
                     double min, max;
@@ -61,7 +81,7 @@ void Yolov5Detector::detect(SidescanImage & image,std::vector<InventoryObject*> 
 
                 }
             }
-            cv::dnn::NMSBoxes(boxes, scores, scoresThreshold, nmsThreshold, indices);
+            cv::dnn::NMSBoxes(boxes, scores, this->scoresThreshold, this->nmsThreshold, indices);
             for (int i = 0; i < indices.size(); i++){
 
                 int idx = indices[i];

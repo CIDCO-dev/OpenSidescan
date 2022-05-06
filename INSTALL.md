@@ -25,7 +25,7 @@ to launch opensidescan from anywhere
 
 1- navigate to Opensidescan directory
 
-2- mkdir models
+2- mkdir models && cd models
 
 3- wget http://updates.cidco.ca/Opensidescan-modeles/crabtrap-beta.onnx
 

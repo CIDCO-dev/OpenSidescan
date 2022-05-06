@@ -110,23 +110,24 @@ void DetectionWindow::initUI(){
 void DetectionWindow::detectorChanged(int i){
     currentDetectorIndex = i;
 
-    const char * id = cmbDetector->itemData(i).toString().toStdString().c_str();
+
+    QString id = cmbDetector->itemData(i).toString();
     advancedParameters->setVisible(false);
     yoloParameters->setVisible(false);
 
-    if(strcmp(id,"shipwrecks")==0){
+    if(id.compare("shipwrecks",Qt::CaseSensitive)==0){
         //No parameter UI for shipwreck detector
     }
-    if(strcmp(id,"machinevision")==0){
+    if(id.compare("machinevision",Qt::CaseSensitive)==0){
        advancedParameters->setVisible(true);
     }
-    if(strcmp(id,"circles")==0){
+    if(id.compare("circles",Qt::CaseSensitive)==0){
         //No parameter UI for circle detector
     }
-    if(strcmp(id,"Ghostgear")==0){
+    if(id.compare("Ghostgear",Qt::CaseSensitive)==0){
         //No parameter UI for crab trap
     }
-    if(strcmp(id,"CustomYolo")==0){
+    if(id.compare("CustomYolo",Qt::CaseSensitive)==0){
         yoloParameters->setVisible(true);
     }
 
@@ -372,7 +373,7 @@ void DetectionWindow::buildAdvancedDetector(){
 
 void DetectionWindow::buildGhostGearDetector(){
 
-    QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx");
+    QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx"); //wont work in qt creator
     std::cerr<<(modelPathInfo.absoluteFilePath()).toStdString()<<"\n";
     Detector * detector = new Yolov5Detector((modelPathInfo.absoluteFilePath()).toStdString());
     launchDetectionWorker(detector);
@@ -407,7 +408,7 @@ void DetectionWindow::buildYolov5Detector(){
         msgBox.exec();
     }
     QFileInfo fileInfo(QString::fromStdString(modelFilePath));
-    std::cerr<<(fileInfo.absoluteFilePath()).toStdString()<<"\n";
+
     if(scoresThresholdValue >0 && scoresThresholdValue <1 &&
        nmsThresholdValue > 0 && nmsThresholdValue < 1 &&
        confidenceThresholdValue >0 && confidenceThresholdValue<1){

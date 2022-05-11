@@ -73,10 +73,10 @@ public:
         		
         		std::vector<double> features;
         		std::vector<std::vector<double>> ys;
-        		features.reserve(7);
+        		features.reserve(9);
         		ys.reserve(img.rows);
         		
-		    	//for every pixel in image
+		    	//for every window in image
 		    	for(int col = windowSize/2; col<img.cols - (windowSize/2); col=col+(windowSize/2)){
 		    		for (int row = windowSize/2; row<img.rows - (windowSize/2); row=row+(windowSize/2)){
 		    			//compute glcm over window
@@ -191,7 +191,7 @@ public:
 								}
 		    				}
 		    			}
-						features = {energy, contrast, homogeneity, entropy, correlation, shade, prominence};
+						features = {double(row), double(col),energy, contrast, homogeneity, entropy, correlation, shade, prominence}; 
 						ys.push_back(features);
    			
 		    		}
@@ -252,12 +252,13 @@ public:
 				outputFile.open (outputFilename);
 				for(auto &v:processedFeatures){
 					for(auto &feature: v){
-						if(!isnan(feature[0]) && !isnan(feature[1]) && !isnan(feature[2]) && !isnan(feature[3]) && !isnan(feature[4]) && 
-						!isnan(feature[5]) && !isnan(feature[6])){
-							if(!isinf(feature[0]) && !isinf(feature[1]) && !isinf(feature[2]) && !isinf(feature[3]) && !isinf(feature[4]) && 
-							!isinf(feature[5]) && !isinf(feature[6])){
+						if(!isnan(feature[2]) && !isnan(feature[3]) && !isnan(feature[4]) && !isnan(feature[5]) && !isnan(feature[6]) && 
+						!isnan(feature[7]) && !isnan(feature[8])){
+							if(!isinf(feature[2]) && !isinf(feature[3]) && !isinf(feature[4]) && !isinf(feature[5]) && !isinf(feature[6]) && 
+							!isinf(feature[7]) && !isinf(feature[8])){
 								outputFile<< feature[0]<<","<< feature[1]<<","<< feature[2]<<","
-								<< feature[3]<<","<< feature[4]<<","<< feature[5]<<","<< feature[6]<<"\n";
+								<< feature[3]<<","<< feature[4]<<","<< feature[5]<<","<< feature[6]
+								<<","<< feature[7]<<","<< feature[8]<<"\n";
 							}
 							else{
 								std::cerr << "contains inf, skip feature \n";

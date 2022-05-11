@@ -2,7 +2,7 @@
 windows instruction will follow
 
 # Install dependencies (on Ubuntu)
-sudo apt install libeigen3-dev qt5-default git cmake libopencv-dev
+sudo apt install libeigen3-dev qt5-default git cmake libopencv-dev libmlpack3
 
 # Download Opensidescan
 git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
@@ -20,6 +20,15 @@ git clone --recursive https://github.com/CIDCO-dev/OpenSidescan
 to launch opensidescan from anywhere
 
 5- sudo make install
+
+# Download models (optional)
+
+1- navigate to Opensidescan directory
+
+2- mkdir models && cd models
+
+3- wget http://updates.cidco.ca/Opensidescan-modeles/crabtrap-beta.onnx
+
 
 # run:
 ./Opensidescan

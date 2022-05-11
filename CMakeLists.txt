@@ -59,6 +59,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/ui/about/aboutdialog.ui;
                 ${SS}/ui/mainwindow/mainwindow.ui;
                 ${SS}/telemetrymanager/telemetrymanager.cpp;
+                ${SS}/detector/yolov5detector.cpp
     )
 
 # thirdParty sources
@@ -107,10 +108,9 @@ if(UNIX)
 
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-	#find_package(OpenCV 3.4.7 REQUIRED)
 	find_package(OpenCV 4.2 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml Network REQUIRED)
-		
+
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
 	add_library(cli_dep ${CLI_SOURCE} ${THIRDPARTY})
@@ -118,9 +118,14 @@ if(UNIX)
 	add_executable(fit-detector src/cli/fit-detector.cpp )
 	add_executable(sidescan-detect src/cli/sidescan-detect.cpp)
 	add_executable(sidescan-dump src/cli/sidescan-dump.cpp)
+	add_executable(sidescan-glcm src/cli/sidescan-glcm.cpp)
+	add_executable(haralick-analysis src/cli/haralick-analysis.cpp)
+	target_compile_options(haralick-analysis PUBLIC -fopenmp) # mlpack is compile with openMP and need this compile option
 	set_target_properties(fit-detector PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-dump PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	set_target_properties(sidescan-glcm PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	set_target_properties(haralick-analysis PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	# linking dependencies
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network Eigen3::Eigen ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
@@ -128,10 +133,14 @@ if(UNIX)
 	target_link_libraries(fit-detector PUBLIC cli_dep)
 	target_link_libraries(sidescan-detect PUBLIC cli_dep)
 	target_link_libraries(sidescan-dump PUBLIC cli_dep)
+	target_link_libraries(sidescan-glcm PUBLIC cli_dep)
+	target_link_libraries(haralick-analysis PUBLIC cli_dep mlpack armadillo gomp)
 
 endif()
 if(WIN32)
 	message("windows cmake")
+	make_directory("${CMAKE_CURRENT_SOURCE_DIR}/models")
+	file(DOWNLOAD http://updates.cidco.ca/Opensidescan-modeles/crabtrap-beta.onnx "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrap-beta.onnx" SHOW_PROGRESS)
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
@@ -153,6 +162,7 @@ if(WIN32)
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrap-beta.onnx" DESTINATION models)
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer

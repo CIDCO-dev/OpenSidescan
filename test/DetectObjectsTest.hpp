@@ -1,6 +1,6 @@
 /* 
  * File:   DetectObjectsTest.hpp
- * Author: glm,jordan
+ * Author: glm,jordan,pat
  */
 
 #ifndef DETECTOBJECTSTEST_HPP
@@ -9,6 +9,8 @@
 #include "catch.hpp"
 #include <string>
 #include <vector>
+
+#include "../src/OpenSidescan/inventoryobject/inventoryobject.h"
 #include "../src/OpenSidescan/sidescan/sidescanimager.h"
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/detector/roidetector.h"
@@ -79,7 +81,9 @@ TEST_CASE("Test Wreck Detector") {
     //std::cout << "airplane latitude: " << position->getLatitude() << std::endl;
 
     //TODO: test position
-
+    
+    
+    
     //clean up pointers
     delete image;
     delete parser;
@@ -134,6 +138,42 @@ TEST_CASE("Test Hough Detector"){
 
     }
 
+}
+
+TEST_CASE("INVENTORY OBJECT IS INSIDE") {
+
+    std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0, 0, 0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    SidescanImage * image;
+
+    for (unsigned int i = 0; i < file->getImages().size(); i++) {
+        if (file->getImages()[i]->getChannelNumber() == 1) {
+            //plane is on channel 1
+            image = file->getImages()[i];
+        }
+    }
+
+    REQUIRE(image);
+    
+    InventoryObject positive_detect(*image,100,100,100,100);
+    InventoryObject false_detect(*image,400,400,100,100);
+    
+    struct region area{0,0,300,300};
+    
+    bool ans1 = positive_detect.is_inside(area);
+    REQUIRE(ans1 == true);
+    bool ans2 = false_detect.is_inside(area);
+    REQUIRE(ans2 == false);
 }
 
 #endif /* DETECTOBJECTSTEST_HPP */

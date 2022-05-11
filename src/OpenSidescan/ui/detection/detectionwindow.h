@@ -10,11 +10,13 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QIntValidator>
+#include <QPushButton>
 
 #include "sidescan/sidescanfile.h"
 #include "sidescan/sidescanimage.h"
 #include "utilities/opencvhelper.h"
 #include "detector/roidetector.h"
+#include "detector/yolov5detector.h"
 #include "detector/houghdetector.h"
 #include "project/project.h"
 
@@ -52,19 +54,22 @@ public:
 private slots:
     void ok();
     void cancel();
-
     void detectorChanged(int i);
+    void selectModel();
 
 private:
     void buildShipwreckDetector();
     void buildAdvancedDetector();
     void buildHoughDetector();
+    void buildYolov5Detector();
+    void buildGhostGearDetector();
 
     void launchDetectionWorker(Detector * detector);
 
     void createFastParameterBox(QFormLayout * advancedParametersLayout);
     void createMserParameterBox(QFormLayout * advancedParametersLayout);
     void createDbscanParameterBox(QFormLayout * advancedParametersLayout);
+    void createYoloParameterBox(QGridLayout * yoloParametersLayout);
 
     Project & project;
 
@@ -79,6 +84,17 @@ private:
     QGroupBox * displayParameters;
 
     QCheckBox * mergeBoundingBoxes;
+
+    //YoloV5 parameters
+    QGroupBox * yoloParameters;
+    QPushButton *modelDialogButton;
+    QLineEdit * modelPath;
+    QLineEdit * scoresThreshold;
+    QLineEdit * nmsThreshold;
+    QLineEdit * confidenceThreshold;
+    //float & scoresThresholdValue = 0.0;
+    //float & nmsThresholdValue = 0.0;
+    //float & confidenceThresholdValue = 0.0;
 
     //FAST parameters
     QGroupBox * advancedParameters;

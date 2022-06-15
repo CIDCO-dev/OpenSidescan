@@ -1,9 +1,9 @@
 /*
-* Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
+* Copyright 2022 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 */
 
 /*
-* \author Guillaume Labbe-Morissette
+* \author Guillaume Labbe-Morissette && Patrick Charron-Morneau
 */
 
 #ifndef MAIN_CPP
@@ -23,11 +23,11 @@
 void printUsage(){
 	std::cerr << "\n\
 	NAME\n\n\
-	sidescan-dump - Dumps sidescan data of an image file\n\n\
+	sidescan-glcm - Dumps haralick features calculated on gray level co-occurence matrix\n\n\
 	SYNOPSIS\n \
-	sidescan-dump file\n\n\
+	sidescan-glcm SSS-file > outputfile.csv\n\n\
 	DESCRIPTION\n\n \
-	Copyright 2021 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
+	Copyright 2022 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), All rights reserved" << std::endl;
 	exit(1);
 }
 

@@ -130,35 +130,6 @@ void InventoryObject::computePosition(){
     double distancePerSample = pingCenter->getDistancePerSample();
     double distanceToObject = distancePerSample*indexPingCenter/2;
 
-    // Getting angle between nadir and object
-    //double sensorPrimaryAltitude = pingCenter->getSensorPrimaryAltitude();
-    //double thetaRadians = acos(sensorPrimaryAltitude/distanceToObject);
-
-    // Getting time corresponding to 1 pixel
-    // double timeDuration = pingCenter->getTimeDuration();
-
-    // Getting soundVelocity
-    // double soundVelocity = pingCenter->getSoundVelocity();
-
-    /*
-    std::cout<<std::endl<<"sensorPrimaryAltitude "<<sensorPrimaryAltitude;
-    std::cout<<std::endl<<"distanceToObject "<<distanceToObject;
-    std::cout<<std::endl<<"thetaRadians "<<thetaRadians;
-
-    Eigen::Vector3d ObjectDirectionUnitVector;
-    if(image.isStarboard()) {
-        ObjectDirectionUnitVector = cos(thetaRadians)*downUnitVector + sin(thetaRadians)*starboardUnitVector;
-    } else if(image.isPort()) {
-        ObjectDirectionUnitVector = cos(thetaRadians)*downUnitVector + sin(thetaRadians)*portUnitVector;
-    } else {
-        position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *position);
-        return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
-    }
-
-    Eigen::Vector3d sideScanDistanceECEF = distanceToObject*ObjectDirectionUnitVector;
-    */
-
     double sensorPrimaryAltitude = pingCenter->getSensorPrimaryAltitude();
     double groundDistance2 = pow(distanceToObject, 2) - pow(sensorPrimaryAltitude, 2);
     if (groundDistance2 < 0) {
@@ -180,74 +151,17 @@ void InventoryObject::computePosition(){
         return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
     }
 
-    /*
-    Eigen::Vector3d sideScanDistanceECEF;
-    if(image.isStarboard()) {
-        sideScanDistanceECEF = distanceToObject*starboardUnitVector;
-    } else if(image.isPort()) {
-        sideScanDistanceECEF = distanceToObject*portUnitVector;
-    } else {
-        position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *position);
-        return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
-    }
-    */
-
     Eigen::Vector3d objectPositionEcef = shipPositionECEF + antenna2TowPointECEF + laybackECEF + sideScanDistanceECEF;
 
     position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(objectPositionEcef, *position);
 
-    // TODO : remove what comes next
-
-    /*
-    if(image.isStarboard()) {
-        std::cout<<"starboard side"<<std::endl;
-    } else if(image.isPort()) {
-        std::cout<<"port side"<<std::endl;
-    } else {
-        std::cout<<"This image is neither port nor starboard."<<std::endl;
-    }
-    */
-
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *shipPosition);
 
-    /*
-    std::cout<<"x"<<std::endl<<x<<std::endl;
-    std::cout<<"y"<<std::endl<<y<<std::endl;
-    std::cout<<"pixelWidth"<<std::endl<<pixelWidth<<std::endl;
-    std::cout<<"pixelHeight"<<std::endl<<pixelHeight<<std::endl;
-    std::cout<<"xCenter"<<std::endl<<xCenter<<std::endl;
-    std::cout<<"yCenter"<<std::endl<<yCenter<<std::endl;
-    std::cout<<"indexPingCenter"<<std::endl<<indexPingCenter<<std::endl;
-    std::cout<<*attitude;
-    std::cout<<"ned2ecef"<<std::endl<<ned2ecef<<std::endl;
-    std::cout<<"imu2ned"<<std::endl<<imu2ned<<std::endl;
-    std::cout<<"tangentUnitVector"<<std::endl<<tangentUnitVector<<std::endl;
-    std::cout<<"portUnitVector"<<std::endl<<portUnitVector<<std::endl;
-    std::cout<<"starboardUnitVector"<<std::endl<<starboardUnitVector<<std::endl;
-    //std::cout<<"Distancepersample "<<distancePerSample<<std::endl;
-    std::cout<<"distanceToObject"<<std::endl<<distanceToObject<<std::endl;
-    std::cout<<"layback "<<layback<<std::endl;
-    std::cout<<"starboardUnitVector"<<std::endl<<starboardUnitVector<<std::endl;
-    std::cout<<"portUnitVector"<<std::endl<<portUnitVector<<std::endl;
-    std::cout<<"shipPositionEcef"<<std::endl<<shipPositionEcef<<std::endl;
-    std::cout<<"sideScanDistanceECEF"<<std::endl<<sideScanDistanceECEF<<std::endl;
-    std::cout<<"objectPositionEcef"<<std::endl<<objectPositionEcef<<std::endl;
-    std::cout<<"ShipPosition"<<std::endl<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight()<<std::endl;
-    std::cout<<std::endl<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight()<<" 0";
-    */
-
-    std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
-    std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
+    //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
+    //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
     //std::cout<<std::endl<<"sensorPrimaryAltitude"<<pingCenter->getSensorPrimaryAltitude()<<std::endl;
-    /*
-    for (int i=0 ; i < image.getPings().size() ; i=i+20 ) {
-        Position *p = image.getPings()[i]->getPosition();
-        std::cout<<std::endl<<i<<" "<<p->getLatitude()<<" "<<p->getLongitude()<<" "<<p->getEllipsoidalHeight();
-    }
-    */
 
 }
 

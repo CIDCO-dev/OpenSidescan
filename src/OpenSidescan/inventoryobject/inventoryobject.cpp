@@ -43,20 +43,66 @@ void InventoryObject::computeDimensions(){
         width = 0;
     }
 
-    if( y < image.getPings().size() && y+pixelHeight < image.getPings().size() ){
-        Position * pos1 = image.getPings()[y]->getPosition();
-        Position * pos2  = image.getPings()[y+pixelHeight]->getPosition();
+    int indexPingBeginning = image.getPings().size() - y;
+    int indexPingEnd = image.getPings().size() - (y + pixelHeight);
 
-        if ( pos1 && pos2  ){
-            height = Distance::haversine(pos1->getLongitude(),pos1->getLatitude(),pos2->getLongitude(),pos2->getLatitude());
+    if( indexPingBeginning < image.getPings().size() && indexPingEnd < image.getPings().size() ){
+
+        // Getting the pings
+        SidescanPing *pingBeginning = image.getPings().at(indexPingBeginning);
+        SidescanPing *pingEnd = image.getPings().at(indexPingEnd);
+
+        // Getting attitude datas
+        Attitude *attitudeBeginning = pingBeginning->getAttitude();
+        Attitude *attitudeEnd = pingEnd->getAttitude();
+
+        // Getting positions datas
+        Position *shipPositionBeginning = pingBeginning->getPosition();
+        Position *shipPositionEnd = pingEnd->getPosition();
+        Eigen::Vector3d shipPositionEcefBeginning;
+        CoordinateTransform::getPositionECEF(shipPositionEcefBeginning, *shipPositionBeginning);
+        Eigen::Vector3d shipPositionEcefEnd;
+        CoordinateTransform::getPositionECEF(shipPositionEcefEnd, *shipPositionEnd);
+
+        // Creating the rotation matrix of transformation between NED and Ecef
+        // We use the same matrix for all the pings because its variations are small
+        Eigen::Matrix3d ned2Ecef;
+        CoordinateTransform::ned2ecef(ned2Ecef, *shipPositionBeginning);
+
+        // Creating the rotation matrix of transformation between IMU and NED
+        Eigen::Matrix3d imu2nedBeginning;
+        CoordinateTransform::getDCM(imu2nedBeginning, *attitudeBeginning);
+        Eigen::Matrix3d imu2nedEnd;
+        CoordinateTransform::getDCM(imu2nedEnd, *attitudeEnd);
+
+        // Creating the horizontal vector in the direction of the ping
+        Eigen::Vector3d lateralUnitVectorIMU;
+        lateralUnitVectorIMU[0] = 0;
+        lateralUnitVectorIMU[2] = 0;
+        if(image.isStarboard()) {
+            lateralUnitVectorIMU[1] = 1;
+        } else if(image.isPort()) {
+            lateralUnitVectorIMU[1] = -1;
+        } else {
+            lateralUnitVectorIMU[1] = 0; // We will just return the distance between the two ship positions
         }
-        else{
-            height = std::nan("");
-        }
+
+        // Getting distances to object
+        double distancePerSampleBeginning = pingBeginning->getDistancePerSample();
+        double distanceToObjectBeginning = distancePerSampleBeginning*indexPingBeginning/2;
+        double distancePerSampleEnd = pingEnd->getDistancePerSample();
+        double distanceToObjectEnd = distancePerSampleEnd*indexPingEnd/2;
+
+        // Creating the vector between the beginning and the end of the image
+        Eigen::Vector3d posBeginningEcef = shipPositionEcefBeginning + distanceToObjectBeginning*ned2Ecef*imu2nedBeginning*lateralUnitVectorIMU;
+        Eigen::Vector3d posEndEcef = shipPositionEcefEnd + distanceToObjectEnd*ned2Ecef*imu2nedEnd*lateralUnitVectorIMU;
+        Eigen::Vector3d heightVector = posBeginningEcef-posEndEcef;
+        height = heightVector.norm();
     }
     else{
         height = 0;
     }
+
 }
 
 void InventoryObject::computePosition(){
@@ -78,51 +124,44 @@ void InventoryObject::computePosition(){
 
     // Getting positions datas
     Position *shipPosition = pingCenter->getPosition();
-    Eigen::Vector3d shipPositionECEF;
-    CoordinateTransform::getPositionECEF(shipPositionECEF, *shipPosition);
+    Eigen::Vector3d shipPositionEcef;
+    CoordinateTransform::getPositionECEF(shipPositionEcef, *shipPosition);
 
-    // Creating the rotation matrix of transformation between NED and ECEF
-    Eigen::Matrix3d ned2ecef;
-    CoordinateTransform::ned2ecef(ned2ecef, *shipPosition);
+    // Creating the rotation matrix of transformation between NED and Ecef
+    Eigen::Matrix3d ned2Ecef;
+    CoordinateTransform::ned2ecef(ned2Ecef, *shipPosition);
 
     // Creating the rotation matrix of transformation between IMU and NED
     Eigen::Matrix3d imu2ned;
     CoordinateTransform::getDCM(imu2ned, *attitude);
 
     // Creating the rotation matrix of transformation between IMU and ECEF
-    Eigen::Matrix3d imu2ecef = ned2ecef*imu2ned;
+    Eigen::Matrix3d imu2Ecef = ned2Ecef*imu2ned;
 
-    // Getting antenna2TowPointEcef
-    // TODO : change if no USBL to take in account this distance
-    Eigen::Vector3d antenna2TowPointECEF;
-    antenna2TowPointECEF[0] = 0;
-    antenna2TowPointECEF[1] = 0;
-    antenna2TowPointECEF[2] = 0;
-
-    // Getting IMU base vector in the ECEF frame
+    // Getting IMU base vector in the Ecef frame
     Eigen::Vector3d starboardUnitVectorIMU;
     starboardUnitVectorIMU[0] = 0;
     starboardUnitVectorIMU[1] = 1;
     starboardUnitVectorIMU[2] = 0;
-    Eigen::Vector3d starboardUnitVectorECEF = imu2ecef*starboardUnitVectorIMU;
+    Eigen::Vector3d starboardUnitVectorEcef = imu2Ecef*starboardUnitVectorIMU;
 
-    Eigen::Vector3d portUnitVectorECEF = -starboardUnitVectorECEF;
+    Eigen::Vector3d portUnitVectorEcef = -starboardUnitVectorEcef;
 
     Eigen::Vector3d tangentUnitVectorIMU;
     tangentUnitVectorIMU[0] = 1;
     tangentUnitVectorIMU[1] = 0;
     tangentUnitVectorIMU[2] = 0;
-    Eigen::Vector3d tangentUnitVectorECEF = imu2ecef*tangentUnitVectorIMU;
+    Eigen::Vector3d tangentUnitVectorEcef = imu2Ecef*tangentUnitVectorIMU;
 
     Eigen::Vector3d downUnitVectorIMU;
     downUnitVectorIMU[0] = 0;
     downUnitVectorIMU[1] = 0;
     downUnitVectorIMU[2] = 1;
-    Eigen::Vector3d downUnitVectorECEF = imu2ecef*downUnitVectorIMU;
+    Eigen::Vector3d downUnitVectorEcef = imu2Ecef*downUnitVectorIMU;
 
     // Getting layback vector
     double layback = pingCenter->getLayback();
-    Eigen::Vector3d laybackECEF = -layback*tangentUnitVectorECEF;
+    Eigen::Vector3d laybackEcef = -layback*tangentUnitVectorEcef;
 
     // Getting distance to object
     //double slantRange = pingCenter->getSlantRange();
@@ -135,29 +174,34 @@ void InventoryObject::computePosition(){
     if (groundDistance2 < 0) {
         // TODO : take in account beamAngle to locate object inside water column.
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *position);
+        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *position);
         std::cerr<<"Object inside water column"<<std::endl;
         return;
     }
-    Eigen::Vector3d sideScanDistanceECEF;
+    Eigen::Vector3d sideScanDistanceEcef;
     double groundDistance = sqrt(groundDistance2);
     if(image.isStarboard()) {
-        sideScanDistanceECEF = groundDistance*starboardUnitVectorECEF + sensorPrimaryAltitude*downUnitVectorECEF;
+        sideScanDistanceEcef = groundDistance*starboardUnitVectorEcef + sensorPrimaryAltitude*downUnitVectorEcef;
     } else if(image.isPort()) {
-        sideScanDistanceECEF = groundDistance*portUnitVectorECEF + sensorPrimaryAltitude*downUnitVectorECEF;
+        sideScanDistanceEcef = groundDistance*portUnitVectorEcef + sensorPrimaryAltitude*downUnitVectorEcef;
     } else {
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *position);
+        CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *position);
         return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
     }
 
-    Eigen::Vector3d objectPositionEcef = shipPositionECEF + antenna2TowPointECEF + laybackECEF + sideScanDistanceECEF;
+    Eigen::Vector3d antenna2TowPointEcef;
+    antenna2TowPointEcef[0] = 0;
+    antenna2TowPointEcef[1] = 0;
+    antenna2TowPointEcef[2] = 0;
+
+    Eigen::Vector3d objectPositionEcef = shipPositionEcef + antenna2TowPointEcef + laybackEcef + sideScanDistanceEcef;
 
     position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(objectPositionEcef, *position);
 
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
-    CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionECEF, *shipPosition);
+    CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *shipPosition);
 
     //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
     //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();

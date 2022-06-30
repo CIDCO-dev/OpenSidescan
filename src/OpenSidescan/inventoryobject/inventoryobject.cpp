@@ -36,8 +36,9 @@ InventoryObject::~InventoryObject(){
 void InventoryObject::computeDimensions(){
     //FIXME: not as accurate as we could go, ok for ballpark
 
-    if(yCenter < image.getPings().size()){
-        width = pixelWidth * image.getPings().at(yCenter)->getDistancePerSample();
+    int indexPingCenter = image.getPings().size() - yCenter;
+    if(indexPingCenter < image.getPings().size()){
+        width = pixelWidth * image.getPings().at(indexPingCenter)->getDistancePerSample();
     }
     else{
         width = 0;

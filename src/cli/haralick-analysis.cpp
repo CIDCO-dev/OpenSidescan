@@ -1,3 +1,12 @@
+/*
+* Copyright 2022 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
+*/
+
+/*
+* \author Patrick Charron-Morneau
+*/
+
+
 #include <iostream>
 #include <cstddef>
 #include <mlpack/core.hpp>

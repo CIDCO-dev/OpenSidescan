@@ -373,7 +373,7 @@ void DetectionWindow::buildAdvancedDetector(){
 
 void DetectionWindow::buildGhostGearDetector(){
 
-    QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrapV1.onnx"); //will only work if compile with cmake for linux, or if installed with windows installer , in other words while developping and testing via qtcreator import the model manually
+    QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrap-beta.onnx"); //will only work if compile with cmake for linux, or if installed with windows installer , in other words while developping and testing via qtcreator import the model manually
     Detector * detector = new Yolov5Detector((modelPathInfo.absoluteFilePath()).toStdString());
     launchDetectionWorker(detector);
 }

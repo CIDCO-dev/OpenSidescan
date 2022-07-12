@@ -34,7 +34,7 @@ InventoryObject::~InventoryObject(){
 }
 
 void InventoryObject::computeDimensions(){
-    //FIXME: not as accurate as we could go, ok for ballpark
+    //FIXME: Apply same modifications than to computePosition
 
     int indexPingCenter = image.getPings().size() - yCenter;
     if(indexPingCenter < image.getPings().size()){
@@ -107,18 +107,33 @@ void InventoryObject::computeDimensions(){
 }
 
 void InventoryObject::computePosition(){
+    //FIXME : Doesn't return the true position.
+    //The computation of the distance between sidescan and object doesn't return the good result.
 
+    //As the image is a waterfall, it is reversed
     int indexPingCenter = image.getPings().size() - yCenter;
 
-    if(indexPingCenter > image.getPings().size()){
+    if(indexPingCenter >= image.getPings().size() || indexPingCenter < 0){
         position = nullptr;
         throw new Exception("GeoreferencedObject::computePosition(): position is nullptr" );
     }
 
+    //TODO : remove when we don't need to make tests anymore
     std::cout.precision(20);
 
     // Getting the ping of the middle of the image
     SidescanPing *pingCenter = image.getPings().at(indexPingCenter);
+
+    // The x axis is reversed if the image is port
+    int indexObjectDistance;
+    int pingCenterSize = pingCenter->getSamples().size();
+    if(image.isStarboard()) {
+        indexObjectDistance = x;
+    } else if(image.isPort()) {
+        indexObjectDistance = pingCenterSize - x;
+    } else {
+        indexObjectDistance = 0;
+    }
 
     // Getting attitude datas
     Attitude *attitude = pingCenter->getAttitude();
@@ -132,12 +147,15 @@ void InventoryObject::computePosition(){
     Eigen::Matrix3d ned2Ecef;
     CoordinateTransform::ned2ecef(ned2Ecef, *shipPosition);
 
+    Eigen::Matrix3d mag2geoNorth;
+    CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, *position);
+
     // Creating the rotation matrix of transformation between IMU and NED
     Eigen::Matrix3d imu2ned;
     CoordinateTransform::getDCM(imu2ned, *attitude);
 
     // Creating the rotation matrix of transformation between IMU and ECEF
-    Eigen::Matrix3d imu2Ecef = ned2Ecef*imu2ned;
+    Eigen::Matrix3d imu2Ecef = ned2Ecef*mag2geoNorth*imu2ned;
 
     // Getting IMU base vector in the Ecef frame
     Eigen::Vector3d starboardUnitVectorIMU;
@@ -168,7 +186,11 @@ void InventoryObject::computePosition(){
     //double slantRange = pingCenter->getSlantRange();
     //double distanceToObject = indexPingCenter*slantRange/image.getPings().size(); // px * m / px
     double distancePerSample = pingCenter->getDistancePerSample();
-    double distanceToObject = distancePerSample*indexPingCenter/2;
+    double distanceToObject = 2*distancePerSample*indexObjectDistance;
+
+    //std::cout<<std::endl<<"sensorPrimaryAltitude "<<pingCenter->getSensorPrimaryAltitude()<<std::endl;
+    //std::cout<<std::endl<<"distanceToObject*cos(30*3.14/180)"<<distanceToObject*cos(30*3.14/180)<<std::endl;
+    //std::cout<<std::endl<<"distanceToObject "<<distanceToObject<<std::endl;
 
     double sensorPrimaryAltitude = pingCenter->getSensorPrimaryAltitude();
     double groundDistance2 = pow(distanceToObject, 2) - pow(sensorPrimaryAltitude, 2);
@@ -176,7 +198,7 @@ void InventoryObject::computePosition(){
         // TODO : take in account beamAngle to locate object inside water column.
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
         CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *position);
-        std::cerr<<"Object inside water column"<<std::endl;
+        std::cerr<<std::endl<<"Object inside water column"<<std::endl;
         return;
     }
     Eigen::Vector3d sideScanDistanceEcef;
@@ -191,6 +213,7 @@ void InventoryObject::computePosition(){
         return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
     }
 
+    // TODO : change the value of this vector if no usbl
     Eigen::Vector3d antenna2TowPointEcef;
     antenna2TowPointEcef[0] = 0;
     antenna2TowPointEcef[1] = 0;
@@ -204,10 +227,18 @@ void InventoryObject::computePosition(){
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *shipPosition);
 
-    //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
-    //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
-    //std::cout<<std::endl<<"sensorPrimaryAltitude"<<pingCenter->getSensorPrimaryAltitude()<<std::endl;
+    std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
+    std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
+    //std::cout<<std::endl<<*attitude;
 
+    /*
+    for(int i=0; i<image.getPings().size(); i=i+20) {
+        SidescanPing *ping = image.getPings().at(i);
+        // Getting positions datas
+        Position *shipPosition = ping->getPosition();
+        std::cout<<i<<" "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight()<<std::endl;
+    }
+    */
 }
 
 bool InventoryObject::is_inside(struct region & area){

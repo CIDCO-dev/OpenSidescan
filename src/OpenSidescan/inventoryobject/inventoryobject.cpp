@@ -6,7 +6,7 @@
 #include "../../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
 #include "../../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
 #include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
-
+#include "../../thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.c"
 #include <algorithm>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
@@ -147,8 +147,23 @@ void InventoryObject::computePosition(){
     Eigen::Matrix3d ned2Ecef;
     CoordinateTransform::ned2ecef(ned2Ecef, *shipPosition);
 
+    double ShipLongitude = shipPosition->getLongitude();
+    double ShipLatitude = shipPosition->getLatitude();
+    double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
+    double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
+    char filename[] = "/home/blanc-sablon/Documents/GitHub/OpenSidescan/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
+
+    double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
+    double inclinationDegree = magneticModel.Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
+
+    /*
+    std::cout << "declinationDegree " << declinationDegree << std::endl;
+    std::cout << "inclinationDegree " << inclinationDegree << std::endl;
+    */
+
     Eigen::Matrix3d mag2geoNorth;
-    CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, *position);
+    CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, declinationDegree, inclinationDegree);
 
     // Creating the rotation matrix of transformation between IMU and NED
     Eigen::Matrix3d imu2ned;
@@ -156,6 +171,9 @@ void InventoryObject::computePosition(){
 
     // Creating the rotation matrix of transformation between IMU and ECEF
     Eigen::Matrix3d imu2Ecef = ned2Ecef*mag2geoNorth*imu2ned;
+    //Eigen::Matrix3d imu2Ecef = ned2Ecef*imu2ned;
+
+    //int test = getMagneticAngles(30, 45, 0, 2021);
 
     // Getting IMU base vector in the Ecef frame
     Eigen::Vector3d starboardUnitVectorIMU;

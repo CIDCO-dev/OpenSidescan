@@ -157,11 +157,6 @@ void InventoryObject::computePosition(){
     double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
     double inclinationDegree = magneticModel.Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
 
-    /*
-    std::cout << "declinationDegree " << declinationDegree << std::endl;
-    std::cout << "inclinationDegree " << inclinationDegree << std::endl;
-    */
-
     Eigen::Matrix3d mag2geoNorth;
     CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, declinationDegree, inclinationDegree);
 
@@ -245,18 +240,8 @@ void InventoryObject::computePosition(){
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *shipPosition);
 
-    std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
-    std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
-    //std::cout<<std::endl<<*attitude;
-
-    /*
-    for(int i=0; i<image.getPings().size(); i=i+20) {
-        SidescanPing *ping = image.getPings().at(i);
-        // Getting positions datas
-        Position *shipPosition = ping->getPosition();
-        std::cout<<i<<" "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight()<<std::endl;
-    }
-    */
+    //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
+    //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
 }
 
 bool InventoryObject::is_inside(struct region & area){

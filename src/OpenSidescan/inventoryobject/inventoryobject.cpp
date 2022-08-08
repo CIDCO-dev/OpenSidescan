@@ -8,6 +8,7 @@
 #include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
 #include "../../thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.c"
 #include <algorithm>
+#include <math.h>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
@@ -22,7 +23,7 @@ InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidt
 {
     yCenter = y + (pixelHeight/2);
     xCenter = x + (pixelWidth/2);
-    
+
     computeDimensions();
     computePosition();
 }
@@ -120,6 +121,7 @@ void InventoryObject::computePosition(){
 
     //TODO : remove when we don't need to make tests anymore
     std::cout.precision(20);
+    std::cerr.precision(20);
 
     // Getting the ping of the middle of the image
     SidescanPing *pingCenter = image.getPings().at(indexPingCenter);
@@ -201,11 +203,80 @@ void InventoryObject::computePosition(){
     double distancePerSample = pingCenter->getDistancePerSample();
     double distanceToObject = 2*distancePerSample*indexObjectDistance;
 
-    //std::cout<<std::endl<<"sensorPrimaryAltitude "<<pingCenter->getSensorPrimaryAltitude()<<std::endl;
-    //std::cout<<std::endl<<"distanceToObject*cos(30*3.14/180)"<<distanceToObject*cos(30*3.14/180)<<std::endl;
-    //std::cout<<std::endl<<"distanceToObject "<<distanceToObject<<std::endl;
+    // Initialising the position of the sigmoid step
+    // We take the index of the first pixel that is superior to k
 
-    double sensorPrimaryAltitude = pingCenter->getSensorPrimaryAltitude();
+    std::vector<double> rawSamples = pingCenter->getRawSamples();
+    int nSamples = rawSamples.size();
+
+    std::vector<double> sortedRawSamples = rawSamples;
+    std::nth_element(sortedRawSamples.begin(),
+                     sortedRawSamples.begin() + nSamples / 2,
+                     sortedRawSamples.end());
+    int middleIndex = nSamples/2;
+    double k = sortedRawSamples[middleIndex];
+
+    //double samplesMean = samplesSum/nSamples;
+    double sensorPrimaryAltitudePixels;
+    if(image.isStarboard()) {
+        for (int i=100; i<rawSamples.size(); i++) {
+            if (rawSamples[i] > k) {
+                sensorPrimaryAltitudePixels = i;
+                break;
+            }
+        }
+    } else if(image.isPort()) {
+        for (int i=100; i<rawSamples.size(); i++) {
+            if (rawSamples[nSamples-i] > k) {
+                sensorPrimaryAltitudePixels = i;
+                break;
+            }
+        }
+    }
+
+    // Least squares calculation of the size of the water column
+    double nSigmoid = 10; // Scale factor on the x axis
+    // Non linear least squares loop
+    double correction = std::numeric_limits<double>::infinity();
+    while (correction<1/10) { // the unit of correction is the pixel
+        // Initialising least squares matrixes
+        int nx = 1;
+        Eigen::MatrixXf A(nSamples, nx);
+        Eigen::VectorXf b(nSamples);
+        Eigen::VectorXf x(nx);
+        for (int j=0; j<nSamples; j++) {
+            double delta;
+            if(image.isStarboard()) {
+                delta = j-sensorPrimaryAltitudePixels;
+            } else if(image.isPort()) {
+                delta = -j+nSamples-sensorPrimaryAltitudePixels;
+            };
+            double e = std::exp( -nSigmoid * delta );
+            double f = k / ( 1 + e );
+            double dfdd = - k * nSigmoid * e / pow( 1 + e , 2);
+            b(j, 0) = rawSamples[j] - f;
+            A(j, 0) = dfdd;
+        };
+        // Calculating least squares solution
+        x = (A.transpose() * A).ldlt().solve(A.transpose() * b);
+        correction = x(0, 0);
+        sensorPrimaryAltitudePixels = sensorPrimaryAltitudePixels + correction;
+    }
+    double sensorPrimaryAltitude = distancePerSample*sensorPrimaryAltitudePixels;
+
+    // loop only used to write datas in text file
+    for (int j=0; j<nSamples; j++) {
+        double delta;
+        if(image.isStarboard()) {
+            delta = j-sensorPrimaryAltitudePixels;
+        } else if(image.isPort()) {
+            delta = -j+nSamples-sensorPrimaryAltitudePixels;
+        };
+        double e = std::exp( -nSigmoid * delta );
+        double f = k / ( 1 + e );
+        double dfdd = - k * nSigmoid * e / pow( 1 + e , 2);
+    };
+
     double groundDistance2 = pow(distanceToObject, 2) - pow(sensorPrimaryAltitude, 2);
     if (groundDistance2 < 0) {
         // TODO : take in account beamAngle to locate object inside water column.
@@ -239,9 +310,6 @@ void InventoryObject::computePosition(){
 
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *shipPosition);
-
-    //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
-    //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
 }
 
 bool InventoryObject::is_inside(struct region & area){

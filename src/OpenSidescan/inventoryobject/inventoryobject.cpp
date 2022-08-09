@@ -153,7 +153,7 @@ void InventoryObject::computePosition(){
     double ShipLatitude = shipPosition->getLatitude();
     double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
-    char filename[] = "/home/blanc-sablon/Documents/GitHub/OpenSidescan/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    char filename[255] = "../src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
     MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
 
     double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/

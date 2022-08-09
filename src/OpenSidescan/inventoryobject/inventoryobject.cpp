@@ -6,8 +6,9 @@
 #include "../../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
 #include "../../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
 #include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
-
+#include "../../thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.c"
 #include <algorithm>
+#include <math.h>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
@@ -22,7 +23,7 @@ InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidt
 {
     yCenter = y + (pixelHeight/2);
     xCenter = x + (pixelWidth/2);
-    
+
     computeDimensions();
     computePosition();
 }
@@ -34,7 +35,7 @@ InventoryObject::~InventoryObject(){
 }
 
 void InventoryObject::computeDimensions(){
-    //FIXME: not as accurate as we could go, ok for ballpark
+    //FIXME: Apply same modifications than to computePosition
 
     int indexPingCenter = image.getPings().size() - yCenter;
     if(indexPingCenter < image.getPings().size()){
@@ -107,18 +108,34 @@ void InventoryObject::computeDimensions(){
 }
 
 void InventoryObject::computePosition(){
+    //FIXME : Doesn't return the true position.
+    //The computation of the distance between sidescan and object doesn't return the good result.
 
+    //As the image is a waterfall, it is reversed
     int indexPingCenter = image.getPings().size() - yCenter;
 
-    if(indexPingCenter > image.getPings().size()){
+    if(indexPingCenter >= image.getPings().size() || indexPingCenter < 0){
         position = nullptr;
         throw new Exception("GeoreferencedObject::computePosition(): position is nullptr" );
     }
 
+    //TODO : remove when we don't need to make tests anymore
     std::cout.precision(20);
+    std::cerr.precision(20);
 
     // Getting the ping of the middle of the image
     SidescanPing *pingCenter = image.getPings().at(indexPingCenter);
+
+    // The x axis is reversed if the image is port
+    int indexObjectDistance;
+    int pingCenterSize = pingCenter->getSamples().size();
+    if(image.isStarboard()) {
+        indexObjectDistance = x;
+    } else if(image.isPort()) {
+        indexObjectDistance = pingCenterSize - x;
+    } else {
+        indexObjectDistance = 0;
+    }
 
     // Getting attitude datas
     Attitude *attitude = pingCenter->getAttitude();
@@ -132,12 +149,28 @@ void InventoryObject::computePosition(){
     Eigen::Matrix3d ned2Ecef;
     CoordinateTransform::ned2ecef(ned2Ecef, *shipPosition);
 
+    double ShipLongitude = shipPosition->getLongitude();
+    double ShipLatitude = shipPosition->getLatitude();
+    double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
+    double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
+    char filename[255] = "../src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
+
+    double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
+    double inclinationDegree = magneticModel.Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
+
+    Eigen::Matrix3d mag2geoNorth;
+    CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, declinationDegree, inclinationDegree);
+
     // Creating the rotation matrix of transformation between IMU and NED
     Eigen::Matrix3d imu2ned;
     CoordinateTransform::getDCM(imu2ned, *attitude);
 
     // Creating the rotation matrix of transformation between IMU and ECEF
-    Eigen::Matrix3d imu2Ecef = ned2Ecef*imu2ned;
+    Eigen::Matrix3d imu2Ecef = ned2Ecef*mag2geoNorth*imu2ned;
+    //Eigen::Matrix3d imu2Ecef = ned2Ecef*imu2ned;
+
+    //int test = getMagneticAngles(30, 45, 0, 2021);
 
     // Getting IMU base vector in the Ecef frame
     Eigen::Vector3d starboardUnitVectorIMU;
@@ -168,15 +201,88 @@ void InventoryObject::computePosition(){
     //double slantRange = pingCenter->getSlantRange();
     //double distanceToObject = indexPingCenter*slantRange/image.getPings().size(); // px * m / px
     double distancePerSample = pingCenter->getDistancePerSample();
-    double distanceToObject = distancePerSample*indexPingCenter/2;
+    double distanceToObject = 2*distancePerSample*indexObjectDistance;
 
-    double sensorPrimaryAltitude = pingCenter->getSensorPrimaryAltitude();
+    // Initialising the position of the sigmoid step
+    // We take the index of the first pixel that is superior to k
+
+    std::vector<double> rawSamples = pingCenter->getRawSamples();
+    int nSamples = rawSamples.size();
+
+    std::vector<double> sortedRawSamples = rawSamples;
+    std::nth_element(sortedRawSamples.begin(),
+                     sortedRawSamples.begin() + nSamples / 2,
+                     sortedRawSamples.end());
+    int middleIndex = nSamples/2;
+    double k = sortedRawSamples[middleIndex];
+
+    //double samplesMean = samplesSum/nSamples;
+    double sensorPrimaryAltitudePixels;
+    if(image.isStarboard()) {
+        for (int i=100; i<rawSamples.size(); i++) {
+            if (rawSamples[i] > k) {
+                sensorPrimaryAltitudePixels = i;
+                break;
+            }
+        }
+    } else if(image.isPort()) {
+        for (int i=100; i<rawSamples.size(); i++) {
+            if (rawSamples[nSamples-i] > k) {
+                sensorPrimaryAltitudePixels = i;
+                break;
+            }
+        }
+    }
+
+    // Least squares calculation of the size of the water column
+    double nSigmoid = 10; // Scale factor on the x axis
+    // Non linear least squares loop
+    double correction = std::numeric_limits<double>::infinity();
+    while (correction<1/10) { // the unit of correction is the pixel
+        // Initialising least squares matrixes
+        int nx = 1;
+        Eigen::MatrixXf A(nSamples, nx);
+        Eigen::VectorXf b(nSamples);
+        Eigen::VectorXf x(nx);
+        for (int j=0; j<nSamples; j++) {
+            double delta;
+            if(image.isStarboard()) {
+                delta = j-sensorPrimaryAltitudePixels;
+            } else if(image.isPort()) {
+                delta = -j+nSamples-sensorPrimaryAltitudePixels;
+            };
+            double e = std::exp( -nSigmoid * delta );
+            double f = k / ( 1 + e );
+            double dfdd = - k * nSigmoid * e / pow( 1 + e , 2);
+            b(j, 0) = rawSamples[j] - f;
+            A(j, 0) = dfdd;
+        };
+        // Calculating least squares solution
+        x = (A.transpose() * A).ldlt().solve(A.transpose() * b);
+        correction = x(0, 0);
+        sensorPrimaryAltitudePixels = sensorPrimaryAltitudePixels + correction;
+    }
+    double sensorPrimaryAltitude = distancePerSample*sensorPrimaryAltitudePixels;
+
+    // loop only used to write datas in text file
+    for (int j=0; j<nSamples; j++) {
+        double delta;
+        if(image.isStarboard()) {
+            delta = j-sensorPrimaryAltitudePixels;
+        } else if(image.isPort()) {
+            delta = -j+nSamples-sensorPrimaryAltitudePixels;
+        };
+        double e = std::exp( -nSigmoid * delta );
+        double f = k / ( 1 + e );
+        double dfdd = - k * nSigmoid * e / pow( 1 + e , 2);
+    };
+
     double groundDistance2 = pow(distanceToObject, 2) - pow(sensorPrimaryAltitude, 2);
     if (groundDistance2 < 0) {
         // TODO : take in account beamAngle to locate object inside water column.
         position = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
         CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *position);
-        std::cerr<<"Object inside water column"<<std::endl;
+        std::cerr<<std::endl<<"Object inside water column"<<std::endl;
         return;
     }
     Eigen::Vector3d sideScanDistanceEcef;
@@ -191,6 +297,7 @@ void InventoryObject::computePosition(){
         return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
     }
 
+    // TODO : change the value of this vector if no usbl
     Eigen::Vector3d antenna2TowPointEcef;
     antenna2TowPointEcef[0] = 0;
     antenna2TowPointEcef[1] = 0;
@@ -203,11 +310,6 @@ void InventoryObject::computePosition(){
 
     shipPosition = new Position(pingCenter->getTimestamp(), 0.0, 0.0, 0.0);
     CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *shipPosition);
-
-    //std::cout<<std::endl<<"objectPosition "<<position->getLatitude()<<" "<<position->getLongitude()<<" "<<position->getEllipsoidalHeight();
-    //std::cout<<std::endl<<"shipPosition "<<shipPosition->getLatitude()<<" "<<shipPosition->getLongitude()<<" "<<shipPosition->getEllipsoidalHeight();
-    //std::cout<<std::endl<<"sensorPrimaryAltitude"<<pingCenter->getSensorPrimaryAltitude()<<std::endl;
-
 }
 
 bool InventoryObject::is_inside(struct region & area){

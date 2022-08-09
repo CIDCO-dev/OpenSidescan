@@ -51,7 +51,6 @@ public:
     */
     void processAttitude(uint64_t microEpoch,double heading,double pitch,double roll) {
         attitudes.push_back(Attitude(microEpoch,roll,pitch,heading));
-
     }
 
     void processPosition(uint64_t microEpoch,double longitude,double latitude,double height){

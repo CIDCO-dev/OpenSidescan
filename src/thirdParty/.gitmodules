@@ -1,0 +1,3 @@
+[submodule "WorldMagneticModel"]
+	path = WorldMagneticModel
+	url = https://github.com/CIDCO-dev/WorldMagneticModel

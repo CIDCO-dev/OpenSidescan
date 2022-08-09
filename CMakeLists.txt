@@ -8,6 +8,7 @@ Date : 13 August 2021
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
+set(PROJECT_VERSION 1)
 project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
@@ -64,6 +65,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
 
 # thirdParty sources
 set(3rdParty src/thirdParty/MBES-lib/src)
+set(WMM src/thirdParty/WorldMagneticModel/WMM2020_Linux/src)
 set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/datagrams/DatagramParserFactory.cpp;
                 ${3rdParty}/datagrams/s7k/S7kParser.cpp;
@@ -73,7 +75,10 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
                 src/thirdParty/opencv/apps/createsamples/utility.cpp;
-    )
+                ${WMM}/GeomagnetismHeader.h;
+                ${WMM}/GeomagnetismLibrary.c;
+                ${WMM}/EGM9615.h;
+                ${WMM}/wmm_calculations.c;)
 
 # headers include directories
 set(INCLUDE_DIR ${SS};

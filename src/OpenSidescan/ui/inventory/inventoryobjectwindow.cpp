@@ -70,7 +70,6 @@ void InventoryObjectWindow::initUI(){
     this->setWindowTitle("Object Information");
     this->setModal(true);
     this->setVisible(true);
-
 }
 
 void InventoryObjectWindow::accept(){

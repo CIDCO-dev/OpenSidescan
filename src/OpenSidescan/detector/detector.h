@@ -11,7 +11,7 @@ public:
     Detector();
     virtual ~Detector();
 
-    virtual void detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound) = 0;
+    virtual void detect(SidescanImage & image, std::vector<InventoryObject*> & objectsFound) = 0;
 };
 
 #endif // DETECTOR_H

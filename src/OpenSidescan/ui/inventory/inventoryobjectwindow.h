@@ -5,6 +5,8 @@
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QFile>
+#include <QFileInfo>
 
 #include "inventoryobject/inventoryobject.h"
 

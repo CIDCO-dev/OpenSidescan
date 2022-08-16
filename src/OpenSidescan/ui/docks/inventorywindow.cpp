@@ -185,4 +185,3 @@ void InventoryWindow::refreshInventoryTable(){
 
     }
 }
-

@@ -72,6 +72,7 @@ private:
     SidescanImage & image;
     SidescanPing  & startPing;
     SidescanPing  & endPing;
+
 };
 
 #endif // INVENTORYOBJECT_H

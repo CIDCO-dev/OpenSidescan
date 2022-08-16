@@ -78,7 +78,7 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${WMM}/GeomagnetismHeader.h;
                 ${WMM}/GeomagnetismLibrary.c;
                 ${WMM}/EGM9615.h;
-                ${WMM}/wmm_calculations.c;)
+                ${WMM}/wmm_calculations.cpp;)
 
 # headers include directories
 set(INCLUDE_DIR ${SS};

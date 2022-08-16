@@ -1,14 +1,17 @@
 #include "inventoryobject.h"
 
 #include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
-
 #include "../../thirdParty/MBES-lib/src/utils/Exception.hpp"
 #include "../../thirdParty/MBES-lib/src/math/CoordinateTransform.hpp"
 #include "../../thirdParty/MBES-lib/src/sidescan/SideScanGeoreferencing.hpp"
 #include "../../thirdParty/MBES-lib/src/math/Distance.hpp"
-#include "../../thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.c"
+#include "../../thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.cpp"
 #include <algorithm>
 #include <math.h>
+#include <iostream>
+
+//#include <QFile>
+//#include <QFileInfo>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
@@ -153,11 +156,16 @@ void InventoryObject::computePosition(){
     double ShipLatitude = shipPosition->getLatitude();
     double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
-    char filename[255] = "../src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
-    MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
 
-    double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
-    double inclinationDegree = magneticModel.Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
+    //wmmCalculations WMMCalculationsObject = wmmCalculations("../src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF");
+    char filename[] = "/home/blanc-sablon/Documents/GitHub/OpenSidescan/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    wmmCalculations WMMCalculationsObject = wmmCalculations(filename);
+    WMMCalculationsObject.getWMMCoefficients();
+
+    MAGtype_GeoMagneticElements magneticModel = WMMCalculationsObject.getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear);
+
+    double declinationDegree = magneticModel.Decl; // 1. Angle between the magnetic field vector and true north, positive east
+    double inclinationDegree = magneticModel.Incl; // 2. Angle between the magnetic field vector and the horizontal plane, positive down
 
     Eigen::Matrix3d mag2geoNorth;
     CoordinateTransform::magneticNorth2geographicNorth(mag2geoNorth, declinationDegree, inclinationDegree);

@@ -9,6 +9,7 @@
 #include "../../thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/wmm_calculations.cpp"
 #include <algorithm>
 #include <math.h>
+#include <filesystem>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
@@ -153,7 +154,12 @@ void InventoryObject::computePosition(){
     double ShipLatitude = shipPosition->getLatitude();
     double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
-    char filename[255] = "../src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+
+    std::string modelPath = std::filesystem::current_path().parent_path() /= "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    char filename[255];
+    std::size_t size = modelPath.copy(filename, modelPath.size(), 0);
+    filename[size] = '\0';
+
     MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
 
     double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/

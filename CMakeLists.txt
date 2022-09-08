@@ -12,7 +12,7 @@ set(PROJECT_VERSION 1)
 project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # QT5
 set(CMAKE_AUTOMOC ON)
@@ -65,7 +65,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
 
 # thirdParty sources
 set(3rdParty src/thirdParty/MBES-lib/src)
-set(WMM src/thirdParty/WorldMagneticModel/WMM2020_Linux/src)
+set(WMM ${3rdParty}/thirdParty/WorldMagneticModel/WMM2020_Linux/src)
 set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/datagrams/DatagramParserFactory.cpp;
                 ${3rdParty}/datagrams/s7k/S7kParser.cpp;
@@ -74,11 +74,12 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/NmeaUtils.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
+                ${3rdParty}/hydroblock/Hydroblock20Parser.cpp
                 src/thirdParty/opencv/apps/createsamples/utility.cpp;
                 ${WMM}/GeomagnetismHeader.h;
                 ${WMM}/GeomagnetismLibrary.c;
                 ${WMM}/EGM9615.h;
-                ${WMM}/wmm_calculations.c;)
+                ${WMM}/wmm_calculations.cpp;)
 
 # headers include directories
 set(INCLUDE_DIR ${SS};

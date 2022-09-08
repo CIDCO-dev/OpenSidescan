@@ -8,7 +8,7 @@ Date : 13 August 2021
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-set(PROJECT_VERSION 1)
+set(PROJECT_VERSION)
 project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
@@ -168,7 +168,7 @@ if(WIN32)
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrap-beta.onnx" DESTINATION models)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrapV1.onnx" DESTINATION models)
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer

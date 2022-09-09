@@ -155,9 +155,12 @@ void InventoryObject::computePosition(){
     double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
 
-    std::string modelPath = std::filesystem::current_path().parent_path() /= "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+    std::filesystem::path root = std::filesystem::current_path().parent_path();
+	std::filesystem::path modelPath = "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
+	std::filesystem::path fullPath = root /= modelPath;
+	std::string filePath = fullPath.string();
     char filename[255];
-    std::size_t size = modelPath.copy(filename, modelPath.size(), 0);
+    std::size_t size = filePath.copy(filename, filePath.size(), 0);
     filename[size] = '\0';
 
     MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);

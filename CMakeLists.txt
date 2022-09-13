@@ -8,18 +8,26 @@ Date : 13 August 2021
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-set(PROJECT_VERSION 1)
+set(PROJECT_VERSION)
 project(Opensidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # QT5
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# models variable
+set(CRABTRAP_MODEL_VERSION crabtrapV1.onnx)
+set(CRABTRAP_MODEL_URL http://updates.cidco.ca/Opensidescan-modeles/crabtrapV1.onnx)
 
+
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}")
+	make_directory("${CMAKE_CURRENT_SOURCE_DIR}/models/")
+	file(DOWNLOAD ${CRABTRAP_MODEL_URL} "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}" SHOW_PROGRESS)
+endif()
 
 # opensidescan sources
 set(SS src/OpenSidescan)
@@ -65,7 +73,7 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
 
 # thirdParty sources
 set(3rdParty src/thirdParty/MBES-lib/src)
-set(WMM src/thirdParty/WorldMagneticModel/WMM2020_Linux/src)
+set(WMM ${3rdParty}/thirdParty/WorldMagneticModel/WMM2020_Linux/src)
 set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/datagrams/DatagramParserFactory.cpp;
                 ${3rdParty}/datagrams/s7k/S7kParser.cpp;
@@ -74,11 +82,12 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/NmeaUtils.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
+                ${3rdParty}/hydroblock/Hydroblock20Parser.cpp
                 src/thirdParty/opencv/apps/createsamples/utility.cpp;
                 ${WMM}/GeomagnetismHeader.h;
                 ${WMM}/GeomagnetismLibrary.c;
                 ${WMM}/EGM9615.h;
-                ${WMM}/wmm_calculations.c;)
+                ${WMM}/wmm_calculations.cpp;)
 
 # headers include directories
 set(INCLUDE_DIR ${SS};
@@ -110,7 +119,7 @@ add_compile_definitions(PROJECT_VERSION=${PROJECT_VERSION})
 
 if(UNIX)
 	message("*nix like cmake")
-
+	
 	# find_package will locate dependencies whether they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 4.2 REQUIRED)
@@ -144,8 +153,6 @@ if(UNIX)
 endif()
 if(WIN32)
 	message("windows cmake")
-	make_directory("${CMAKE_CURRENT_SOURCE_DIR}/models")
-	file(DOWNLOAD http://http://updates.cidco.ca/Opensidescan-modeles/crabtrapV1.onnx "${CMAKE_CURRENT_SOURCE_DIR}/models/http://updates.cidco.ca/Opensidescan-modeles/crabtrapV1.onnx" SHOW_PROGRESS)
 	include_directories(C:/LIBS/eigen)
 	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
@@ -167,7 +174,7 @@ if(WIN32)
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
 	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrap-beta.onnx" DESTINATION models)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrapV1.onnx" DESTINATION models)
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer

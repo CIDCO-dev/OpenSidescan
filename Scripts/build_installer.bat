@@ -2,5 +2,5 @@ set version=%1
 
 mkdir build
 cd build
-cmake .. -DCMAKE_GENERATOR_PLATFORM=x64 -DPROJECT_VERSION=%version%
+cmake .. -G"Visual Studio 15 2017 Win64" -DPROJECT_VERSION=%1
 cpack -G NSIS

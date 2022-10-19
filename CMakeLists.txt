@@ -149,7 +149,9 @@ if(UNIX)
 	target_link_libraries(sidescan-dump PUBLIC cli_dep)
 	target_link_libraries(sidescan-glcm PUBLIC cli_dep)
 	target_link_libraries(haralick-analysis PUBLIC cli_dep mlpack armadillo gomp)
-
+	
+	install(TARGETS sidescan-dump DESTINATION /usr/local/bin/)
+	
 endif()
 if(WIN32)
 	message("windows cmake")

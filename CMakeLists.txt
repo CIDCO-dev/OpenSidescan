@@ -157,8 +157,8 @@ if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen-3.4.0)
 	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
-	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
-	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
+	find_package(Qt5 5.15 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.15.2/msvc2019_64/lib)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
@@ -167,16 +167,16 @@ if(WIN32)
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
-	set(CV_DLLS C:/LIBS/opencv4.5/opencv/build/x64/vc15/bin/opencv_world454.dll)
-	set(QT_DLLS_PATH C:/Qt2/5.12.11/msvc2015_64/bin)
+	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world454.dll)
+	set(QT_DLLS_PATH C:/Qt/5.15.2/msvc2019_64/bin)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
 				${QT_DLLS_PATH}/QT5Core.dll
 				${QT_DLLS_PATH}/QT5Gui.dll
 				${QT_DLLS_PATH}/Qt5Network.dll
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
-	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}" DESTINATION models)
+	install(FILES C:/Qt/5.15.2/msvc2019_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}" DESTINATION bin/models)
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer

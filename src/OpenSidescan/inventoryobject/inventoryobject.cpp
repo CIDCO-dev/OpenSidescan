@@ -159,7 +159,8 @@ void InventoryObject::computePosition(){
 	std::filesystem::path modelPath = "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
 	std::filesystem::path fullPath = root /= modelPath;
 	std::string filePath = fullPath.string();
-    char filename[255];
+    //std::cout<<filePath<<std::endl;
+    char filename[1024];
     std::size_t size = filePath.copy(filename, filePath.size(), 0);
     filename[size] = '\0';
 

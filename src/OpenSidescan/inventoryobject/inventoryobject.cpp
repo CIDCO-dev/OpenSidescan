@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <math.h>
 #include <filesystem>
+#include <fstream>
 
 InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidth,int pixelHeight,std::string name, std::string description) :
     image(image),
@@ -156,16 +157,26 @@ void InventoryObject::computePosition(){
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
 
     std::filesystem::path root = std::filesystem::current_path().parent_path();
+	#ifdef _WIN32
+		root = std::filesystem::current_path();
+		std::cout<<root.filename()<<std::endl;
+		if(root.filename() != "Opensidescan"){
+			 root = std::filesystem::current_path().parent_path();
+		}
+		
+	#endif
 	std::filesystem::path modelPath = "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
 	std::filesystem::path fullPath = root /= modelPath;
 	std::string filePath = fullPath.string();
-    //std::cout<<filePath<<std::endl;
+    /* std::cout<<filePath<<std::endl;
+	std::ofstream MyFile("C:/Users/pat/log.txt");
+	MyFile << filePath;
+	MyFile.close(); */
     char filename[1024];
     std::size_t size = filePath.copy(filename, filePath.size(), 0);
     filename[size] = '\0';
-
-    MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
-
+	
+	MAGtype_GeoMagneticElements magneticModel = getMagneticModel(ShipLongitude, ShipLatitude, shipEllipsoidalHeight, tYear, filename);
     double declinationDegree = magneticModel.Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
     double inclinationDegree = magneticModel.Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
 

@@ -178,7 +178,6 @@ if(WIN32)
 	install(FILES C:/Qt/5.15.2/msvc2019_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}" DESTINATION models)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF" DESTINATION src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/)
-	set(CPACK_NSIS_EXECUTABLE ${PROJECT_NAME})
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer
@@ -195,10 +194,11 @@ endif()
 
 # Packaging
 include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 include(CPack)

@@ -125,6 +125,8 @@ private:
     bool & mergeOverlappingBoundingBoxesValue;
 
     void initUI();
+    
+    unsigned long int imageCount;
 
 };
 

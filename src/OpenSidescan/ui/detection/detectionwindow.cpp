@@ -39,6 +39,7 @@ DetectionWindow::DetectionWindow(Project & project,
                                 mergeOverlappingBoundingBoxesValue(mergeOverlappingBoundingBoxesValue)
 
 {
+	this->imageCount = project.getImageCount();
     initUI();
 }
 
@@ -434,7 +435,7 @@ void DetectionWindow::selectModel(){
 }
 
 void DetectionWindow::launchDetectionWorker(Detector * detector){
-    QProgressDialog progress("Finding objects...", QString(), 0, project.getFileCount(), this);
+    QProgressDialog progress("Finding objects...", QString(), 0, imageCount, this);
 
     progress.setWindowModality(Qt::WindowModal);
     progress.setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowTitleHint);
@@ -445,11 +446,11 @@ void DetectionWindow::launchDetectionWorker(Detector * detector){
 
     QThread * workerThread = new QThread( this );
 
-    WorkerDetection * worker = new WorkerDetection(project, *this , *detector);
+    WorkerDetection * worker = new WorkerDetection(project, *this , *detector, this->imageCount);
 
     worker->moveToThread(workerThread);
 
-    connect( workerThread, &QThread::finished, worker, &WorkerDetection::deleteLater );
+    //connect( workerThread, &QThread::finished, worker, &WorkerDetection::deleteLater );
     connect( workerThread, &QThread::started, worker, &WorkerDetection::doWork );
 
     connect( worker, &WorkerDetection::progress, &progress, &QProgressDialog::setValue);

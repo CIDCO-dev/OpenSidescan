@@ -514,6 +514,7 @@ unsigned long Project::getFileCount()
     return count;
 }
 
+
 unsigned long Project::getObjectCount()
 {
     unsigned long count=0;
@@ -523,12 +524,26 @@ unsigned long Project::getObjectCount()
     for(auto i = files.begin();i != files.end();i++){
         for(auto j = (*i)->getImages().begin(); j != (*i)->getImages().end();j++){
             count += (*j)->getObjects().size();
+            std::cout<< "getObjectCount: " << count << "\n";
         }
     }
 
     mutex.unlock();
 
     return count;
+}
+
+unsigned long Project::getImageCount()
+{
+    mutex.lock();
+	unsigned long imageCount = 0;
+    for( auto i = files.begin(); i != files.end(); i++){
+    	auto v = (*i)->getImages();
+    	imageCount += v.size();
+    }
+
+    mutex.unlock();
+    return imageCount;
 }
 
 

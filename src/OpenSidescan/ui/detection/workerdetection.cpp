@@ -12,15 +12,15 @@
 #include "workerdetection.h"
 
 
-WorkerDetection::WorkerDetection(Project & project, DetectionWindow & detectionWindow, Detector & detector )
-    : project(project),detectionWindow( detectionWindow ),detector(detector)
+WorkerDetection::WorkerDetection(Project & project, DetectionWindow & detectionWindow, Detector & detector, unsigned long int &imageCount)
+    : project(project),detectionWindow( detectionWindow ),detector(detector), imageCount(imageCount)
 {
 }
 
 void WorkerDetection::detectInFiles(SidescanFile & file){
     for(auto j=file.getImages().begin();j != file.getImages().end();j++){
-        detector.detect(**j,(*j)->getObjects());
         progress(fileIdx++);
+        detector.detect(**j,(*j)->getObjects());
     }
 }
 
@@ -30,5 +30,5 @@ void WorkerDetection::doWork() {
 
     project.walkFiles<WorkerDetection>(this,&WorkerDetection::detectInFiles);
 
-    progress(project.getFileCount()); // To close the progress dialog
+    progress(imageCount); // To close the progress dialog
 }

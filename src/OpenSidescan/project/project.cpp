@@ -204,7 +204,6 @@ void Project::exportInventoryAsKml(std::string & filename){
     xmlWriter.writeStartElement("kml");
     xmlWriter.writeNamespace(QString::fromStdString("http://www.opengis.net/kml/2.2"));
     xmlWriter.writeStartElement("Document");
-
     mutex.lock();
 
     for(auto i=files.begin();i!=files.end();i++){

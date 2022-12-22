@@ -15,6 +15,7 @@
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/detector/roidetector.h"
 #include "../src/OpenSidescan/detector/houghdetector.h"
+#include "../src/OpenSidescan/detector/yolov5detector.h"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
@@ -174,6 +175,43 @@ TEST_CASE("INVENTORY OBJECT IS INSIDE") {
     REQUIRE(ans1 == true);
     bool ans2 = false_detect.is_inside(area);
     REQUIRE(ans2 == false);
+}
+
+TEST_CASE("Crab trap model test") {
+
+    std::string sidescanFileName = "test/data/ghostfishinggear/crabtrap1.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0, 0, 0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    SidescanImage * image;
+
+    for (unsigned int i = 0; i < file->getImages().size(); i++) {
+        if (file->getImages()[i]->getChannelNumber() == 1) {
+            //crabtrap is on channel 1
+            image = file->getImages()[i];
+        }
+    }
+
+    std::vector<InventoryObject*> objectsFound;
+    roiDetector.detect(*image, objectsFound);
+    REQUIRE(objectsFound.size() >= 1);  
+
+
+    //clean up pointers
+    delete image;
+    delete parser;
+
+    for(unsigned int i=0; i<objectsFound.size(); i++) {
+        delete objectsFound[i];
+    }
 }
 
 #endif /* DETECTOBJECTSTEST_HPP */

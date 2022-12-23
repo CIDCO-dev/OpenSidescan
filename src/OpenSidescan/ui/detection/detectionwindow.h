@@ -92,9 +92,6 @@ private:
     QLineEdit * scoresThreshold;
     QLineEdit * nmsThreshold;
     QLineEdit * confidenceThreshold;
-    //float & scoresThresholdValue = 0.0;
-    //float & nmsThresholdValue = 0.0;
-    //float & confidenceThresholdValue = 0.0;
 
     //FAST parameters
     QGroupBox * advancedParameters;

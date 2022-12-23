@@ -375,8 +375,13 @@ void DetectionWindow::buildAdvancedDetector(){
 void DetectionWindow::buildGhostGearDetector(){
 
     QFileInfo modelPathInfo(QCoreApplication::applicationDirPath() + "/../models/crabtrapV1.onnx"); //will only work if compile with cmake for linux, or if installed with windows installer , in other words while developping and testing via qtcreator import the model manually
-    Detector * detector = new Yolov5Detector((modelPathInfo.absoluteFilePath()).toStdString());
-    launchDetectionWorker(detector);
+    if(modelPathInfo.exists()){
+    	Detector * detector = new Yolov5Detector((modelPathInfo.absoluteFilePath()).toStdString());
+    	launchDetectionWorker(detector);
+    }
+    else{
+    	QMessageBox::critical(this, tr("Error"), tr("Cannot find Model"));
+    }
 }
 
 void DetectionWindow::buildYolov5Detector(){
@@ -386,7 +391,10 @@ void DetectionWindow::buildYolov5Detector(){
     float confidenceThresholdValue;
     std::string modelFilePath;
 
-    if(!modelPath->text().isEmpty()){
+    if(modelPath->text().isEmpty()){
+    	QMessageBox::critical(this, tr("Error"), tr("Please select a model"));
+    }
+    else{
         try{
             scoresThresholdValue = std::stof(scoresThreshold->text().toStdString());
             nmsThresholdValue = std::stof(nmsThreshold->text().toStdString());
@@ -395,32 +403,26 @@ void DetectionWindow::buildYolov5Detector(){
         }
         catch(const std::exception &e){
             QString errorMessage = e.what();
-            QMessageBox msgBox;
-            msgBox.setText(errorMessage);
-            msgBox.setIcon(QMessageBox::Critical);
-            msgBox.exec();
-        }
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("Please select a model"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-    }
-    QFileInfo fileInfo(QString::fromStdString(modelFilePath));
+            QMessageBox::critical(this, tr("Error"), errorMessage);
 
-    if(scoresThresholdValue >0 && scoresThresholdValue <1 &&
-       nmsThresholdValue > 0 && nmsThresholdValue < 1 &&
-       confidenceThresholdValue >0 && confidenceThresholdValue<1){
-            Detector * detector = new Yolov5Detector((fileInfo.absoluteFilePath()).toStdString(), scoresThresholdValue, nmsThresholdValue, confidenceThresholdValue);
-            launchDetectionWorker(detector);
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText(tr("All thresholds must be between 0 and 1"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-    }
+        }
+    
+		QFileInfo fileInfo(QString::fromStdString(modelFilePath));
+		if(fileInfo.exists()){
+			if(scoresThresholdValue >0 && scoresThresholdValue <1 &&
+			   nmsThresholdValue > 0 && nmsThresholdValue < 1 &&
+			   confidenceThresholdValue >0 && confidenceThresholdValue<1){
+				    Detector * detector = new Yolov5Detector((fileInfo.absoluteFilePath()).toStdString(), scoresThresholdValue, nmsThresholdValue, confidenceThresholdValue);
+				    launchDetectionWorker(detector);
+			}
+			else{
+				QMessageBox::critical(this, tr("Error"), tr("All thresholds must be between 0 and 1"));
+			}
+		}
+		else{
+			QMessageBox::critical(this, tr("Error"), tr("Cannot find Model"));
+		}
+	}
 }
 
 void DetectionWindow::selectModel(){

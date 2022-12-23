@@ -1,38 +1,32 @@
 #include "yolov5detector.h"
-#include <QDebug>
-#include <QString>
-#include <QFileInfo>
-#include <QMessageBox>
+#include <filesystem>
 
 Yolov5Detector::Yolov5Detector(std::string modelPath , float scoresThresh, float nmsThresh, float confidenceThresh)
 {
-    QString model(QString::fromStdString(modelPath));
+    std::filesystem::path model(modelPath);
     this->scoresThreshold = scoresThresh;
     this->nmsThreshold = nmsThresh;
     this->confidenceThreshold = confidenceThresh;
-    if(QFileInfo::exists(model)){
+    if(std::filesystem::is_regular_file(model)){
         try{
             this->net = cv::dnn::readNetFromONNX(modelPath);
         }
         catch(cv::Exception &e){
-            QString errorMessage = e.what();
-            QMessageBox msgBox;
-            msgBox.setText(errorMessage);
-            msgBox.setIcon(QMessageBox::Critical);
-            msgBox.exec();
+			std::cerr<<e.what()<<std::endl;
+        }
+        catch(...){
+        	std::cout<<"error while reading model \n"<<std::endl;
         }
     }
     else{
-        QMessageBox msgBox;
-        msgBox.setText("model not found");
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
+    	  std::cerr<<"model not found"<<std::endl;
     }
     //TODO load file with class name -> idealy parse yml file used for training
+    
 }
 
 void Yolov5Detector::detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound){
-
+	
     cv::Mat gray = image.getImage();
     cv::Mat color;
     cv::cvtColor(gray, color, cv::COLOR_GRAY2BGR);
@@ -49,8 +43,14 @@ void Yolov5Detector::detect(SidescanImage & image,std::vector<InventoryObject*> 
             cv::Mat img = color(cv::Range(y, y2), cv::Range(x, x2));
             cv::Mat blob = cv::dnn::blobFromImage(img, 1.0/255, cv::Size(640,640), cv::Scalar(0,0,0),true, false);
             this->net.setInput(blob);
-
-            cv::Mat output = net.forward();
+			cv::Mat output;
+			try{
+            	output = net.forward();
+            }
+            catch(cv::Exception &e){
+            	std::cerr<<e.what()<<std::endl; //XXX no UI error
+            	return;
+            }
             cv::Mat detections(output.size[1], output.size[2], CV_32F, output.ptr<float>());
             std::vector<cv::Rect> boxes;
             std::vector<int> indices;

@@ -14,6 +14,7 @@ tests main.cpp
     ../src/OpenSidescan/detector/roidetector.cpp
     ../src/OpenSidescan/detector/detector.cpp
     ../src/OpenSidescan/detector/houghdetector.cpp
+    ../src/OpenSidescan/detector/yolov5detector.cpp
     ../src/OpenSidescan/inventoryobject/inventoryobject.cpp
     ../src/OpenSidescan/sidescan/sidescanimage.cpp
     ../src/OpenSidescan/sidescan/sidescanfile.cpp
@@ -22,6 +23,7 @@ tests main.cpp
     ../src/thirdParty/MBES-lib/src/datagrams/s7k/S7kParser.cpp
     ../src/thirdParty/MBES-lib/src/datagrams/kongsberg/KongsbergParser.cpp
     ../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.cpp
+    ../src/thirdParty/MBES-lib/src/hydroblock/Hydroblock20Parser.cpp
     ../src/thirdParty/MBES-lib/src/utils/NmeaUtils.cpp
     ../src/thirdParty/MBES-lib/src/utils/StringUtils.cpp
     ../src/thirdParty/MBES-lib/src/sidescan/SidescanPing.cpp
@@ -43,9 +45,9 @@ endif()
 if(WIN32)
 	message("windows unit-test")
 	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
-	find_package(Qt5 5.12 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
-	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
+	find_package(Qt5 5.15 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)
 
 	target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
 	

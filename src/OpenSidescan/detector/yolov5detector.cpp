@@ -19,7 +19,7 @@ Yolov5Detector::Yolov5Detector(std::string modelPath , float scoresThresh, float
         }
     }
     else{
-    	  std::cerr<<"model not found"<<std::endl;
+    	  std::cerr<<"model not found : "<< model.u8string() <<std::endl;
     }
     //TODO load file with class name -> idealy parse yml file used for training
     

@@ -199,9 +199,21 @@ TEST_CASE("Crab trap model test") {
             image = file->getImages()[i];
         }
     }
-
+	
+	std::string modelPath;
+	
+	const std::filesystem::path modelDir{"models"};
+	for (auto const& dir_entry : std::filesystem::directory_iterator{modelDir}) {
+        std::cout << dir_entry.path().extension() << '\n';
+        if(dir_entry.path().extension() == ".onnx"){
+        	modelPath = dir_entry.path().string();
+        }
+    }
+	
+	Yolov5Detector crabtrapDetector(modelPath);
+	
     std::vector<InventoryObject*> objectsFound;
-    roiDetector.detect(*image, objectsFound);
+    crabtrapDetector.detect(*image, objectsFound);
     REQUIRE(objectsFound.size() >= 1);  
 
 

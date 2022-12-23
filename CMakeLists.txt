@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 set(PROJECT_VERSION)
-project(Opensidescan VERSION ${PROJECT_VERSION})
+project(OpenSidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -156,9 +156,9 @@ endif()
 if(WIN32)
 	message("windows cmake")
 	include_directories(C:/LIBS/eigen-3.4.0)
-	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.15 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
-	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.15.2/msvc2019_64/lib)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})

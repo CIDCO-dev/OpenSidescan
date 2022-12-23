@@ -204,7 +204,6 @@ TEST_CASE("Crab trap model test") {
 	
 	const std::filesystem::path modelDir{"models"};
 	for (auto const& dir_entry : std::filesystem::directory_iterator{modelDir}) {
-        std::cout << dir_entry.path().extension() << '\n';
         if(dir_entry.path().extension() == ".onnx"){
         	modelPath = dir_entry.path().string();
         }

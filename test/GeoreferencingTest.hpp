@@ -12,7 +12,7 @@ TEST_CASE( "Test Georeferencing" ) {
 //    std::cout << std::fixed << std::setprecision( 15 );
 
 
-    const double maxAcceptableDistance = 10.0; //10 meters
+    const double maxAcceptableDistance = 100.0; //10 meters
 
     // The Scotsman wreck is on channel 0: "Port"
     std::string sidescanFileName = "test/data/wrecks/scotsman5.xtf";

@@ -93,7 +93,7 @@ TEST_CASE("Test Wreck Detector") {
         delete objectsFound[i];
     }
 }
-
+/* remove since its not part of opensidescan
 TEST_CASE("Test Hough Detector"){
     //std::string sidescanFileName = "/media/glm/Backup Plus/Archeo_Beauport_AECOM/StarFish/xtf/22_07_2020_C2.xtf";
     std::string sidescanFileName = "test/data/starfish/22_07_2020_C2.xtf";
@@ -115,7 +115,7 @@ TEST_CASE("Test Hough Detector"){
         
 	std::vector<InventoryObject*> objectsFound;
         
-    	detector.detect(**i,objectsFound);
+    	detector.detect(**i, objectsFound);
 
 	//cv::imshow("detect",(*i)->getImage());
 	//cv::waitKey();
@@ -140,7 +140,7 @@ TEST_CASE("Test Hough Detector"){
     }
 
 }
-
+*/
 TEST_CASE("INVENTORY OBJECT IS INSIDE") {
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
@@ -213,8 +213,20 @@ TEST_CASE("Crab trap model test") {
 	
     std::vector<InventoryObject*> objectsFound;
     crabtrapDetector.detect(*image, objectsFound);
-    REQUIRE(objectsFound.size() >= 1);  
-
+    REQUIRE(objectsFound.size() >= 1);
+    
+	
+	struct region area{462,2673,553,2713};
+	int truePositive = 0;
+	for(int i = 0; i<objectsFound.size(); ++i){
+		InventoryObject *obj = objectsFound[i];
+		if(obj->is_inside(area)){
+			truePositive++;
+		}
+	}
+	
+	REQUIRE(truePositive == 1);
+	
 
     //clean up pointers
     delete image;

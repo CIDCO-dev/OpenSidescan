@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Opensidescan_gui_Tests)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # QT5
 set(CMAKE_AUTOMOC ON)
@@ -51,6 +51,8 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/ui/mainwindow/monitorthread.cpp;
                 ${SS}/ui/about/aboutdialog.ui;
                 ${SS}/ui/mainwindow/mainwindow.ui;
+                ${SS}/telemetrymanager/telemetrymanager.cpp;
+                ${SS}/detector/yolov5detector.cpp;
     )
 
 # thirdParty sources
@@ -64,6 +66,7 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
                 ../../src/thirdParty/opencv/apps/createsamples/utility.cpp;
+                ${3rdParty}/hydroblock/Hydroblock20Parser.cpp;
     )
 
 # headers include directories

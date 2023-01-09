@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.10)
 project(win_unit_test)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # QT5
 set(CMAKE_AUTOMOC ON)
@@ -30,6 +30,8 @@ set(LIB_FILES   ${SS}/sidescan/sidescanfile.cpp;
                 ${SS}/detector/detector.cpp;
                 ${SS}/machinelearning/dbscan.cpp;
                 ${SS}/project/project.cpp;
+                ${SS}/telemetrymanager/telemetrymanager.cpp;
+                ${SS}/detector/yolov5detector.cpp
     )
 
 # thirdParty sources
@@ -42,6 +44,7 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/NmeaUtils.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
+                ${3rdParty}/hydroblock/Hydroblock20Parser.cpp
     )
 
 # headers include directories

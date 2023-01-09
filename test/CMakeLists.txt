@@ -6,7 +6,7 @@ message("cmake unit-test file")
 
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(
 tests main.cpp
@@ -44,7 +44,7 @@ endif()
 
 if(WIN32)
 	message("windows unit-test")
-	include_directories(C:/LIBS/eigen)
+	include_directories(C:/LIBS/eigen-3.4.0)
 	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.15 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)

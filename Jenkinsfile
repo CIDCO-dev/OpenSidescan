@@ -103,13 +103,21 @@ pipeline {
 		stash includes: 'build/**' , name: 'installer'
       }
     }
+	
+	stage('test Windows installer'){
+      agent { label 'windows10-build-opensidescan-vm'}
+      steps {
+		bat "Scripts\\test_installer.au3 $version"
+		bat "ScriptsPython\\check_installation.py"
+      }
+    }
 		
     stage('SIGN INSTALLER WINDOWS 10'){
       agent{label 'windows10-x64-2'}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3 $version"
-        archiveArtifacts('build/Opensidescan-*-win64.exe')
+        archiveArtifacts('build/OpenSidescan-*-win64.exe')
 
        }
      }

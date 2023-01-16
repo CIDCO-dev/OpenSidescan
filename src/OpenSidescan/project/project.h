@@ -54,15 +54,16 @@ public:
 
     unsigned long getFileCount();
     unsigned long getObjectCount();
+    unsigned long getImageCount();
 
     /**
      * A generic visitor method that wraps up the proper use of the project's mutex to avoid race conditions between GUI operations and Monitor-mode
      */
     template <typename T>
-    void walkFiles(T * obj,void (T::*fn)(SidescanFile &)){
+    void walkFiles(T * obj, void (T::*fn)(SidescanFile &)){
         mutex.lock();
 
-        for(auto i = files.begin();i != files.end();i++){
+        for(auto i = files.begin(); i != files.end(); i++){
             (obj->*fn)(*(*i));
         }
 

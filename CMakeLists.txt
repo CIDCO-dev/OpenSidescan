@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 set(PROJECT_VERSION)
-project(Opensidescan VERSION ${PROJECT_VERSION})
+project(OpenSidescan VERSION ${PROJECT_VERSION})
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -155,10 +155,10 @@ if(UNIX)
 endif()
 if(WIN32)
 	message("windows cmake")
-	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 4.2 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
-	find_package(Qt5 5.12 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
-	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
+	include_directories(C:/LIBS/eigen-3.4.0)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
+	find_package(Qt5 5.15 COMPONENTS Widgets Network REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)
 	
 	# creating targets
 	add_library(dep ${LIB_FILES} ${THIRDPARTY})
@@ -167,16 +167,17 @@ if(WIN32)
 	target_link_libraries(dep Qt5::Widgets Qt5::Xml Qt5::Network ${OpenCV_LIBS})
 	target_link_libraries(${PROJECT_NAME} PUBLIC dep)
 
-	set(CV_DLLS C:/LIBS/opencv4.5/opencv/build/x64/vc15/bin/opencv_world454.dll)
-	set(QT_DLLS_PATH C:/Qt2/5.12.11/msvc2015_64/bin)
+	set(CV_DLLS C:/LIBS/opencv/build/x64/vc15/bin/opencv_world454.dll)
+	set(QT_DLLS_PATH C:/Qt/5.15.2/msvc2019_64/bin)
 	set(QT_DLLS ${QT_DLLS_PATH}/QT5Widgets.dll
 				${QT_DLLS_PATH}/QT5Core.dll
 				${QT_DLLS_PATH}/QT5Gui.dll
 				${QT_DLLS_PATH}/Qt5Network.dll
 	)
 	install(FILES ${QT_DLLS} ${CV_DLLS} DESTINATION bin)
-	install(FILES C:/Qt2/5.12.11/msvc2015_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/crabtrapV1.onnx" DESTINATION models)
+	install(FILES C:/Qt/5.15.2/msvc2019_64/plugins/platforms/qwindows.dll DESTINATION bin/platforms)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/models/${CRABTRAP_MODEL_VERSION}" DESTINATION models)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF" DESTINATION src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/)
 	set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})# add project to program and features in control panel
 	set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 	set(CPACK_NSIS_PACKAGE_NAME ${PROJECT_NAME}) # show project name in installer
@@ -193,10 +194,11 @@ endif()
 
 # Packaging
 include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "CIDCO")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_VERBATIM_VARIABLES true)
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 include(CPack)

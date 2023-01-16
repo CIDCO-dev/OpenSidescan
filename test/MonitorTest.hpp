@@ -20,7 +20,6 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <experimental/filesystem>
 #include <atomic>
 #include "../src/OpenSidescan/utilities/FileLockUtils.h"
 #include "../src/OpenSidescan/utilities/SideScanFileProcessor.hpp"

@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.10)
 project(wintest)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
@@ -42,6 +42,7 @@ set(THIRDPARTY  ${3rdParty}/datagrams/DatagramParser.cpp;
                 ${3rdParty}/utils/StringUtils.cpp;
                 ${3rdParty}/sidescan/SidescanPing.cpp;
                 ../../src/thirdParty/opencv/apps/createsamples/utility.cpp;
+				${3rdParty}/hydroblock/Hydroblock20Parser.cpp
     )
 
 # headers include directories
@@ -53,10 +54,10 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIR})
 
 if(WIN32)
 	message("windows cmake")
-	include_directories(C:/LIBS/eigen)
-	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv4.5/opencv/build/x64/vc15/lib)
-	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib/cmake/Qt5)
-	find_package(Qt5Xml REQUIRED PATHS C:/Qt2/5.12.11/msvc2015_64/lib)
+	include_directories(C:/LIBS/eigen-3.4.0)
+	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
+	find_package(Qt5 5.12 COMPONENTS Widgets REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
+	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)
 	
 	# creating targets
 	add_executable(winlocker winlocker.cpp)

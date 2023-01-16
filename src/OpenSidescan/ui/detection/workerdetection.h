@@ -18,7 +18,7 @@ class WorkerDetection : public QObject
     Q_OBJECT
 
 public:
-    WorkerDetection( Project & project,DetectionWindow & detectionWindow,Detector & detector );
+    WorkerDetection( Project & project, DetectionWindow & detectionWindow, Detector & detector, unsigned long int &imageCount);
 
 //    virtual ~WorkerDetection(){}
 
@@ -38,6 +38,7 @@ private:
     Detector & detector;
 
     int fileIdx;
+    unsigned long int imageCount;
 };
 
 

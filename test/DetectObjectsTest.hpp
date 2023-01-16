@@ -15,6 +15,7 @@
 #include "../src/OpenSidescan/sidescan/sidescanfile.h"
 #include "../src/OpenSidescan/detector/roidetector.h"
 #include "../src/OpenSidescan/detector/houghdetector.h"
+#include "../src/OpenSidescan/detector/yolov5detector.h"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
@@ -92,7 +93,7 @@ TEST_CASE("Test Wreck Detector") {
         delete objectsFound[i];
     }
 }
-
+/* remove since its not part of opensidescan
 TEST_CASE("Test Hough Detector"){
     //std::string sidescanFileName = "/media/glm/Backup Plus/Archeo_Beauport_AECOM/StarFish/xtf/22_07_2020_C2.xtf";
     std::string sidescanFileName = "test/data/starfish/22_07_2020_C2.xtf";
@@ -114,7 +115,7 @@ TEST_CASE("Test Hough Detector"){
         
 	std::vector<InventoryObject*> objectsFound;
         
-    	detector.detect(**i,objectsFound);
+    	detector.detect(**i, objectsFound);
 
 	//cv::imshow("detect",(*i)->getImage());
 	//cv::waitKey();
@@ -139,7 +140,7 @@ TEST_CASE("Test Hough Detector"){
     }
 
 }
-
+*/
 TEST_CASE("INVENTORY OBJECT IS INSIDE") {
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
@@ -174,6 +175,66 @@ TEST_CASE("INVENTORY OBJECT IS INSIDE") {
     REQUIRE(ans1 == true);
     bool ans2 = false_detect.is_inside(area);
     REQUIRE(ans2 == false);
+}
+
+TEST_CASE("Crab trap model test") {
+
+    std::string sidescanFileName = "test/data/ghostfishinggear/crabtrap1.xtf";
+
+    SidescanImager imager;
+    DatagramParser * parser = DatagramParserFactory::build(sidescanFileName, imager);
+    parser->parse(sidescanFileName);
+
+    Eigen::Vector3d leverArm(0, 0, 0);
+
+    SidescanFile * file = imager.generate(sidescanFileName, leverArm);
+
+    REQUIRE(file);
+
+    SidescanImage * image;
+
+    for (unsigned int i = 0; i < file->getImages().size(); i++) {
+        if (file->getImages()[i]->getChannelNumber() == 1) {
+            //crabtrap is on channel 1
+            image = file->getImages()[i];
+        }
+    }
+	
+	std::string modelPath;
+	
+	const std::filesystem::path modelDir{"models"};
+	for (auto const& dir_entry : std::filesystem::directory_iterator{modelDir}) {
+        if(dir_entry.path().extension() == ".onnx"){
+        	modelPath = dir_entry.path().string();
+        }
+    }
+	
+	Yolov5Detector crabtrapDetector(modelPath);
+	
+    std::vector<InventoryObject*> objectsFound;
+    crabtrapDetector.detect(*image, objectsFound);
+    REQUIRE(objectsFound.size() >= 1);
+    
+	
+	struct region area{462,2673,553,2713};
+	int truePositive = 0;
+	for(int i = 0; i<objectsFound.size(); ++i){
+		InventoryObject *obj = objectsFound[i];
+		if(obj->is_inside(area)){
+			truePositive++;
+		}
+	}
+	
+	REQUIRE(truePositive == 1);
+	
+
+    //clean up pointers
+    delete image;
+    delete parser;
+
+    for(unsigned int i=0; i<objectsFound.size(); i++) {
+        delete objectsFound[i];
+    }
 }
 
 #endif /* DETECTOBJECTSTEST_HPP */

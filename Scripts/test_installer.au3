@@ -1,8 +1,8 @@
-$installerPath="OpenSidescan\build\_CPack_Packages\win64\NSIS\OpenSidescan-VERSION-win64.exe"
-$installerPath=StringReplace($CMD, "VERSION", $CmdLine[1])
+$installerPath="C:\Users\pat\jenkins\\workspace\\OpenSidescan-Pat\\build\\OpenSidescan\\build\\_CPack_Packages\\win64\\NSIS\\OpenSidescan-VERSION-win64.exe"
+$path=StringReplace($installerPath, "VERSION", $CmdLine[1])
 
 #RequireAdmin
-Run("C:\Users\pat\OpenSidescan\build\_CPack_Packages\win64\NSIS\OpenSidescan-666-win64.exe")
+Run($path)
 
 WinWaitActive("OpenSidescan Setup")
 

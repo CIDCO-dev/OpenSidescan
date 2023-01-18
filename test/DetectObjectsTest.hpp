@@ -22,6 +22,7 @@
 #include "opencv2/opencv.hpp"
 
 TEST_CASE("Test Wreck Detector") {
+	std::cout<<"Detector test 1" << std::endl;
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 
@@ -142,6 +143,7 @@ TEST_CASE("Test Hough Detector"){
 }
 */
 TEST_CASE("INVENTORY OBJECT IS INSIDE") {
+	std::cout<<"Detector test 2" << std::endl;
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
 
@@ -178,6 +180,7 @@ TEST_CASE("INVENTORY OBJECT IS INSIDE") {
 }
 
 TEST_CASE("Crab trap model test") {
+	std::cout<<"Detector test 3" << std::endl;
 
     std::string sidescanFileName = "test/data/ghostfishinggear/crabtrap1.xtf";
 

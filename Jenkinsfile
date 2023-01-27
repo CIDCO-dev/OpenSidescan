@@ -109,7 +109,7 @@ pipeline {
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3 $version"
-        archiveArtifacts('build/Opensidescan-*-win64.exe')
+        archiveArtifacts('build/OpenSidescan-*-win64.exe')
 
        }
      }

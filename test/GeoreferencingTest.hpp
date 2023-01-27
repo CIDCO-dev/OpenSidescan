@@ -8,6 +8,7 @@
 #include "../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
 TEST_CASE( "Test Georeferencing" ) {
+	std::cout<<"Georeferencing test 1" << std::endl;
 
 //    std::cout << std::fixed << std::setprecision( 15 );
 

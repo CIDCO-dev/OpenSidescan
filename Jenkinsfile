@@ -56,7 +56,7 @@ pipeline {
         sh 'Scripts/build_linux_unit_tests.sh'
         sh 'mkdir -p build/reports'
         //sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
-		sh 'test/build/tests
+		sh 'test/build/tests'
         //junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
@@ -66,7 +66,7 @@ pipeline {
         steps {
             bat "Scripts/win-unittest.bat"
 			//bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
-			bat "test\\build\\tests.exe
+			bat "test\\build\\tests.exe"
         }
         post {
             always {

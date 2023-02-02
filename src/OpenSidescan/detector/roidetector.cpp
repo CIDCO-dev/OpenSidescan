@@ -23,9 +23,9 @@ cv::FastFeatureDetector::DetectorType RoiDetector::toCvFastType (int fastType){
 }
 
 void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound){
-	std::cout<<"roi detector debug mesage" <<std::endl;
+	
     image.resetDisplayedImage();
-	std::cout<<"roi detector debug mesage 1" <<std::endl;
+	
     /*  Detect Features ----------------------------------- */
     std::vector<cv::KeyPoint> combinedKeypoints;
 
@@ -34,11 +34,11 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     /* FAST & MSER feature detection */
 
     cv::FAST(image.getImage(),combinedKeypoints,fastThreshold,fastNonMaxSuppression,fastType);
-	std::cout<<"roi detector debug mesage 2" <<std::endl;
+	
     cv::Ptr<cv::MSER> detector= cv::MSER::create(mserDelta,mserMinimumArea,mserMaximumArea,0.25,0.2,200,1.01,0.003,5);
     std::cout<<"roi detector debug mesage 3" <<std::endl;
 	detector->detect(image.getImage(),combinedKeypoints);
-	std::cout<<"roi detector debug mesage 4" <<std::endl;
+	
     for(auto i = combinedKeypoints.begin();i!=combinedKeypoints.end();i++){
         if(
            i->pt.x - i->size < 0   ||   i->pt.x + i->size > image.getDisplayedImage().size().width
@@ -48,21 +48,21 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
             combinedKeypoints.erase(i--); //inline removal
         }
     }
-	std::cout<<"roi detector debug mesage 5" <<std::endl;
+	
     image.setMicroFeatures(combinedKeypoints);
-	std::cout<<"roi detector debug mesage 6" <<std::endl;
+	
 
     /* Cluster ------------------------------------------ */
     DBSCAN clustering(dbscanEpsilon, dbscanMinimumPoints, combinedKeypoints);
-	std::cout<<"roi detector debug mesage 7" <<std::endl;
+	
     clustering.run();
-	std::cout<<"roi detector debug mesage 8" <<std::endl;
+	
     std::vector<std::vector<int>> clusters = clustering.getCluster();
 	
     //std::cerr << clusters.size() << " clusters found" << std::endl;
 
     std::vector<cv::Rect> rois;
-	std::cout<<"roi detector debug mesage 9" <<std::endl;
+	
     for(unsigned int i=0;i<clusters.size();i++){
         std::vector<cv::Point> points;
         for(unsigned int j=0;j<clusters[i].size();j++){
@@ -99,7 +99,7 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
                 points.push_back(cv::Point( xNorth                      ,   yNorth + boundingBoxPadding));  //North
             }
         }
-		std::cout<<"roi detector debug mesage 10" <<std::endl;
+		
         cv::Rect roi = cv::boundingRect(points);
 
         int yCenter = floor(roi.y + roi.height/(double)2);
@@ -138,7 +138,6 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
         cv::Rect object(x,y,width,height);
         rois.push_back(object);
     }
-	std::cout<<"roi detector debug mesage 11" <<std::endl;
 
     // fuse overlapping bounding boxes if demanded
     if(mergeOverlappingObjects){

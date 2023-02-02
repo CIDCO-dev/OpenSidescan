@@ -36,7 +36,6 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     cv::FAST(image.getImage(),combinedKeypoints,fastThreshold,fastNonMaxSuppression,fastType);
 	
     cv::Ptr<cv::MSER> detector= cv::MSER::create(mserDelta,mserMinimumArea,mserMaximumArea,0.25,0.2,200,1.01,0.003,5);
-    std::cout<<"roi detector debug mesage 3" <<std::endl;
 	detector->detect(image.getImage(),combinedKeypoints);
 	
     for(auto i = combinedKeypoints.begin();i!=combinedKeypoints.end();i++){
@@ -143,7 +142,7 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     if(mergeOverlappingObjects){
         OpencvHelper::mergeOverlapping(rois);
     }
-	std::cout<<"roi detector debug mesage 12" <<std::endl;
+	
     for(auto i=rois.begin();i!=rois.end();i++){
 		std::cout<< &(rois.begin()) << "		" << &(rois.end()) << std::endl;
 		//auto x = i;
@@ -152,5 +151,5 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
         InventoryObject * object = new InventoryObject(image,(*i).x,(*i).y,(*i).width,(*i).height);
         objectsFound.push_back(object);
     }
-	std::cout<<"roi detector debug mesage 13" <<std::endl;
+	
 }

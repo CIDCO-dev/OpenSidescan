@@ -26,11 +26,10 @@ InventoryObject::InventoryObject(SidescanImage & image,int x,int y,int pixelWidt
     yCenter = y + (pixelHeight/2);
     xCenter = x + (pixelWidth/2);
 	
-	std::cout<<"inventory obj debug 1" << std::endl;
+	
     computeDimensions();
-	std::cout<<"inventory obj debug 2" << std::endl;
-    computePosition();
-	std::cout<<"inventory obj debug final" << std::endl;
+	computePosition();
+	
 }
 
 InventoryObject::~InventoryObject(){
@@ -158,14 +157,13 @@ void InventoryObject::computePosition(){
     double ShipLatitude = shipPosition->getLatitude();
     double shipEllipsoidalHeight = shipPosition->getEllipsoidalHeight();
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
-	std::cout<<"inventory obj debug 3" << std::endl;
+	
 	std::filesystem::path root = std::filesystem::current_path();
-	std::cout<< root << std::endl;
+	
 	while(root.filename() != "OpenSidescan"){
 		root = root.parent_path();
-		std::cout<< root << std::endl;
 	}	
-	std::cout<<"inventory obj debug 4" << std::endl;
+
 	std::filesystem::path modelPath = "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";
 	std::filesystem::path fullPath = root /= modelPath;
 	std::string filePath = fullPath.string();
@@ -251,12 +249,11 @@ void InventoryObject::computePosition(){
             }
         }
     }
-	std::cout<<"inventory obj debug 5" << std::endl;
+	
     // Least squares calculation of the size of the water column
     double nSigmoid = 10; // Scale factor on the x axis
     // Non linear least squares loop
     double correction = std::numeric_limits<double>::infinity();
-	std::cout<<"inventory obj debug 6 " << correction << std::endl;
     while (correction < (double)(1/10) ) { // the unit of correction is the pixel
         // Initialising least squares matrixes
         int nx = 1;
@@ -280,10 +277,10 @@ void InventoryObject::computePosition(){
         x = (A.transpose() * A).ldlt().solve(A.transpose() * b);
         correction = x(0, 0);
         sensorPrimaryAltitudePixels = sensorPrimaryAltitudePixels + correction;
-		std::cout<<"inventory obj debug lsq " << correction << std::endl;
+		
     }
     double sensorPrimaryAltitude = distancePerSample*sensorPrimaryAltitudePixels;
-	std::cout<<"inventory obj debug 7" << std::endl;
+	
     // loop only used to write datas in text file
     for (int j=0; j<nSamples; j++) {
         double delta;
@@ -296,7 +293,7 @@ void InventoryObject::computePosition(){
         double f = k / ( 1 + e );
         double dfdd = - k * nSigmoid * e / pow( 1 + e , 2);
     }
-	std::cout<<"inventory obj debug 8" << std::endl;
+	
 
     double groundDistance2 = pow(distanceToObject, 2) - pow(sensorPrimaryAltitude, 2);
     if (groundDistance2 < 0) {
@@ -306,7 +303,7 @@ void InventoryObject::computePosition(){
         std::cerr<<std::endl<<"Object inside water column"<<std::endl;
         return;
     }
-	std::cout<<"inventory obj debug 9" << std::endl;
+	
     Eigen::Vector3d sideScanDistanceEcef;
     double groundDistance = sqrt(groundDistance2);
     if(image.isStarboard()) {
@@ -318,7 +315,7 @@ void InventoryObject::computePosition(){
         CoordinateTransform::convertECEFToLongitudeLatitudeElevation(shipPositionEcef, *position);
         return; // This image is neither port nor starboard. We use ship position, it is the most accurate you can have.
     }
-	std::cout<<"inventory obj debug 10" << std::endl;
+	
     // TODO : change the value of this vector if no usbl
     Eigen::Vector3d antenna2TowPointEcef;
     antenna2TowPointEcef[0] = 0;

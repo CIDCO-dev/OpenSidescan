@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
@@ -63,14 +63,14 @@ pipeline {
         //junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
-	*/
+	
 	
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "Scripts/win-unittest.bat"
-			//bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
-			bat "test\\build\\tests.exe"
+			bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
+			//bat "test\\build\\tests.exe"
         }
         post {
             always {

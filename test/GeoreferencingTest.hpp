@@ -105,9 +105,9 @@ TEST_CASE( "Test Georeferencing" ) {
                 mserMinimumAreaValue,
                 mserMaximumAreaValue,
                 mergeOverlappingBoundingBoxesValue);
-    std::cout<<"georef debug mesage 1" <<std::endl;
+    
     detector.detect(*image, objectsDetected);
-	std::cout<<"georef debug mesage 2" <<std::endl;
+	
 
 /*
     OpencvHelper::detectObjects(
@@ -130,7 +130,6 @@ TEST_CASE( "Test Georeferencing" ) {
 
 
     REQUIRE( objectsDetected.size() == 1 );
-	std::cout<<"georef debug mesage 3" <<std::endl;
     Position * position = objectsDetected[ 0 ]->getPosition();
 
 //    std::cout << "\nObject name: "
@@ -143,7 +142,7 @@ TEST_CASE( "Test Georeferencing" ) {
 //              << "\n  height(m): " << objectsDetected[ 0 ]->getHeight()
 //              << "\n" << std::endl;
 
-	std::cout<<"georef debug mesage 4" <<std::endl;
+	
     double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
                                            position->getLongitude(), position->getLatitude() );
 

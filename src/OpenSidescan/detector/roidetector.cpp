@@ -144,9 +144,6 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     }
 	
     for(auto i=rois.begin();i!=rois.end();i++){
-		std::cout<< &(rois.begin()) << "		" << &(rois.end()) << std::endl;
-		//auto x = i;
-		//std::cout<< &(x++) << "		" << &(rois.end()) << std::endl;
 		
         InventoryObject * object = new InventoryObject(image,(*i).x,(*i).y,(*i).width,(*i).height);
         objectsFound.push_back(object);

@@ -160,8 +160,10 @@ void InventoryObject::computePosition(){
     double tYear = 1970 + shipPosition->getTimestamp()/pow(10, 6)/60/60/24/365.2425;
 	std::cout<<"inventory obj debug 3" << std::endl;
 	std::filesystem::path root = std::filesystem::current_path();
+	std::cout<< root << std::endl;
 	while(root.filename() != "OpenSidescan"){
 		root = root.parent_path();
+		std::cout<< root << std::endl;
 	}	
 	std::cout<<"inventory obj debug 4" << std::endl;
 	std::filesystem::path modelPath = "src/thirdParty/MBES-lib/src/thirdParty/WorldMagneticModel/WMM2020_Linux/src/WMM.COF";

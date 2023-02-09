@@ -127,6 +127,7 @@ pipeline {
 
        }
      }
+    /*
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       options {skipDefaultCheckout()}
@@ -135,6 +136,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-*-win64.exe $binWinx64PublishDir/'
       }
     }
+    */
 /*	
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}

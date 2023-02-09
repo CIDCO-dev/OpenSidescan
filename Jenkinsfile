@@ -20,6 +20,7 @@ pipeline {
   
   
   stages {
+	
     stage('Test file locking on linux'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
@@ -31,6 +32,7 @@ pipeline {
         junit 'build/reports/cut-report.xml'
       }
     }
+	
 	
     stage('Test file locking on WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
@@ -50,21 +52,25 @@ pipeline {
         }
     }
 	
+	
     stage('Unit tests on linux'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
         sh 'Scripts/build_linux_unit_tests.sh'
         sh 'mkdir -p build/reports'
-        sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
-        junit 'build/reports/opensidescan-linux-test-report.xml'
+        //sh 'test/build/tests -r junit -o build/reports/opensidescan-linux-test-report.xml || true'
+		sh 'test/build/tests'
+        //junit 'build/reports/opensidescan-linux-test-report.xml'
       }
     }
+	
 	
     stage('Unit tests WINDOWS 10') {
         agent { label 'windows10-build-opensidescan-vm'}
         steps {
             bat "Scripts/win-unittest.bat"
 			bat "test\\build\\tests.exe -r junit -o build\\reports\\win-unittest.xml"
+			//bat "test\\build\\tests.exe"
         }
         post {
             always {
@@ -121,6 +127,7 @@ pipeline {
 
        }
      }
+    /*
     stage('PUBLISH ON SERVER'){
       agent { label 'master'}
       options {skipDefaultCheckout()}
@@ -129,6 +136,7 @@ pipeline {
         sh 'cp /var/lib/jenkins/jobs/$name/builds/$patch/archive/build/Opensidescan-*-win64.exe $binWinx64PublishDir/'
       }
     }
+    */
 /*	
     stage('Windows GUI tests'){
       agent { label 'windows10-build-opensidescan-vm'}

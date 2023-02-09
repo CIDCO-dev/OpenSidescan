@@ -18,6 +18,7 @@ std::string current_working_direction() {
 
 
 TEST_CASE("Test normal image") {
+	std::cout<<"SideScan imager test 1" << std::endl;
     
     std::cout << "current working directory: " << current_working_direction() << std::endl;
 
@@ -56,6 +57,7 @@ TEST_CASE("Test normal image") {
 }
 
 TEST_CASE("Test image with no position data") {
+	std::cout<<"SideScan imager test 2" << std::endl;
     //std::cout << "current working directory: " << current_working_direction() << std::endl;
 
     std::string sidescanFileName = "test/data/wrecks/plane1.xtf";
@@ -82,6 +84,7 @@ TEST_CASE("Test image with no position data") {
 }
 
 TEST_CASE("Test SideScanImager") {
+	std::cout<<"SideScan imager test 3" << std::endl;
     class TestParser : DatagramParser {
     public:
         TestParser(DatagramEventHandler & processor) : DatagramParser(processor) {};

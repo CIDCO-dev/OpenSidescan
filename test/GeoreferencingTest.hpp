@@ -8,6 +8,7 @@
 #include "../src/thirdParty/MBES-lib/src/math/Distance.hpp"
 
 TEST_CASE( "Test Georeferencing" ) {
+	std::cout<<"Georeferencing test 1" << std::endl;
 
 //    std::cout << std::fixed << std::setprecision( 15 );
 
@@ -106,6 +107,7 @@ TEST_CASE( "Test Georeferencing" ) {
                 mergeOverlappingBoundingBoxesValue);
     
     detector.detect(*image, objectsDetected);
+	
 
 /*
     OpencvHelper::detectObjects(
@@ -128,7 +130,6 @@ TEST_CASE( "Test Georeferencing" ) {
 
 
     REQUIRE( objectsDetected.size() == 1 );
-
     Position * position = objectsDetected[ 0 ]->getPosition();
 
 //    std::cout << "\nObject name: "
@@ -141,7 +142,7 @@ TEST_CASE( "Test Georeferencing" ) {
 //              << "\n  height(m): " << objectsDetected[ 0 ]->getHeight()
 //              << "\n" << std::endl;
 
-
+	
     double distance = Distance::haversine( longitudeCarisScotsman, latitudeCarisScotsman,
                                            position->getLongitude(), position->getLatitude() );
 

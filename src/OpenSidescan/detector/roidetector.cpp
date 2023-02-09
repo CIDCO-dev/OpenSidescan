@@ -23,9 +23,9 @@ cv::FastFeatureDetector::DetectorType RoiDetector::toCvFastType (int fastType){
 }
 
 void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & objectsFound){
-
+	
     image.resetDisplayedImage();
-
+	
     /*  Detect Features ----------------------------------- */
     std::vector<cv::KeyPoint> combinedKeypoints;
 
@@ -34,10 +34,10 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     /* FAST & MSER feature detection */
 
     cv::FAST(image.getImage(),combinedKeypoints,fastThreshold,fastNonMaxSuppression,fastType);
-
+	
     cv::Ptr<cv::MSER> detector= cv::MSER::create(mserDelta,mserMinimumArea,mserMaximumArea,0.25,0.2,200,1.01,0.003,5);
-    detector->detect(image.getImage(),combinedKeypoints);
-
+	detector->detect(image.getImage(),combinedKeypoints);
+	
     for(auto i = combinedKeypoints.begin();i!=combinedKeypoints.end();i++){
         if(
            i->pt.x - i->size < 0   ||   i->pt.x + i->size > image.getDisplayedImage().size().width
@@ -47,24 +47,23 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
             combinedKeypoints.erase(i--); //inline removal
         }
     }
-
+	
     image.setMicroFeatures(combinedKeypoints);
-
+	
 
     /* Cluster ------------------------------------------ */
     DBSCAN clustering(dbscanEpsilon, dbscanMinimumPoints, combinedKeypoints);
-
+	
     clustering.run();
-
+	
     std::vector<std::vector<int>> clusters = clustering.getCluster();
-
+	
     //std::cerr << clusters.size() << " clusters found" << std::endl;
 
     std::vector<cv::Rect> rois;
-
+	
     for(unsigned int i=0;i<clusters.size();i++){
         std::vector<cv::Point> points;
-
         for(unsigned int j=0;j<clusters[i].size();j++){
             //colorizedClusters.push_back(cv::KeyPoint(combinedKeypoints[  clusters[i][j]  ]));
 
@@ -99,7 +98,7 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
                 points.push_back(cv::Point( xNorth                      ,   yNorth + boundingBoxPadding));  //North
             }
         }
-
+		
         cv::Rect roi = cv::boundingRect(points);
 
         int yCenter = floor(roi.y + roi.height/(double)2);
@@ -143,9 +142,11 @@ void RoiDetector::detect(SidescanImage & image,std::vector<InventoryObject*> & o
     if(mergeOverlappingObjects){
         OpencvHelper::mergeOverlapping(rois);
     }
-
+	
     for(auto i=rois.begin();i!=rois.end();i++){
+		
         InventoryObject * object = new InventoryObject(image,(*i).x,(*i).y,(*i).width,(*i).height);
         objectsFound.push_back(object);
     }
+	
 }

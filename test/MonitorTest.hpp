@@ -46,6 +46,7 @@ public:
 };
 
 TEST_CASE("Test monitor") {
+	std::cout<<"monitor test 1" << std::endl;
 
     std::string path = "test/data/lockTest/";
 

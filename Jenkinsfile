@@ -98,6 +98,7 @@ pipeline {
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
+        sleep time: 60, unit: 'SECONDS'
         stash includes: 'build/Release/**' , name: 'executable'
        }
      }
@@ -123,6 +124,7 @@ pipeline {
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3 $version"
+        sleep time: 60, unit: 'SECONDS'
         archiveArtifacts('build/OpenSidescan-*-win64.exe')
 
        }

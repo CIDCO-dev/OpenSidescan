@@ -10,7 +10,7 @@
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
 #include <filesystem>
 
-/*
+
 std::string current_working_direction() {
     char* cwd = getcwd(0,0);
     std::string working_directory(cwd);
@@ -185,96 +185,6 @@ TEST_CASE("Test SideScanImager") {
     delete parser;
     delete ssFile;
 }
-*/
 
-
-TEST_CASE("Parse one SSS per mission") {
-	std::cout<<"SideScan imager test 4" << std::endl;
-	
-	class SidescanFileReader : public DatagramEventHandler{
-		public:
-			
-			SidescanFileReader(std::string & filename):filename(filename){
-
-			}
-
-			/**Destroys the SidescanDataDumper*/
-			~SidescanFileReader(){
-				for(auto &v: channels){
-					for(auto &p: v){
-						delete p;
-					}
-				}
-			}
-    
-			void processSidescanData(SidescanPing * ping){
-				    
-				    if(channels.size() < ping->getChannelNumber()+1){
-				        std::vector<SidescanPing*> u;
-				        channels.push_back(u);
-				    }
-
-				    channels[ping->getChannelNumber()].push_back(ping);
-				}
-		    
-			bool generateImages(){
-				
-				int count = 0;
-				
-			    for(unsigned int i=0;i<channels.size();i++){
-			        std::stringstream ss;
-			        
-			        ss << filename <<  "-channel-" << i << ".jpg";
-			        
-			        cv::Mat img(channels[i].size(),channels[i].at(0)->getSamples().size(), CV_64F,cv::Scalar(0));
-			        
-			        if(channels[i].size() > 0 && channels[i].at(0)->getSamples().size() > 0){
-			        	count++;
-			        }
-				
-				} //channel loop
-				
-				if(count == channels.size() && count != 0){
-					std::cerr << count << "\n";
-					return true;
-				}
-				else{
-					return false;
-				}
-			}
-		
-		private:
-    		std::string filename;
-    
-    		std::vector< std::vector<SidescanPing * > > channels;
-
-	};
-	
-
-	const std::filesystem::path filesLocation{"/home/pat/Documents/test_xtf_pyxtf/download"};
-	
-	for (auto const& dir_entry : std::filesystem::directory_iterator{filesLocation}){
-		std::string fileName = dir_entry.path();
-        try{
-        	
-        	DatagramParser *parser = NULL;
-        	
-            SidescanFileReader sidescan(fileName);
-
-			std::cerr << "[+] Decoding " << fileName << std::endl;
-			
-			parser = DatagramParserFactory::build(fileName, sidescan);
-
-			parser->parse(fileName);
-		            
-			CHECK(sidescan.generateImages());
-			
-			delete parser;
-		}
-		catch(std::exception * e){
-			std::cerr << "[-] Error while parsing " << fileName << ": " << e->what() << std::endl;
-		}	    
-	}
-}
 
 #endif // SIDESCANIMAGERTEST_H

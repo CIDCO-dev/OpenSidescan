@@ -32,8 +32,6 @@ tests main.cpp
 
 if(UNIX)
 	message("*nix unit-test")
-
-	# find_package will locate dependencies wheter they are installed from source or from a package manager
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 4.5 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
@@ -48,7 +46,6 @@ if(WIN32)
 	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.15 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
 	find_package(Qt5Xml REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib)
-
 	target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Xml ${OpenCV_LIBS})
 	
 endif()

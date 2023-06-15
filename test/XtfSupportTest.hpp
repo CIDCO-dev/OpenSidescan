@@ -73,35 +73,23 @@ TEST_CASE("XTF Support Test") {
 	
 	
 	/*
-	A backup of the dataset can be found in the NAS : /TI/Opensidescan/XTF_Support_test_dataset
-	SciptsPython/update_sss_test_file_list.py can also be use to update the SSS file dataset
+	1- A backup of the dataset can be found in the NAS : /TI/Opensidescan/XTF_Support_test_dataset
+	2- SciptsPython/update_sss_test_file_list.py can also be use to update the SSS file dataset
+	3- cmake is in charge of downloading and extracting the files
 	*/
 	
-	std::filesystem::path filesLocation;
-	
-	#ifdef _WIN32
-	/*
-		filesLocation = "C:\\users\\abcdef\\XTF_Support_test_dataset" ; //TODO
-		
-		if (!std::filesystem::exists(filesLocation)) {
-		std::system("wget cidco.local/PATH -O  ");
-	
+	std::filesystem::path filesLocation{"test/data/XTF_Support_test_dataset/"};
+	if (!std::filesystem::exists(filesLocation)) {
+		REQUIRE(true == false);
 	}
-	*/
-	#endif
-	
-	#ifdef linux
-		filesLocation = "/opt/jenkins.cidco.local/XTF_Support_test_dataset";
-		if (!std::filesystem::exists(filesLocation)) {
-			std::system("wget --no-parent -r jenkins.cidco.local/XTF_Support_test_dataset/ -P /opt/");
-		}
-	#endif
-	
+	else{
+		std::cerr<<"ok" <<std::endl;
+	}
 	
 	
 	for (auto const& dir_entry : std::filesystem::directory_iterator{filesLocation}){
-		std::string fileName = dir_entry.path();
-        if(dir_entry.path().extension() == ".xtf"){
+		std::string fileName = dir_entry.path().string();
+        if(dir_entry.path().extension().string() == ".xtf"){
 			try{
 		    	
 		    	DatagramParser *parser = NULL;
@@ -113,8 +101,6 @@ TEST_CASE("XTF Support Test") {
 				parser = DatagramParserFactory::build(fileName, sidescan);
 
 				parser->parse(fileName);
-				
-				std::cerr<<"ok\n";
 				 
 				REQUIRE(sidescan.generateImages());
 				

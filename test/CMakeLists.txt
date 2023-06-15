@@ -30,6 +30,11 @@ tests main.cpp
     ../src/thirdParty/MBES-lib/src/getopt.c
 )
 
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip")
+	file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
+	file(ARCHIVE_EXTRACT INPUT "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/data/" VERBOSE)
+endif()
+
 if(UNIX)
 	message("*nix unit-test")
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)

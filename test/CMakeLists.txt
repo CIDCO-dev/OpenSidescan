@@ -30,13 +30,16 @@ tests main.cpp
     ../src/thirdParty/MBES-lib/src/getopt.c
 )
 
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip")
-	file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
-	file(ARCHIVE_EXTRACT INPUT "${CMAKE_CURRENT_SOURCE_DIR}/data/XTF_Support_test_dataset.zip" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/data/" VERBOSE)
-endif()
+
 
 if(UNIX)
 	message("*nix unit-test")
+	
+	if(NOT EXISTS "/opt/XTF_Support_test_dataset.zip")
+		file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "/opt/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
+		# file(ARCHIVE_EXTRACT INPUT "/opt/XTF_Support_test_dataset.zip" DESTINATION "/opt/" VERBOSE) require cmake >= 3.18
+	endif()
+	
 	find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 	find_package(OpenCV 4.5 REQUIRED)
 	find_package(Qt5 COMPONENTS Widgets Xml REQUIRED)
@@ -47,6 +50,13 @@ endif()
 
 if(WIN32)
 	message("windows unit-test")
+	
+	if(NOT EXISTS "C:/XTF_Support_test_dataset.zip")
+		file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "C:/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
+		message("Extracting XTF_Support_test_dataset.zip")
+		file(ARCHIVE_EXTRACT INPUT "C:/XTF_Support_test_dataset.zip" DESTINATION "C:/" VERBOSE)
+	endif()
+	
 	include_directories(C:/LIBS/eigen-3.4.0)
 	find_package(OpenCV 4.5 REQUIRED PATHS C:/LIBS/opencv/build/x64/vc15/lib)
 	find_package(Qt5 5.15 COMPONENTS Widgets Core REQUIRED PATHS C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)

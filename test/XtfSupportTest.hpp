@@ -75,16 +75,45 @@ TEST_CASE("XTF Support Test") {
 	/*
 	1- A backup of the dataset can be found in the NAS : /TI/Opensidescan/XTF_Support_test_dataset
 	2- SciptsPython/update_sss_test_file_list.py can also be use to update the SSS file dataset
-	3- cmake is in charge of downloading and extracting the files
 	*/
 	
-	std::filesystem::path filesLocation{"test/data/XTF_Support_test_dataset/"};
-	if (!std::filesystem::exists(filesLocation)) {
-		REQUIRE(true == false);
-	}
-	else{
-		std::cerr<<"ok" <<std::endl;
-	}
+	std::filesystem::path filesLocation;
+	
+	#ifdef linux
+		
+		filesLocation = "/opt/XTF_Support_test_dataset/";
+		
+		if (!std::filesystem::exists(filesLocation)) {
+			std::filesystem::path zip{"/opt/XTF_Support_test_dataset.zip"};
+			
+			if (std::filesystem::exists(zip)) {
+				
+				// depending on distribution version, cmake >= 3.18 might not be available
+				// therefore extracting zip cannot be done with cmake
+				std::system("unzip /opt/XTF_Support_test_dataset.zip -d /opt/");
+			}
+			else{
+				std::cerr<<"Zip and dataset cannot be found" << std::endl;
+				REQUIRE(true == false);
+			}
+		}
+	#endif
+	
+	
+	#ifdef _WIN32
+		
+		filesLocation = "C:\\XTF_Support_test_dataset\\";
+		
+		if (!std::filesystem::exists(filesLocation)) {
+			std::cerr<<"Dataset cannot be found" << std::endl;
+			REQUIRE(true == false);
+		}
+		
+	#endif
+	
+	
+
+	
 	
 	
 	for (auto const& dir_entry : std::filesystem::directory_iterator{filesLocation}){

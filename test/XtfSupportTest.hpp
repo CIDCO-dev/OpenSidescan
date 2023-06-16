@@ -74,7 +74,7 @@ TEST_CASE("XTF Support Test") {
 	
 	/*
 	1- A backup of the dataset can be found in the NAS : /TI/Opensidescan/XTF_Support_test_dataset
-	2- SciptsPython/update_sss_test_file_list.py can also be use to update the SSS file dataset
+	2- SciptsPython/update_sss_test_file_list.py can also be use to help updating the SSS file dataset
 	*/
 	
 	std::filesystem::path filesLocation;

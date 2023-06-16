@@ -8,8 +8,6 @@
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParser.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/DatagramParserFactory.hpp"
 #include "../src/thirdParty/MBES-lib/src/datagrams/xtf/XtfParser.hpp"
-#include <filesystem>
-
 
 std::string current_working_direction() {
     char* cwd = getcwd(0,0);

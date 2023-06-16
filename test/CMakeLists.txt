@@ -52,9 +52,9 @@ if(WIN32)
 	message("windows unit-test")
 	
 	if(NOT EXISTS "C:/XTF_Support_test_dataset.zip")
-		file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "C:/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
+		file(DOWNLOAD jenkins.cidco.local/XTF_Support_test_dataset.zip "C:/data/XTF_Support_test_dataset.zip" SHOW_PROGRESS)
 		message("Extracting XTF_Support_test_dataset.zip")
-		file(ARCHIVE_EXTRACT INPUT "C:/XTF_Support_test_dataset.zip" DESTINATION "C:/" VERBOSE)
+		file(ARCHIVE_EXTRACT INPUT "C:/data/XTF_Support_test_dataset.zip" DESTINATION "C:/data/" VERBOSE)
 	endif()
 	
 	include_directories(C:/LIBS/eigen-3.4.0)

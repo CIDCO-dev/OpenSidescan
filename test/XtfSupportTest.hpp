@@ -102,7 +102,7 @@ TEST_CASE("XTF Support Test") {
 	
 	#ifdef _WIN32
 		
-		filesLocation = "C:\\XTF_Support_test_dataset\\";
+		filesLocation = "C:\\data\\XTF_Support_test_dataset\\";
 		
 		if (!std::filesystem::exists(filesLocation)) {
 			std::cerr<<"Dataset cannot be found" << std::endl;

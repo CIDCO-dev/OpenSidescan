@@ -94,7 +94,7 @@ pipeline {
     }
 	
     stage('SIGN EXECUTABLE WINDOWS 10'){
-      agent{label 'windows10-x64-2'}
+      agent{label 'windows10-Signatures'}
       steps{
       	unstash 'executable'
         bat "Scripts\\sign_exe.au3"
@@ -120,7 +120,7 @@ pipeline {
     }
 		
     stage('SIGN INSTALLER WINDOWS 10'){
-      agent{label 'windows10-x64-2'}
+      agent{label 'windows10-Signatures'}
       steps{
       	unstash 'installer'
         bat "Scripts\\sign_installer.au3 $version"

@@ -20,7 +20,7 @@ pipeline {
   
   
   stages {
-	/*
+	
     stage('Test file locking on linux'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {
@@ -78,7 +78,7 @@ pipeline {
             }
         }
     }
-	*/
+	
     stage('Build opensidescan linux'){
       agent { label 'ubnt20-build-opensidescan-vm'}
       steps {

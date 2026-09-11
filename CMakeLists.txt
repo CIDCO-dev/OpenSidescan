@@ -136,7 +136,11 @@ if(UNIX)
 	add_executable(sidescan-dump src/cli/sidescan-dump.cpp)
 	add_executable(sidescan-glcm src/cli/sidescan-glcm.cpp)
 	add_executable(haralick-analysis src/cli/haralick-analysis.cpp)
-	target_compile_options(haralick-analysis PUBLIC -fopenmp) # mlpack is compile with openMP and need this compile option
+	if(APPLE)
+		find_package(OpenMP REQUIRED) # AppleClang OpenMP uses libomp, not gomp
+	else()
+		target_compile_options(haralick-analysis PUBLIC -fopenmp) # mlpack is compile with openMP and need this compile option
+	endif()
 	set_target_properties(fit-detector PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-detect PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_target_properties(sidescan-dump PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -150,7 +154,11 @@ if(UNIX)
 	target_link_libraries(sidescan-detect PUBLIC cli_dep)
 	target_link_libraries(sidescan-dump PUBLIC cli_dep)
 	target_link_libraries(sidescan-glcm PUBLIC cli_dep)
-	target_link_libraries(haralick-analysis PUBLIC cli_dep mlpack armadillo gomp)
+	if(APPLE)
+		target_link_libraries(haralick-analysis PUBLIC cli_dep mlpack armadillo OpenMP::OpenMP_CXX)
+	else()
+		target_link_libraries(haralick-analysis PUBLIC cli_dep mlpack armadillo gomp)
+	endif()
 	
 	install(TARGETS sidescan-dump DESTINATION /usr/local/bin/)
 	

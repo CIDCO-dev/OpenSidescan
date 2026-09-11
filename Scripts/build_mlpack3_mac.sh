@@ -32,6 +32,8 @@ cmake -S . -B build \
 	-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_INSTALL_PREFIX="$PREFIX" \
+	-DCMAKE_PREFIX_PATH="/opt/homebrew/opt/libomp" \
+	-DCMAKE_CXX_FLAGS="-I/opt/homebrew/opt/libomp/include" \
 	-DBUILD_CLI_EXECUTABLES=OFF \
 	-DBUILD_TESTS=OFF \
 	-DBUILD_PYTHON_BINDINGS=OFF \

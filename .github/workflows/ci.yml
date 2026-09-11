@@ -118,7 +118,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/opt/mlpack-3.4.2
-          key: macos-mlpack-3.4.2-v1
+          key: macos-mlpack-3.4.2-v2
 
       - name: Build mlpack 3.4.2
         run: bash Scripts/build_mlpack3_mac.sh

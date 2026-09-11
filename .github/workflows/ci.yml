@@ -94,6 +94,47 @@ jobs:
             build/bin/*
           if-no-files-found: warn
 
+  build_macos:
+    name: Build OpenSidescan (macOS)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install qt@5 eigen@3 libomp armadillo boost cereal ensmallen
+          # opencv@4 pulls in Qt 6 (qtbase) whose binaries conflict with linked qt@5.
+          # The build only consumes the qt@5 keg through CMAKE_PREFIX_PATH, so
+          # unlinking is enough to let qtbase install and link.
+          brew unlink qt@5
+          brew install opencv@4
+
+      - name: Restore mlpack 3 cache
+        id: cache-mlpack3
+        uses: actions/cache@v4
+        with:
+          path: ~/opt/mlpack-3.4.2
+          key: macos-mlpack-3.4.2-v1
+
+      - name: Build mlpack 3.4.2
+        run: bash Scripts/build_mlpack3_mac.sh
+
+      - name: Build OpenSidescan
+        run: bash Scripts/build_opensidescan_mac.sh "$APP_VERSION"
+
+      - name: Upload macOS binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-opensidescan-binary
+          path: |
+            build/OpenSidescan
+            build/bin/*
+          if-no-files-found: warn
+
   windows_ci:
     name: Windows Build and Tests
     runs-on: windows-latest

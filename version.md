@@ -8,6 +8,10 @@ This file must be updated whenever a change is planned or completed.
 
 | Date (UTC) | Status | Area | Change |
 |---|---|---|---|
+| 2026-09-11 | Done | Build | Added macOS (Apple Silicon) build support in root `CMakeLists.txt`: Apple branch for `haralick-analysis` uses `find_package(OpenMP)` + `OpenMP::OpenMP_CXX` (AppleClang/libomp instead of `-fopenmp`/`gomp`) and links mlpack 3 exactly like Linux (`mlpack armadillo`); Linux behavior unchanged. Verified full build and smoke tests against source-built mlpack 3.4.2. |
+| 2026-09-11 | Done | Build | Added `Scripts/build_opensidescan_mac.sh` (Homebrew keg-only prefixes via `CMAKE_PREFIX_PATH` plus explicit include/link/`-Wl,-rpath` flags for `$MLPACK3_PREFIX`, default `~/opt/mlpack-3.4.2`) and `Scripts/build_mlpack3_mac.sh` (library-only source build of mlpack 3.4.2, the version the project links against, with CMake 4 and armadillo 15 compatibility patches; Homebrew ships only header-only mlpack 4). |
+| 2026-09-11 | Done | CI | Added macOS CI build: `build_macos` job on `macos-latest` installing Homebrew `qt@5`, `eigen@3`, `libomp`, `armadillo`, `boost`, `cereal`, `ensmallen`, then `opencv@4` after `brew unlink qt@5` (Qt 6 `qtbase` binary conflict), cached mlpack 3.4.2 bootstrap via `Scripts/build_mlpack3_mac.sh`, build via `Scripts/build_opensidescan_mac.sh`, binary artifact upload. |
+| 2026-09-11 | Done | Build | Anchored the `.gitignore` `build*` pattern to the repository root (`/build*`): the unanchored pattern silently ignored the new `Scripts/build_*.sh` scripts, which would have been skipped by a plain `git add .` and broken the macOS CI job. |
 | 2026-02-19 | Done | Docs | Added repository governance and baseline analysis file: `AGENTS.md`. |
 | 2026-02-19 | Done | Docs | Added repository version audit file: `versions.md`. |
 | 2026-02-19 | Done | Docs | Added change tracking file: `version.md`. |

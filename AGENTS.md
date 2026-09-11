@@ -20,6 +20,7 @@ This document summarizes the technical baseline of `OpenSidescan`, the CI migrat
   - Linux file lock tests
   - Linux unit test build/run
   - Linux application build
+  - macOS application build (`macos-latest`)
   - Windows file lock tests (`windows-latest`)
   - Windows unit tests (`windows-latest`)
   - Windows application build (`windows-latest`)
@@ -29,6 +30,11 @@ This document summarizes the technical baseline of `OpenSidescan`, the CI migrat
 ### Linux build/test
 - `build-essential`, `cmake`
 - `libeigen3-dev`, `libopencv-dev`, `qtbase5-dev`
+
+### macOS build (Homebrew, Apple Silicon)
+- `qt@5`, `opencv@4`, `eigen@3`, `libomp`, `armadillo`, `boost`, `cereal`, `ensmallen`
+- `qt@5` must be unlinked before installing `opencv@4` (its Qt 6 `qtbase` dependency conflicts on linked binaries); the build consumes keg-only prefixes via `CMAKE_PREFIX_PATH` (see `Scripts/build_opensidescan_mac.sh`)
+- mlpack 3.4.2 is built from source into `~/opt/mlpack-3.4.2` by `Scripts/build_mlpack3_mac.sh` (Homebrew only ships header-only mlpack 4; OpenSidescan links against mlpack 3)
 
 ### Windows build/test
 - MSBuild toolchain
